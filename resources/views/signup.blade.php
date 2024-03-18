@@ -64,12 +64,12 @@
 						</div>
 					</form>
 					<div class="regist">
-						Already have an account?  <a href="#">Login</a>
+						Already have an account?  <a href="{{ URL('/login') }}">Login</a>
 					</div>
 				</div>
 				<div class="col-lg-7 col-sm-12">
 					<div class="login_img">
-						<img src="assets/img/blank_img.png" alt="">
+						<a href="{{ URL('/') }}"><img src="assets/img/blank_img.png" alt=""></a>
 					</div>
 				</div>
 			</div>

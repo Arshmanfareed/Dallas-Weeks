@@ -13,6 +13,12 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    
+    'linkedin-openid' => [
+        'client_id' => '77d4hvfiuinruk',
+        'client_secret' => 'GGMMqoef9PI2gAZS',
+        'redirect' => 'http://127.0.0.1:8000/auth/linkedin/callback',
+    ],
 
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),

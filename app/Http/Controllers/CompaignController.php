@@ -17,7 +17,7 @@ class CompaignController extends Controller
             'title'=>'Create Compaign'
         ];
         return view('compaigncreate',$data);
-       }
+    }
     function compaigninfo(){
         $data=[
             'title'=>'Create Compaign Info'

@@ -44,7 +44,7 @@
   <tbody>
   @for ($i = 0; $i < 5; $i++)
   <tr>
-      <td><div class="d-flex align-items-center"><img src="assets/img/acc.png" alt=""><strong>John doe</strong></div></td>
+      <td><div class="d-flex align-items-center"><img src="assets/img/acc_img{{$i+1}}.png" alt=""><strong>John doe</strong></div></td>
       <td><a href="#" class="black_list_activate">Blacklisted</a></td>
       <td>
         <a href="javascript:;" type="button" class="setting setting_btn" id=""><i class="fa-solid fa-gear"></i></a>

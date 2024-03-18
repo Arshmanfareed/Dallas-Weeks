@@ -14,7 +14,7 @@
                     <div class="filt_opt d-flex">
                    
                         <div class="add_btn ">
-                                    <a href="javascript:;" class="" data-toggle="modal" data-target="#"><i class="fa-solid fa-plus"></i></a>Add team member
+                                    <a href="/compaign/createcompaign" class="" ><i class="fa-solid fa-plus"></i></a>Add Campaign
                                 </div>                            
                         </div>
                     </div>
@@ -50,9 +50,9 @@
                         <div class="border_box dashboard_box">
                             <div class="count_div">
                                 <strong>984</strong>
-                                <div class="cont">
+                                <div class="cont ">
                                     <span>Total replies</span>
-                                    <div class="gray_back d-flex">
+                                    <div class="gray_back d-flex down">
                                         <i class="fa-solid fa-arrow-down"></i>2%<span>Today</span>
                                     </div>
                                 </div>
@@ -92,7 +92,8 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <div class="border_box">
+                        <div class="border_box ">
+                            <div class="compaign_list">
                             <table class="data_table w-100">
                             <thead>
                                 <tr>
@@ -107,34 +108,40 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @for ($i = 0; $i < 5; $i++)
+                                @for ($i = 0; $i < 8; $i++)
                                 <tr>
-                                    <td><div class="switch_box"><input type="checkbox" class="switch" id="switch0"><label for="switch0">Toggle</label></div></td>
+                                    <td><div class="switch_box"><input type="checkbox" class="switch" id="switch{{$i}}"><label for="switch{{$i}}">Toggle</label></div></td>
                                     <td>Sed ut perspiciatis unde</td>
                                     <td>44</td>
                                     <td>105</td>
                                     <td class="stats">
                                         <ul class="status_list d-flex align-items-center list-unstyled p-0 m-0">
-                                            <li><span><img src="assets/img/eye.svg" alt="">10</span></li>
-                                            <li><span><img src="assets/img/request.svg" alt="">42</span></li>
-                                            <li><span><img src="assets/img/mailmsg.svg" alt="">10</span></li>
-                                            <li><span><img src="assets/img/mailopen.svg" alt="">16</span></li>
+                                            <li><span><img src="/assets/img/eye.svg" alt="">10</span></li>
+                                            <li><span><img src="/assets/img/request.svg" alt="">42</span></li>
+                                            <li><span><img src="/assets/img/mailmsg.svg" alt="">10</span></li>
+                                            <li><span><img src="/assets/img/mailopen.svg" alt="">16</span></li>
                                         </ul>
                                     </td>
-                                    <td><div class="per">34%</div></td>
-                                    <td><div class="per">23%</div>
+                                    <td><div class="per up">34%</div></td>
+                                    <td><div class="per down">23%</div>
                                 </td>
                                 <td>
                                     <a href="javascript:;" type="button" class="setting setting_btn" id=""><i class="fa-solid fa-gear"></i></a>
                                     <ul class="setting_list">
-                                        <li><a href="#">Edit</a></li>
-                                        <li><a href="#">Delete</a></li>
+                                        <li><a href="#">Check campaign details</a></li>
+                                        <li><a href="#">Edit campaign</a></li>
+                                        <li><a href="#">Duplicate campaign steps</a></li>
+                                        <li><a href="#">Add new leads</a></li>
+                                        <li><a href="#">Export data</a></li>
+                                        <li><a href="#">Archive campaign</a></li>
+                                        <li><a href="#">Delete campaign</a></li>
                                     </ul>
                                 </td>
                             </tr>
                             @endfor
                             </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
             </div>

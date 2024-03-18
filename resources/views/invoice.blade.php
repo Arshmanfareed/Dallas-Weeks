@@ -51,14 +51,14 @@
     </tr>
   </thead>
   <tbody>
-  @for ($i = 0; $i < 5; $i++)
+  @for ($i = 0; $i < 7; $i++)
   <tr>
-      <td><div class="d-flex align-items-center"><img src="assets/img/acc.png" alt=""><strong>John doe</strong></div></td>
+      <td><div class="d-flex align-items-center"><img src="assets/img/acc_img{{$i+1}}.png" alt=""><strong>John doe</strong></div></td>
       <td>info@johndoe.com</td>
       <td  class="inv_data">Sed ut perspiciatis unde omnis iste natus error sit voluptatem</td>
       <td class="inv_date">28 August 2023</td>
 
-      <td><a href="javascript:;" class="black_list_activate">Download</a></td>
+      <td><a href="javascript:;" class="black_list_activate download">Download</a></td>
     </tr>
 @endfor
   </tbody>

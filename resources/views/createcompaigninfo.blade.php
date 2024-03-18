@@ -16,8 +16,8 @@
                             </div>
                             <div class="cmp_opt_link d-flex">
                                 <ul class="d-flex list-unstyled justify-content-end align-items-center">
-                                    <li class="active prev"><span>1</span><a href="javascript:;">Campaign info</a></li>
-                                    <li class="active"><span>2</span><a href="javascript:;">Campaign settings</a></li>
+                                    <li class="active prev full"><span>1</span><a href="javascript:;">Campaign info</a></li>
+                                    <li class="active "><span>2</span><a href="javascript:;">Campaign settings</a></li>
                                     <li><span>3</span><a href="javascript:;">Campaign steps</a></li>
                                 </ul>
                             </div>
@@ -144,14 +144,14 @@
         <div class="row">
             <div class="col-6">
                 <div class="border_box">
-                    <img src="assets/img/temp.png" alt="">
+                    <img src="/assets/img/temp.png" alt="">
                     <a href="javascript:;" class="btn">From template</a>
                     <p>Create a sequence from our suggested templates.</p>
                 </div>
             </div>
             <div class="col-6">
                 <div class="border_box">
-                    <img src="assets/img/creat_temp.png" alt="">
+                    <img src="/assets/img/creat_temp.png" alt="">
                     <a href="javascript:;" class="btn">From scratch</a>
                     <p>Create a sequence from scratch specify steps and everything.</p>
                 </div>

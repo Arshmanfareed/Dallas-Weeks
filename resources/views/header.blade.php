@@ -20,10 +20,6 @@
       <li class="nav-item">
         <a class="nav-link " href="#">Settings</a>
       </li>
-     
-      
-
-      
     </ul>
   </div>
   <div class="right_nav">

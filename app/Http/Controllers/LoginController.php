@@ -9,9 +9,7 @@ class LoginController extends Controller
 {
   function login(){
     $data= [
-
         'title'=>'Login Page'
-
     ];
     
     return view('Login',$data);
