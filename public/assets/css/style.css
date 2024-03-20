@@ -4933,8 +4933,7 @@ body.light-mode.register label {
     padding: 15px;
 }
 
-.drop-list,
-body > .element {
+.drop-list {
     padding-left: 0px;
     list-style: none;
 }
@@ -5081,4 +5080,9 @@ div > h5 {
 
 .task-list .attach-elements:hover {
     background-color: #fff;
+}
+
+.task-list .element:hover,
+.drop-list .element:hover {
+    cursor: pointer;
 }

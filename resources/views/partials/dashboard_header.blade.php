@@ -37,6 +37,9 @@
         </script>
         <script>
             $(document).ready(function() {
+                $('.element').on('click', function(e) {
+
+                });
                 var chooseElement;
 
                 function move() {
@@ -47,13 +50,21 @@
                         });
                         $('body').append(clone);
                         chooseElement = clone;
+                        var task_list = $('.task-list').get(0).getBoundingClientRect();
                         $(document).on('mousemove', function(e) {
                             var x = e.pageX;
                             var y = e.pageY;
-                            chooseElement.css({
-                                left: x - 50,
-                                top: y - 50
-                            });
+                            if (x > task_list.x && y > task_list.y) {
+                                chooseElement.css({
+                                    left: x - 350,
+                                    top: y - 350
+                                });
+                            } else {
+                                chooseElement.css({
+                                    left: task_list.x + 250,
+                                    top: task_list.y + 250
+                                });
+                            }
                         });
                     });
 
@@ -61,7 +72,7 @@
                         if (chooseElement) {
                             $(document).off('mousemove');
                             $('.task-list').append(chooseElement);
-                            chooseElement.removeClass('element').on('mousedown', startDragging);
+                            chooseElement.on('mousedown', startDragging);
                             $('.cancel-icon').on('click', removeElement);
                             chooseElement = null;
                         }
@@ -69,7 +80,7 @@
                 }
 
                 function removeElement(e) {
-                    $(e).parent().parent().remove();
+                    $(this).parent().remove()
                 }
 
                 function startDragging(e) {
@@ -82,8 +93,8 @@
                         var x = e.clientX - initialX;
                         var y = e.clientY - initialY;
                         currentElement.css({
-                            left: x,
-                            top: y
+                            left: x - 350,
+                            top: y - 350
                         });
                     });
 

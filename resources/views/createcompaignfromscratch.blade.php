@@ -12,9 +12,10 @@
                             <div class="d-flex align-items-center justify-content-between w-100">
                                 <h3>Smart sequence</h3>
                                 <div class="filt_opt d-flex">
-                                    <div class="add_btn ">
-                                        <a href="">Sequence template<i
-                                                class="fa-solid fa-up-right-and-down-left-from-center"></i><a />
+                                    <div class="add_btn">
+                                        <span><a href=""><i
+                                                    class="fa-solid fa-up-right-and-down-left-from-center"></i></a>Sequence
+                                            template</span>
                                     </div>
                                 </div>
                             </div>
