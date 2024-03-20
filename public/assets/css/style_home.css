@@ -1,4 +1,5 @@
-body,html {
+body,
+html {
     overflow-x: hidden;
 }
 
@@ -8,22 +9,22 @@ body,html {
     padding: 0;
 }
 .btn-blue a {
-    background: #16ADCB;
+    background: #16adcb;
     color: #fff;
     padding: 13px 25px;
     border-radius: 30px;
     text-decoration: none;
     font-size: 14px;
     display: inline-block;
-    border: solid 1px #16ADCB;
+    border: solid 1px #16adcb;
 }
 .btn-blue a:hover {
     background: transparent;
-    color: #16ADCB;
+    color: #16adcb;
 }
 .btn-yellow a {
-    background: #E3C935;
-    border-color: #E3C935;
+    background: #e3c935;
+    border-color: #e3c935;
     color: #000;
     text-transform: uppercase;
     font-weight: 600;
@@ -33,7 +34,7 @@ body,html {
     letter-spacing: 1.5px;
 }
 .btn-yellow a i {
-    background: #FFFFFF;
+    background: #ffffff;
     height: 44px;
     width: 44px;
     display: inline-flex;
@@ -41,7 +42,7 @@ body,html {
     justify-content: center;
     border-radius: 50%;
     margin-right: 20px;
-    color: #E3C935;
+    color: #e3c935;
     transition: 0.5s;
 }
 .btn-yellow a:hover {
@@ -49,22 +50,21 @@ body,html {
     color: #000000;
 }
 .btn-yellow a:hover i {
-    background: #E3C935;
+    background: #e3c935;
     color: #fff;
 }
-
 
 a {
     transition: 0.5s;
 }
-body{
-    font-family: 'Poppins', sans-serif;
+body {
+    font-family: "Poppins", sans-serif;
 }
 header#masthead .container-fluid {
     padding: 0 45px;
 }
-header#masthead  .topbar {
-    background: #D0EFF5;
+header#masthead .topbar {
+    background: #d0eff5;
     padding: 7px 7px 7px 30px;
     border-radius: 40px;
     margin-bottom: 16px;
@@ -85,13 +85,14 @@ header#masthead .topbar .row {
 header#masthead .topbar ul li {
     padding-right: 32px;
 }
-header#masthead .topbar ul li a, header#masthead .topbar ul li {
+header#masthead .topbar ul li a,
+header#masthead .topbar ul li {
     color: #0000009c;
     text-decoration: none;
 }
 header#masthead .topbar ul li i {
     padding-right: 15px;
-    color: #16ADCB;
+    color: #16adcb;
 }
 header#masthead .topbar .language {
     display: flex;
@@ -104,17 +105,17 @@ header#masthead .topbar .language select.language {
     padding: 0;
 }
 header#masthead .topbar .language select {
-    background: #E3C935;
-    border: solid 1px #E3C935;
+    background: #e3c935;
+    border: solid 1px #e3c935;
     padding: 15px 30px;
     border-radius: 40px;
     appearance: none;
     outline: none;
 }
-header#masthead  li.nav-item a.nav-link {
+header#masthead li.nav-item a.nav-link {
     font-size: 18px;
     padding: 0;
-    color: #1C1E22;
+    color: #1c1e22;
     position: relative;
 }
 header#masthead li.nav-item {
@@ -125,14 +126,14 @@ header#masthead li.nav-item a.nav-link.active:after {
     position: absolute;
     height: 6px;
     width: 6px;
-    background: #16ADCB;
+    background: #16adcb;
     border-radius: 50%;
     bottom: -9px;
     left: 50%;
     transform: translate(-50%, 0);
 }
 header#masthead li.nav-item a.nav-link.active {
-    color: #16ADCB;
+    color: #16adcb;
 }
 header#masthead .socialicons ul {
     display: flex;
@@ -156,7 +157,7 @@ header#masthead .socialicons ul li a {
     color: #0000002b;
     font-size: 24px;
 }
-header#masthead  .logomain {
+header#masthead .logomain {
     text-align: center;
 }
 header#masthead .logomain .navbar-brand {
@@ -168,8 +169,6 @@ header#masthead .logomain .navbar-brand {
     padding: 0;
 }
 
-
-
 section.bannerSec {
     min-height: 908px;
     display: flex;
@@ -179,7 +178,7 @@ section.bannerSec {
 section.bannerSec .container {
     max-width: 1520px;
 }
-section.bannerSec  h1 {
+section.bannerSec h1 {
     font-size: 62px;
     font-weight: 600;
     line-height: 1.4;
@@ -196,11 +195,11 @@ section.bannerSec .ratingimg img {
 p {
     font-size: 18px;
 }
-section.bannerSec  p {
+section.bannerSec p {
     width: 90%;
 }
 section.logoSec {
-    background: #E3C935;
+    background: #e3c935;
     padding: 34px 0;
 }
 section.logoSec .logonew img {
@@ -208,22 +207,22 @@ section.logoSec .logonew img {
     height: 44px;
     object-fit: scale-down;
 }
-section.logoSec .logonew  .item {
+section.logoSec .logonew .item {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-section.logoSec .logonew  .owl-dots {
+section.logoSec .logonew .owl-dots {
     display: none;
 }
-section.logoSec .logonew  .item {
+section.logoSec .logonew .item {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-section.logoSec .logonew  .owl-dots {
+section.logoSec .logonew .owl-dots {
     display: none;
 }
 section.bannerSec .img3 img {
@@ -238,22 +237,22 @@ section.bannerSec .img3 img {
     padding: 0;
 }
 .btn-blue a {
-    background: #16ADCB;
+    background: #16adcb;
     color: #fff;
     padding: 13px 25px;
     border-radius: 30px;
     text-decoration: none;
     font-size: 14px;
     display: inline-block;
-    border: solid 1px #16ADCB;
+    border: solid 1px #16adcb;
 }
 .btn-blue a:hover {
     background: transparent;
-    color: #16ADCB;
+    color: #16adcb;
 }
 .btn-yellow a {
-    background: #E3C935;
-    border-color: #E3C935;
+    background: #e3c935;
+    border-color: #e3c935;
     color: #000;
     text-transform: uppercase;
     font-weight: 600;
@@ -263,7 +262,7 @@ section.bannerSec .img3 img {
     letter-spacing: 1.5px;
 }
 .btn-yellow a i {
-    background: #FFFFFF;
+    background: #ffffff;
     height: 44px;
     width: 44px;
     display: inline-flex;
@@ -271,7 +270,7 @@ section.bannerSec .img3 img {
     justify-content: center;
     border-radius: 50%;
     margin-right: 20px;
-    color: #E3C935;
+    color: #e3c935;
     transition: 0.5s;
 }
 .btn-yellow a:hover {
@@ -279,22 +278,21 @@ section.bannerSec .img3 img {
     color: #000000;
 }
 .btn-yellow a:hover i {
-    background: #E3C935;
+    background: #e3c935;
     color: #fff;
 }
-
 
 a {
     transition: 0.5s;
 }
-body{
-    font-family: 'Poppins', sans-serif;
+body {
+    font-family: "Poppins", sans-serif;
 }
 header#masthead .container-fluid {
     padding: 0 45px;
 }
-header#masthead  .topbar {
-    background: #D0EFF5;
+header#masthead .topbar {
+    background: #d0eff5;
     padding: 7px 7px 7px 30px;
     border-radius: 40px;
     margin-bottom: 16px;
@@ -315,13 +313,14 @@ header#masthead .topbar .row {
 header#masthead .topbar ul li {
     padding-right: 32px;
 }
-header#masthead .topbar ul li a, header#masthead .topbar ul li {
+header#masthead .topbar ul li a,
+header#masthead .topbar ul li {
     color: #0000009c;
     text-decoration: none;
 }
 header#masthead .topbar ul li i {
     padding-right: 15px;
-    color: #16ADCB;
+    color: #16adcb;
 }
 header#masthead .topbar .language {
     display: flex;
@@ -334,17 +333,17 @@ header#masthead .topbar .language select.language {
     padding: 0;
 }
 header#masthead .topbar .language select {
-    background: #E3C935;
-    border: solid 1px #E3C935;
+    background: #e3c935;
+    border: solid 1px #e3c935;
     padding: 15px 30px;
     border-radius: 40px;
     appearance: none;
     outline: none;
 }
-header#masthead  li.nav-item a.nav-link {
+header#masthead li.nav-item a.nav-link {
     font-size: 18px;
     padding: 0;
-    color: #1C1E22;
+    color: #1c1e22;
     position: relative;
 }
 header#masthead li.nav-item {
@@ -355,14 +354,14 @@ header#masthead li.nav-item a.nav-link.active:after {
     position: absolute;
     height: 6px;
     width: 6px;
-    background: #16ADCB;
+    background: #16adcb;
     border-radius: 50%;
     bottom: -9px;
     left: 50%;
     transform: translate(-50%, 0);
 }
 header#masthead li.nav-item a.nav-link.active {
-    color: #16ADCB;
+    color: #16adcb;
 }
 header#masthead .socialicons ul {
     display: flex;
@@ -386,7 +385,7 @@ header#masthead .socialicons ul li a {
     color: #0000002b;
     font-size: 24px;
 }
-header#masthead  .logomain {
+header#masthead .logomain {
     text-align: center;
 }
 header#masthead .logomain .navbar-brand {
@@ -398,8 +397,6 @@ header#masthead .logomain .navbar-brand {
     padding: 0;
 }
 
-
-
 section.bannerSec {
     min-height: 908px;
     display: flex;
@@ -409,7 +406,7 @@ section.bannerSec {
 section.bannerSec .container {
     max-width: 1520px;
 }
-section.bannerSec  h1 {
+section.bannerSec h1 {
     font-size: 62px;
     font-weight: 600;
     line-height: 1.4;
@@ -426,11 +423,11 @@ section.bannerSec .ratingimg img {
 p {
     font-size: 18px;
 }
-section.bannerSec  p {
+section.bannerSec p {
     width: 90%;
 }
 section.logoSec {
-    background: #E3C935;
+    background: #e3c935;
     padding: 34px 0;
 }
 section.logoSec .logonew img {
@@ -438,22 +435,22 @@ section.logoSec .logonew img {
     height: 44px;
     object-fit: scale-down;
 }
-section.logoSec .logonew  .item {
+section.logoSec .logonew .item {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-section.logoSec .logonew  .owl-dots {
+section.logoSec .logonew .owl-dots {
     display: none;
 }
-section.logoSec .logonew  .item {
+section.logoSec .logonew .item {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-section.logoSec .logonew  .owl-dots {
+section.logoSec .logonew .owl-dots {
     display: none;
 }
 section.connectSec {
@@ -471,7 +468,7 @@ section.connectSec h1 {
     font-weight: 600;
     line-height: 1.3;
 }
-section.connectSec  p {
+section.connectSec p {
     text-align: center;
     width: 80%;
     margin-right: auto;
@@ -496,7 +493,7 @@ section.linkedin h1 {
     margin: auto;
     margin-bottom: 20px;
 }
-section.linkedin  p {
+section.linkedin p {
     text-align: center;
     width: 80%;
     margin-right: auto;
@@ -504,8 +501,8 @@ section.linkedin  p {
     margin-top: 30px;
     margin-bottom: 50px;
 }
-section.linkedin  .condition {
-    background: #FFFFFF;
+section.linkedin .condition {
+    background: #ffffff;
     padding: 25px;
     width: 78%;
     border-radius: 30px;
@@ -528,12 +525,12 @@ section.linkedin .condition ul {
     margin: 0;
 }
 section.linkedin .condition ul li {
-    background: #F2F2F2;
+    background: #f2f2f2;
     margin-bottom: 11px;
     border-radius: 30px;
     padding: 8px 8px;
     font-size: 14px;
-    color: #8E99A8;
+    color: #8e99a8;
     position: relative;
 }
 section.linkedin .condition ul li img {
@@ -544,7 +541,7 @@ section.linkedin .condition ul li img {
     border-radius: 50%;
     margin-right: 12px;
 }
-section.linkedin .condition  h3 {
+section.linkedin .condition h3 {
     font-size: 25px;
     color: #000;
     font-weight: 600;
@@ -576,7 +573,7 @@ section.tabsSec {
 section.tabsSec div#nav-tab {
     border: none !important;
     justify-content: center;
-    background: #D0EFF5;
+    background: #d0eff5;
     padding: 9px 5px;
     border-radius: 50px;
     justify-content: space-between;
@@ -592,7 +589,7 @@ section.tabsSec .nav-tabs .nav-link {
     text-transform: capitalize;
 }
 section.tabsSec .nav-tabs .nav-link.active {
-    background: #E3C935 !important;
+    background: #e3c935 !important;
     font-weight: 600;
 }
 section.tabsSec .tab-content {
@@ -625,7 +622,6 @@ section.tabsSec .btn {
     margin-top: 60px;
 }
 
-
 section.getInSec {
     background: url(../images/getin.png);
     height: 450px;
@@ -648,10 +644,10 @@ section.getInSec p {
     width: 80%;
 }
 section.getInSec .btn-chat a {
-    background: #FFFFFF;
+    background: #ffffff;
 }
 section.getInSec .btn-chat a i {
-    background: #16ADCB;
+    background: #16adcb;
     color: #fff;
 }
 section.getInSec .btn-chat {
@@ -663,7 +659,7 @@ section.getInSec .btn-chat a:hover {
 }
 section.getInSec .btn-chat a:hover i {
     background: #fff;
-    color: #16ADCB;
+    color: #16adcb;
 }
 
 section.testimonialSec {
@@ -706,7 +702,7 @@ section.testimonialSec .testimonialBox .titleImg h4 {
     margin: 0;
     margin-left: 13px;
 }
-section.testimonialSec .testimonialBox  p {
+section.testimonialSec .testimonialBox p {
     color: #11131778;
     width: 100%;
     text-align: left;
@@ -715,12 +711,12 @@ section.testimonialSec .testimonialBox  p {
     line-height: 2;
 }
 section.testimonialSec .testimonialBox {
-    background: #F2F2F2;
+    background: #f2f2f2;
     padding: 30px;
     border-radius: 30px;
 }
 section.testimonialSec .testimonialBox .fa-star {
-    color: #E3C935;
+    color: #e3c935;
     font-size: 20px;
 }
 section.testimonialSec .owl-dots {
@@ -730,13 +726,10 @@ section.testimonialSec .owl-dots {
     margin-top: 26px;
 }
 
-
-
-
 footer .connentin {
     width: 95%;
     margin: auto;
-    background: #E3C935;
+    background: #e3c935;
     padding: 60px;
     border-radius: 50px;
 }
@@ -751,7 +744,7 @@ footer .connentin .startedrating {
     align-items: center;
 }
 footer .connentin .startedrating .btn-yellow a {
-    border: solid 3px #FFFFFF;
+    border: solid 3px #ffffff;
     padding: 30px 50px 30px 30px;
     min-height: 140px;
     display: flex;
@@ -764,13 +757,13 @@ footer .connentin .startedrating .btn-yellow a i {
     height: 77.5px;
     width: 77.5px;
     font-size: 34px;
-    color: #16ADCB;
+    color: #16adcb;
 }
 footer .connentin p {
     margin: 0;
 }
 footer {
-    background: #F2F2F2;
+    background: #f2f2f2;
     padding-top: 70px;
 }
 .widthinner {
@@ -832,7 +825,7 @@ footer .col1 ul li {
     top: 40%;
     border-radius: 50%;
 }
-.widthinner  a {
+.widthinner a {
     color: #15151599;
     text-decoration: none;
     font-size: 16px;
@@ -842,7 +835,7 @@ footer .col1 ul li {
 }
 .widthinner a.phone {
     font-size: 28px;
-    color: #16ADCB;
+    color: #16adcb;
 }
 footer .col1 p:last-child {
     margin: 0;
@@ -859,7 +852,7 @@ footer .col1 p:last-child {
 .widthinner .col4 form input {
     width: 100%;
     background: transparent;
-    border: solid 1px #9DA8B4;
+    border: solid 1px #9da8b4;
     padding: 15px 25px;
     border-radius: 30px;
     outline: none;
@@ -872,7 +865,7 @@ footer .col1 p:last-child {
     height: 47px;
     top: 4px;
     font-size: 0;
-    background-color: #E3C935;
+    background-color: #e3c935;
     background-image: url(../images/submit.png);
     border: none;
     background-repeat: no-repeat;
@@ -887,8 +880,7 @@ footer .col1 p:last-child a {
     font-weight: 600;
 }
 
-
-@media screen and (max-width: 1500px) and (min-width: 1200px){
+@media screen and (max-width: 1500px) and (min-width: 1200px) {
     body {
         zoom: 0.7;
     }
@@ -897,12 +889,11 @@ footer .col1 p:last-child a {
     }
 }
 
-@media screen and (max-width: 1750px) and (min-width: 1500px){
+@media screen and (max-width: 1750px) and (min-width: 1500px) {
     body {
         zoom: 0.85;
     }
 }
-
 
 /* ABOUT US PAGE START */
 
@@ -1014,7 +1005,7 @@ section.faqSection h1 {
     color: #000;
 }
 section.faqSection button.accordion-button {
-    background: #F2F2F2;
+    background: #f2f2f2;
     border: none !important;
     min-height: 110px;
     border-radius: 70px !important;
@@ -1032,7 +1023,7 @@ section.faqSection .accordion-item {
 section.faqSection button.accordion-button span {
     position: absolute;
     left: 9px;
-    background: #D0EFF5;
+    background: #d0eff5;
     font-size: 32px;
     border-radius: 90px;
     width: 128px;
@@ -1043,7 +1034,7 @@ section.faqSection button.accordion-button span {
     font-weight: 700;
 }
 section.faqSection .accordion-body {
-    background: #F2F2F2;
+    background: #f2f2f2;
     padding: 50px 80px 20px 160px;
     border-radius: 100px !important;
     border-top-right-radius: 0 !important;
@@ -1107,13 +1098,13 @@ section.testimonialSec p {
     line-height: 2 !important;
 }
 .testimonialBox {
-    background: #F2F2F2;
+    background: #f2f2f2;
     padding: 30px;
     border-radius: 30px;
     min-height: 330px;
 }
 .testimonialBox .fa-star {
-    color: #E3C935;
+    color: #e3c935;
     font-size: 20px;
 }
 .owl-dots {
@@ -1123,15 +1114,12 @@ section.testimonialSec p {
     margin-top: 26px;
 }
 
-
-
 section.pricingSec img {
     margin: 0 !important;
 }
-section.pricingSec 
- .testimonialInnerBox {
+section.pricingSec .testimonialInnerBox {
     padding: 40px;
-    background: #D0EFF5;
+    background: #d0eff5;
     border-radius: 30px;
 }
 section.pricingSec .testimonialInnerBox .fa-star {
@@ -1184,13 +1172,13 @@ section.pricingPageSec .col-md-12 p {
 }
 .pricingInner {
     text-align: center;
-    background: #F2F2F2;
+    background: #f2f2f2;
     border-radius: 50px;
     padding: 10px 10px 50px 10px;
     min-height: 630px;
 }
 .pricingInner .pricingPrice {
-    background: #D0EFF5;
+    background: #d0eff5;
     border-radius: 50px;
     min-height: 255px;
     margin-bottom: 20px;
@@ -1206,7 +1194,7 @@ section.pricingPageSec .col-md-12 p {
 }
 .pricingInner .pricingPrice .pricein {
     margin: 0;
-    background: #FFFFFF;
+    background: #ffffff;
     width: 100%;
     border-radius: 50px;
     padding: 20px 28px;
@@ -1221,7 +1209,7 @@ section.pricingPageSec .col-md-12 p {
     display: block;
     margin-top: 6px;
 }
-.pricingInner  ul {
+.pricingInner ul {
     padding: 0;
     list-style: none;
 }
@@ -1250,7 +1238,7 @@ section.bannerSec.aboutSec.faqSec .row {
     align-items: flex-start;
 }
 
-@media screen and (max-width: 1500px) and (min-width: 1200px){
+@media screen and (max-width: 1500px) and (min-width: 1200px) {
     body {
         zoom: 0.7;
     }
@@ -1259,43 +1247,40 @@ section.bannerSec.aboutSec.faqSec .row {
     }
 }
 
-@media screen and (max-width: 1750px) and (min-width: 1500px){
+@media screen and (max-width: 1750px) and (min-width: 1500px) {
     body {
         zoom: 0.85;
     }
 }
 
-
-
-
 /*---------- REVEAl-ANIMATION -----------*/
 .reveal {
-     position: relative;
-     transform: translateY(150px);
-     opacity: 0;
-     transition: all 1.5s ease 0s;
+    position: relative;
+    transform: translateY(150px);
+    opacity: 0;
+    transition: all 1.5s ease 0s;
 }
- .reveal.active {
-     transform: translateY(0px);
-     opacity: 1;
+.reveal.active {
+    transform: translateY(0px);
+    opacity: 1;
 }
- .revealleft {
-     position: relative;
-     transform: translateX(-150px);
-     opacity: 0;
-     transition: all 1.5s ease 0s;
+.revealleft {
+    position: relative;
+    transform: translateX(-150px);
+    opacity: 0;
+    transition: all 1.5s ease 0s;
 }
- .revealleft.active {
-     transform: translateX(0px);
-     opacity: 1;
+.revealleft.active {
+    transform: translateX(0px);
+    opacity: 1;
 }
- .revealright {
-     position: relative;
-     transform: translateX(150px);
-     opacity: 0;
-     transition: all 1.5s ease 0s;
+.revealright {
+    position: relative;
+    transform: translateX(150px);
+    opacity: 0;
+    transition: all 1.5s ease 0s;
 }
- .revealright.active {
-     transform: translateX(0px);
-     opacity: 1;
+.revealright.active {
+    transform: translateX(0px);
+    opacity: 1;
 }

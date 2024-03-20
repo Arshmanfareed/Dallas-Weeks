@@ -6,22 +6,32 @@ use Illuminate\Http\Request;
 
 class CompaignController extends Controller
 {
-    function compaign(){
-        $data=[
-            'title'=>'Compaign'
+    function compaign()
+    {
+        $data = [
+            'title' => 'Compaign'
         ];
-        return view('compaign',$data);
+        return view('compaign', $data);
     }
-    function compaigncreate(){
-        $data=[
-            'title'=>'Create Compaign'
+    function compaigncreate()
+    {
+        $data = [
+            'title' => 'Create Compaign'
         ];
-        return view('compaigncreate',$data);
+        return view('compaigncreate', $data);
     }
-    function compaigninfo(){
-        $data=[
-            'title'=>'Create Compaign Info'
+    function compaigninfo()
+    {
+        $data = [
+            'title' => 'Create Compaign Info'
         ];
-        return view('createcompaigninfo',$data);
+        return view('createcompaigninfo', $data);
+    }
+    function fromscratch()
+    {
+        $data = [
+            'title' => 'Create Compaign Info'
+        ];
+        return view('createcompaignfromscratch', $data);
     }
 }

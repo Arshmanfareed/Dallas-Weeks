@@ -40,58 +40,59 @@ use App\http\Controllers\SocialController;
 Route::get('/auth/linkedin/redirect', function () {
     return Socialite::driver('linkedin-openid')->redirect();
 });
- 
+
 Route::get('/auth/linkedin/callback', function () {
     $user = Socialite::driver('linkedin-openid')->stateless()->user();
     // echo $user->token;
     // dd($user);
 
-    $data=[
-        'title'=>'Setting'
+    $data = [
+        'title' => 'Setting'
     ];
-    
-    return view('dashboard-account', compact('data','user'));
-   
+
+    return view('dashboard-account', compact('data', 'user'));
+
     // return redirect('/dashboard');
 
 
-   
+
 });
 
 // Route::get('linkedin/login', [SocialController::class, 'provider'])->name('linked.login');
 // Route::get('linkedin/callback', [SocialController::class, 'providerCallback'])->name('linked.user');
 
 
-Route::get('/team-rolesandpermission',[RolespermissionController::class,'rolespermission']);
-Route::get('/roles-and-permission-setting',[SettingController::class,'settingrolespermission']);
-Route::get('/compaign/createcompaign',[CompaignController::class,'compaigncreate']);
-Route::get('/compaign/compaigninfo',[CompaignController::class,'compaigninfo']);
-Route::get('/leads',[LeadsController::class,'leads']);
-Route::get('/report',[ReportController::class,'report']);
-Route::get('/message',[MessageController::class,'message']);
-Route::get('/contacts',[ContactController::class,'contact']);
-Route::get('/integration',[IntegrationController::class,'integration']);
-Route::get('/feature-suggestion',[FeatureController::class,'featuresuggestions']);
+Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']);
+Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']);
+Route::get('/compaign/createcompaign', [CompaignController::class, 'compaigncreate']);
+Route::get('/compaign/compaigninfo', [CompaignController::class, 'compaigninfo']);
+Route::get('/compaign/createcompaignfromscratch', [CompaignController::class, 'fromscratch']);
+Route::get('/leads', [LeadsController::class, 'leads']);
+Route::get('/report', [ReportController::class, 'report']);
+Route::get('/message', [MessageController::class, 'message']);
+Route::get('/contacts', [ContactController::class, 'contact']);
+Route::get('/integration', [IntegrationController::class, 'integration']);
+Route::get('/feature-suggestion', [FeatureController::class, 'featuresuggestions']);
 
-Route::get('/',[HomeController::class,'home']);
-Route::get('/about',[HomeController::class,'about']);
-Route::get('/pricing',[HomeController::class,'pricing']);
-Route::get('/faq',[HomeController::class,'faq']);
-Route::get('/login',[LoginController::class,'login']);
-Route::post('logout', [LoginController::class,'logoutUser'])->name('logout-user');
-Route::get('/register',[RegisterController::class,'register']);
+Route::get('/', [HomeController::class, 'home']);
+Route::get('/about', [HomeController::class, 'about']);
+Route::get('/pricing', [HomeController::class, 'pricing']);
+Route::get('/faq', [HomeController::class, 'faq']);
+Route::get('/login', [LoginController::class, 'login']);
+Route::post('logout', [LoginController::class, 'logoutUser'])->name('logout-user');
+Route::get('/register', [RegisterController::class, 'register']);
 Route::post('/register-user', [RegisterController::class, 'registerUser'])->name('register-user');
-Route::get('/dashboard',[DasboardController::class,'dashboard'])->name('dashobardz');
-Route::get('/blacklist',[BlacklistController::class,'blacklist']);
-Route::get('/team',[TeamController::class,'team']);
-Route::get('/invoice',[InvoiceController::class,'invoice']);
+Route::get('/dashboard', [DasboardController::class, 'dashboard'])->name('dashobardz');
+Route::get('/blacklist', [BlacklistController::class, 'blacklist']);
+Route::get('/team', [TeamController::class, 'team']);
+Route::get('/invoice', [InvoiceController::class, 'invoice']);
 // Route::get('/rolesandpermission',[RolespermissionController::class,'rolespermission']);
-Route::get('/setting',[SettingController::class,'setting']);
-Route::get('/accdashboard',[MaindashboardController::class,'maindasboard']);
-Route::get('/compaign',[CompaignController::class,'compaign']);
+Route::get('/setting', [SettingController::class, 'setting']);
+Route::get('/accdashboard', [MaindashboardController::class, 'maindasboard']);
+Route::get('/compaign', [CompaignController::class, 'compaign']);
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
 
-Route::controller(StripePaymentController::class)->group(function(){
+Route::controller(StripePaymentController::class)->group(function () {
     Route::get('stripe', 'stripe');
     Route::post('stripe', 'stripePost')->name('stripe.post');
 });
