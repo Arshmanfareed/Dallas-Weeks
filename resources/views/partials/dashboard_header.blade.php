@@ -37,10 +37,9 @@
         </script>
         <script>
             $(document).ready(function() {
-                $('.element').on('click', function(e) {
-
-                });
                 var chooseElement;
+                var elementInput;
+                var elementOutput;
 
                 function move() {
                     $('.element').on('mousedown', function(e) {
@@ -61,8 +60,8 @@
                                 });
                             } else {
                                 chooseElement.css({
-                                    left: task_list.x + 250,
-                                    top: task_list.y + 250
+                                    left: task_list.x,
+                                    top: task_list.y
                                 });
                             }
                         });
@@ -74,9 +73,48 @@
                             $('.task-list').append(chooseElement);
                             chooseElement.on('mousedown', startDragging);
                             $('.cancel-icon').on('click', removeElement);
+                            $('.attach-elements-out').on('click', attachElementInput);
+                            $('.attach-elements-in').on('click', attachElementOutput)
                             chooseElement = null;
                         }
                     });
+                }
+
+                function attachElementInput(e) {
+                    var attachDiv = $(this);
+                    attachDiv.css({
+                        "background-color": "white"
+                    });
+                    elementInput = attachDiv[0];
+                }
+
+                function attachElementOutput(e) {
+                    var attachDiv = $(this);
+                    attachDiv.css({
+                        "background-color": "white"
+                    });
+                    elementOutput = attachDiv[0];
+
+                    if (elementInput && elementOutput) {
+                        var svgNS = "http://www.w3.org/2000/svg";
+                        var svg = document.createElementNS(svgNS, "svg");
+                        var line = document.createElementNS(svgNS, "line");
+                        var rect1 = elementInput.getBoundingClientRect();
+                        var rect2 = elementOutput.getBoundingClientRect();
+                        var x1 = rect1.left + rect1.width / 2;
+                        var y1 = rect1.top + rect1.height / 2;
+                        var x2 = rect2.left + rect2.width / 2;
+                        var y2 = rect2.top + rect2.height / 2;
+                        console.log("x1:", x1, "y1:", y1, "x2:", x2, "y2:", y2);
+                        line.setAttribute("x1", x1);
+                        line.setAttribute("y1", y1);
+                        line.setAttribute("x2", x2);
+                        line.setAttribute("y2", y2);
+                        line.setAttribute("stroke", "pink");
+                        line.setAttribute("stroke-width", "25");
+                        svg.appendChild(line);
+                        document.body.appendChild(svg);
+                    }
                 }
 
                 function removeElement(e) {

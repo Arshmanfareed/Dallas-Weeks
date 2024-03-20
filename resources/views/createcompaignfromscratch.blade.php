@@ -31,6 +31,7 @@
                             <ul class='drop-list'>
                                 <li>
                                     <div class="element" id="view_profile" data-filter-item data-filter-name="view_profile">
+                                        <div class="attach-elements attach-elements-in"></div>
                                         <div class="cancel-icon">
                                             <i class="fa-solid fa-x"></i>
                                         </div>
@@ -45,12 +46,13 @@
                                         <div class="menu-icon">
                                             <i class="fa-solid fa-bars"></i>
                                         </div>
-                                        <div class="attach-elements"></div>
+                                        <div class="attach-elements attach-elements-out"></div>
                                     </div>
                                 </li>
                                 <li>
                                     <div class="element" id="invite_to_connect" data-filter-item
                                         data-filter-name="invite_to_connect">
+                                        <div class="attach-elements attach-elements-in"></div>
                                         <div class="cancel-icon">
                                             <i class="fa-solid fa-x"></i>
                                         </div>
@@ -65,7 +67,7 @@
                                         <div class="menu-icon">
                                             <i class="fa-solid fa-bars"></i>
                                         </div>
-                                        <div class="attach-elements"></div>
+                                        <div class="attach-elements attach-elements-out"></div>
                                     </div>
                                 </li>
                             </ul>

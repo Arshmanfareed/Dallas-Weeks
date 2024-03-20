@@ -5073,9 +5073,17 @@ div > h5 {
     height: 14px;
     position: absolute;
     background-color: #000;
+    border-radius: 100%;
+}
+
+.task-list .attach-elements-in {
+    top: -7px;
+    left: calc(50% - 14px);
+}
+
+.task-list .attach-elements-out {
     bottom: -7px;
     left: calc(50% - 14px);
-    border-radius: 100%;
 }
 
 .task-list .attach-elements:hover {
