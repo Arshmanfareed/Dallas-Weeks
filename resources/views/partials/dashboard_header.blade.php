@@ -57,21 +57,13 @@
                         chooseElement.attr('id', id);
                         chooseElement.attr('class', 'drop-pad-element');
                         chooseElement.removeClass('element');
-                        var task_list = $('.task-list').get(0).getBoundingClientRect();
                         $(document).on('mousemove', function(e) {
                             var x = e.pageX;
                             var y = e.pageY;
-                            if (x > task_list.x && y > task_list.y) {
-                                chooseElement.css({
-                                    left: x - 350,
-                                    top: y - 350
-                                });
-                            } else {
-                                chooseElement.css({
-                                    left: task_list.x,
-                                    top: task_list.y
-                                });
-                            }
+                            chooseElement.css({
+                                left: x - 350,
+                                top: y - 350
+                            });
                         });
                     });
 
@@ -82,7 +74,7 @@
                             $('.cancel-icon').on('click', removeElement);
                             $('.drop-pad-element').on('click', elementProperties);
                             $('.attach-elements-out').on('click', attachElementOutput);
-                            $('.attach-elements-in').on('click', attachElementInput)
+                            $('.attach-elements-in').on('click', attachElementInput);
                             chooseElement.on('mousedown', startDragging);
                             chooseElement = null;
                         }
@@ -115,42 +107,87 @@
                 function attachElementInput(e) {
                     if (elementOutput && elementOutput.attr('id') != $(this).parent().attr('id')) {
                         var attachDiv = $(this);
-                        attachDiv.css({
-                            "background-color": "white"
-                        });
                         elementInput = attachDiv.parent();
-                        if (elementInput && elementOutput) {
-                            if (!final_array.includes(elementOutput.attr('id'))) {
+                        if (elementOutput && elementInput) {
+                            if (!final_array.includes(elementOutput.attr('id')) && !final_array.includes(elementInput
+                                    .attr('id'))) {
                                 final_array.push(elementOutput.attr('id'));
                                 final_array.push(elementInput.attr('id'));
-                            } else if (final_array.includes(elementOutput.attr('id'))) {
-                                final_array.push(elementInput.attr('id'));
+                            } else if (!final_array.includes(elementOutput.attr('id')) && final_array.includes(
+                                    elementInput.attr('id'))) {
+                                let index = final_array.indexOf(elementInput.attr('id'));
+                                if (final_array[index - 1] == '') {
+                                    final_array[index - 1] = elementOutput.attr('id');
+                                }
+                            } else if (final_array.includes(elementOutput.attr('id')) && !final_array.includes(
+                                    elementInput.attr('id'))) {
+                                let index = final_array.indexOf(elementOutput.attr('id'));
+                                if (final_array[index + 1] == '') {
+                                    final_array[index + 1] = elementInput.attr('id');
+                                } else {
+                                    final_array.push(elementInput.attr('id'));
+                                }
+                            } else {
+                                return;
                             }
+                            attachDiv.css({
+                                "background-color": "white"
+                            });
+                            $('.task-list').append('<div class="line" id="' + elementOutput.attr('id') + '-to-' +
+                                elementInput.attr('id') +
+                                '"><div class="path-cancel-icon"><i class="fa-solid fa-x"></i></div></div>');
+                            var attachElementInput = elementInput.find('.attach-elements-in');
+                            var attachElementOutput = elementOutput.find('.attach-elements-out');
+                            var rect1 = attachElementOutput.get(0).getBoundingClientRect();
+                            var rect2 = attachElementInput.get(0).getBoundingClientRect();
+                            if (rect1 && rect2) {
+                                var x1 = rect1.left;
+                                var x2 = rect2.left;
+                                var y1 = rect1.top;
+                                var y2 = rect2.top;
+                                var lineId = elementOutput.attr('id') + '-to-' + elementInput.attr('id');
+                                create_line(x1, y1, x2, y2, lineId);
+                            }
+                            elementInput = null;
+                            elementOutput = null;
                         }
-                        $('.task-list').append('<div class="line" id="' + elementOutput.attr('id') + '-' + elementInput
-                            .attr('id') +
-                            '"></div>');
-                        var attachElementInput = elementInput.find('.attach-elements-in');
-                        var attachElementOutput = elementOutput.find('.attach-elements-out');
-                        var rect1 = attachElementOutput.get(0).getBoundingClientRect();
-                        var rect2 = attachElementInput.get(0).getBoundingClientRect();
-                        if (rect1 && rect2) {
-                            var x1 = rect1.left + (rect1.width / 2);
-                            var y1 = rect1.top + (rect1.height / 2);
-                            var x2 = rect2.left + (rect2.width / 2);
-                            var y2 = rect2.top + (rect2.height / 2);
-                            console.log(rect1);
-                            console.log(rect2);
-                            var lineId = elementOutput.attr('id') + '-' + elementInput.attr('id');
-                            create_line(x1, y1, x2, y2, lineId);
-                        }
-
-                        elementInput = null;
-                        elementOutput = null;
                     }
                 }
 
+                function removePath(e) {
+                    var element = $(this).parent().attr('id');
+                    var index = element.indexOf('-to-');
+                    var first_item_id = element.substring(0, index);
+                    var last_item_id = element.substring(index + 4);
+                    first_item = $('#' + first_item_id);
+                    first_item = first_item.find('.attach-elements-out');
+                    last_item = $('#' + last_item_id);
+                    last_item = last_item.find('.attach-elements-in');
+                    first_item.css({
+                        'background-color': '#000',
+                    });
+                    last_item.css({
+                        'background-color': '#000',
+                    });
+                    if (final_array.includes(first_item_id)) {
+                        let index = final_array.indexOf(first_item_id);
+                        index = index + 1;
+                        var duplicate_array = [
+                            ...final_array.splice(0, index),
+                            '',
+                            ...final_array.splice(index + 1)
+                        ];
+                        final_array = duplicate_array;
+                    }
+                    $(this).parent().remove();
+                }
+
                 function removeElement(e) {
+                    var element = $(this).parent();
+                    if (final_array.includes(element.attr('id'))) {
+                        let index = final_array.indexOf(element.attr('id'));
+                        final_array[index] = '';
+                    }
                     $(this).parent().remove()
                 }
 
@@ -173,7 +210,6 @@
                         $(document).off('mousemove');
                     });
                 }
-                move();
                 $('.element-btn').on('click', function() {
                     var targetTab = $(this).data('tab');
                     $('.element-content').removeClass('active');
@@ -192,17 +228,24 @@
 
                 function create_line(x1, y1, x2, y2, lineId) {
                     var line = $('#' + lineId);
+                    var distance = Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+                    var xMid = (x1 + x2) / 2;
+                    var yMid = (y1 + y2) / 2;
+                    var slopeInRadian = Math.atan2(y1 - y2, x1 - x2);
+                    var slopeInDergee = (slopeInRadian * 180) / Math.PI;
                     line.css({
                         'position': 'absolute',
                         'background': 'none',
                         'border-radius': 0,
                         'border-right': '3px solid black',
-                        'left': x1 + 'px',
-                        'top': y1 + 'px',
-                        'width': 1 + 'px',
-                        'height': (y2 - y1) + 'px',
+                        'height': distance + 'px',
+                        'top': yMid + 'px',
+                        'left': (xMid - (distance / 2)) + 'px',
+                        'transform': 'rotate(' + slopeInDergee + 'deg)',
                     });
+                    $('.path-cancel-icon').on('click', removePath);
                 }
+                move();
             });
         </script>
     </footer>

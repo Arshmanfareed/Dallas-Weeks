@@ -5181,3 +5181,20 @@ button#save-changes {
     border-radius: 15px;
     padding: 10px;
 }
+
+.path-cancel-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 100%;
+    top: -7px;
+    right: -7px;
+    position: absolute;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-list .path-cancel-icon i {
+    color: #000;
+}
