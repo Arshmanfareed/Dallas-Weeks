@@ -14,9 +14,9 @@ class CompaignElementController extends Controller
         if ($elements) {
             $properties = ElementProperties::where('element_id', $elements->id)->get();
             if ($properties->isNotEmpty()) {
-                return response()->json(['success'=>true, 'properties'=>$properties]);
+                return response()->json(['success' => true, 'properties' => $properties]);
             } else {
-                return response()->json(['success'=>false, 'message'=>'No Properties Found']);
+                return response()->json(['success' => false, 'message' => 'No Properties Found']);
             }
         }
     }

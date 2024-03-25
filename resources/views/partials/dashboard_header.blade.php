@@ -109,11 +109,16 @@
                         dataType: 'json',
                         success: function(response) {
                             if (response.success) {
-                                name_html += '<div class="element_properties">' + list_icon +
+                                name_html += '<div class="element_properties">'
+                                name_html += '<div class="element_name">' + list_icon +
                                         '<p>' + item_name + '</p></div>';
                                 response.properties.forEach(property => {
-                                    
+                                    name_html += '<div class="property_item">';
+                                    name_html += '<input type="'+property['data_type']+'">';
+                                    name_html += '<p>'+property['property_name']+'</p>'
+                                    name_html += '</div>';
                                 });
+                                name_html += '</div>';
                                 $('#properties').append(name_html);
                                 $('#element-list').removeClass('active');
                                 $('#properties').addClass('active');
