@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CampaignElement;
 use Illuminate\Http\Request;
 
 class CompaignController extends Controller
@@ -30,6 +31,7 @@ class CompaignController extends Controller
     function fromscratch()
     {
         $data = [
+            'compaigns' => CampaignElement::all(),
             'title' => 'Create Compaign Info'
         ];
         return view('createcompaignfromscratch', $data);

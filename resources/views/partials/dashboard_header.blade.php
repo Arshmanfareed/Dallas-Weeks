@@ -38,7 +38,22 @@
         <script>
             $(document).ready(function() {
                 $('.attach-elements-out').on('click', attachElementOutput);
-
+                $('.element-btn').on('click', function() {
+                    var targetTab = $(this).data('tab');
+                    $('.element-content').removeClass('active');
+                    $('#' + targetTab).addClass('active');
+                    $('.element-btn').removeClass('active');
+                    $(this).addClass('active');
+                });
+                $('#save-changes').on('click', function() {
+                    if (final_array[0] != 'step-1') {
+                        alert('Select Step 1 First');
+                        location.reload();
+                    } else {
+                        console.log(final_array);
+                    }
+                });
+                move();
                 var chooseElement;
                 var elementInput;
                 var elementOutput;
@@ -84,6 +99,18 @@
                 function elementProperties(e) {
                     $('#properties').empty();
                     var item = $(this);
+                    var item_slug = item.data('filterName');
+                    $.ajax({
+                        url: "{{route('/compaign/getcompaignelementbyslug', ':slug')}}".replace(':slug', item_slug),
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (response) {
+
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText);
+                        },
+                    });
                     var item_name = item.find('.item_name').text();
                     var list_icon = item.find('.list-icon').html();
                     var name_html = '<div class="element_properties">' + list_icon + '<p>' + item_name + '</p></div>';
@@ -116,7 +143,7 @@
                             } else if (!final_array.includes(elementOutput.attr('id')) && final_array.includes(
                                     elementInput.attr('id'))) {
                                 let index = final_array.indexOf(elementInput.attr('id'));
-                                if (final_array[index - 1] == '') {
+                                if (index > 0 && final_array[index - 1] == '') {
                                     final_array[index - 1] = elementOutput.attr('id');
                                 }
                             } else if (final_array.includes(elementOutput.attr('id')) && !final_array.includes(
@@ -171,7 +198,6 @@
                     });
                     if (final_array.includes(first_item_id)) {
                         let index = final_array.indexOf(first_item_id);
-                        index = index + 1;
                         var duplicate_array = [
                             ...final_array.splice(0, index),
                             '',
@@ -186,9 +212,41 @@
                     var element = $(this).parent();
                     if (final_array.includes(element.attr('id'))) {
                         let index = final_array.indexOf(element.attr('id'));
+                        var current_element = final_array[index];
+                        current_element = $('#' + current_element);
+                        if (final_array[index - 1] != '') {
+                            var prev_element = final_array[index - 1];
+                            prev_element = $('#' + prev_element);
+                            var element_id = prev_element + '-to-' + current_element;
+                            var element = $('#' + element_id);
+                            var first_item = prev_element.find('.attach-elements-out');
+                            var last_item = current_element.find('.attach-elements-in');
+                            first_item.css({
+                                'background-color': '#000',
+                            });
+                            last_item.css({
+                                'background-color': '#000',
+                            });
+                            element.remove();
+                        }
+                        if (final_array[index + 1] != '') {
+                            var next_element = final_array[index + 1];
+                            next_element = $('#' + next_element);
+                            var element_id = current_element + '-to-' + next_element;
+                            var element = $('#' + element_id);
+                            var first_item = current_element.find('.attach-elements-out');
+                            var last_item = next_element.find('.attach-elements-in');
+                            first_item.css({
+                                'background-color': '#000',
+                            });
+                            last_item.css({
+                                'background-color': '#000',
+                            });
+                            element.remove();
+                        }
                         final_array[index] = '';
                     }
-                    $(this).parent().remove()
+                    $(this).parent().remove();
                 }
 
                 function startDragging(e) {
@@ -210,21 +268,6 @@
                         $(document).off('mousemove');
                     });
                 }
-                $('.element-btn').on('click', function() {
-                    var targetTab = $(this).data('tab');
-                    $('.element-content').removeClass('active');
-                    $('#' + targetTab).addClass('active');
-                    $('.element-btn').removeClass('active');
-                    $(this).addClass('active');
-                });
-                $('#save-changes').on('click', function() {
-                    if (final_array[0] != 'step-1') {
-                        alert('Select Step 1 First');
-                        location.reload();
-                    } else {
-                        console.log(final_array);
-                    }
-                });
 
                 function create_line(x1, y1, x2, y2, lineId) {
                     var line = $('#' + lineId);
@@ -245,7 +288,6 @@
                     });
                     $('.path-cancel-icon').on('click', removePath);
                 }
-                move();
             });
         </script>
     </footer>

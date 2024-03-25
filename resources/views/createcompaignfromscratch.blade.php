@@ -46,68 +46,31 @@
                             </div>
                             <div class="element-list element-content active" id="element-list">
                                 <ul class='drop-list'>
-                                    <li>
-                                        <div class="element" id="view_profile" data-filter-item
-                                            data-filter-name="view_profile">
-                                            <div class="attach-elements attach-elements-in"></div>
-                                            <div class="cancel-icon">
-                                                <i class="fa-solid fa-x"></i>
-                                            </div>
-                                            <div class="list-icon">
-                                                <i class="fa-solid fa-eye"></i>
-                                            </div>
-                                            <div class="item_details">
-                                                <p class="item_name">View Profile</p>
-                                                <p class="item_desc">Lorem ipsum dolor sit amet consectetur
-                                                    adipisicing elit.</p>
-                                            </div>
-                                            <div class="menu-icon">
-                                                <i class="fa-solid fa-bars"></i>
-                                            </div>
-                                            <div class="attach-elements attach-elements-out"></div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="element" id="invite_to_connect" data-filter-item
-                                            data-filter-name="invite_to_connect">
-                                            <div class="attach-elements attach-elements-in"></div>
-                                            <div class="cancel-icon">
-                                                <i class="fa-solid fa-x"></i>
-                                            </div>
-                                            <div class="list-icon">
-                                                <i class="fa-solid fa-share"></i>
-                                            </div>
-                                            <div class="item_details">
-                                                <p class="item_name">Invite to Connect</p>
-                                                <p class="item_desc">Lorem ipsum, dolor sit amet consectetur
-                                                    adipisicing elit.</p>
-                                            </div>
-                                            <div class="menu-icon">
-                                                <i class="fa-solid fa-bars"></i>
-                                            </div>
-                                            <div class="attach-elements attach-elements-out"></div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="element" id="message" data-filter-item data-filter-name="message">
-                                            <div class="attach-elements attach-elements-in"></div>
-                                            <div class="cancel-icon">
-                                                <i class="fa-solid fa-x"></i>
-                                            </div>
-                                            <div class="list-icon">
-                                                <i class="fa-solid fa-message"></i>
-                                            </div>
-                                            <div class="item_details">
-                                                <p class="item_name">Message</p>
-                                                <p class="item_desc">Lorem ipsum dolor sit amet consectetur
-                                                    adipisicing elit.</p>
-                                            </div>
-                                            <div class="menu-icon">
-                                                <i class="fa-solid fa-bars"></i>
-                                            </div>
-                                            <div class="attach-elements attach-elements-out"></div>
-                                        </div>
-                                    </li>
+                                    @if (!empty($compaigns))
+                                        @foreach ($compaigns as $compaign)
+                                            <li>
+                                                <div class="element" id="{{$compaign['element_slug']}}" data-filter-item
+                                                    data-filter-name="{{$compaign['element_slug']}}">
+                                                    <div class="attach-elements attach-elements-in"></div>
+                                                    <div class="cancel-icon">
+                                                        <i class="fa-solid fa-x"></i>
+                                                    </div>
+                                                    <div class="list-icon">
+                                                        {!!$compaign['element_icon']!!}
+                                                    </div>
+                                                    <div class="item_details">
+                                                        <p class="item_name">{{$compaign['element_name']}}</p>
+                                                        <p class="item_desc">Lorem ipsum dolor sit amet consectetur
+                                                            adipisicing elit.</p>
+                                                    </div>
+                                                    <div class="menu-icon">
+                                                        <i class="fa-solid fa-bars"></i>
+                                                    </div>
+                                                    <div class="attach-elements attach-elements-out"></div>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    @endif
                                 </ul>
                                 <div class="save-btns">
                                     <button id="save-changes">Save Changes</button>

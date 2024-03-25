@@ -11,6 +11,7 @@ use App\Http\Controllers\RolespermissionController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\MaindashboardController;
 use App\http\Controllers\CompaignController;
+use App\Http\Controllers\CompaignElementController;
 use App\http\Controllers\StripePaymentController;
 use App\http\Controllers\LeadsController;
 use App\http\Controllers\ReportController;
@@ -67,6 +68,7 @@ Route::get('/roles-and-permission-setting', [SettingController::class, 'settingr
 Route::get('/compaign/createcompaign', [CompaignController::class, 'compaigncreate']);
 Route::get('/compaign/compaigninfo', [CompaignController::class, 'compaigninfo']);
 Route::get('/compaign/createcompaignfromscratch', [CompaignController::class, 'fromscratch']);
+Route::get('/compaign/getcompaignelementbyslug', [CompaignElementController::class, 'compaignElement']);
 Route::get('/leads', [LeadsController::class, 'leads']);
 Route::get('/report', [ReportController::class, 'report']);
 Route::get('/message', [MessageController::class, 'message']);
