@@ -68,7 +68,7 @@ Route::get('/roles-and-permission-setting', [SettingController::class, 'settingr
 Route::get('/compaign/createcompaign', [CompaignController::class, 'compaigncreate']);
 Route::get('/compaign/compaigninfo', [CompaignController::class, 'compaigninfo']);
 Route::get('/compaign/createcompaignfromscratch', [CompaignController::class, 'fromscratch']);
-Route::get('/compaign/getcompaignelementbyslug', [CompaignElementController::class, 'compaignElement']);
+Route::get('/compaign/getcompaignelementbyslug/{slug}', [CompaignElementController::class, 'compaignElement'])->name('getcompaignelementbyslug');
 Route::get('/leads', [LeadsController::class, 'leads']);
 Route::get('/report', [ReportController::class, 'report']);
 Route::get('/message', [MessageController::class, 'message']);

@@ -100,25 +100,33 @@
                     $('#properties').empty();
                     var item = $(this);
                     var item_slug = item.data('filterName');
+                    var item_name = item.find('.item_name').text();
+                    var list_icon = item.find('.list-icon').html();
+                    var name_html = '';
                     $.ajax({
-                        url: "{{route('/compaign/getcompaignelementbyslug', ':slug')}}".replace(':slug', item_slug),
+                        url: "{{ route('getcompaignelementbyslug', ':slug') }}".replace(':slug', item_slug),
                         type: 'GET',
                         dataType: 'json',
-                        success: function (response) {
-
+                        success: function(response) {
+                            if (response.success) {
+                                name_html += '<div class="element_properties">' + list_icon +
+                                        '<p>' + item_name + '</p></div>';
+                                response.properties.forEach(property => {
+                                    
+                                });
+                                $('#properties').append(name_html);
+                                $('#element-list').removeClass('active');
+                                $('#properties').addClass('active');
+                                $('#element-list-btn').removeClass('active');
+                                $('#properties-btn').addClass('active');
+                            } else {
+                                console.log(response.message);
+                            }
                         },
-                        error: function (xhr, status, error) {
+                        error: function(xhr, status, error) {
                             console.error(xhr.responseText);
                         },
                     });
-                    var item_name = item.find('.item_name').text();
-                    var list_icon = item.find('.list-icon').html();
-                    var name_html = '<div class="element_properties">' + list_icon + '<p>' + item_name + '</p></div>';
-                    $('#properties').append(name_html);
-                    $('#element-list').removeClass('active');
-                    $('#properties').addClass('active');
-                    $('#element-list-btn').removeClass('active');
-                    $('#properties-btn').addClass('active');
                 }
 
                 function attachElementOutput(e) {
