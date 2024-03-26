@@ -64,7 +64,7 @@
                     $('.element').on('mousedown', function(e) {
                         e.preventDefault();
                         var clone = $(this).clone().css({
-                            position: "absolute"
+                            'position': 'absolute',
                         });
                         $('body').append(clone);
                         chooseElement = clone;
@@ -72,24 +72,130 @@
                         chooseElement.attr('id', id);
                         chooseElement.attr('class', 'drop-pad-element');
                         chooseElement.removeClass('element');
+                        chooseElement.css({
+                            'display': 'flex',
+                            'justify-content': 'space-between',
+                            'align-items': 'center',
+                            'background-color': '#1c1e22',
+                            'min-height': '100px',
+                            'max-height': 'fit-content',
+                            'width': '350px',
+                            'padding': '7px',
+                            'border-radius': '17px',
+                            'margin': '14px 0',
+                            'cursor': 'pointer',
+                        });
+                        p = chooseElement.find('p');
+                        p.css({
+                            'color': '#fff',
+                            'width': 'fit-content',
+                        });
+                        list_icon = chooseElement.find('.list-icon');
+                        list_icon.css({
+                            'padding': '7px',
+                            'min-height': '100%',
+                            'display': 'flex',
+                            'align-items': 'center',
+                            'justify-content': 'center',
+                            'background-color': '#15171c',
+                            'border-radius': '25%',
+                            'margin-right': '25px',
+                        });
+                        i = chooseElement.find('.list-icon').find('i');
+                        i.css({
+                            'color': '#17accb',
+                        });
+                        p = chooseElement.find('.item_details').find('p');
+                        p.css({
+                            'margin': '0',
+                            'width': '80%',
+                        });
+                        desc = chooseElement.find('.item_desc');
+                        desc.css({
+                            'display': 'block',
+                            'max-width': '100%',
+                            'text-overflow': 'ellipsis',
+                            'font-size': '15px',
+                        });
+                        menu_icon = chooseElement.find('.menu-icon');
+                        menu_icon.css({
+                            'display': 'none',
+                        });
+                        cancel_icon = chooseElement.find('.cancel-icon');
+                        cancel_icon.css({
+                            'display': 'none',
+                        });
+                        attach_in = chooseElement.find('.attach-elements-in');
+                        attach_in.css({
+                            'display': 'none',
+                        });
+                        attach_on = chooseElement.find('.attach-elements-out');
+                        attach_on.css({
+                            'display': 'none',
+                        });
                         $(document).on('mousemove', function(e) {
                             var x = e.pageX;
                             var y = e.pageY;
-                            chooseElement.css({
-                                left: x - 350,
-                                top: y - 350
-                            });
+                            var element = $('.drop-pad').offset();
+                            var element_x = element.left;
+                            var max_x = element_x + $('.drop-pad').outerWidth();
+                            var element_y = element.top;
+                            var max_y = element_y + $('.drop-pad').outerHeight();
+                            if (x > element_x && y > element_y && x < max_x && y < max_y) {
+                                chooseElement.css({
+                                    left: x,
+                                    top: y
+                                });
+                            } else {
+                                chooseElement.css({
+                                    left: element_x,
+                                    top: element_y
+                                });
+                            }
                         });
                     });
 
-                    $(document).on('mouseup', function() {
+                    $(document).on('mouseup', function(e) {
                         if (chooseElement) {
+                            chooseElement.css({
+                                'align-items': 'stretch',
+                            });
+                            attach_in = chooseElement.find('.attach-elements-in');
+                            attach_in.css({
+                                'display': 'block',
+                            });
+                            attach_on = chooseElement.find('.attach-elements-out');
+                            attach_on.css({
+                                'display': 'block',
+                            });
+                            cancel_icon = chooseElement.find('.cancel-icon');
+                            cancel_icon.css({
+                                'display': 'flex',
+                            });
+                            var x = e.pageX;
+                            var y = e.pageY;
+                            var element = $('.drop-pad').offset();
+                            var element_x = element.left;
+                            var max_x = element_x + $('.drop-pad').outerWidth();
+                            var element_y = element.top;
+                            var max_y = element_y + $('.drop-pad').outerHeight();
+                            if (x > element_x && y > element_y && x < max_x && y < max_y) {
+                                chooseElement.css({
+                                    left: x - 350,
+                                    top: y - 350
+                                });
+                            } else {
+                                chooseElement.css({
+                                    left: 0,
+                                    top: 30
+                                });
+                            }
                             $(document).off('mousemove');
                             $('.task-list').append(chooseElement);
                             $('.cancel-icon').on('click', removeElement);
-                            $('.drop-pad-element').on('click', elementProperties);
                             $('.attach-elements-out').on('click', attachElementOutput);
                             $('.attach-elements-in').on('click', attachElementInput);
+                            $('.drop-pad-element').on('click', elementProperties);
                             chooseElement.on('mousedown', startDragging);
                             chooseElement = null;
                         }
@@ -109,24 +215,28 @@
                         dataType: 'json',
                         success: function(response) {
                             if (response.success) {
-                                name_html += '<div class="element_properties">'
+                                name_html += '<div class="element_properties">';
                                 name_html += '<div class="element_name">' + list_icon +
-                                        '<p>' + item_name + '</p></div>';
+                                    '<p>' + item_name + '</p></div>';
                                 response.properties.forEach(property => {
                                     name_html += '<div class="property_item">';
-                                    name_html += '<input type="'+property['data_type']+'">';
-                                    name_html += '<p>'+property['property_name']+'</p>'
+                                    name_html += '<input type="' + property['data_type'] + '">';
+                                    name_html += '<p>' + property['property_name'] + '</p>';
                                     name_html += '</div>';
                                 });
                                 name_html += '</div>';
-                                $('#properties').append(name_html);
-                                $('#element-list').removeClass('active');
-                                $('#properties').addClass('active');
-                                $('#element-list-btn').removeClass('active');
-                                $('#properties-btn').addClass('active');
                             } else {
-                                console.log(response.message);
+                                name_html += '<div class="element_properties">';
+                                name_html += '<div class="element_name">' + list_icon +
+                                    '<p>' + item_name + '</p></div>';
+                                name_html += '<div class="text-center">' + response.message +
+                                    '</div></div>';
                             }
+                            $('#properties').html(name_html);
+                            $('#element-list').removeClass('active');
+                            $('#properties').addClass('active');
+                            $('#element-list-btn').removeClass('active');
+                            $('#properties-btn').addClass('active');
                         },
                         error: function(xhr, status, error) {
                             console.error(xhr.responseText);
@@ -147,33 +257,56 @@
                 function attachElementInput(e) {
                     if (elementOutput && elementOutput.attr('id') != $(this).parent().attr('id')) {
                         var attachDiv = $(this);
+                        attachDiv.css({
+                            "background-color": "white"
+                        });
                         elementInput = attachDiv.parent();
                         if (elementOutput && elementInput) {
                             if (!final_array.includes(elementOutput.attr('id')) && !final_array.includes(elementInput
                                     .attr('id'))) {
                                 final_array.push(elementOutput.attr('id'));
                                 final_array.push(elementInput.attr('id'));
-                            } else if (!final_array.includes(elementOutput.attr('id')) && final_array.includes(
-                                    elementInput.attr('id'))) {
-                                let index = final_array.indexOf(elementInput.attr('id'));
-                                if (index > 0 && final_array[index - 1] == '') {
-                                    final_array[index - 1] = elementOutput.attr('id');
-                                }
                             } else if (final_array.includes(elementOutput.attr('id')) && !final_array.includes(
                                     elementInput.attr('id'))) {
                                 let index = final_array.indexOf(elementOutput.attr('id'));
-                                if (final_array[index + 1] == '') {
+                                var arr_len = final_array.length - 1;
+                                if (arr_len > index + 1) {
+                                    final_array.push(elementInput.attr('id'));
+                                } else if (final_array[index + 1] == '') {
                                     final_array[index + 1] = elementInput.attr('id');
                                 } else {
-                                    final_array.push(elementInput.attr('id'));
+                                    var duplicate_array = [
+                                        ...final_array.splice(0, index),
+                                        elementInput.attr('id'),
+                                        ...final_array.splice(index + 1)
+                                    ];
+                                    final_array = duplicate_array;
+                                }
+                            } else if (!final_array.includes(elementOutput.attr('id')) && final_array.includes(
+                                    elementInput.attr('id'))) {
+                                let index = final_array.indexOf(elementInput.attr('id'));
+                                if (index - 1 < 0) {
+                                    var duplicate_array = [
+                                        elementOutput.attr('id'),
+                                        ...final_array.slice()
+                                    ];
+                                    final_array = duplicate_array;
+                                } else if (final_array[index - 1] == '') {
+                                    final_array[index - 1] = elementOutput.attr('id');
+                                } else {
+                                    var duplicate_array = [
+                                        ...final_array.splice(0, index - 1),
+                                        elementOutput.attr('id'),
+                                        ...final_array.splice(index)
+                                    ];
+                                    final_array = duplicate_array;
                                 }
                             } else {
                                 return;
                             }
-                            attachDiv.css({
-                                "background-color": "white"
-                            });
-                            $('.task-list').append('<div class="line" id="' + elementOutput.attr('id') + '-to-' +
+
+                            $('.' + elementOutput.attr('id')).append('<div class="line" id="' + elementOutput.attr(
+                                    'id') + '-to-' +
                                 elementInput.attr('id') +
                                 '"><div class="path-cancel-icon"><i class="fa-solid fa-x"></i></div></div>');
                             var attachElementInput = elementInput.find('.attach-elements-in');
@@ -182,14 +315,14 @@
                             var rect2 = attachElementInput.get(0).getBoundingClientRect();
                             if (rect1 && rect2) {
                                 var x1 = rect1.left;
-                                var x2 = rect2.left;
                                 var y1 = rect1.top;
+                                var x2 = rect2.left;
                                 var y2 = rect2.top;
                                 var lineId = elementOutput.attr('id') + '-to-' + elementInput.attr('id');
                                 create_line(x1, y1, x2, y2, lineId);
+                                elementInput = null;
+                                elementOutput = null;
                             }
-                            elementInput = null;
-                            elementOutput = null;
                         }
                     }
                 }
@@ -269,12 +402,24 @@
                     var initialY = e.clientY - currentElement.offset().top;
 
                     $(document).on('mousemove', function(e) {
-                        var x = e.clientX - initialX;
-                        var y = e.clientY - initialY;
-                        currentElement.css({
-                            left: x - 350,
-                            top: y - 350
-                        });
+                        var x = e.pageX;
+                        var y = e.pageY;
+                        var element = $('.drop-pad').offset();
+                        var element_x = element.left;
+                        var max_x = element_x + $('.drop-pad').outerWidth();
+                        var element_y = element.top;
+                        var max_y = element_y + $('.drop-pad').outerHeight();
+                        if (x > element_x && y > element_y && x < max_x && y < max_y) {
+                            currentElement.css({
+                                left: x - 350,
+                                top: y - 350
+                            });
+                        } else {
+                            currentElement.css({
+                                left: 0,
+                                top: 30
+                            });
+                        }
                     });
 
                     $(document).on('mouseup', function() {
@@ -284,21 +429,19 @@
 
                 function create_line(x1, y1, x2, y2, lineId) {
                     var line = $('#' + lineId);
-                    var distance = Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
-                    var xMid = (x1 + x2) / 2;
-                    var yMid = (y1 + y2) / 2;
-                    var slopeInRadian = Math.atan2(y1 - y2, x1 - x2);
-                    var slopeInDergee = (slopeInRadian * 180) / Math.PI;
+                    var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+
                     line.css({
                         'position': 'absolute',
                         'background': 'none',
                         'border-radius': 0,
-                        'border-right': '3px solid black',
                         'height': distance + 'px',
-                        'top': yMid + 'px',
-                        'left': (xMid - (distance / 2)) + 'px',
-                        'transform': 'rotate(' + slopeInDergee + 'deg)',
+                        'top': y1 + 'px',
+                        'left': x1 + 'px',
+                        'width': distance + 'px',
+                        'border-right': '3px solid black',
                     });
+
                     $('.path-cancel-icon').on('click', removePath);
                 }
             });

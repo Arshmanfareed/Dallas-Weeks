@@ -49,17 +49,17 @@
                                     @if (!empty($compaigns))
                                         @foreach ($compaigns as $compaign)
                                             <li>
-                                                <div class="element" id="{{$compaign['element_slug']}}" data-filter-item
-                                                    data-filter-name="{{$compaign['element_slug']}}">
+                                                <div class="element" id="{{ $compaign['element_slug'] }}" data-filter-item
+                                                    data-filter-name="{{ $compaign['element_slug'] }}">
                                                     <div class="attach-elements attach-elements-in"></div>
                                                     <div class="cancel-icon">
                                                         <i class="fa-solid fa-x"></i>
                                                     </div>
                                                     <div class="list-icon">
-                                                        {!!$compaign['element_icon']!!}
+                                                        {!! $compaign['element_icon'] !!}
                                                     </div>
                                                     <div class="item_details">
-                                                        <p class="item_name">{{$compaign['element_name']}}</p>
+                                                        <p class="item_name">{{ $compaign['element_name'] }}</p>
                                                         <p class="item_desc">Lorem ipsum dolor sit amet consectetur
                                                             adipisicing elit.</p>
                                                     </div>
