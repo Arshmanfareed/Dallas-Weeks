@@ -17,7 +17,7 @@ class CreatePropertiesTable extends Migration
             $table->id();
             $table->string('element_id');
             $table->string('property_name');
-            $table->string('data_type');
+            $table->string('data_type')->nullable();
             $table->timestamps();
         });
     }

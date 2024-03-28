@@ -44,6 +44,7 @@
                 var count = 0;
                 var final_array = [];
                 var final_data = {};
+                var input_array = [];
 
                 $('.attach-elements-out').on('click', attachElementOutput);
                 $('.element-btn').on('click', function() {
@@ -56,7 +57,7 @@
                 $('#save-changes').on('click', function() {
                     if (final_array[0] != 'step-1' || final_array[1] == '') {
                         alert('Select Step 1 First');
-                    } else {
+                    } else if (input_array.length < final_array.length) {
                         $.ajax({
                             url: "{{ route('updateCompaign') }}",
                             type: 'POST',
@@ -71,14 +72,19 @@
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    console.log(response);
+                                    console.log(response.properties);
+                                } else {
+                                    console.log(response.properties);
                                 }
                             },
                             error: function(xhr, status, error) {
                                 console.error(xhr.responseText);
                             }
                         });
+                    } else {
+                        alert('Compaign path is broken');
                     }
+
                 });
                 move();
 
@@ -107,6 +113,7 @@
                         $('body').append(clone);
                         chooseElement = clone;
                         id = chooseElement.attr('id') + '_' + ++count;
+                        input_array.push(id);
                         chooseElement.attr('id', id);
                         chooseElement.attr('class', 'drop-pad-element');
                         chooseElement.removeClass('element');
@@ -309,14 +316,13 @@
                             name_html += '<div class="property_item">';
                             name_html += '<p>' + key + '</p>';
                             if (value === 0) {
-                                name_html += '<input " placeholder="' + value + '" class="property_input">';
+                                name_html += '<input type="number" placeholder="' + value + '" class="property_input">';
                             } else if (value == '') {
-                                name_html += '<input " placeholder="Enter your ' + lowercaseWords(key) +
+                                name_html += '<input typer="text" placeholder="Enter your ' + lowercaseWords(key) +
                                     '" class="property_input">';
                             } else {
                                 name_html += '<input " value="' + value + '" class="property_input">';
                             }
-
                             name_html += '</div>';
                         }
                         name_html += '</div><div class="save-btns"><button id="save">Save</button></div>';
@@ -389,10 +395,10 @@
                             } else {
                                 return;
                             }
-                            $('.task-list').append('<div class="line" id="' + elementOutput.attr(
-                                    'id') + '-to-' +
-                                elementInput.attr('id') +
-                                '"><div class="path-cancel-icon"><i class="fa-solid fa-x"></i></div></div>');
+                            // $('.task-list').append('<div class="line" id="' + elementOutput.attr(
+                            //         'id') + '-to-' +
+                            //     elementInput.attr('id') +
+                            //     '"><div class="path-cancel-icon"><i class="fa-solid fa-x"></i></div></div>');
                             var attachElementInput = elementInput.find('.attach-elements-in');
                             var attachElementOutput = elementOutput.find('.attach-elements-out');
                             var rect1 = attachElementOutput.get(0).getBoundingClientRect();
@@ -403,7 +409,7 @@
                                 var x2 = rect2.left;
                                 var y2 = rect2.top;
                                 var lineId = elementOutput.attr('id') + '-to-' + elementInput.attr('id');
-                                create_line(x1, y1, x2, y2, lineId);
+                                // create_line(x1, y1, x2, y2, lineId);
                                 elementInput = null;
                                 elementOutput = null;
                             }
@@ -515,21 +521,21 @@
                     });
                 }
 
-                function create_line(x1, y1, x2, y2, lineId) {
-                    var line = $('#' + lineId);
-                    var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    line.css({
-                        'position': 'absolute',
-                        'background': 'none',
-                        'border-radius': 0,
-                        'height': distance + 'px',
-                        'top': y1 + 'px',
-                        'left': x1 + 'px',
-                        'width': 1 + 'px',
-                        'border-left': '3px solid black',
-                    });
-                    $('.path-cancel-icon').on('click', removePath);
-                }
+                // function create_line(x1, y1, x2, y2, lineId) {
+                //     var line = $('#' + lineId);
+                //     var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                //     line.css({
+                //         'position': 'absolute',
+                //         'background': 'none',
+                //         'border-radius': 0,
+                //         'height': distance + 'px',
+                //         'top': y1 + 'px',
+                //         'left': x1 + 'px',
+                //         'width': 1 + 'px',
+                //         'border-left': '3px solid black',
+                //     });
+                //     $('.path-cancel-icon').on('click', removePath);
+                // }
             });
         </script>
     </footer>

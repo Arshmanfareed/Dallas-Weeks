@@ -8,6 +8,7 @@ use App\Models\ElementProperties;
 use App\Models\UpdatedCompaignElements;
 use App\Models\UpdatedCompaignProperties;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CompaignElementController extends Controller
 {
@@ -27,7 +28,8 @@ class CompaignElementController extends Controller
     {
         $compaign = new Campaign();
         $compaign->compaign_name = 'My Compaign';
-        $compaign->user_id = 1;
+        $id = Auth::user()->id;
+        $compaign->user_id = $id;
         $compaign->seat_id = 1;
         $compaign->description = 'This compaign is the test compaign';
         $compaign->modified_date = date('Y-m-d');
@@ -53,7 +55,7 @@ class CompaignElementController extends Controller
                     $element_item->element_id = $element->id;
                     $element_item->compaign_id = $compaign->id;
                     $element_item->compaign_element_id = ++$count;
-                    $element_item->user_id = 1;
+                    $element_item->user_id = $id;
                     $element_item->seat_id = 1;
                     $element_item->save();
                     $property_item = $final_data[$final_array[$count]];
