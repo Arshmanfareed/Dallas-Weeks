@@ -3,6 +3,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 
 <body>
@@ -37,6 +38,13 @@
         </script>
         <script>
             $(document).ready(function() {
+                var chooseElement;
+                var elementInput;
+                var elementOutput;
+                var count = 0;
+                var final_array = [];
+                var final_data = {};
+
                 $('.attach-elements-out').on('click', attachElementOutput);
                 $('.element-btn').on('click', function() {
                     var targetTab = $(this).data('tab');
@@ -46,19 +54,49 @@
                     $(this).addClass('active');
                 });
                 $('#save-changes').on('click', function() {
-                    if (final_array[0] != 'step-1') {
+                    if (final_array[0] != 'step-1' || final_array[1] == '') {
                         alert('Select Step 1 First');
-                        location.reload();
                     } else {
-                        console.log(final_array);
+                        $.ajax({
+                            url: "{{ route('updateCompaign') }}",
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                'final_data': final_data,
+                                'final_array': final_array,
+                            }),
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    console.log(response);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(xhr.responseText);
+                            }
+                        });
                     }
                 });
                 move();
-                var chooseElement;
-                var elementInput;
-                var elementOutput;
-                var count = 0;
-                var final_array = [];
+
+                function onSave() {
+                    var property = $('.element_properties');
+                    var elements = property.find('.property_item');
+                    var element_name = property.find('.element_name').attr('id');
+                    elements.each(function(index, element) {
+                        var input = $(element).find('input').val();
+                        var p = $(element).find('p').text();
+                        final_data[element_name][p] = input;
+                    });
+                }
+
+                function lowercaseWords(str) {
+                    str = str.replace(' (optional)', '');
+                    return str.split(' ').map(word => word.toLowerCase()).join(' ');
+                }
 
                 function move() {
                     $('.element').on('mousedown', function(e) {
@@ -208,40 +246,87 @@
                     var item_slug = item.data('filterName');
                     var item_name = item.find('.item_name').text();
                     var list_icon = item.find('.list-icon').html();
+                    var item_id = item.attr('id');
                     var name_html = '';
-                    $.ajax({
-                        url: "{{ route('getcompaignelementbyslug', ':slug') }}".replace(':slug', item_slug),
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.success) {
-                                name_html += '<div class="element_properties">';
-                                name_html += '<div class="element_name">' + list_icon +
-                                    '<p>' + item_name + '</p></div>';
-                                response.properties.forEach(property => {
-                                    name_html += '<div class="property_item">';
-                                    name_html += '<input type="' + property['data_type'] + '">';
-                                    name_html += '<p>' + property['property_name'] + '</p>';
-                                    name_html += '</div>';
-                                });
-                                name_html += '</div>';
+                    if (!final_data[item_id]) {
+                        $.ajax({
+                            url: "{{ route('getcompaignelementbyslug', ':slug') }}".replace(':slug', item_slug),
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.success) {
+                                    name_html += '<div class="element_properties">';
+                                    name_html += '<div class="element_name" id="' + item_id + '">' +
+                                        list_icon +
+                                        '<p>' + item_name + '</p></div>';
+                                    arr = {};
+                                    response.properties.forEach(property => {
+                                        name_html += '<div class="property_item">';
+                                        name_html += '<p>' + property['property_name'] + '</p>';
+                                        if (property['data_type'] == 'text') {
+                                            name_html += '<input type="' + property['data_type'] +
+                                                '" placeholder="Enter your ' + lowercaseWords(
+                                                    property['property_name']) +
+                                                '" class="property_input">';
+                                            name_html += '</div>';
+                                            arr[property['property_name']] = '';
+                                        } else {
+                                            name_html += '<input type="' + property['data_type'] +
+                                                '" placeholder="0" class="property_input">';
+                                            name_html += '</div>';
+                                            arr[property['property_name']] = 0;
+                                        }
+                                    });
+                                    final_data[item_id] = arr;
+                                    name_html +=
+                                        '</div><div class="save-btns"><button id="save">Save</button></div>';
+                                } else {
+                                    name_html += '<div class="element_properties">';
+                                    name_html += '<div class="element_name">' + list_icon +
+                                        '<p>' + item_name + '</p></div>';
+                                    name_html += '<div class="text-center">' + response.message +
+                                        '</div></div>';
+                                }
+                                $('#properties').html(name_html);
+                                $('#save').on('click', onSave);
+                                $('#element-list').removeClass('active');
+                                $('#properties').addClass('active');
+                                $('#element-list-btn').removeClass('active');
+                                $('#properties-btn').addClass('active');
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(xhr.responseText);
+                            },
+                        });
+                    } else {
+                        name_html += '<div class="element_properties">';
+                        name_html += '<div class="element_name" id="' + item_id + '">' +
+                            list_icon +
+                            '<p>' + item_name + '</p></div>';
+                        elements = final_data[item_id];
+                        for (const key in elements) {
+                            const value = elements[key];
+                            name_html += '<div class="property_item">';
+                            name_html += '<p>' + key + '</p>';
+                            if (value === 0) {
+                                name_html += '<input " placeholder="' + value + '" class="property_input">';
+                            } else if (value == '') {
+                                name_html += '<input " placeholder="Enter your ' + lowercaseWords(key) +
+                                    '" class="property_input">';
                             } else {
-                                name_html += '<div class="element_properties">';
-                                name_html += '<div class="element_name">' + list_icon +
-                                    '<p>' + item_name + '</p></div>';
-                                name_html += '<div class="text-center">' + response.message +
-                                    '</div></div>';
+                                name_html += '<input " value="' + value + '" class="property_input">';
                             }
-                            $('#properties').html(name_html);
-                            $('#element-list').removeClass('active');
-                            $('#properties').addClass('active');
-                            $('#element-list-btn').removeClass('active');
-                            $('#properties-btn').addClass('active');
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                        },
-                    });
+
+                            name_html += '</div>';
+                        }
+                        name_html += '</div><div class="save-btns"><button id="save">Save</button></div>';
+                        $('#properties').html(name_html);
+                        $('#save').on('click', onSave);
+                        $('#element-list').removeClass('active');
+                        $('#properties').addClass('active');
+                        $('#element-list-btn').removeClass('active');
+                        $('#properties-btn').addClass('active');
+                    }
                 }
 
                 function attachElementOutput(e) {
@@ -270,10 +355,10 @@
                                     elementInput.attr('id'))) {
                                 let index = final_array.indexOf(elementOutput.attr('id'));
                                 var arr_len = final_array.length - 1;
-                                if (arr_len > index + 1) {
+                                if (index == arr_len) {
                                     final_array.push(elementInput.attr('id'));
                                 } else if (final_array[index + 1] == '') {
-                                    final_array[index + 1] = elementInput.attr('id');
+                                    final_array[index + 1] = elementInput.attr('id')
                                 } else {
                                     var duplicate_array = [
                                         ...final_array.splice(0, index),
@@ -285,7 +370,7 @@
                             } else if (!final_array.includes(elementOutput.attr('id')) && final_array.includes(
                                     elementInput.attr('id'))) {
                                 let index = final_array.indexOf(elementInput.attr('id'));
-                                if (index - 1 < 0) {
+                                if (index == 0) {
                                     var duplicate_array = [
                                         elementOutput.attr('id'),
                                         ...final_array.slice()
@@ -304,8 +389,7 @@
                             } else {
                                 return;
                             }
-
-                            $('.' + elementOutput.attr('id')).append('<div class="line" id="' + elementOutput.attr(
+                            $('.task-list').append('<div class="line" id="' + elementOutput.attr(
                                     'id') + '-to-' +
                                 elementInput.attr('id') +
                                 '"><div class="path-cancel-icon"><i class="fa-solid fa-x"></i></div></div>');
@@ -324,6 +408,7 @@
                                 elementOutput = null;
                             }
                         }
+                        $('.drop-pad-element').on('click', elementProperties);
                     }
                 }
 
@@ -342,28 +427,31 @@
                     last_item.css({
                         'background-color': '#000',
                     });
-                    if (final_array.includes(first_item_id)) {
+                    if (final_array.includes(first_item_id) && final_array.includes(last_item_id)) {
                         let index = final_array.indexOf(first_item_id);
-                        var duplicate_array = [
-                            ...final_array.splice(0, index),
-                            '',
-                            ...final_array.splice(index + 1)
-                        ];
-                        final_array = duplicate_array;
+                        let final_index = final_array.indexOf(last_item_id);
+                        if (index + 1 == final_index) {
+                            var duplicate_array = [
+                                ...final_array.splice(0, index + 1),
+                                '',
+                                ...final_array.splice(index)
+                            ];
+                            final_array = duplicate_array;
+                            $(this).parent().remove();
+                        }
                     }
-                    $(this).parent().remove();
                 }
 
                 function removeElement(e) {
                     var element = $(this).parent();
                     if (final_array.includes(element.attr('id'))) {
                         let index = final_array.indexOf(element.attr('id'));
-                        var current_element = final_array[index];
-                        current_element = $('#' + current_element);
-                        if (final_array[index - 1] != '') {
-                            var prev_element = final_array[index - 1];
-                            prev_element = $('#' + prev_element);
-                            var element_id = prev_element + '-to-' + current_element;
+                        var current_element_id = final_array[index];
+                        var current_element = $('#' + current_element_id);
+                        if (final_array[index - 1] != '' && current_element) {
+                            var prev_element_id = final_array[index - 1];
+                            var prev_element = $('#' + prev_element_id);
+                            var element_id = prev_element_id + '-to-' + current_element_id;
                             var element = $('#' + element_id);
                             var first_item = prev_element.find('.attach-elements-out');
                             var last_item = current_element.find('.attach-elements-in');
@@ -375,10 +463,10 @@
                             });
                             element.remove();
                         }
-                        if (final_array[index + 1] != '') {
-                            var next_element = final_array[index + 1];
-                            next_element = $('#' + next_element);
-                            var element_id = current_element + '-to-' + next_element;
+                        if (final_array[index + 1] != '' && current_element) {
+                            var next_element_id = final_array[index + 1];
+                            var next_element = $('#' + next_element_id);
+                            var element_id = current_element_id + '-to-' + next_element_id;
                             var element = $('#' + element_id);
                             var first_item = current_element.find('.attach-elements-out');
                             var last_item = next_element.find('.attach-elements-in');
@@ -430,7 +518,6 @@
                 function create_line(x1, y1, x2, y2, lineId) {
                     var line = $('#' + lineId);
                     var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-
                     line.css({
                         'position': 'absolute',
                         'background': 'none',
@@ -438,10 +525,9 @@
                         'height': distance + 'px',
                         'top': y1 + 'px',
                         'left': x1 + 'px',
-                        'width': distance + 'px',
-                        'border-right': '3px solid black',
+                        'width': 1 + 'px',
+                        'border-left': '3px solid black',
                     });
-
                     $('.path-cancel-icon').on('click', removePath);
                 }
             });
