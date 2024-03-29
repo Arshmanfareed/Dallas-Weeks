@@ -35,6 +35,12 @@
                     jQuery(this).siblings('.setting_list').toggle();
                 });
             });
+            $('.next_tab').on('click', function(e) {
+                $(this).closest('.comp_tabs').find('.nav-tabs .nav-link.active').next().click();
+            });
+            $('.prev_tab').on('click', function(e) {
+                $(this).closest('.comp_tabs').find('.nav-tabs .nav-link.active').prev().click();
+            });
         </script>
         <script>
             $(document).ready(function() {
@@ -592,6 +598,11 @@
                 //     });
                 //     $('.path-cancel-icon').on('click', removePath);
                 // }
+            });
+        </script>
+        <script>
+            $("a.setting_btn").on('click', function() {
+                $(this).siblings().toggle();
             });
         </script>
     </footer>

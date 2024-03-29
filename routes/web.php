@@ -55,9 +55,6 @@ Route::get('/auth/linkedin/callback', function () {
     return view('dashboard-account', compact('data', 'user'));
 
     // return redirect('/dashboard');
-
-
-
 });
 
 // Route::get('linkedin/login', [SocialController::class, 'provider'])->name('linked.login');

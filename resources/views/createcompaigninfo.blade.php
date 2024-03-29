@@ -113,7 +113,7 @@
                                             </div>
                                         </div>
                                         <div class="cmp_btns d-flex justify-content-center align-items-center">
-                                            <a href="/compaign/createcompaign" class="btn"><i
+                                            <a href="javascript:;" class="btn"><i
                                                     class="fa-solid fa-arrow-left"></i>Back</a>
                                             <a href="javascript:;" class="btn nxt_btn">Next<i
                                                     class="fa-solid fa-arrow-right"></i></a>
@@ -183,6 +183,7 @@
                                             </div>
                                         </div>
 
+
                                         <div class="cmp_btns d-flex justify-content-center align-items-center">
                                             <a href="javascript:;" class="btn"><i
                                                     class="fa-solid fa-arrow-left"></i>Back</a>
@@ -222,7 +223,7 @@
                         <div class="col-6">
                             <div class="border_box">
                                 <img src="/assets/img/creat_temp.png" alt="">
-                                <a href="createcompaignfromscratch" class="btn">From scratch</a>
+                                <a href="javascript:;" class="btn">From scratch</a>
                                 <p>Create a sequence from scratch specify steps and everything.</p>
                             </div>
                         </div>

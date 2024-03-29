@@ -1870,11 +1870,17 @@ select {
 .comp_tabs {
     padding: 15px;
 }
+.accordion-item {
+    background: none !important;
+    border: none !important;
+    margin-bottom: 14px;
+}
 .comp_tabs .accordion-item h2.accordion-header button {
     width: 100%;
     text-align: left;
     padding: 38px 60px;
     background: none;
+    border-radius: unset;
     color: #fff;
     border: 1px solid oklab(0.73 -0.01 -0.02 / 0.6);
     border-radius: 19px;
@@ -1883,12 +1889,14 @@ select {
     display: flex;
     justify-content: space-between;
 }
+.accordion-item:last-of-type .accordion-button.collapsed {
+    border-bottom-right-radius: 19px !important;
+    border-bottom-left-radius: 19px !important;
+}
 .comp_tabs .accordion-item .collapse {
     margin: 0 auto;
     margin-bottom: 50px;
     padding: 0 30px;
-}
-.comp_tabs .linked_set {
 }
 
 .comp_tabs .linked_set p {
