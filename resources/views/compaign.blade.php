@@ -109,14 +109,21 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @for ($i = 0; $i < 8; $i++)
+                                            @foreach ($compaigns as $compaign)
                                                 <tr>
                                                     <td>
-                                                        <div class="switch_box"><input type="checkbox" class="switch"
-                                                                id="switch{{ $i }}"><label
-                                                                for="switch{{ $i }}">Toggle</label></div>
+                                                        <div class="switch_box">
+                                                            @if ($compaign->is_active == 1)
+                                                                <input type="checkbox" class="switch"
+                                                                    id="switch{{ $compaign->id }}" checked>
+                                                            @else
+                                                                <input type="checkbox" class="switch"
+                                                                    id="switch{{ $compaign->id }}">
+                                                            @endif
+                                                            <label for="switch{{ $compaign->id }}">Toggle</label>
+                                                        </div>
                                                     </td>
-                                                    <td>Sed ut perspiciatis unde</td>
+                                                    <td>{{ $compaign->compaign_name }}</td>
                                                     <td>44</td>
                                                     <td>105</td>
                                                     <td class="stats">
@@ -152,7 +159,7 @@
                                                         </ul>
                                                     </td>
                                                 </tr>
-                                            @endfor
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>

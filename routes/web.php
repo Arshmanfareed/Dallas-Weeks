@@ -20,6 +20,7 @@ use App\http\Controllers\ContactController;
 use App\http\Controllers\IntegrationController;
 use App\http\Controllers\HomeController;
 use App\http\Controllers\FeatureController;
+use App\Http\Controllers\PropertiesController;
 use App\http\Controllers\SocialController;
 
 /*
@@ -69,7 +70,8 @@ Route::get('/compaign/createcompaign', [CompaignController::class, 'compaigncrea
 Route::get('/compaign/compaigninfo', [CompaignController::class, 'compaigninfo']);
 Route::get('/compaign/createcompaignfromscratch', [CompaignController::class, 'fromscratch']);
 Route::get('/compaign/getcompaignelementbyslug/{slug}', [CompaignElementController::class, 'compaignElement'])->name('getcompaignelementbyslug');
-Route::post('/compaign/updateCompaign', [CompaignElementController::class, 'updateCompaign'])->name('updateCompaign');
+Route::post('/compaign/createCompaign', [CompaignElementController::class, 'createCompaign'])->name('createCompaign');
+Route::get('/compaign/getPropertyDatatype/{name}/{element_slug}', [PropertiesController::class, 'getPropertyDatatype'])->name('getPropertyDatatype');
 Route::get('/leads', [LeadsController::class, 'leads']);
 Route::get('/report', [ReportController::class, 'report']);
 Route::get('/message', [MessageController::class, 'message']);

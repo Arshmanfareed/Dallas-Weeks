@@ -59,7 +59,7 @@
                         alert('Select Step 1 First');
                     } else if (input_array.length < final_array.length) {
                         $.ajax({
-                            url: "{{ route('updateCompaign') }}",
+                            url: "{{ route('createCompaign') }}",
                             type: 'POST',
                             dataType: 'json',
                             contentType: 'application/json',
@@ -72,9 +72,26 @@
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    console.log(response.properties);
+                                    toastr.options = {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "5000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    }
+                                    toastr.success(response.properties);
                                 } else {
-                                    console.log(response.properties);
+                                    toastr.error(response.properties);
                                 }
                             },
                             error: function(xhr, status, error) {
@@ -84,7 +101,6 @@
                     } else {
                         alert('Compaign path is broken');
                     }
-
                 });
                 move();
 
@@ -97,6 +113,28 @@
                         var p = $(element).find('p').text();
                         final_data[element_name][p] = input;
                     });
+                    if (true) {
+                        toastr.options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "newestOnTop": false,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "preventDuplicates": false,
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "5000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        }
+                        toastr.success('Properties updated succesfully');
+                    } else {
+                        toastr.error('Properties can not be updated');
+                    }
                 }
 
                 function lowercaseWords(str) {
@@ -311,27 +349,45 @@
                             list_icon +
                             '<p>' + item_name + '</p></div>';
                         elements = final_data[item_id];
+                        var ajaxRequests = [];
                         for (const key in elements) {
-                            const value = elements[key];
-                            name_html += '<div class="property_item">';
-                            name_html += '<p>' + key + '</p>';
-                            if (value === 0) {
-                                name_html += '<input type="number" placeholder="' + value + '" class="property_input">';
-                            } else if (value == '') {
-                                name_html += '<input typer="text" placeholder="Enter your ' + lowercaseWords(key) +
-                                    '" class="property_input">';
-                            } else {
-                                name_html += '<input " value="' + value + '" class="property_input">';
-                            }
-                            name_html += '</div>';
+                            ajaxRequests.push($.ajax({
+                                url: "{{ route('getPropertyDatatype', [':name', ':element_slug']) }}"
+                                    .replace(':name', key).replace(':element_slug', item_slug),
+                                type: 'GET',
+                                dataType: 'json'
+                            }).then(function(response) {
+                                if (response.success) {
+                                    const value = elements[key];
+                                    name_html += '<div class="property_item">';
+                                    name_html += '<p>' + key + '</p>';
+                                    if (response.properties == 'text') {
+                                        name_html += '<input type="' + response.properties +
+                                            '" placeholder="Enter your ' + value +
+                                            '" class="property_input">';
+                                    } else {
+                                        name_html += '<input type="' + response.properties +
+                                            '" placeholder="' + value + '" class="property_input">';
+                                    }
+                                    name_html += '</div>';
+                                } else {
+                                    name_html += '<div class="property_item">';
+                                    name_html += '<p>' + key + '</p>';
+                                    name_html += '<input type="text" placeholder="' + value +
+                                        '" class="property_input">';
+                                    name_html += '</div>';
+                                }
+                            }));
                         }
-                        name_html += '</div><div class="save-btns"><button id="save">Save</button></div>';
-                        $('#properties').html(name_html);
-                        $('#save').on('click', onSave);
-                        $('#element-list').removeClass('active');
-                        $('#properties').addClass('active');
-                        $('#element-list-btn').removeClass('active');
-                        $('#properties-btn').addClass('active');
+                        $.when.apply($, ajaxRequests).then(function() {
+                            name_html += '</div><div class="save-btns"><button id="save">Save</button></div>';
+                            $('#properties').html(name_html);
+                            $('#save').on('click', onSave);
+                            $('#element-list').removeClass('active');
+                            $('#properties').addClass('active');
+                            $('#element-list-btn').removeClass('active');
+                            $('#properties-btn').addClass('active');
+                        });
                     }
                 }
 
