@@ -173,6 +173,7 @@
                             'border-radius': '17px',
                             'margin': '14px 0',
                             'cursor': 'pointer',
+                            'border': '1px solid rgb(23, 172, 203)',
                         });
                         p = chooseElement.find('p');
                         p.css({
@@ -270,13 +271,15 @@
                             var max_y = element_y + $('.drop-pad').outerHeight();
                             if (x > element_x && y > element_y && x < max_x && y < max_y) {
                                 chooseElement.css({
-                                    left: x - 350,
-                                    top: y - 350
+                                    left: x - 230,
+                                    top: y - 350,
+                                    'border': 'none',
                                 });
                             } else {
                                 chooseElement.css({
                                     left: 0,
-                                    top: 30
+                                    top: 30,
+                                    'border': 'none',
                                 });
                             }
                             $(document).off('mousemove');
@@ -294,6 +297,14 @@
                 function elementProperties(e) {
                     $('#properties').empty();
                     var item = $(this);
+                    $('.drop-pad-element').css({
+                        "z-index": "0",
+                        "border": "none",
+                    });
+                    item.css({
+                        "z-index": "999",
+                        "border": "1px solid rgb(23, 172, 203)",
+                    });
                     var item_slug = item.data('filterName');
                     var item_name = item.find('.item_name').text();
                     var list_icon = item.find('.list-icon').html();
@@ -457,8 +468,7 @@
                             } else {
                                 return;
                             }
-                            // $('.task-list').append('<div class="line" id="' + elementOutput.attr(
-                            //         'id') + '-to-' +
+                            // $('.task-list').append('<div class="line" id="' + elementOutput.attr('id') + '-to-' +
                             //     elementInput.attr('id') +
                             //     '"><div class="path-cancel-icon"><i class="fa-solid fa-x"></i></div></div>');
                             var attachElementInput = elementInput.find('.attach-elements-in');
@@ -567,7 +577,7 @@
                         var max_y = element_y + $('.drop-pad').outerHeight();
                         if (x > element_x && y > element_y && x < max_x && y < max_y) {
                             currentElement.css({
-                                left: x - 350,
+                                left: x - 230,
                                 top: y - 350
                             });
                         } else {

@@ -47,13 +47,13 @@
                                         <div class="accordion" id="accordionExample">
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="headingOne">
-                                                    <button class="accordion-button" type="button"
+                                                    <button class="accordion-button collapsed" type="button"
                                                         data-bs-toggle="collapse" data-bs-target="#collapseOne"
                                                         aria-expanded="true" aria-controls="collapseOne">
                                                         Email accounts to use for this campaign
                                                     </button>
                                                 </h2>
-                                                <div id="collapseOne" class="accordion-collapse collapse show"
+                                                <div id="collapseOne" class="accordion-collapse collapse"
                                                     aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
                                                         <strong>This is the first item's accordion body.</strong> It is
@@ -113,9 +113,9 @@
                                             </div>
                                         </div>
                                         <div class="cmp_btns d-flex justify-content-center align-items-center">
-                                            <a href="javascript:;" class="btn"><i
+                                            <a href="{{ url('/compaign/createcompaign') }}" class="btn"><i
                                                     class="fa-solid fa-arrow-left"></i>Back</a>
-                                            <a href="javascript:;" class="btn nxt_btn">Next<i
+                                            <a href="javascript:;" class="btn next_tab nxt_btn">Next<i
                                                     class="fa-solid fa-arrow-right"></i></a>
                                         </div>
                                     </div>
@@ -127,9 +127,9 @@
                                                     id="switch0"><label for="switch0">Toggle</label></div>
                                         </div>
                                         <div class="cmp_btns d-flex justify-content-center align-items-center">
-                                            <a href="javascript:;" class="btn"><i
+                                            <a href="javascript:;" class="btn prev_tab"><i
                                                     class="fa-solid fa-arrow-left"></i>Back</a>
-                                            <a href="javascript:;" class="btn nxt_btn">Next<i
+                                            <a href="javascript:;" class="btn next_tab nxt_btn">Next<i
                                                     class="fa-solid fa-arrow-right"></i></a>
                                         </div>
                                     </div>
@@ -139,13 +139,13 @@
                                         <div class="accordion" id="accordionExample">
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="headingOne">
-                                                    <button class="accordion-button" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                                                        aria-expanded="true" aria-controls="collapseOne">
+                                                    <button class="accordion-button collapsed" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#collapse1"
+                                                        aria-expanded="true" aria-controls="collapse1">
                                                         Targeting options
                                                     </button>
                                                 </h2>
-                                                <div id="collapseOne" class="accordion-collapse collapse show"
+                                                <div id="collapse1" class="accordion-collapse collapse"
                                                     aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
                                                         <strong>This is the first item's accordion body.</strong> It is
@@ -162,12 +162,12 @@
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="headingTwo">
                                                     <button class="accordion-button collapsed" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapseTwo"
-                                                        aria-expanded="false" aria-controls="collapseTwo">
+                                                        data-bs-toggle="collapse" data-bs-target="#collapse2"
+                                                        aria-expanded="false" aria-controls="collapse2">
                                                         Schedule campaign
                                                     </button>
                                                 </h2>
-                                                <div id="collapseTwo" class="accordion-collapse collapse"
+                                                <div id="collapse2" class="accordion-collapse collapse"
                                                     aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
                                                         <strong>This is the second item's accordion body.</strong> It is
@@ -185,7 +185,7 @@
 
 
                                         <div class="cmp_btns d-flex justify-content-center align-items-center">
-                                            <a href="javascript:;" class="btn"><i
+                                            <a href="javascript:;" class="btn prev_tab"><i
                                                     class="fa-solid fa-arrow-left"></i>Back</a>
                                             <a href="javascript:;" type="button" class="btn nxt_btn"
                                                 data-bs-toggle="modal" data-bs-target="#sequance_modal">Create sequence<i
@@ -194,7 +194,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -223,7 +222,7 @@
                         <div class="col-6">
                             <div class="border_box">
                                 <img src="/assets/img/creat_temp.png" alt="">
-                                <a href="javascript:;" class="btn">From scratch</a>
+                                <a href="{{ url('/compaign/createcompaignfromscratch') }}" class="btn">From scratch</a>
                                 <p>Create a sequence from scratch specify steps and everything.</p>
                             </div>
                         </div>

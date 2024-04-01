@@ -76,8 +76,7 @@
                                     <button id="save-changes">Save Changes</button>
                                 </div>
                             </div>
-                            <div class="properties element-content" id="properties">
-                            </div>
+                            <div class="properties element-content" id="properties"></div>
                         </div>
                     </div>
                 </div>
