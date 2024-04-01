@@ -1878,7 +1878,7 @@ select {
 .comp_tabs .accordion-item h2.accordion-header button {
     width: 100%;
     text-align: left;
-    padding: 38px 60px;
+    padding: 28px 40px;
     background: none;
     border-radius: unset;
     color: #fff;
@@ -4253,10 +4253,10 @@ header nav.navbar a.nav-link.active {
         padding-right: 20px;
     }
     .comp_tabs .accordion-item h2.accordion-header button {
-        padding: 28px 50px;
+        padding: 28px 40px;
     }
     .comp_tabs .accordion-item h2.accordion-header button {
-        padding: 28px 50px;
+        padding: 28px 40px;
     }
     .create_sequence_modal .modal-body .border_box p {
         margin: 0 auto;
@@ -5237,4 +5237,9 @@ button#save {
 
 .task-list .path-cancel-icon i {
     color: #000;
+}
+
+.linked_set.d-flex.justify-content-between {
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
 }

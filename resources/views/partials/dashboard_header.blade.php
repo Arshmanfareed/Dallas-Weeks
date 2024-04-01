@@ -30,6 +30,7 @@
     <footer>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script>
+            var linkedin_settings = [];
             jQuery('.setting_btn').each(function() {
                 jQuery(this).on('click', function() {
                     jQuery(this).siblings('.setting_list').toggle();
@@ -37,9 +38,26 @@
             });
             $('.next_tab').on('click', function(e) {
                 $(this).closest('.comp_tabs').find('.nav-tabs .nav-link.active').next().click();
+                linkedin_settings['discover_premium_linked_accounts_only'] = $('#discover_premium_linked_accounts_only')
+                    .prop('checked');
+                linkedin_settings['discover_leads_with_open_profile_status_only'] = $(
+                    '#discover_leads_with_open_profile_status_only').prop('checked');
+                linkedin_settings['collect_contact_information'] = $('#collect_contact_information').prop('checked');
+                linkedin_settings['remove_leads_with_pending_connections'] = $('#remove_leads_with_pending_connections')
+                    .prop('checked');
             });
             $('.prev_tab').on('click', function(e) {
                 $(this).closest('.comp_tabs').find('.nav-tabs .nav-link.active').prev().click();
+                linkedin_settings['discover_premium_linked_accounts_only'] = $('#discover_premium_linked_accounts_only')
+                    .prop('checked');
+                linkedin_settings['discover_leads_with_open_profile_status_only'] = $(
+                    '#discover_leads_with_open_profile_status_only').prop('checked');
+                linkedin_settings['collect_contact_information'] = $('#collect_contact_information').prop('checked');
+                linkedin_settings['remove_leads_with_pending_connections'] = $('#remove_leads_with_pending_connections')
+                    .prop('checked');
+            });
+            $('.linkedin_setting_switch').on('change', function(e) {
+                linkedin_settings[$(this).attr('id')] = $(this).prop('checked');
             });
         </script>
         <script>
@@ -52,6 +70,14 @@
                 var final_data = {};
                 var input_array = [];
 
+                $('.compaign_tab').on('click', function(e) {
+                    e.preventDefault();
+                    $('.compaign_tab').removeClass('active');
+                    $(this).addClass('active');
+                    var id = $(this).data('bs-target');
+                    $('.compaign_pane').removeClass('active');
+                    $('#' + id).addClass('active');
+                });
                 $('.attach-elements-out').on('click', attachElementOutput);
                 $('.element-btn').on('click', function() {
                     var targetTab = $(this).data('tab');

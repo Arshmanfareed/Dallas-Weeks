@@ -122,9 +122,32 @@
                                     <div class="tab-pane fade" id="nav-linkedin" role="tabpanel"
                                         aria-labelledby="nav-linkedin-tab">
                                         <div class="linked_set d-flex justify-content-between">
+                                            <p> Discover Premium Linked accounts only </p>
+                                            <div class="switch_box"><input type="checkbox"
+                                                    class="linkedin_setting_switch"
+                                                    id="discover_premium_linked_accounts_only"><label
+                                                    for="discover_premium_linked_accounts_only">Toggle</label></div>
+                                        </div>
+                                        <div class="linked_set d-flex justify-content-between">
+                                            <p> Discover Leads with Open Profile status only </p>
+                                            <div class="switch_box"><input type="checkbox"
+                                                    class="linkedin_setting_switch"
+                                                    id="discover_leads_with_open_profile_status_only"><label
+                                                    for="discover_leads_with_open_profile_status_only">Toggle</label></div>
+                                        </div>
+                                        <div class="linked_set d-flex justify-content-between">
                                             <p> Collect contact information <span>!</span></p>
-                                            <div class="switch_box"><input type="checkbox" class="switch"
-                                                    id="switch0"><label for="switch0">Toggle</label></div>
+                                            <div class="switch_box"><input type="checkbox"
+                                                    class="linkedin_setting_switch"
+                                                    id="collect_contact_information"><label
+                                                    for="collect_contact_information">Toggle</label></div>
+                                        </div>
+                                        <div class="linked_set d-flex justify-content-between">
+                                            <p> Remove leads with pending connections <span>!</span></p>
+                                            <div class="switch_box"><input type="checkbox"
+                                                    class="linkedin_setting_switch"
+                                                    id="remove_leads_with_pending_connections"><label
+                                                    for="remove_leads_with_pending_connections">Toggle</label></div>
                                         </div>
                                         <div class="cmp_btns d-flex justify-content-center align-items-center">
                                             <a href="javascript:;" class="btn prev_tab"><i

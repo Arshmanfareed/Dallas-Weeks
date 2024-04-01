@@ -1,7 +1,13 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
 <div class="sidebar_menu col-12  p-0 flex-shrink-1">
     <ul class="list-unstyle p-0 m-0">
-        <li><a href="/accdashboard" class="nav_link"><img src="{{ asset('assets/img/home.svg') }}" alt=""></a></li>
-        <li><a href="/compaign" class="nav_link"><img src="{{ asset('assets/img/speaker.svg') }}" alt=""></a></li>
+        <li><a href="/accdashboard"
+                class="nav_link {{ Str::contains(request()->url(), 'accdashboard') ? 'active' : '' }}"><img
+                    src="{{ asset('assets/img/home.svg') }}" alt=""></a></li>
+        <li><a href="/compaign" class="nav_link {{ Str::contains(request()->url(), 'compaign') ? 'active' : '' }}"><img
+                    src="{{ asset('assets/img/speaker.svg') }}" alt=""></a></li>
         <li><a href="#" class="nav_link"><img src="{{ asset('assets/img/leads.svg') }}" alt=""></a></li>
         <li><a href="#" class="nav_link"><img src="{{ asset('assets/img/stat.svg') }}" alt=""></a></li>
         <li><a href="#" class="nav_link"><img src="{{ asset('assets/img/message.svg') }}" alt=""></a></li>
