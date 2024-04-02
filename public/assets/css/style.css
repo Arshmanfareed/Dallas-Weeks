@@ -5243,3 +5243,11 @@ button#save {
     border-bottom: 1px solid #ddd;
     padding: 15px 0;
 }
+
+.accordian_inputs {
+    width: 250px;
+}
+
+.accordion-body > div > * {
+    margin-bottom: 0 !important;
+}

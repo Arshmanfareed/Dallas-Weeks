@@ -33,11 +33,17 @@ class CompaignController extends Controller
         ];
         return view('createcompaigninfo', $data);
     }
-    function fromscratch()
+    function fromscratch(Request $request)
     {
+        $all = $request->except('_token');
+        $linkedin_setting = [];
+        foreach ($all as $key => $value) {
+            $linkedin_setting[$key] = $value;
+        }
         $data = [
             'compaigns' => CampaignElement::all(),
-            'title' => 'Create Compaign Info'
+            'title' => 'Create Compaign Info',
+            'linkedin_setting' => $linkedin_setting,
         ];
         return view('createcompaignfromscratch', $data);
     }

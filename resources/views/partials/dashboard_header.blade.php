@@ -59,6 +59,41 @@
             $('.linkedin_setting_switch').on('change', function(e) {
                 linkedin_settings[$(this).attr('id')] = $(this).prop('checked');
             });
+            $('#create_sequence').on('click', function(e) {
+                e.preventDefault();
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+                var form = document.createElement('form');
+                form.setAttribute('method', 'POST');
+                form.setAttribute('action', "{{ route('createcompaignfromscratch') }}");
+                var csrfInput = document.createElement('input');
+                csrfInput.setAttribute('type', 'hidden');
+                csrfInput.setAttribute('name', '_token');
+                csrfInput.setAttribute('value', csrfToken);
+                form.appendChild(csrfInput);
+                var input = document.createElement('input');
+                input.setAttribute('type', 'hidden');
+                input.setAttribute('name', 'discover_premium_linked_accounts_only');
+                input.setAttribute('value', linkedin_settings['discover_premium_linked_accounts_only']);
+                form.appendChild(input);
+                var input = document.createElement('input');
+                input.setAttribute('type', 'hidden');
+                input.setAttribute('name', 'discover_leads_with_open_profile_status_only');
+                input.setAttribute('value', linkedin_settings['discover_leads_with_open_profile_status_only']);
+                form.appendChild(input);
+                var input = document.createElement('input');
+                input.setAttribute('type', 'hidden');
+                input.setAttribute('name', 'collect_contact_information');
+                input.setAttribute('value', linkedin_settings['collect_contact_information']);
+                form.appendChild(input);
+                var input = document.createElement('input');
+                input.setAttribute('type', 'hidden');
+                input.setAttribute('name', 'remove_leads_with_pending_connections');
+                input.setAttribute('value', linkedin_settings['remove_leads_with_pending_connections']);
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+                console.log(form);
+            });
         </script>
         <script>
             $(document).ready(function() {
@@ -69,7 +104,6 @@
                 var final_array = [];
                 var final_data = {};
                 var input_array = [];
-
                 $('.compaign_tab').on('click', function(e) {
                     e.preventDefault();
                     $('.compaign_tab').removeClass('active');
@@ -98,6 +132,7 @@
                             data: JSON.stringify({
                                 'final_data': final_data,
                                 'final_array': final_array,
+                                'linkedin_setting': linkedin_setting
                             }),
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -406,11 +441,11 @@
                                     name_html += '<p>' + key + '</p>';
                                     if (response.properties == 'text') {
                                         name_html += '<input type="' + response.properties +
-                                            '" placeholder="Enter your ' + value +
+                                            '" value="' + value +
                                             '" class="property_input">';
                                     } else {
                                         name_html += '<input type="' + response.properties +
-                                            '" placeholder="' + value + '" class="property_input">';
+                                            '" value="' + value + '" class="property_input">';
                                     }
                                     name_html += '</div>';
                                 } else {
@@ -590,8 +625,6 @@
                 function startDragging(e) {
                     e.preventDefault();
                     var currentElement = $(this);
-                    var initialX = e.clientX - currentElement.offset().left;
-                    var initialY = e.clientY - currentElement.offset().top;
 
                     $(document).on('mousemove', function(e) {
                         var x = e.pageX;

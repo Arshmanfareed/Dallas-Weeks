@@ -46,6 +46,9 @@
                             </div>
                             <div class="element-list element-content active" id="element-list">
                                 <ul class='drop-list'>
+                                    @php
+                                        $linkedin_setting_json = json_encode($linkedin_setting);
+                                    @endphp
                                     @if (!empty($compaigns))
                                         @foreach ($compaigns as $compaign)
                                             <li>
@@ -82,6 +85,8 @@
                 </div>
             </div>
         </div>
-        </div>
     </section>
+    <script>
+        var linkedin_setting = {!! $linkedin_setting_json !!};
+    </script>
 @endsection

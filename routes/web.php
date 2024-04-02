@@ -65,7 +65,7 @@ Route::get('/team-rolesandpermission', [RolespermissionController::class, 'roles
 Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']);
 Route::get('/compaign/createcompaign', [CompaignController::class, 'compaigncreate']);
 Route::get('/compaign/compaigninfo', [CompaignController::class, 'compaigninfo']);
-Route::get('/compaign/createcompaignfromscratch', [CompaignController::class, 'fromscratch']);
+Route::post('/compaign/createcompaignfromscratch', [CompaignController::class, 'fromscratch'])->name('createcompaignfromscratch');
 Route::get('/compaign/getcompaignelementbyslug/{slug}', [CompaignElementController::class, 'compaignElement'])->name('getcompaignelementbyslug');
 Route::post('/compaign/createCompaign', [CompaignElementController::class, 'createCompaign'])->name('createCompaign');
 Route::get('/compaign/getPropertyDatatype/{name}/{element_slug}', [PropertiesController::class, 'getPropertyDatatype'])->name('getPropertyDatatype');

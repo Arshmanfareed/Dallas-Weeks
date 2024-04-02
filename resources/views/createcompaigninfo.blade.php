@@ -56,14 +56,11 @@
                                                 <div id="collapseOne" class="accordion-collapse collapse"
                                                     aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
-                                                        <strong>This is the first item's accordion body.</strong> It is
-                                                        shown by default, until the collapse plugin adds the appropriate
-                                                        classes that we use to style each element. These classes control the
-                                                        overall appearance, as well as the showing and hiding via CSS
-                                                        transitions. You can modify any of this with custom CSS or
-                                                        overriding our default variables. It's also worth noting that just
-                                                        about any HTML can go within the <code>.accordion-body</code>,
-                                                        though the transition does limit overflow.
+                                                        <div>
+                                                            <label for="email_accounts">Toggle</label>
+                                                            <input type="email" class="accordian_inputs"
+                                                                name="email_accounts" id="email_accounts">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -124,6 +121,7 @@
                                         <div class="linked_set d-flex justify-content-between">
                                             <p> Discover Premium Linked accounts only </p>
                                             <div class="switch_box"><input type="checkbox"
+                                                    name="discover_premium_linked_accounts_only"
                                                     class="linkedin_setting_switch"
                                                     id="discover_premium_linked_accounts_only"><label
                                                     for="discover_premium_linked_accounts_only">Toggle</label></div>
@@ -131,6 +129,7 @@
                                         <div class="linked_set d-flex justify-content-between">
                                             <p> Discover Leads with Open Profile status only </p>
                                             <div class="switch_box"><input type="checkbox"
+                                                    name="discover_leads_with_open_profile_status_only"
                                                     class="linkedin_setting_switch"
                                                     id="discover_leads_with_open_profile_status_only"><label
                                                     for="discover_leads_with_open_profile_status_only">Toggle</label></div>
@@ -138,13 +137,14 @@
                                         <div class="linked_set d-flex justify-content-between">
                                             <p> Collect contact information <span>!</span></p>
                                             <div class="switch_box"><input type="checkbox"
-                                                    class="linkedin_setting_switch"
+                                                    name="collect_contact_information" class="linkedin_setting_switch"
                                                     id="collect_contact_information"><label
                                                     for="collect_contact_information">Toggle</label></div>
                                         </div>
                                         <div class="linked_set d-flex justify-content-between">
                                             <p> Remove leads with pending connections <span>!</span></p>
                                             <div class="switch_box"><input type="checkbox"
+                                                    name="remove_leads_with_pending_connections"
                                                     class="linkedin_setting_switch"
                                                     id="remove_leads_with_pending_connections"><label
                                                     for="remove_leads_with_pending_connections">Toggle</label></div>
@@ -205,8 +205,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
                                         <div class="cmp_btns d-flex justify-content-center align-items-center">
                                             <a href="javascript:;" class="btn prev_tab"><i
                                                     class="fa-solid fa-arrow-left"></i>Back</a>
@@ -245,7 +243,7 @@
                         <div class="col-6">
                             <div class="border_box">
                                 <img src="/assets/img/creat_temp.png" alt="">
-                                <a href="{{ url('/compaign/createcompaignfromscratch') }}" class="btn">From scratch</a>
+                                <a id="create_sequence" class="btn">From scratch</a>
                                 <p>Create a sequence from scratch specify steps and everything.</p>
                             </div>
                         </div>

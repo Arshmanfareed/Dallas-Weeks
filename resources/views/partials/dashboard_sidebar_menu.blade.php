@@ -14,7 +14,8 @@
         <li><a href="#" class="nav_link"><img src="{{ asset('assets/img/phonecall.svg') }}" alt=""></a>
         </li>
         <li><a href="#" class="nav_link"><img src="{{ asset('assets/img/clip.svg') }}" alt=""></a></li>
-        <li><a href="#" class="nav_link"><img src="{{ asset('assets/img/settings.svg') }}" alt=""></a>
+        <li><a href="#" class="nav_link {{ Str::contains(request()->url(), 'setting') ? 'active' : '' }}"><img
+                    src="{{ asset('assets/img/settings.svg') }}" alt=""></a>
         </li>
         <li><a href="#" class="nav_link"><img src="{{ asset('assets/img/calendar.svg') }}" alt=""></a>
         </li>
