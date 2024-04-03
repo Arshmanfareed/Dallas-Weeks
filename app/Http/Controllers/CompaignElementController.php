@@ -31,11 +31,11 @@ class CompaignElementController extends Controller
         $final_array = $all_request['final_array'];
         $final_data = $all_request['final_data'];
         $linkedin_setting = $all_request['linkedin_setting'];
-        $compaign = new Campaign();
-        $id = Auth::user()->id;
-        if ($id) {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $compaign = new Campaign();
             $compaign->compaign_name = 'My Compaign';
-            $compaign->user_id = $id;
+            $compaign->user_id = $user_id;
             $compaign->seat_id = 1;
             $compaign->description = 'This compaign is the test compaign';
             $compaign->modified_date = date('Y-m-d');
@@ -47,7 +47,7 @@ class CompaignElementController extends Controller
                     $setting = new LinkedinSetting();
                     $setting->compaign_id = $compaign->id;
                     $setting->setting_slug = $key;
-                    $setting->user_id = $id;
+                    $setting->user_id = $user_id;
                     $setting->seat_id = 1;
                     if ($value == 'false') {
                         $setting->is_active = 0;
@@ -59,10 +59,10 @@ class CompaignElementController extends Controller
                 }
                 $elements = [];
                 foreach ($final_array as $value) {
-                    $reverse_value = strrev($value);
-                    $string_index = strpos($reverse_value, '_');
-                    $position = strlen($value) - $string_index;
-                    $string = substr_replace($value, '', $position, 2);
+                    $reverse = strrev($value);
+                    $first_index = strpos($reverse, '_');
+                    $second_index = strlen($value) - $first_index - 1;
+                    $string = substr($value, 0, $second_index);
                     $elements[] = $string;
                 }
                 $count = 0;
@@ -74,7 +74,7 @@ class CompaignElementController extends Controller
                             $element_item->element_id = $element->id;
                             $element_item->compaign_id = $compaign->id;
                             $element_item->compaign_element_id = ++$count;
-                            $element_item->user_id = $id;
+                            $element_item->user_id = $user_id;
                             $element_item->seat_id = 1;
                             $element_item->save();
                             $property_item = $final_data[$final_array[$count]];

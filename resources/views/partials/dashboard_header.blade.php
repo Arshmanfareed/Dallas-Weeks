@@ -123,7 +123,7 @@
                 $('#save-changes').on('click', function() {
                     if (final_array[0] != 'step-1' || final_array[1] == '') {
                         alert('Select Step 1 First');
-                    } else if (input_array.length < final_array.length) {
+                    } else if (input_array.length <= final_array.length) {
                         $.ajax({
                             url: "{{ route('createCompaign') }}",
                             type: 'POST',
@@ -139,24 +139,7 @@
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    toastr.options = {
-                                        "closeButton": true,
-                                        "debug": false,
-                                        "newestOnTop": false,
-                                        "progressBar": true,
-                                        "positionClass": "toast-top-right",
-                                        "preventDuplicates": false,
-                                        "onclick": null,
-                                        "showDuration": "300",
-                                        "hideDuration": "1000",
-                                        "timeOut": "5000",
-                                        "extendedTimeOut": "1000",
-                                        "showEasing": "swing",
-                                        "hideEasing": "linear",
-                                        "showMethod": "fadeIn",
-                                        "hideMethod": "fadeOut"
-                                    }
-                                    toastr.success(response.properties);
+                                    window.location = "{{ route('compaigns') }}?success=true";
                                 } else {
                                     toastr.error(response.properties);
                                 }
@@ -532,17 +515,17 @@
                             // $('.task-list').append('<div class="line" id="' + elementOutput.attr('id') + '-to-' +
                             //     elementInput.attr('id') +
                             //     '"><div class="path-cancel-icon"><i class="fa-solid fa-x"></i></div></div>');
-                            var attachElementInput = elementInput.find('.attach-elements-in');
-                            var attachElementOutput = elementOutput.find('.attach-elements-out');
-                            var rect1 = attachElementOutput.get(0).getBoundingClientRect();
-                            var rect2 = attachElementInput.get(0).getBoundingClientRect();
+                            var attachElementInput = $(elementInput).find('.attach-elements-in');
+                            var attachElementOutput = $(elementOutput).find('.attach-elements-out');
+                            var rect1 = attachElementOutput[0].getBoundingClientRect();
+                            var rect2 = attachElementInput[0].getBoundingClientRect();
                             if (rect1 && rect2) {
-                                var x1 = rect1.left;
-                                var y1 = rect1.top;
-                                var x2 = rect2.left;
-                                var y2 = rect2.top;
-                                var lineId = elementOutput.attr('id') + '-to-' + elementInput.attr('id');
-                                // create_line(x1, y1, x2, y2, lineId);
+                                var x1 = rect1.x + rect1.width / 2;
+                                var x2 = rect2.x + rect2.width / 2;
+                                var y1 = rect1.y + rect1.height / 2;
+                                var y2 = rect2.y + rect2.height / 2;
+                                // var lineId = elementOutput.attr('id') + '-to-' + elementInput.attr('id');
+                                // create_line(x1, x2, y1, y2, lineId);
                                 elementInput = null;
                                 elementOutput = null;
                             }
@@ -587,6 +570,8 @@
                         let index = final_array.indexOf(element.attr('id'));
                         var current_element_id = final_array[index];
                         var current_element = $('#' + current_element_id);
+                        var index_input_array = input_array.indexOf(element.attr('id'));
+                        input_array.splice(index_input_array, 1);
                         if (final_array[index - 1] != '' && current_element) {
                             var prev_element_id = final_array[index - 1];
                             var prev_element = $('#' + prev_element_id);
@@ -652,20 +637,21 @@
                     });
                 }
 
-                // function create_line(x1, y1, x2, y2, lineId) {
+                // function create_line(x1, x2, y1, y2, lineId) {
+                //     var deltaX = x2 - x1;
+                //     var deltaY = y2 - y1;
+                //     var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                //     var angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
                 //     var line = $('#' + lineId);
-                //     var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
                 //     line.css({
-                //         'position': 'absolute',
-                //         'background': 'none',
-                //         'border-radius': 0,
-                //         'height': distance + 'px',
-                //         'top': y1 + 'px',
-                //         'left': x1 + 'px',
-                //         'width': 1 + 'px',
-                //         'border-left': '3px solid black',
+                //         position: 'absolute',
+                //         left: x1,
+                //         top: y1,
+                //         width: length,
+                //         transform: 'rotate(' + angle + 'deg)',
+                //         transformOrigin: '0 0',
+                //         backgroundColor: 'black'
                 //     });
-                //     $('.path-cancel-icon').on('click', removePath);
                 // }
             });
         </script>

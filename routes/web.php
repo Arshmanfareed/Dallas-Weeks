@@ -91,7 +91,7 @@ Route::get('/invoice', [InvoiceController::class, 'invoice']);
 // Route::get('/rolesandpermission',[RolespermissionController::class,'rolespermission']);
 Route::get('/setting', [SettingController::class, 'setting']);
 Route::get('/accdashboard', [MaindashboardController::class, 'maindasboard']);
-Route::get('/compaign', [CompaignController::class, 'compaign']);
+Route::get('/compaign', [CompaignController::class, 'compaign'])->name('compaigns');
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
 
 Route::controller(StripePaymentController::class)->group(function () {
