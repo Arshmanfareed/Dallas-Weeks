@@ -5226,18 +5226,18 @@ button#save {
     width: 24px;
     height: 24px;
     border-radius: 100%;
-    top: calc(50% - 24px);
-    right: 3px;
+    top: calc(50% - 12px);
+    right: calc(50% - 24px);
     position: absolute;
-    background-color: #fff;
+    background-color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.task-list .path-cancel-icon i {
-    color: #000;
-}
+/* .drop-list .path-cancel-icon i {
+    color: #000 !important;
+} */
 
 .linked_set.d-flex.justify-content-between {
     border-bottom: 1px solid #ddd;
@@ -5251,3 +5251,4 @@ button#save {
 .accordion-body > div > * {
     margin-bottom: 0 !important;
 }
+

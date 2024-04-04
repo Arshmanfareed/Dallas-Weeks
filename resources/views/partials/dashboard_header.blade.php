@@ -23,17 +23,15 @@
         </nav>
     </header>
     <main class="col bg-faded py-3 flex-grow-1">
-
         @yield('content')
-
     </main>
     <footer>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script>
             var linkedin_settings = [];
-            jQuery('.setting_btn').each(function() {
-                jQuery(this).on('click', function() {
-                    jQuery(this).siblings('.setting_list').toggle();
+            $('.setting_btn').each(function() {
+                $(this).on('click', function() {
+                    $(this).siblings('.setting_list').toggle();
                 });
             });
             $('.next_tab').on('click', function(e) {
@@ -92,7 +90,6 @@
                 form.appendChild(input);
                 document.body.appendChild(form);
                 form.submit();
-                console.log(form);
             });
         </script>
         <script>
@@ -139,7 +136,7 @@
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    window.location = "{{ route('compaigns') }}?success=true";
+                                    window.location = "{{ route('compaigns') }}";
                                 } else {
                                     toastr.error(response.properties);
                                 }
@@ -512,20 +509,40 @@
                             } else {
                                 return;
                             }
-                            // $('.task-list').append('<div class="line" id="' + elementOutput.attr('id') + '-to-' +
-                            //     elementInput.attr('id') +
-                            //     '"><div class="path-cancel-icon"><i class="fa-solid fa-x"></i></div></div>');
+                            $('.drop-pad').append('<div class="line" id="' + elementOutput.attr('id') + '-to-' +
+                                elementInput.attr('id') +
+                                '"><div class="path-cancel-icon"><i class="fa-solid fa-xmark"></i></div></div>');
+                            $('.path-cancel-icon').on('click', removePath);
+                            $('.line').css({
+                                'position': 'absolute',
+                                'background-color': 'white',
+                                'height': '2px',
+                                'transform-origin': 'left center'
+                            });
                             var attachElementInput = $(elementInput).find('.attach-elements-in');
                             var attachElementOutput = $(elementOutput).find('.attach-elements-out');
-                            var rect1 = attachElementOutput[0].getBoundingClientRect();
-                            var rect2 = attachElementInput[0].getBoundingClientRect();
-                            if (rect1 && rect2) {
-                                var x1 = rect1.x + rect1.width / 2;
-                                var x2 = rect2.x + rect2.width / 2;
-                                var y1 = rect1.y + rect1.height / 2;
-                                var y2 = rect2.y + rect2.height / 2;
-                                // var lineId = elementOutput.attr('id') + '-to-' + elementInput.attr('id');
-                                // create_line(x1, x2, y1, y2, lineId);
+
+                            if (attachElementInput && attachElementOutput) {
+                                var inputPosition = attachElementInput.offset();
+                                var outputPosition = attachElementOutput.offset();
+
+                                var x1 = inputPosition.left;
+                                var y1 = inputPosition.top;
+                                var x2 = outputPosition.left;
+                                var y2 = outputPosition.top;
+
+                                var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+                                var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+                                var lineId = elementOutput.attr('id') + '-to-' + elementInput.attr('id');
+                                var line = $('#' + lineId);
+
+                                line.css({
+                                    'width': distance + 'px',
+                                    'transform': 'rotate(' + angle + 'deg)',
+                                    'top': y1 - 320 + 'px',
+                                    'left': x1 - 205 + 'px'
+                                });
                                 elementInput = null;
                                 elementOutput = null;
                             }
@@ -537,21 +554,22 @@
                 function removePath(e) {
                     var element = $(this).parent().attr('id');
                     var index = element.indexOf('-to-');
-                    var first_item_id = element.substring(0, index);
-                    var last_item_id = element.substring(index + 4);
-                    first_item = $('#' + first_item_id);
-                    first_item = first_item.find('.attach-elements-out');
-                    last_item = $('#' + last_item_id);
-                    last_item = last_item.find('.attach-elements-in');
-                    first_item.css({
+                    var prev_element_id = element.substring(0, index);
+                    var prev_element = $('#' + prev_element_id);
+                    prev_element = prev_element.find('.attach-elements-out');
+                    prev_element.css({
                         'background-color': '#000',
                     });
-                    last_item.css({
+                    var current_element_id = element.substring(index + 4);
+                    var current_element = $('#' + current_element_id);
+                    current_element = current_element.find('.attach-elements-in');
+                    current_element.css({
                         'background-color': '#000',
                     });
-                    if (final_array.includes(first_item_id) && final_array.includes(last_item_id)) {
-                        let index = final_array.indexOf(first_item_id);
-                        let final_index = final_array.indexOf(last_item_id);
+                    var index = final_array.indexOf(prev_element_id);
+                    if (final_array.includes(prev_element_id) && final_array[index + 1] == current_element_id) {
+                        let index = final_array.indexOf(prev_element_id);
+                        let final_index = final_array.indexOf(current_element_id);
                         if (index + 1 == final_index) {
                             var duplicate_array = [
                                 ...final_array.splice(0, index + 1),
@@ -624,35 +642,159 @@
                                 left: x - 230,
                                 top: y - 350
                             });
+                            var index = final_array.indexOf(currentElement.attr('id'));
+                            var elementOutput = final_array[index - 1];
+                            var elementInput = currentElement.attr('id');
+                            if (elementOutput && elementInput) {
+                                if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
+                                    0) {
+                                    var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
+                                    var attachElementOutput = $('#' + elementOutput).find(
+                                        '.attach-elements-out');
+                                    if (attachElementInput.length && attachElementOutput.length) {
+                                        var inputPosition = attachElementInput.offset();
+                                        var outputPosition = attachElementOutput.offset();
+
+                                        var x1 = inputPosition.left;
+                                        var y1 = inputPosition.top;
+                                        var x2 = outputPosition.left;
+                                        var y2 = outputPosition.top;
+
+                                        var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
+                                            2));
+                                        var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+                                        var lineId = elementOutput + '-to-' + elementInput;
+                                        var line = $('#' + lineId);
+
+                                        line.css({
+                                            'width': distance + 'px',
+                                            'transform': 'rotate(' + angle + 'deg)',
+                                            'top': y1 - 320 + 'px',
+                                            'left': x1 - 205 + 'px'
+                                        });
+                                        elementInput = null;
+                                        elementOutput = null;
+                                    }
+                                }
+                            }
+                            var elementOutput = currentElement.attr('id');
+                            var elementInput = final_array[index + 1];
+                            if (elementOutput && elementInput) {
+                                if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
+                                    0) {
+                                    var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
+                                    var attachElementOutput = $('#' + elementOutput).find(
+                                        '.attach-elements-out');
+                                    if (attachElementInput.length && attachElementOutput.length) {
+                                        var inputPosition = attachElementInput.offset();
+                                        var outputPosition = attachElementOutput.offset();
+
+                                        var x1 = inputPosition.left;
+                                        var y1 = inputPosition.top;
+                                        var x2 = outputPosition.left;
+                                        var y2 = outputPosition.top;
+
+                                        var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
+                                            2));
+                                        var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+                                        var lineId = elementOutput + '-to-' + elementInput;
+                                        var line = $('#' + lineId);
+
+                                        line.css({
+                                            'width': distance + 'px',
+                                            'transform': 'rotate(' + angle + 'deg)',
+                                            'top': y1 - 320 + 'px',
+                                            'left': x1 - 205 + 'px'
+                                        });
+                                        elementInput = null;
+                                        elementOutput = null;
+                                    }
+                                }
+                            }
                         } else {
                             currentElement.css({
                                 left: 0,
                                 top: 30
                             });
+                            var index = final_array.indexOf(currentElement.attr('id'));
+                            var elementOutput = final_array[index - 1];
+                            var elementInput = currentElement.attr('id');
+                            if (elementOutput && elementInput) {
+                                if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
+                                    0) {
+                                    var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
+                                    var attachElementOutput = $('#' + elementOutput).find(
+                                        '.attach-elements-out');
+                                    if (attachElementInput.length && attachElementOutput.length) {
+                                        var inputPosition = attachElementInput.offset();
+                                        var outputPosition = attachElementOutput.offset();
+
+                                        var x1 = inputPosition.left;
+                                        var y1 = inputPosition.top;
+                                        var x2 = outputPosition.left;
+                                        var y2 = outputPosition.top;
+
+                                        var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
+                                            2));
+                                        var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+                                        var lineId = elementOutput + '-to-' + elementInput;
+                                        var line = $('#' + lineId);
+
+                                        line.css({
+                                            'width': distance + 'px',
+                                            'transform': 'rotate(' + angle + 'deg)',
+                                            'top': y1 + 'px',
+                                            'left': x1 + 'px'
+                                        });
+                                        elementInput = null;
+                                        elementOutput = null;
+                                    }
+                                }
+                            }
+                            var elementOutput = currentElement.attr('id');
+                            var elementInput = final_array[index + 1];
+                            if (elementOutput && elementInput) {
+                                if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
+                                    0) {
+                                    var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
+                                    var attachElementOutput = $('#' + elementOutput).find(
+                                        '.attach-elements-out');
+                                    if (attachElementInput.length && attachElementOutput.length) {
+                                        var inputPosition = attachElementInput.offset();
+                                        var outputPosition = attachElementOutput.offset();
+
+                                        var x1 = inputPosition.left;
+                                        var y1 = inputPosition.top;
+                                        var x2 = outputPosition.left;
+                                        var y2 = outputPosition.top;
+
+                                        var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
+                                            2));
+                                        var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+                                        var lineId = elementOutput + '-to-' + elementInput;
+                                        var line = $('#' + lineId);
+
+                                        line.css({
+                                            'width': distance + 'px',
+                                            'transform': 'rotate(' + angle + 'deg)',
+                                            'top': y1 + 'px',
+                                            'left': x1 + 'px'
+                                        });
+                                        elementInput = null;
+                                        elementOutput = null;
+                                    }
+                                }
+                            }
                         }
                     });
-
                     $(document).on('mouseup', function() {
                         $(document).off('mousemove');
                     });
                 }
-
-                // function create_line(x1, x2, y1, y2, lineId) {
-                //     var deltaX = x2 - x1;
-                //     var deltaY = y2 - y1;
-                //     var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                //     var angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
-                //     var line = $('#' + lineId);
-                //     line.css({
-                //         position: 'absolute',
-                //         left: x1,
-                //         top: y1,
-                //         width: length,
-                //         transform: 'rotate(' + angle + 'deg)',
-                //         transformOrigin: '0 0',
-                //         backgroundColor: 'black'
-                //     });
-                // }
             });
         </script>
         <script>
