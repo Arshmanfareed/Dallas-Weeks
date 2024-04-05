@@ -31,19 +31,136 @@
             $("a.setting_btn").on('click', function() {
                 $(this).siblings().toggle();
             });
+            $('.setting_btn').each(function() {
+                $(this).on('click', function() {
+                    $(this).siblings('.setting_list').toggle();
+                });
+            });
         </script>
         @if (Str::contains(request()->url(), 'createcompaignfromscratch'))
             <script>
                 $(document).ready(function() {
-                    move();
-                    var chooseElement;
-                    var elementInput;
-                    var elementOutput;
+                    var chooseElement = null;
+                    var elementInput = null;
+                    var elementOutput = null;
                     var count = 0;
                     var final_array = [];
                     var final_data = {};
                     var input_array = [];
+
                     $('.attach-elements-out').on('click', attachElementOutput);
+
+                    function attachElementOutput(e) {
+                        if (!elementInput) {
+                            var attachDiv = $(this);
+                            attachDiv.css({
+                                "background-color": "white"
+                            });
+                            elementOutput = attachDiv.parent();
+                        }
+                    }
+
+                    // function attachElementInput(e) {
+                    //     if (elementOutput && elementOutput.attr('id') != $(this).parent().attr('id')) {
+                    //         var attachDiv = $(this);
+                    //         attachDiv.css({
+                    //             "background-color": "white"
+                    //         });
+                    //         elementInput = attachDiv.parent();
+                    //         if (elementOutput && elementInput) {
+                    //             if (!final_array.includes(elementOutput.attr('id')) && !final_array.includes(elementInput
+                    //                     .attr('id'))) {
+                    //                 final_array.push(elementOutput.attr('id'));
+                    //                 final_array.push(elementInput.attr('id'));
+                    //             } else if (final_array.includes(elementOutput.attr('id')) && !final_array.includes(
+                    //                     elementInput.attr('id'))) {
+                    //                 let index = final_array.indexOf(elementOutput.attr('id'));
+                    //                 var arr_len = final_array.length - 1;
+                    //                 if (index == arr_len) {
+                    //                     final_array.push(elementInput.attr('id'));
+                    //                 } else if (final_array[index + 1] == '') {
+                    //                     final_array[index + 1] = elementInput.attr('id')
+                    //                 } else {
+                    //                     var duplicate_array = [
+                    //                         ...final_array.slice(0, index),
+                    //                         elementInput.attr('id'),
+                    //                         ...final_array.slice(index + 1)
+                    //                     ];
+                    //                     final_array = duplicate_array;
+                    //                 }
+                    //             } else if (!final_array.includes(elementOutput.attr('id')) && final_array.includes(
+                    //                     elementInput.attr('id'))) {
+                    //                 let index = final_array.indexOf(elementInput.attr('id'));
+                    //                 if (index == 0) {
+                    //                     var duplicate_array = [
+                    //                         elementOutput.attr('id'),
+                    //                         ...final_array.slice()
+                    //                     ];
+                    //                     final_array = duplicate_array;
+                    //                 } else if (final_array[index - 1] == '') {
+                    //                     final_array[index - 1] = elementOutput.attr('id');
+                    //                 } else {
+                    //                     var duplicate_array = [
+                    //                         ...final_array.slice(0, index - 1),
+                    //                         elementOutput.attr('id'),
+                    //                         ...final_array.slice(index)
+                    //                     ];
+                    //                     final_array = duplicate_array;
+                    //                 }
+                    //             } else {
+                    //                 first_item_index = final_array.indexOf(elementOutput.attr('id'));
+                    //                 last_item_index = final_array.indexOf(elementInput.attr('id'));
+                    //                 if (final_array[first_item_index + 1] == '' && final_array[last_item_index - 1] == '' &&
+                    //                     first_item_index + 1 == last_item_index - 1) {
+                    //                     var duplicate_array = [
+                    //                         ...final_array.slice(0, first_item_index + 1),
+                    //                         ...final_array.slice(last_item_index)
+                    //                     ];
+                    //                     final_array = duplicate_array;
+                    //                 }
+                    //             }
+                    //             $('.drop-pad').append('<div class="line" id="' + elementOutput.attr('id') + '-to-' +
+                    //                 elementInput.attr('id') +
+                    //                 '"><div class="path-cancel-icon"><i class="fa-solid fa-xmark"></i></div></div>');
+                    //             $('.path-cancel-icon').on('click', removePath);
+                    //             $('.line').css({
+                    //                 'position': 'absolute',
+                    //                 'background-color': 'white',
+                    //                 'height': '2px',
+                    //                 'transform-origin': 'left center'
+                    //             });
+                    //             var attachElementInput = $(elementInput).find('.attach-elements-in');
+                    //             var attachElementOutput = $(elementOutput).find('.attach-elements-out');
+
+                    //             if (attachElementInput && attachElementOutput) {
+                    //                 var inputPosition = attachElementInput.offset();
+                    //                 var outputPosition = attachElementOutput.offset();
+
+                    //                 var x1 = inputPosition.left;
+                    //                 var y1 = inputPosition.top;
+                    //                 var x2 = outputPosition.left;
+                    //                 var y2 = outputPosition.top;
+
+                    //                 var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+                    //                 var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+                    //                 var lineId = elementOutput.attr('id') + '-to-' + elementInput.attr('id');
+                    //                 var line = $('#' + lineId);
+
+                    //                 line.css({
+                    //                     'width': distance + 'px',
+                    //                     'transform': 'rotate(' + angle + 'deg)',
+                    //                     'top': y1 - 320 + 'px',
+                    //                     'left': x1 - 205 + 'px'
+                    //                 });
+                    //                 elementInput = null;
+                    //                 elementOutput = null;
+                    //             }
+                    //         }
+                    //         $('.drop-pad-element').on('click', elementProperties);
+                    //     }
+                    // }
+
                     $('.element-btn').on('click', function() {
                         var targetTab = $(this).data('tab');
                         $('.element-content').removeClass('active');
@@ -51,10 +168,11 @@
                         $('.element-btn').removeClass('active');
                         $(this).addClass('active');
                     });
+
                     $('#save-changes').on('click', function() {
                         if (final_array[0] != 'step-1' || final_array[1] == '') {
                             alert('Select Step 1 First');
-                        } else if (input_array.length <= final_array.length) {
+                        } else if (input_array.length >= final_array.length) {
                             $.ajax({
                                 url: "{{ route('createCompaign') }}",
                                 type: 'POST',
@@ -122,151 +240,151 @@
                         return str.split(' ').map(word => word.toLowerCase()).join(' ');
                     }
 
-                    function move() {
-                        $('.element').on('mousedown', function(e) {
-                            e.preventDefault();
-                            var clone = $(this).clone().css({
-                                'position': 'absolute',
-                            });
-                            $('body').append(clone);
-                            chooseElement = clone;
-                            id = chooseElement.attr('id') + '_' + ++count;
-                            input_array.push(id);
-                            chooseElement.attr('id', id);
-                            chooseElement.attr('class', 'drop-pad-element');
-                            chooseElement.removeClass('element');
-                            chooseElement.css({
-                                'display': 'flex',
-                                'justify-content': 'space-between',
-                                'align-items': 'center',
-                                'background-color': '#1c1e22',
-                                'min-height': '100px',
-                                'max-height': 'fit-content',
-                                'width': '350px',
-                                'padding': '7px',
-                                'border-radius': '17px',
-                                'margin': '14px 0',
-                                'cursor': 'pointer',
-                                'border': '1px solid rgb(23, 172, 203)',
-                            });
-                            p = chooseElement.find('p');
-                            p.css({
-                                'color': '#fff',
-                                'width': 'fit-content',
-                            });
-                            list_icon = chooseElement.find('.list-icon');
-                            list_icon.css({
-                                'padding': '7px',
-                                'min-height': '100%',
-                                'display': 'flex',
-                                'align-items': 'center',
-                                'justify-content': 'center',
-                                'background-color': '#15171c',
-                                'border-radius': '25%',
-                                'margin-right': '25px',
-                            });
-                            i = chooseElement.find('.list-icon').find('i');
-                            i.css({
-                                'color': '#17accb',
-                            });
-                            p = chooseElement.find('.item_details').find('p');
-                            p.css({
-                                'margin': '0',
-                                'width': '80%',
-                            });
-                            desc = chooseElement.find('.item_desc');
-                            desc.css({
-                                'display': 'block',
-                                'max-width': '100%',
-                                'text-overflow': 'ellipsis',
-                                'font-size': '15px',
-                            });
-                            menu_icon = chooseElement.find('.menu-icon');
-                            menu_icon.css({
-                                'display': 'none',
-                            });
-                            cancel_icon = chooseElement.find('.cancel-icon');
-                            cancel_icon.css({
-                                'display': 'none',
-                            });
-                            attach_in = chooseElement.find('.attach-elements-in');
-                            attach_in.css({
-                                'display': 'none',
-                            });
-                            attach_on = chooseElement.find('.attach-elements-out');
-                            attach_on.css({
-                                'display': 'none',
-                            });
-                            $(document).on('mousemove', function(e) {
-                                var x = e.pageX;
-                                var y = e.pageY;
-                                var element = $('.drop-pad').offset();
-                                var element_x = element.left;
-                                var max_x = element_x + $('.drop-pad').outerWidth();
-                                var element_y = element.top;
-                                var max_y = element_y + $('.drop-pad').outerHeight();
-                                if (x > element_x && y > element_y && x < max_x && y < max_y) {
-                                    chooseElement.css({
-                                        left: x,
-                                        top: y
-                                    });
-                                } else {
-                                    chooseElement.css({
-                                        left: element_x,
-                                        top: element_y
-                                    });
-                                }
-                            });
-                        });
+                    // function move() {
+                    //     $('.element').on('mousedown', function(e) {
+                    //         e.preventDefault();
+                    //         var clone = $(this).clone().css({
+                    //             'position': 'absolute',
+                    //         });
+                    //         $('body').append(clone);
+                    //         chooseElement = clone;
+                    //         id = chooseElement.attr('id') + '_' + ++count;
+                    //         input_array.push(id);
+                    //         chooseElement.attr('id', id);
+                    //         chooseElement.attr('class', 'drop-pad-element');
+                    //         chooseElement.removeClass('element');
+                    //         chooseElement.css({
+                    //             'display': 'flex',
+                    //             'justify-content': 'space-between',
+                    //             'align-items': 'center',
+                    //             'background-color': '#1c1e22',
+                    //             'min-height': '100px',
+                    //             'max-height': 'fit-content',
+                    //             'width': '350px',
+                    //             'padding': '7px',
+                    //             'border-radius': '17px',
+                    //             'margin': '14px 0',
+                    //             'cursor': 'pointer',
+                    //             'border': '1px solid rgb(23, 172, 203)',
+                    //         });
+                    //         p = chooseElement.find('p');
+                    //         p.css({
+                    //             'color': '#fff',
+                    //             'width': 'fit-content',
+                    //         });
+                    //         list_icon = chooseElement.find('.list-icon');
+                    //         list_icon.css({
+                    //             'padding': '7px',
+                    //             'min-height': '100%',
+                    //             'display': 'flex',
+                    //             'align-items': 'center',
+                    //             'justify-content': 'center',
+                    //             'background-color': '#15171c',
+                    //             'border-radius': '25%',
+                    //             'margin-right': '25px',
+                    //         });
+                    //         i = chooseElement.find('.list-icon').find('i');
+                    //         i.css({
+                    //             'color': '#17accb',
+                    //         });
+                    //         p = chooseElement.find('.item_details').find('p');
+                    //         p.css({
+                    //             'margin': '0',
+                    //             'width': '80%',
+                    //         });
+                    //         desc = chooseElement.find('.item_desc');
+                    //         desc.css({
+                    //             'display': 'block',
+                    //             'max-width': '100%',
+                    //             'text-overflow': 'ellipsis',
+                    //             'font-size': '15px',
+                    //         });
+                    //         menu_icon = chooseElement.find('.menu-icon');
+                    //         menu_icon.css({
+                    //             'display': 'none',
+                    //         });
+                    //         cancel_icon = chooseElement.find('.cancel-icon');
+                    //         cancel_icon.css({
+                    //             'display': 'none',
+                    //         });
+                    //         attach_in = chooseElement.find('.attach-elements-in');
+                    //         attach_in.css({
+                    //             'display': 'none',
+                    //         });
+                    //         attach_on = chooseElement.find('.attach-elements-out');
+                    //         attach_on.css({
+                    //             'display': 'none',
+                    //         });
+                    //         $(document).on('mousemove', function(e) {
+                    //             var x = e.pageX;
+                    //             var y = e.pageY;
+                    //             var element = $('.drop-pad').offset();
+                    //             var element_x = element.left;
+                    //             var max_x = element_x + $('.drop-pad').outerWidth();
+                    //             var element_y = element.top;
+                    //             var max_y = element_y + $('.drop-pad').outerHeight();
+                    //             if (x > element_x && y > element_y && x < max_x && y < max_y) {
+                    //                 chooseElement.css({
+                    //                     left: x,
+                    //                     top: y
+                    //                 });
+                    //             } else {
+                    //                 chooseElement.css({
+                    //                     left: element_x,
+                    //                     top: element_y
+                    //                 });
+                    //             }
+                    //         });
+                    //     });
 
-                        $(document).on('mouseup', function(e) {
-                            if (chooseElement) {
-                                chooseElement.css({
-                                    'align-items': 'stretch',
-                                });
-                                attach_in = chooseElement.find('.attach-elements-in');
-                                attach_in.css({
-                                    'display': 'block',
-                                });
-                                attach_on = chooseElement.find('.attach-elements-out');
-                                attach_on.css({
-                                    'display': 'block',
-                                });
-                                cancel_icon = chooseElement.find('.cancel-icon');
-                                cancel_icon.css({
-                                    'display': 'flex',
-                                });
-                                var x = e.pageX;
-                                var y = e.pageY;
-                                var element = $('.drop-pad').offset();
-                                var element_x = element.left;
-                                var max_x = element_x + $('.drop-pad').outerWidth();
-                                var element_y = element.top;
-                                var max_y = element_y + $('.drop-pad').outerHeight();
-                                if (x > element_x && y > element_y && x < max_x && y < max_y) {
-                                    chooseElement.css({
-                                        left: x - 230,
-                                        top: y - 350,
-                                        'border': 'none',
-                                    });
-                                } else {
-                                    chooseElement.css({
-                                        left: 0,
-                                        top: 30,
-                                        'border': 'none',
-                                    });
-                                }
-                                $(document).off('mousemove');
-                                $('.task-list').append(chooseElement);
-                                $('.cancel-icon').on('click', removeElement);
-                                $('.attach-elements-out').on('click', attachElementOutput);
-                                $('.attach-elements-in').on('click', attachElementInput);
-                                $('.drop-pad-element').on('click', elementProperties);
-                                chooseElement.on('mousedown', startDragging);
-                                chooseElement = null;
-                            }
-                        });
-                    }
+                    //     $(document).on('mouseup', function(e) {
+                    //         if (chooseElement) {
+                    //             chooseElement.css({
+                    //                 'align-items': 'stretch',
+                    //             });
+                    //             attach_in = chooseElement.find('.attach-elements-in');
+                    //             attach_in.css({
+                    //                 'display': 'block',
+                    //             });
+                    //             attach_on = chooseElement.find('.attach-elements-out');
+                    //             attach_on.css({
+                    //                 'display': 'block',
+                    //             });
+                    //             cancel_icon = chooseElement.find('.cancel-icon');
+                    //             cancel_icon.css({
+                    //                 'display': 'flex',
+                    //             });
+                    //             var x = e.pageX;
+                    //             var y = e.pageY;
+                    //             var element = $('.drop-pad').offset();
+                    //             var element_x = element.left;
+                    //             var max_x = element_x + $('.drop-pad').outerWidth();
+                    //             var element_y = element.top;
+                    //             var max_y = element_y + $('.drop-pad').outerHeight();
+                    //             if (x > element_x && y > element_y && x < max_x && y < max_y) {
+                    //                 chooseElement.css({
+                    //                     left: x - 230,
+                    //                     top: y - 350,
+                    //                     'border': 'none',
+                    //                 });
+                    //             } else {
+                    //                 chooseElement.css({
+                    //                     left: 0,
+                    //                     top: 30,
+                    //                     'border': 'none',
+                    //                 });
+                    //             }
+                    //             $(document).off('mousemove');
+                    //             $('.task-list').append(chooseElement);
+                    //             $('.cancel-icon').on('click', removeElement);
+                    //             $('.attach-elements-out').on('click', attachElementOutput);
+                    //             $('.attach-elements-in').on('click', attachElementInput);
+                    //             $('.drop-pad-element').on('click', elementProperties);
+                    //             chooseElement.on('mousedown', startDragging);
+                    //             chooseElement = null;
+                    //         }
+                    //     });
+                    // }
 
                     function elementProperties(e) {
                         $('#properties').empty();
@@ -382,138 +500,36 @@
                         }
                     }
 
-                    function attachElementOutput(e) {
-                        if (!elementInput) {
-                            var attachDiv = $(this);
-                            attachDiv.css({
-                                "background-color": "white"
-                            });
-                            elementOutput = attachDiv.parent();
-                        }
-                    }
-
-                    function attachElementInput(e) {
-                        if (elementOutput && elementOutput.attr('id') != $(this).parent().attr('id')) {
-                            var attachDiv = $(this);
-                            attachDiv.css({
-                                "background-color": "white"
-                            });
-                            elementInput = attachDiv.parent();
-                            if (elementOutput && elementInput) {
-                                if (!final_array.includes(elementOutput.attr('id')) && !final_array.includes(elementInput
-                                        .attr('id'))) {
-                                    final_array.push(elementOutput.attr('id'));
-                                    final_array.push(elementInput.attr('id'));
-                                } else if (final_array.includes(elementOutput.attr('id')) && !final_array.includes(
-                                        elementInput.attr('id'))) {
-                                    let index = final_array.indexOf(elementOutput.attr('id'));
-                                    var arr_len = final_array.length - 1;
-                                    if (index == arr_len) {
-                                        final_array.push(elementInput.attr('id'));
-                                    } else if (final_array[index + 1] == '') {
-                                        final_array[index + 1] = elementInput.attr('id')
-                                    } else {
-                                        var duplicate_array = [
-                                            ...final_array.splice(0, index),
-                                            elementInput.attr('id'),
-                                            ...final_array.splice(index + 1)
-                                        ];
-                                        final_array = duplicate_array;
-                                    }
-                                } else if (!final_array.includes(elementOutput.attr('id')) && final_array.includes(
-                                        elementInput.attr('id'))) {
-                                    let index = final_array.indexOf(elementInput.attr('id'));
-                                    if (index == 0) {
-                                        var duplicate_array = [
-                                            elementOutput.attr('id'),
-                                            ...final_array.slice()
-                                        ];
-                                        final_array = duplicate_array;
-                                    } else if (final_array[index - 1] == '') {
-                                        final_array[index - 1] = elementOutput.attr('id');
-                                    } else {
-                                        var duplicate_array = [
-                                            ...final_array.splice(0, index - 1),
-                                            elementOutput.attr('id'),
-                                            ...final_array.splice(index)
-                                        ];
-                                        final_array = duplicate_array;
-                                    }
-                                } else {
-                                    return;
-                                }
-                                $('.drop-pad').append('<div class="line" id="' + elementOutput.attr('id') + '-to-' +
-                                    elementInput.attr('id') +
-                                    '"><div class="path-cancel-icon"><i class="fa-solid fa-xmark"></i></div></div>');
-                                $('.path-cancel-icon').on('click', removePath);
-                                $('.line').css({
-                                    'position': 'absolute',
-                                    'background-color': 'white',
-                                    'height': '2px',
-                                    'transform-origin': 'left center'
-                                });
-                                var attachElementInput = $(elementInput).find('.attach-elements-in');
-                                var attachElementOutput = $(elementOutput).find('.attach-elements-out');
-
-                                if (attachElementInput && attachElementOutput) {
-                                    var inputPosition = attachElementInput.offset();
-                                    var outputPosition = attachElementOutput.offset();
-
-                                    var x1 = inputPosition.left;
-                                    var y1 = inputPosition.top;
-                                    var x2 = outputPosition.left;
-                                    var y2 = outputPosition.top;
-
-                                    var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
-                                    var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
-
-                                    var lineId = elementOutput.attr('id') + '-to-' + elementInput.attr('id');
-                                    var line = $('#' + lineId);
-
-                                    line.css({
-                                        'width': distance + 'px',
-                                        'transform': 'rotate(' + angle + 'deg)',
-                                        'top': y1 - 320 + 'px',
-                                        'left': x1 - 205 + 'px'
-                                    });
-                                    elementInput = null;
-                                    elementOutput = null;
-                                }
-                            }
-                            $('.drop-pad-element').on('click', elementProperties);
-                        }
-                    }
-
-                    function removePath(e) {
-                        var element = $(this).parent().attr('id');
-                        var index = element.indexOf('-to-');
-                        var prev_element_id = element.substring(0, index);
-                        var prev_element = $('#' + prev_element_id);
-                        prev_element = prev_element.find('.attach-elements-out');
-                        prev_element.css({
-                            'background-color': '#000',
-                        });
-                        var current_element_id = element.substring(index + 4);
-                        var current_element = $('#' + current_element_id);
-                        current_element = current_element.find('.attach-elements-in');
-                        current_element.css({
-                            'background-color': '#000',
-                        });
-                        var index = final_array.indexOf(prev_element_id);
-                        if (final_array.includes(prev_element_id) && final_array[index + 1] == current_element_id) {
-                            let index = final_array.indexOf(prev_element_id);
-                            let final_index = final_array.indexOf(current_element_id);
-                            if (index + 1 == final_index) {
-                                var duplicate_array = [
-                                    ...final_array.splice(0, index + 1),
-                                    '',
-                                    ...final_array.splice(index)
-                                ];
-                                final_array = duplicate_array;
-                                $(this).parent().remove();
-                            }
-                        }
-                    }
+                    // function removePath(e) {
+                    //     var element = $(this).parent().attr('id');
+                    //     var index = element.indexOf('-to-');
+                    //     var prev_element_id = element.substring(0, index);
+                    //     var prev_element = $('#' + prev_element_id);
+                    //     prev_element = prev_element.find('.attach-elements-out');
+                    //     prev_element.css({
+                    //         'background-color': '#000',
+                    //     });
+                    //     var current_element_id = element.substring(index + 4);
+                    //     var current_element = $('#' + current_element_id);
+                    //     current_element = current_element.find('.attach-elements-in');
+                    //     current_element.css({
+                    //         'background-color': '#000',
+                    //     });
+                    //     var index = final_array.indexOf(prev_element_id);
+                    //     if (final_array.includes(prev_element_id) && final_array[index + 1] == current_element_id) {
+                    //         let index = final_array.indexOf(prev_element_id);
+                    //         let final_index = final_array.indexOf(current_element_id);
+                    //         if (index + 1 == final_index) {
+                    //             var duplicate_array = [
+                    //                 ...final_array.slice(0, index + 1),
+                    //                 '',
+                    //                 ...final_array.slice(index)
+                    //             ];
+                    //             final_array = duplicate_array;
+                    //             $(this).parent().remove();
+                    //         }
+                    //     }
+                    // }
 
                     function removeElement(e) {
                         var element = $(this).parent();
@@ -522,7 +538,7 @@
                             var current_element_id = final_array[index];
                             var current_element = $('#' + current_element_id);
                             var index_input_array = input_array.indexOf(element.attr('id'));
-                            input_array.splice(index_input_array, 1);
+                            input_array.slice(index_input_array, 1);
                             if (final_array[index - 1] != '' && current_element) {
                                 var prev_element_id = final_array[index - 1];
                                 var prev_element = $('#' + prev_element_id);
@@ -558,181 +574,182 @@
                         $(this).parent().remove();
                     }
 
-                    function startDragging(e) {
-                        e.preventDefault();
-                        var currentElement = $(this);
+                    // function startDragging(e) {
+                    //     e.preventDefault();
+                    //     var currentElement = $(this);
 
-                        $(document).on('mousemove', function(e) {
-                            var x = e.pageX;
-                            var y = e.pageY;
-                            var element = $('.drop-pad').offset();
-                            var element_x = element.left;
-                            var max_x = element_x + $('.drop-pad').outerWidth();
-                            var element_y = element.top;
-                            var max_y = element_y + $('.drop-pad').outerHeight();
-                            if (x > element_x && y > element_y && x < max_x && y < max_y) {
-                                currentElement.css({
-                                    left: x - 230,
-                                    top: y - 350
-                                });
-                                var index = final_array.indexOf(currentElement.attr('id'));
-                                var elementOutput = final_array[index - 1];
-                                var elementInput = currentElement.attr('id');
-                                if (elementOutput && elementInput) {
-                                    if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
-                                        0) {
-                                        var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
-                                        var attachElementOutput = $('#' + elementOutput).find(
-                                            '.attach-elements-out');
-                                        if (attachElementInput.length && attachElementOutput.length) {
-                                            var inputPosition = attachElementInput.offset();
-                                            var outputPosition = attachElementOutput.offset();
+                    //     $(document).on('mousemove', function(e) {
+                    //         var x = e.pageX;
+                    //         var y = e.pageY;
+                    //         var element = $('.drop-pad').offset();
+                    //         var element_x = element.left;
+                    //         var max_x = element_x + $('.drop-pad').outerWidth();
+                    //         var element_y = element.top;
+                    //         var max_y = element_y + $('.drop-pad').outerHeight();
+                    //         if (x > element_x && y > element_y && x < max_x && y < max_y) {
+                    //             currentElement.css({
+                    //                 left: x - 230,
+                    //                 top: y - 350
+                    //             });
+                    //             var index = final_array.indexOf(currentElement.attr('id'));
+                    //             var elementOutput = final_array[index - 1];
+                    //             var elementInput = currentElement.attr('id');
+                    //             if (elementOutput && elementInput) {
+                    //                 if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
+                    //                     0) {
+                    //                     var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
+                    //                     var attachElementOutput = $('#' + elementOutput).find(
+                    //                         '.attach-elements-out');
+                    //                     if (attachElementInput.length && attachElementOutput.length) {
+                    //                         var inputPosition = attachElementInput.offset();
+                    //                         var outputPosition = attachElementOutput.offset();
 
-                                            var x1 = inputPosition.left;
-                                            var y1 = inputPosition.top;
-                                            var x2 = outputPosition.left;
-                                            var y2 = outputPosition.top;
+                    //                         var x1 = inputPosition.left;
+                    //                         var y1 = inputPosition.top;
+                    //                         var x2 = outputPosition.left;
+                    //                         var y2 = outputPosition.top;
 
-                                            var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
-                                                2));
-                                            var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+                    //                         var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
+                    //                             2));
+                    //                         var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 
-                                            var lineId = elementOutput + '-to-' + elementInput;
-                                            var line = $('#' + lineId);
+                    //                         var lineId = elementOutput + '-to-' + elementInput;
+                    //                         var line = $('#' + lineId);
 
-                                            line.css({
-                                                'width': distance + 'px',
-                                                'transform': 'rotate(' + angle + 'deg)',
-                                                'top': y1 - 320 + 'px',
-                                                'left': x1 - 205 + 'px'
-                                            });
-                                            elementInput = null;
-                                            elementOutput = null;
-                                        }
-                                    }
-                                }
-                                var elementOutput = currentElement.attr('id');
-                                var elementInput = final_array[index + 1];
-                                if (elementOutput && elementInput) {
-                                    if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
-                                        0) {
-                                        var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
-                                        var attachElementOutput = $('#' + elementOutput).find(
-                                            '.attach-elements-out');
-                                        if (attachElementInput.length && attachElementOutput.length) {
-                                            var inputPosition = attachElementInput.offset();
-                                            var outputPosition = attachElementOutput.offset();
+                    //                         line.css({
+                    //                             'width': distance + 'px',
+                    //                             'transform': 'rotate(' + angle + 'deg)',
+                    //                             'top': y1 - 320 + 'px',
+                    //                             'left': x1 - 205 + 'px'
+                    //                         });
+                    //                         elementInput = null;
+                    //                         elementOutput = null;
+                    //                     }
+                    //                 }
+                    //             }
+                    //             var elementOutput = currentElement.attr('id');
+                    //             var elementInput = final_array[index + 1];
+                    //             if (elementOutput && elementInput) {
+                    //                 if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
+                    //                     0) {
+                    //                     var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
+                    //                     var attachElementOutput = $('#' + elementOutput).find(
+                    //                         '.attach-elements-out');
+                    //                     if (attachElementInput.length && attachElementOutput.length) {
+                    //                         var inputPosition = attachElementInput.offset();
+                    //                         var outputPosition = attachElementOutput.offset();
 
-                                            var x1 = inputPosition.left;
-                                            var y1 = inputPosition.top;
-                                            var x2 = outputPosition.left;
-                                            var y2 = outputPosition.top;
+                    //                         var x1 = inputPosition.left;
+                    //                         var y1 = inputPosition.top;
+                    //                         var x2 = outputPosition.left;
+                    //                         var y2 = outputPosition.top;
 
-                                            var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
-                                                2));
-                                            var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+                    //                         var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
+                    //                             2));
+                    //                         var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 
-                                            var lineId = elementOutput + '-to-' + elementInput;
-                                            var line = $('#' + lineId);
+                    //                         var lineId = elementOutput + '-to-' + elementInput;
+                    //                         var line = $('#' + lineId);
 
-                                            line.css({
-                                                'width': distance + 'px',
-                                                'transform': 'rotate(' + angle + 'deg)',
-                                                'top': y1 - 320 + 'px',
-                                                'left': x1 - 205 + 'px'
-                                            });
-                                            elementInput = null;
-                                            elementOutput = null;
-                                        }
-                                    }
-                                }
-                            } else {
-                                currentElement.css({
-                                    left: 0,
-                                    top: 30
-                                });
-                                var index = final_array.indexOf(currentElement.attr('id'));
-                                var elementOutput = final_array[index - 1];
-                                var elementInput = currentElement.attr('id');
-                                if (elementOutput && elementInput) {
-                                    if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
-                                        0) {
-                                        var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
-                                        var attachElementOutput = $('#' + elementOutput).find(
-                                            '.attach-elements-out');
-                                        if (attachElementInput.length && attachElementOutput.length) {
-                                            var inputPosition = attachElementInput.offset();
-                                            var outputPosition = attachElementOutput.offset();
+                    //                         line.css({
+                    //                             'width': distance + 'px',
+                    //                             'transform': 'rotate(' + angle + 'deg)',
+                    //                             'top': y1 - 320 + 'px',
+                    //                             'left': x1 - 205 + 'px'
+                    //                         });
+                    //                         elementInput = null;
+                    //                         elementOutput = null;
+                    //                     }
+                    //                 }
+                    //             }
+                    //         } else {
+                    //             currentElement.css({
+                    //                 left: 0,
+                    //                 top: 30
+                    //             });
+                    //             var index = final_array.indexOf(currentElement.attr('id'));
+                    //             var elementOutput = final_array[index - 1];
+                    //             var elementInput = currentElement.attr('id');
+                    //             if (elementOutput && elementInput) {
+                    //                 if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
+                    //                     0) {
+                    //                     var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
+                    //                     var attachElementOutput = $('#' + elementOutput).find(
+                    //                         '.attach-elements-out');
+                    //                     if (attachElementInput.length && attachElementOutput.length) {
+                    //                         var inputPosition = attachElementInput.offset();
+                    //                         var outputPosition = attachElementOutput.offset();
 
-                                            var x1 = inputPosition.left;
-                                            var y1 = inputPosition.top;
-                                            var x2 = outputPosition.left;
-                                            var y2 = outputPosition.top;
+                    //                         var x1 = inputPosition.left;
+                    //                         var y1 = inputPosition.top;
+                    //                         var x2 = outputPosition.left;
+                    //                         var y2 = outputPosition.top;
 
-                                            var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
-                                                2));
-                                            var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+                    //                         var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
+                    //                             2));
+                    //                         var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 
-                                            var lineId = elementOutput + '-to-' + elementInput;
-                                            var line = $('#' + lineId);
+                    //                         var lineId = elementOutput + '-to-' + elementInput;
+                    //                         var line = $('#' + lineId);
 
-                                            line.css({
-                                                'width': distance + 'px',
-                                                'transform': 'rotate(' + angle + 'deg)',
-                                                'top': y1 + 'px',
-                                                'left': x1 + 'px'
-                                            });
-                                            elementInput = null;
-                                            elementOutput = null;
-                                        }
-                                    }
-                                }
-                                var elementOutput = currentElement.attr('id');
-                                var elementInput = final_array[index + 1];
-                                if (elementOutput && elementInput) {
-                                    if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
-                                        0) {
-                                        var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
-                                        var attachElementOutput = $('#' + elementOutput).find(
-                                            '.attach-elements-out');
-                                        if (attachElementInput.length && attachElementOutput.length) {
-                                            var inputPosition = attachElementInput.offset();
-                                            var outputPosition = attachElementOutput.offset();
+                    //                         line.css({
+                    //                             'width': distance + 'px',
+                    //                             'transform': 'rotate(' + angle + 'deg)',
+                    //                             'top': y1 + 'px',
+                    //                             'left': x1 + 'px'
+                    //                         });
+                    //                         elementInput = null;
+                    //                         elementOutput = null;
+                    //                     }
+                    //                 }
+                    //             }
+                    //             var elementOutput = currentElement.attr('id');
+                    //             var elementInput = final_array[index + 1];
+                    //             if (elementOutput && elementInput) {
+                    //                 if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
+                    //                     0) {
+                    //                     var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
+                    //                     var attachElementOutput = $('#' + elementOutput).find(
+                    //                         '.attach-elements-out');
+                    //                     if (attachElementInput.length && attachElementOutput.length) {
+                    //                         var inputPosition = attachElementInput.offset();
+                    //                         var outputPosition = attachElementOutput.offset();
 
-                                            var x1 = inputPosition.left;
-                                            var y1 = inputPosition.top;
-                                            var x2 = outputPosition.left;
-                                            var y2 = outputPosition.top;
+                    //                         var x1 = inputPosition.left;
+                    //                         var y1 = inputPosition.top;
+                    //                         var x2 = outputPosition.left;
+                    //                         var y2 = outputPosition.top;
 
-                                            var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
-                                                2));
-                                            var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+                    //                         var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
+                    //                             2));
+                    //                         var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 
-                                            var lineId = elementOutput + '-to-' + elementInput;
-                                            var line = $('#' + lineId);
+                    //                         var lineId = elementOutput + '-to-' + elementInput;
+                    //                         var line = $('#' + lineId);
 
-                                            line.css({
-                                                'width': distance + 'px',
-                                                'transform': 'rotate(' + angle + 'deg)',
-                                                'top': y1 + 'px',
-                                                'left': x1 + 'px'
-                                            });
-                                            elementInput = null;
-                                            elementOutput = null;
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                        $(document).on('mouseup', function() {
-                            $(document).off('mousemove');
-                        });
-                    }
+                    //                         line.css({
+                    //                             'width': distance + 'px',
+                    //                             'transform': 'rotate(' + angle + 'deg)',
+                    //                             'top': y1 + 'px',
+                    //                             'left': x1 + 'px'
+                    //                         });
+                    //                         elementInput = null;
+                    //                         elementOutput = null;
+                    //                     }
+                    //                 }
+                    //             }
+                    //         }
+                    //     });
+                    //     $(document).on('mouseup', function() {
+                    //         $(document).off('mousemove');
+                    //     });
+                    // }
                 });
             </script>
         @elseif (Str::contains(request()->url(), 'createcompaign'))
             <script>
                 $(document).ready(function() {
+                    var details = {};
                     $('.compaign_tab').on('click', function(e) {
                         e.preventDefault();
                         $('.compaign_tab').removeClass('active');
@@ -740,6 +757,14 @@
                         var id = $(this).data('bs-target');
                         $('.compaign_pane').removeClass('active');
                         $('#' + id).addClass('active');
+                        $('#' + id).find('#campaign_name').val(details['campaign_name'] || '');
+                        $('#' + id).find('#connections').val(details['connections'] || '');
+                    });
+                    $('#campaign_name').on('change', function(e) {
+                        details['campaign_name'] = $(this).val();
+                    });
+                    $('#connections').on('change', function(e) {
+                        details['connections'] = $(this).val();
                     });
                     $('.nxt_btn').on('click', function(e) {
                         e.preventDefault();
@@ -782,11 +807,6 @@
             <script>
                 $(document).ready(function() {
                     var linkedin_settings = [];
-                    $('.setting_btn').each(function() {
-                        $(this).on('click', function() {
-                            $(this).siblings('.setting_list').toggle();
-                        });
-                    });
                     $('.next_tab').on('click', function(e) {
                         $(this).closest('.comp_tabs').find('.nav-tabs .nav-link.active').next().click();
                         linkedin_settings['discover_premium_linked_accounts_only'] = $(

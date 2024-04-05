@@ -1,5 +1,16 @@
 @extends('partials/dashboard_header')
 @section('content')
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>{{ session('success') }}</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @php
+            session()->forget('success');
+        @endphp
+    @endif
     <section class="main_dashboard blacklist  compaign_sec">
         <div class="container_fluid">
             <div class="row">

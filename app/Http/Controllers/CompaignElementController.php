@@ -35,9 +35,13 @@ class CompaignElementController extends Controller
         if ($user_id) {
             $compaign = new Campaign();
             $compaign->compaign_name = $linkedin_setting['campaign_name'];
+            unset($linkedin_setting['campaign_name']);
             $compaign->compaign_type = $linkedin_setting['campaign_type'];
+            unset($linkedin_setting['campaign_type']);
             $compaign->compaign_url = $linkedin_setting['campaign_url'];
+            unset($linkedin_setting['campaign_url']);
             $compaign->compaign_connection = $linkedin_setting['connections'];
+            unset($linkedin_setting['connections']);
             $compaign->user_id = $user_id;
             $compaign->seat_id = 1;
             $compaign->description = 'This compaign is the test compaign';
@@ -101,7 +105,8 @@ class CompaignElementController extends Controller
                     }
                 }
             }
-            return response()->json(['success' => true, 'properties' => 'Changes succesfully updated']);
+            $request->session()->flash('success', 'Campaign succesfully saved!');
+            return response()->json(['success' => true]);
         } else {
             return response()->json(['success' => false, 'properties' => 'User login first!']);
         }
