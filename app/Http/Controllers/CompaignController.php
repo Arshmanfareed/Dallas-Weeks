@@ -26,10 +26,16 @@ class CompaignController extends Controller
         ];
         return view('compaigncreate', $data);
     }
-    function compaigninfo()
+    function compaigninfo(Request $request)
     {
+        $all = $request->except('_token');
+        $campaign_details = [];
+        foreach ($all as $key => $value) {
+            $campaign_details[$key] = $value;
+        }
         $data = [
-            'title' => 'Create Compaign Info'
+            'title' => 'Create Compaign Info',
+            'campaign_details' => $campaign_details,
         ];
         return view('createcompaigninfo', $data);
     }

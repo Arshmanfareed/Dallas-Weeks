@@ -34,7 +34,10 @@ class CompaignElementController extends Controller
         $user_id = Auth::user()->id;
         if ($user_id) {
             $compaign = new Campaign();
-            $compaign->compaign_name = 'My Compaign';
+            $compaign->compaign_name = $linkedin_setting['campaign_name'];
+            $compaign->compaign_type = $linkedin_setting['campaign_type'];
+            $compaign->compaign_url = $linkedin_setting['campaign_url'];
+            $compaign->compaign_connection = $linkedin_setting['connections'];
             $compaign->user_id = $user_id;
             $compaign->seat_id = 1;
             $compaign->description = 'This compaign is the test compaign';

@@ -64,7 +64,7 @@ Route::get('/auth/linkedin/callback', function () {
 Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']);
 Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']);
 Route::get('/compaign/createcompaign', [CompaignController::class, 'compaigncreate']);
-Route::get('/compaign/compaigninfo', [CompaignController::class, 'compaigninfo']);
+Route::post('/compaign/compaigninfo', [CompaignController::class, 'compaigninfo'])->name('compaigninfo');
 Route::post('/compaign/createcompaignfromscratch', [CompaignController::class, 'fromscratch'])->name('createcompaignfromscratch');
 Route::get('/compaign/getcompaignelementbyslug/{slug}', [CompaignElementController::class, 'compaignElement'])->name('getcompaignelementbyslug');
 Route::post('/compaign/createCompaign', [CompaignElementController::class, 'createCompaign'])->name('createCompaign');

@@ -6,6 +6,9 @@
                 <div class="col-lg-1">
                     @include('partials/dashboard_sidebar_menu')
                 </div>
+                @php
+                    $campaign_details_json = json_encode($campaign_details);
+                @endphp
                 <div class="col-lg-11 col-sm-12">
                     <div class="row crt_cmp_r">
                         <div class="col-12">
@@ -254,4 +257,7 @@
             </div>
         </div>
     </div>
+    <script>
+        var campaign_details = {!! $campaign_details_json !!};
+    </script>
 @endsection
