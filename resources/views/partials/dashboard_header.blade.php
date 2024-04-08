@@ -305,7 +305,6 @@
                         $(this).parent().remove();
                     }
 
-                    // Not Checked
                     function removePath(e) {
                         var element = $(this).parent().attr('id');
                         var index = element.indexOf('-to-');
@@ -315,30 +314,29 @@
                         prev_element.css({
                             'background-color': '#000',
                         });
-                        var current_element_id = element.substring(index + 4);
-                        var current_element = $('#' + current_element_id);
-                        current_element = current_element.find('.attach-elements-in');
-                        current_element.css({
+                        var next_element_id = element.substring(index + 4);
+                        var next_element = $('#' + next_element_id);
+                        next_element = next_element.find('.attach-elements-in');
+                        next_element.css({
                             'background-color': '#000',
                         });
-                        index = final_array.indexOf(prev_element_id);
-                        if (index + 1 < final_array.length && final_array.includes(prev_element_id) && final_array[index +
-                                1] === current_element_id) {
-                            index = final_array.indexOf(prev_element_id);
-                            let final_index = final_array.indexOf(current_element_id);
-                            if (index + 1 == final_index) {
-                                var duplicate_array = [
-                                    ...final_array.slice(0, index + 1),
-                                    '',
-                                    ...final_array.slice(index)
-                                ];
-                                final_array = duplicate_array;
+                        var prev_index = final_array.indexOf(prev_element_id);
+                        var next_index = final_array.indexOf(next_element_id);
+                        if (prev_index >= 0 && next_index < final_array.length) {
+                            if (final_array.includes(prev_element_id) && final_array.includes(next_element_id)) {
+                                prev_index = final_array.indexOf(prev_element_id);
+                                if (!final_array[prev_index - 1]) {
+                                    final_array.splice(prev_index, 1);
+                                }
+                                next_index = final_array.indexOf(next_element_id);
+                                if (!final_array[next_index + 1]) {
+                                    final_array.splice(next_index, 1);
+                                }
                                 $(this).parent().remove();
                             }
                         }
                     }
 
-                    // Not Checked
                     function attachElementInput(e) {
                         if (elementOutput && elementOutput.attr('id') != $(this).parent().attr('id')) {
                             var attachDiv = $(this);
@@ -357,7 +355,7 @@
                                     var arr_len = final_array.length - 1;
                                     if (index == arr_len) {
                                         final_array.push(elementInput.attr('id'));
-                                    } else if (final_array[index + 1] == '') {
+                                    } else if (final_array[index + 1] === '') {
                                         final_array[index + 1] = elementInput.attr('id')
                                     } else {
                                         var duplicate_array = [
@@ -410,7 +408,6 @@
                                 });
                                 var attachElementInput = $(elementInput).find('.attach-elements-in');
                                 var attachElementOutput = $(elementOutput).find('.attach-elements-out');
-
                                 if (attachElementInput && attachElementOutput) {
                                     var inputPosition = attachElementInput.offset();
                                     var outputPosition = attachElementOutput.offset();
@@ -440,7 +437,6 @@
                         }
                     }
 
-                    // Not Checked
                     function move() {
                         $('.element').on('mousedown', function(e) {
                             e.preventDefault();
@@ -524,7 +520,47 @@
                                 var max_x = element_x + $('.drop-pad').outerWidth();
                                 var element_y = element.top;
                                 var max_y = element_y + $('.drop-pad').outerHeight();
-                                if (x > element_x && y > element_y && x < max_x && y < max_y) {
+                                if (x < element_x && y > element_y && y < max_y) {
+                                    chooseElement.css({
+                                        left: element_x,
+                                        top: y
+                                    });
+                                } else if (y < element_y && x > element_x && x < max_x) {
+                                    chooseElement.css({
+                                        left: x,
+                                        top: element_y
+                                    });
+                                } else if (x > max_x && y > element_y && y < max_y) {
+                                    chooseElement.css({
+                                        left: max_x - chooseElement.width() - 30,
+                                        top: y
+                                    });
+                                } else if (y > max_y && x > element_x && x < max_x) {
+                                    chooseElement.css({
+                                        left: x,
+                                        top: max_y - chooseElement.height() - 30
+                                    });
+                                } else if (x < element_x && y < element_y) {
+                                    chooseElement.css({
+                                        left: element_x,
+                                        top: element_y
+                                    });
+                                } else if (x > max_x && y > max_y) {
+                                    chooseElement.css({
+                                        left: max_x - chooseElement.width() - 30,
+                                        top: max_y - chooseElement.height() - 30
+                                    });
+                                } else if (x < element_x && y > max_y) {
+                                    chooseElement.css({
+                                        left: element_x,
+                                        top: max_y - chooseElement.height() - 30
+                                    });
+                                } else if (x > max_x && y < element_y) {
+                                    chooseElement.css({
+                                        left: max_x - chooseElement.width() - 30,
+                                        top: element_y
+                                    });
+                                } else if (x > element_x && x < max_x && y > element_y && y < max_y) {
                                     chooseElement.css({
                                         left: x,
                                         top: y
@@ -562,10 +598,56 @@
                                 var max_x = element_x + $('.drop-pad').outerWidth();
                                 var element_y = element.top;
                                 var max_y = element_y + $('.drop-pad').outerHeight();
-                                if (x > element_x && y > element_y && x < max_x && y < max_y) {
+                                if (x < element_x && y > element_y && y < max_y) {
                                     chooseElement.css({
-                                        left: x - 230,
-                                        top: y - 350,
+                                        left: element_x - 260,
+                                        top: y - 380,
+                                        'border': 'none',
+                                    });
+                                } else if (y < element_y && x > element_x && x < max_x) {
+                                    chooseElement.css({
+                                        left: x - 260,
+                                        top: element_y - 380,
+                                        'border': 'none',
+                                    });
+                                } else if (x > max_x && y > element_y && y < max_y) {
+                                    chooseElement.css({
+                                        left: max_x - chooseElement.width() - 260,
+                                        top: y - 380,
+                                        'border': 'none',
+                                    });
+                                } else if (y > max_y && x > element_x && x < max_x) {
+                                    chooseElement.css({
+                                        left: x - 260,
+                                        top: max_y - chooseElement.height() - 380,
+                                        'border': 'none',
+                                    });
+                                } else if (x < element_x && y < element_y) {
+                                    chooseElement.css({
+                                        left: element_x - 260,
+                                        top: element_y - 380,
+                                        'border': 'none',
+                                    });
+                                } else if (x > max_x && y > max_y) {
+                                    chooseElement.css({
+                                        left: max_x - chooseElement.width() - 260,
+                                        top: max_y - chooseElement.height() - 380
+                                    });
+                                } else if (x < element_x && y > max_y) {
+                                    chooseElement.css({
+                                        left: element_x - 260,
+                                        top: max_y - chooseElement.height() - 380
+                                    });
+                                } else if (x > max_x && y < element_y) {
+                                    chooseElement.css({
+                                        left: max_x - chooseElement.width() - 260,
+                                        top: element_y - 380,
+                                        'border': 'none',
+                                    });
+                                } else if (x > element_x && x < max_x && y > element_y && y < max_y) {
+                                    chooseElement.css({
+                                        left: x - 260,
+                                        top: y - 380,
                                         'border': 'none',
                                     });
                                 } else {
@@ -764,6 +846,8 @@
             <script>
                 $(document).ready(function() {
                     var details = {};
+                    $('.tab-pane.active').find('.connections').on('change', changeConnections);
+                    $('.tab-pane.active').find('.campaign_name').on('change', changeName);
                     $('.compaign_tab').on('click', function(e) {
                         e.preventDefault();
                         $('.compaign_tab').removeClass('active');
@@ -771,15 +855,23 @@
                         var id = $(this).data('bs-target');
                         $('.compaign_pane').removeClass('active');
                         $('#' + id).addClass('active');
-                        $('#' + id).find('#campaign_name').val(details['campaign_name'] || '');
-                        $('#' + id).find('#connections').val(details['connections'] || '');
+                        if (details['campaign_name']) {
+                            $('#' + id).find('#campaign_name').val(details['campaign_name']);
+                        }
+                        if (details['connections']) {
+                            $('#' + id).find('#connections').val(details['connections']);
+                        }
+                        $('.tab-pane.active').find('.connections').on('change', changeConnections);
+                        $('.tab-pane.active').find('.campaign_name').on('change', changeName);
                     });
-                    $('#campaign_name').on('change', function(e) {
-                        details['campaign_name'] = $(this).val();
-                    });
-                    $('#connections').on('change', function(e) {
+
+                    function changeConnections(e) {
                         details['connections'] = $(this).val();
-                    });
+                    }
+
+                    function changeName(e) {
+                        details['campaign_name'] = $(this).val();
+                    }
                     $('.nxt_btn').on('click', function(e) {
                         e.preventDefault();
                         var csrfToken = $('meta[name="csrf-token"]').attr('content');
