@@ -72,7 +72,7 @@
                     $('#save-changes').on('click', function() {
                         if (final_array[0] != 'step-1' || final_array[1] == '') {
                             alert('Select Step 1 First');
-                        } else if (input_array.length >= final_array.length) {
+                        } else {
                             $.ajax({
                                 url: "{{ route('createCompaign') }}",
                                 type: 'POST',
@@ -97,8 +97,6 @@
                                     console.error(xhr.responseText);
                                 }
                             });
-                        } else {
-                            alert('Compaign path is broken');
                         }
                     });
 
@@ -175,12 +173,20 @@
                                                 name_html += '<input type="' + property['data_type'] +
                                                     '" placeholder="Enter your ' + lowercaseWords(
                                                         property['property_name']) +
-                                                    '" class="property_input">';
+                                                    '" class="property_input"';
+                                                if (property['optional'] == '1') {
+                                                    name_html += 'required';
+                                                }
+                                                name_html += '>';
                                                 name_html += '</div>';
                                                 arr[property['property_name']] = '';
                                             } else {
                                                 name_html += '<input type="' + property['data_type'] +
-                                                    '" placeholder="0" class="property_input">';
+                                                    '" placeholder="0" class="property_input"';
+                                                if (property['optional'] == '1') {
+                                                    name_html += 'required';
+                                                }
+                                                name_html += '>';
                                                 name_html += '</div>';
                                                 arr[property['property_name']] = 0;
                                             }
@@ -227,10 +233,18 @@
                                         if (response.properties == 'text') {
                                             name_html += '<input type="' + response.properties +
                                                 '" value="' + value +
-                                                '" class="property_input">';
+                                                '" class="property_input"';
+                                            if (response.optional == '1') {
+                                                name_html += 'required';
+                                            }
+                                            name_html += '>';
                                         } else {
                                             name_html += '<input type="' + response.properties +
-                                                '" value="' + value + '" class="property_input">';
+                                                '" value="' + value + '" class="property_input"';
+                                            if (response.optional == '1') {
+                                                name_html += 'required';
+                                            }
+                                            name_html += '>';
                                         }
                                         name_html += '</div>';
                                     } else {
@@ -427,7 +441,7 @@
                                         'width': distance + 'px',
                                         'transform': 'rotate(' + angle + 'deg)',
                                         'top': y1 - 320 + 'px',
-                                        'left': x1 - 205 + 'px'
+                                        'left': x1 - 207 + 'px'
                                     });
                                     elementInput = null;
                                     elementOutput = null;
@@ -520,7 +534,27 @@
                                 var max_x = element_x + $('.drop-pad').outerWidth();
                                 var element_y = element.top;
                                 var max_y = element_y + $('.drop-pad').outerHeight();
-                                if (x < element_x && y > element_y && y < max_y) {
+                                if (x < element_x && y < element_y) {
+                                    chooseElement.css({
+                                        left: element_x,
+                                        top: element_y
+                                    });
+                                } else if (x < element_x && y > max_y) {
+                                    chooseElement.css({
+                                        left: element_x,
+                                        top: max_y - chooseElement.height() - 30
+                                    });
+                                } else if (x > max_x && y < element_y) {
+                                    chooseElement.css({
+                                        left: max_x - chooseElement.width() - 30,
+                                        top: element_y
+                                    });
+                                } else if (x > max_x && y > max_y) {
+                                    chooseElement.css({
+                                        left: max_x - chooseElement.width() - 30,
+                                        top: max_y - chooseElement.height() - 30
+                                    });
+                                } else if (x < element_x && y > element_y && y < max_y) {
                                     chooseElement.css({
                                         left: element_x,
                                         top: y
@@ -539,26 +573,6 @@
                                     chooseElement.css({
                                         left: x,
                                         top: max_y - chooseElement.height() - 30
-                                    });
-                                } else if (x < element_x && y < element_y) {
-                                    chooseElement.css({
-                                        left: element_x,
-                                        top: element_y
-                                    });
-                                } else if (x > max_x && y > max_y) {
-                                    chooseElement.css({
-                                        left: max_x - chooseElement.width() - 30,
-                                        top: max_y - chooseElement.height() - 30
-                                    });
-                                } else if (x < element_x && y > max_y) {
-                                    chooseElement.css({
-                                        left: element_x,
-                                        top: max_y - chooseElement.height() - 30
-                                    });
-                                } else if (x > max_x && y < element_y) {
-                                    chooseElement.css({
-                                        left: max_x - chooseElement.width() - 30,
-                                        top: element_y
                                     });
                                 } else if (x > element_x && x < max_x && y > element_y && y < max_y) {
                                     chooseElement.css({
@@ -598,56 +612,58 @@
                                 var max_x = element_x + $('.drop-pad').outerWidth();
                                 var element_y = element.top;
                                 var max_y = element_y + $('.drop-pad').outerHeight();
-                                if (x < element_x && y > element_y && y < max_y) {
+                                if (x < element_x && y < element_y) {
                                     chooseElement.css({
-                                        left: element_x - 260,
-                                        top: y - 380,
+                                        left: 0,
+                                        top: 0,
                                         'border': 'none',
                                     });
-                                } else if (y < element_y && x > element_x && x < max_x) {
+                                } else if (x < element_x && y > max_y) {
                                     chooseElement.css({
-                                        left: x - 260,
-                                        top: element_y - 380,
+                                        left: 0,
+                                        top: max_y - chooseElement.height() - 360,
                                         'border': 'none',
                                     });
-                                } else if (x > max_x && y > element_y && y < max_y) {
+                                } else if (x > max_x && y < element_y) {
                                     chooseElement.css({
-                                        left: max_x - chooseElement.width() - 260,
-                                        top: y - 380,
-                                        'border': 'none',
-                                    });
-                                } else if (y > max_y && x > element_x && x < max_x) {
-                                    chooseElement.css({
-                                        left: x - 260,
-                                        top: max_y - chooseElement.height() - 380,
-                                        'border': 'none',
-                                    });
-                                } else if (x < element_x && y < element_y) {
-                                    chooseElement.css({
-                                        left: element_x - 260,
-                                        top: element_y - 380,
+                                        left: max_x - chooseElement.width() - 230,
+                                        top: element_y - 350,
                                         'border': 'none',
                                     });
                                 } else if (x > max_x && y > max_y) {
                                     chooseElement.css({
-                                        left: max_x - chooseElement.width() - 260,
-                                        top: max_y - chooseElement.height() - 380
+                                        left: max_x - chooseElement.width() - 230,
+                                        top: max_y - chooseElement.height() - 350,
+                                        'border': 'none',
                                     });
-                                } else if (x < element_x && y > max_y) {
+                                } else if (x < element_x && y > element_y && y < max_y) {
                                     chooseElement.css({
-                                        left: element_x - 260,
-                                        top: max_y - chooseElement.height() - 380
+                                        left: element_x - 230,
+                                        top: y - 350,
+                                        'border': 'none',
                                     });
-                                } else if (x > max_x && y < element_y) {
+                                } else if (y < element_y && x > element_x && x < max_x) {
                                     chooseElement.css({
-                                        left: max_x - chooseElement.width() - 260,
-                                        top: element_y - 380,
+                                        left: x - 230,
+                                        top: element_y - 350,
+                                        'border': 'none',
+                                    });
+                                } else if (x > max_x && y > element_y && y < max_y) {
+                                    chooseElement.css({
+                                        left: max_x - chooseElement.width() - 230,
+                                        top: y - 350,
+                                        'border': 'none',
+                                    });
+                                } else if (y > max_y && x > element_x && x < max_x) {
+                                    chooseElement.css({
+                                        left: x - 230,
+                                        top: max_y - chooseElement.height() - 350,
                                         'border': 'none',
                                     });
                                 } else if (x > element_x && x < max_x && y > element_y && y < max_y) {
                                     chooseElement.css({
-                                        left: x - 260,
-                                        top: y - 380,
+                                        left: x - 230,
+                                        top: y - 350,
                                         'border': 'none',
                                     });
                                 } else {
@@ -669,7 +685,6 @@
                         });
                     }
 
-                    // Not Checked
                     function startDragging(e) {
                         e.preventDefault();
                         var currentElement = $(this);
@@ -682,156 +697,125 @@
                             var max_x = element_x + $('.drop-pad').outerWidth();
                             var element_y = element.top;
                             var max_y = element_y + $('.drop-pad').outerHeight();
-                            if (x > element_x && y > element_y && x < max_x && y < max_y) {
+
+                            if (x < element_x && y < element_y) {
+                                currentElement.css({
+                                    left: 0,
+                                    top: 0,
+                                    'border': 'none',
+                                });
+                            } else if (x < element_x && y > max_y) {
+                                currentElement.css({
+                                    left: 0,
+                                    top: max_y - currentElement.height() - 330,
+                                    'border': 'none',
+                                });
+                            } else if (x > max_x && y < element_y) {
+                                currentElement.css({
+                                    left: max_x - currentElement.width() - 240,
+                                    top: element_y - 330,
+                                    'border': 'none',
+                                });
+                            } else if (x > max_x && y > max_y) {
+                                currentElement.css({
+                                    left: max_x - currentElement.width() - 240,
+                                    top: max_y - currentElement.height() - 330,
+                                    'border': 'none',
+                                });
+                            } else if (x < element_x && y > element_y && y < max_y) {
+                                currentElement.css({
+                                    left: element_x - 230,
+                                    top: y - 350,
+                                    'border': 'none',
+                                });
+                            } else if (y < element_y && x > element_x && x < max_x) {
+                                currentElement.css({
+                                    left: x - 230,
+                                    top: element_y - 350,
+                                    'border': 'none',
+                                });
+                            } else if (x > max_x && y > element_y && y < max_y) {
+                                currentElement.css({
+                                    left: max_x - currentElement.width() - 230,
+                                    top: y - 350,
+                                    'border': 'none',
+                                });
+                            } else if (y > max_y && x > element_x && x < max_x) {
+                                currentElement.css({
+                                    left: x - 230,
+                                    top: max_y - currentElement.height() - 350,
+                                    'border': 'none',
+                                });
+                            } else if (x > element_x && x < max_x && y > element_y && y < max_y) {
                                 currentElement.css({
                                     left: x - 230,
                                     top: y - 350
                                 });
-                                var index = final_array.indexOf(currentElement.attr('id'));
-                                var elementOutput = final_array[index - 1];
-                                var elementInput = currentElement.attr('id');
-                                if (elementOutput && elementInput) {
-                                    if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
-                                        0) {
-                                        var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
-                                        var attachElementOutput = $('#' + elementOutput).find(
-                                            '.attach-elements-out');
-                                        if (attachElementInput.length && attachElementOutput.length) {
-                                            var inputPosition = attachElementInput.offset();
-                                            var outputPosition = attachElementOutput.offset();
-
-                                            var x1 = inputPosition.left;
-                                            var y1 = inputPosition.top;
-                                            var x2 = outputPosition.left;
-                                            var y2 = outputPosition.top;
-
-                                            var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
-                                                2));
-                                            var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
-
-                                            var lineId = elementOutput + '-to-' + elementInput;
-                                            var line = $('#' + lineId);
-
-                                            line.css({
-                                                'width': distance + 'px',
-                                                'transform': 'rotate(' + angle + 'deg)',
-                                                'top': y1 - 320 + 'px',
-                                                'left': x1 - 205 + 'px'
-                                            });
-                                            elementInput = null;
-                                            elementOutput = null;
-                                        }
-                                    }
-                                }
-                                var elementOutput = currentElement.attr('id');
-                                var elementInput = final_array[index + 1];
-                                if (elementOutput && elementInput) {
-                                    if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
-                                        0) {
-                                        var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
-                                        var attachElementOutput = $('#' + elementOutput).find(
-                                            '.attach-elements-out');
-                                        if (attachElementInput.length && attachElementOutput.length) {
-                                            var inputPosition = attachElementInput.offset();
-                                            var outputPosition = attachElementOutput.offset();
-
-                                            var x1 = inputPosition.left;
-                                            var y1 = inputPosition.top;
-                                            var x2 = outputPosition.left;
-                                            var y2 = outputPosition.top;
-
-                                            var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
-                                                2));
-                                            var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
-
-                                            var lineId = elementOutput + '-to-' + elementInput;
-                                            var line = $('#' + lineId);
-
-                                            line.css({
-                                                'width': distance + 'px',
-                                                'transform': 'rotate(' + angle + 'deg)',
-                                                'top': y1 - 320 + 'px',
-                                                'left': x1 - 205 + 'px'
-                                            });
-                                            elementInput = null;
-                                            elementOutput = null;
-                                        }
-                                    }
-                                }
                             } else {
                                 currentElement.css({
                                     left: 0,
                                     top: 30
                                 });
-                                var index = final_array.indexOf(currentElement.attr('id'));
-                                var elementOutput = final_array[index - 1];
-                                var elementInput = currentElement.attr('id');
-                                if (elementOutput && elementInput) {
-                                    if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
-                                        0) {
-                                        var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
-                                        var attachElementOutput = $('#' + elementOutput).find(
-                                            '.attach-elements-out');
-                                        if (attachElementInput.length && attachElementOutput.length) {
-                                            var inputPosition = attachElementInput.offset();
-                                            var outputPosition = attachElementOutput.offset();
+                            }
 
-                                            var x1 = inputPosition.left;
-                                            var y1 = inputPosition.top;
-                                            var x2 = outputPosition.left;
-                                            var y2 = outputPosition.top;
+                            var index = final_array.indexOf(currentElement.attr('id'));
+                            var prev_element_id = final_array[index - 1];
+                            var current_element_id = final_array[index];
+                            var next_element_id = final_array[index + 1];
 
-                                            var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
-                                                2));
-                                            var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+                            if (prev_element_id && current_element_id) {
+                                if ($('.drop-pad').find('#' + prev_element_id + '-to-' + current_element_id)
+                                    .length > 0) {
+                                    var attachElementInput = $('#' + current_element_id).find(
+                                        '.attach-elements-in');
+                                    var attachElementOutput = $('#' + prev_element_id).find('.attach-elements-out');
+                                    if (attachElementInput.length && attachElementOutput.length) {
+                                        var inputPosition = attachElementInput.offset();
+                                        var outputPosition = attachElementOutput.offset();
 
-                                            var lineId = elementOutput + '-to-' + elementInput;
-                                            var line = $('#' + lineId);
+                                        var x1 = inputPosition.left;
+                                        var y1 = inputPosition.top;
+                                        var x2 = outputPosition.left;
+                                        var y2 = outputPosition.top;
 
-                                            line.css({
-                                                'width': distance + 'px',
-                                                'transform': 'rotate(' + angle + 'deg)',
-                                                'top': y1 + 'px',
-                                                'left': x1 + 'px'
-                                            });
-                                            elementInput = null;
-                                            elementOutput = null;
-                                        }
+                                        var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+                                        var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+                                        var lineId = prev_element_id + '-to-' + current_element_id;
+                                        var line = $('#' + lineId);
+                                        line.css({
+                                            'width': distance + 'px',
+                                            'transform': 'rotate(' + angle + 'deg)',
+                                            'top': y1 - 320 + 'px',
+                                            'left': x1 - 207 + 'px'
+                                        });
                                     }
                                 }
-                                var elementOutput = currentElement.attr('id');
-                                var elementInput = final_array[index + 1];
-                                if (elementOutput && elementInput) {
-                                    if ($('.drop-pad').find('#' + elementOutput + '-to-' + elementInput).length >
-                                        0) {
-                                        var attachElementInput = $('#' + elementInput).find('.attach-elements-in');
-                                        var attachElementOutput = $('#' + elementOutput).find(
-                                            '.attach-elements-out');
-                                        if (attachElementInput.length && attachElementOutput.length) {
-                                            var inputPosition = attachElementInput.offset();
-                                            var outputPosition = attachElementOutput.offset();
+                            }
+                            if (current_element_id && next_element_id) {
+                                if ($('.drop-pad').find('#' + current_element_id + '-to-' + next_element_id)
+                                    .length > 0) {
+                                    var attachElementInput = $('#' + next_element_id).find('.attach-elements-in');
+                                    var attachElementOutput = $('#' + current_element_id).find(
+                                        '.attach-elements-out');
+                                    if (attachElementInput.length && attachElementOutput.length) {
+                                        var inputPosition = attachElementInput.offset();
+                                        var outputPosition = attachElementOutput.offset();
 
-                                            var x1 = inputPosition.left;
-                                            var y1 = inputPosition.top;
-                                            var x2 = outputPosition.left;
-                                            var y2 = outputPosition.top;
+                                        var x1 = inputPosition.left;
+                                        var y1 = inputPosition.top;
+                                        var x2 = outputPosition.left;
+                                        var y2 = outputPosition.top;
 
-                                            var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1),
-                                                2));
-                                            var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
-
-                                            var lineId = elementOutput + '-to-' + elementInput;
-                                            var line = $('#' + lineId);
-
-                                            line.css({
-                                                'width': distance + 'px',
-                                                'transform': 'rotate(' + angle + 'deg)',
-                                                'top': y1 + 'px',
-                                                'left': x1 + 'px'
-                                            });
-                                            elementInput = null;
-                                            elementOutput = null;
-                                        }
+                                        var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+                                        var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+                                        var lineId = current_element_id + '-to-' + next_element_id;
+                                        var line = $('#' + lineId);
+                                        line.css({
+                                            'width': distance + 'px',
+                                            'transform': 'rotate(' + angle + 'deg)',
+                                            'top': y1 - 320 + 'px',
+                                            'left': x1 - 207 + 'px'
+                                        });
                                     }
                                 }
                             }

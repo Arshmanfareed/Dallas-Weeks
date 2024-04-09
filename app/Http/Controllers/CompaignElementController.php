@@ -84,8 +84,8 @@ class CompaignElementController extends Controller
                             $element_item->user_id = $user_id;
                             $element_item->seat_id = 1;
                             $element_item->save();
-                            $property_item = $final_data[$final_array[$count]];
-                            if ($property_item) {
+                            if (isset($final_data[$final_array[$count]])) {
+                                $property_item = $final_data[$final_array[$count]];
                                 foreach ($property_item as $key => $value) {
                                     $element_property = new UpdatedCompaignProperties();
                                     $property = ElementProperties::where('property_name', $key)->first();
@@ -98,8 +98,6 @@ class CompaignElementController extends Controller
                                         return response()->json(['success' => false, 'properties' => 'Properties not found!']);
                                     }
                                 }
-                            } else {
-                                return response()->json(['success' => false, 'properties' => 'Element not found!']);
                             }
                         }
                     }

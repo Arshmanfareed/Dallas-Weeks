@@ -15,7 +15,7 @@ class PropertiesController extends Controller
         if ($element) {
             $property = ElementProperties::where('element_id', $element->id)->where('property_name', $name)->first();
             if ($property) {
-                return response()->json(['success' => true, 'properties' => $property->data_type]);
+                return response()->json(['success' => true, 'properties' => $property->data_type, 'optional' => $property->optional]);
             } else {
                 return response()->json(['success' => false, 'properties' => 'Properties not found!']);
             }
