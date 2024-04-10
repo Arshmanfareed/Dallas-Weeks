@@ -1,6 +1,6 @@
 @extends('partials/dashboard_header')
 @section('content')
-    <section class="main_dashboard blacklist  compaign_sec">
+    <section class="main_dashboard blacklist  campaign_sec">
         <div class="container_fluid">
             <div class="row">
                 <div class="col-lg-1">
@@ -49,20 +49,20 @@
                                     @php
                                         $linkedin_setting_json = json_encode($linkedin_setting);
                                     @endphp
-                                    @if (!empty($compaigns))
-                                        @foreach ($compaigns as $compaign)
+                                    @if (!empty($campaigns))
+                                        @foreach ($campaigns as $campaign)
                                             <li>
-                                                <div class="element" id="{{ $compaign['element_slug'] }}" data-filter-item
-                                                    data-filter-name="{{ $compaign['element_slug'] }}">
+                                                <div class="element" id="{{ $campaign['element_slug'] }}" data-filter-item
+                                                    data-filter-name="{{ $campaign['element_slug'] }}">
                                                     <div class="attach-elements attach-elements-in"></div>
                                                     <div class="cancel-icon">
                                                         <i class="fa-solid fa-x"></i>
                                                     </div>
                                                     <div class="list-icon">
-                                                        {!! $compaign['element_icon'] !!}
+                                                        {!! $campaign['element_icon'] !!}
                                                     </div>
                                                     <div class="item_details">
-                                                        <p class="item_name">{{ $compaign['element_name'] }}</p>
+                                                        <p class="item_name">{{ $campaign['element_name'] }}</p>
                                                         <p class="item_desc">Lorem ipsum dolor sit amet consectetur
                                                             adipisicing elit.</p>
                                                     </div>

@@ -1,6 +1,6 @@
 @extends('partials/dashboard_header')
 @section('content')
-<section class="main_dashboard blacklist  compaign_sec lead_sec">
+<section class="main_dashboard blacklist  campaign_sec lead_sec">
     <div class="container_fluid">
         <div class="row">
             <div class="col-lg-1">
@@ -13,7 +13,7 @@
                             <h3>Leads</h3>
                             <div class="filt_opt d-flex">
                                 <div class="filt_opt">
-                                    <select name="compaign" id="compaign">
+                                    <select name="campaign" id="campaign">
                                         <option value="01">All Campaigns</option>
                                         <option value="02">All Campaigns</option>
                                         <option value="03">3All Campaigns0</option>

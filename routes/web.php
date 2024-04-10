@@ -10,8 +10,8 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\RolespermissionController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\MaindashboardController;
-use App\http\Controllers\CompaignController;
-use App\Http\Controllers\CompaignElementController;
+use App\http\Controllers\CampaignController;
+use App\Http\Controllers\CampaignElementController;
 use App\http\Controllers\StripePaymentController;
 use App\http\Controllers\LeadsController;
 use App\http\Controllers\ReportController;
@@ -63,12 +63,12 @@ Route::get('/auth/linkedin/callback', function () {
 
 Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']);
 Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']);
-Route::get('/compaign/createcompaign', [CompaignController::class, 'compaigncreate']);
-Route::post('/compaign/compaigninfo', [CompaignController::class, 'compaigninfo'])->name('compaigninfo');
-Route::post('/compaign/createcompaignfromscratch', [CompaignController::class, 'fromscratch'])->name('createcompaignfromscratch');
-Route::get('/compaign/getcompaignelementbyslug/{slug}', [CompaignElementController::class, 'compaignElement'])->name('getcompaignelementbyslug');
-Route::post('/compaign/createCompaign', [CompaignElementController::class, 'createCompaign'])->name('createCompaign');
-Route::get('/compaign/getPropertyDatatype/{name}/{element_slug}', [PropertiesController::class, 'getPropertyDatatype'])->name('getPropertyDatatype');
+Route::get('/campaign/createcampaign', [CampaignController::class, 'campaigncreate']);
+Route::post('/campaign/campaigninfo', [CampaignController::class, 'campaigninfo'])->name('campaigninfo');
+Route::post('/campaign/createcampaignfromscratch', [CampaignController::class, 'fromscratch'])->name('createcampaignfromscratch');
+Route::get('/campaign/getcampaignelementbyslug/{slug}', [CampaignElementController::class, 'campaignElement'])->name('getcampaignelementbyslug');
+Route::post('/campaign/createCampaign', [CampaignElementController::class, 'createCampaign'])->name('createCampaign');
+Route::get('/campaign/getPropertyDatatype/{name}/{element_slug}', [PropertiesController::class, 'getPropertyDatatype'])->name('getPropertyDatatype');
 Route::get('/leads', [LeadsController::class, 'leads']);
 Route::get('/report', [ReportController::class, 'report']);
 Route::get('/message', [MessageController::class, 'message']);
@@ -91,7 +91,7 @@ Route::get('/invoice', [InvoiceController::class, 'invoice']);
 // Route::get('/rolesandpermission',[RolespermissionController::class,'rolespermission']);
 Route::get('/setting', [SettingController::class, 'setting']);
 Route::get('/accdashboard', [MaindashboardController::class, 'maindasboard']);
-Route::get('/compaign', [CompaignController::class, 'compaign'])->name('compaigns');
+Route::get('/campaign', [CampaignController::class, 'campaign'])->name('campaigns');
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
 
 Route::controller(StripePaymentController::class)->group(function () {

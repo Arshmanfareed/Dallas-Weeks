@@ -11,7 +11,7 @@
             session()->forget('success');
         @endphp
     @endif
-    <section class="main_dashboard blacklist  compaign_sec">
+    <section class="main_dashboard blacklist  campaign_sec">
         <div class="container_fluid">
             <div class="row">
                 <div class="col-lg-1">
@@ -25,7 +25,7 @@
                                 <div class="filt_opt d-flex">
 
                                     <div class="add_btn ">
-                                        <a href="/compaign/createcompaign" class=""><i
+                                        <a href="/campaign/createcampaign" class=""><i
                                                 class="fa-solid fa-plus"></i></a>Add Campaign
                                     </div>
                                 </div>
@@ -105,7 +105,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="border_box ">
-                                <div class="compaign_list">
+                                <div class="campaign_list">
                                     <table class="data_table w-100">
                                         <thead>
                                             <tr>
@@ -120,21 +120,21 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($compaigns as $compaign)
+                                            @foreach ($campaigns as $campaign)
                                                 <tr>
                                                     <td>
                                                         <div class="switch_box">
-                                                            @if ($compaign->is_active == 1)
+                                                            @if ($campaign->is_active == 1)
                                                                 <input type="checkbox" class="switch"
-                                                                    id="switch{{ $compaign->id }}" checked>
+                                                                    id="switch{{ $campaign->id }}" checked>
                                                             @else
                                                                 <input type="checkbox" class="switch"
-                                                                    id="switch{{ $compaign->id }}">
+                                                                    id="switch{{ $campaign->id }}">
                                                             @endif
-                                                            <label for="switch{{ $compaign->id }}">Toggle</label>
+                                                            <label for="switch{{ $campaign->id }}">Toggle</label>
                                                         </div>
                                                     </td>
-                                                    <td>{{ $compaign->compaign_name }}</td>
+                                                    <td>{{ $campaign->campaign_name }}</td>
                                                     <td>44</td>
                                                     <td>105</td>
                                                     <td class="stats">

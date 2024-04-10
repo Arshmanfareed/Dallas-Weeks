@@ -6,14 +6,14 @@ use App\Models\Campaign;
 use App\Models\CampaignElement;
 use App\Models\ElementProperties;
 use App\Models\LinkedinSetting;
-use App\Models\UpdatedCompaignElements;
-use App\Models\UpdatedCompaignProperties;
+use App\Models\UpdatedCampaignElements;
+use App\Models\UpdatedCampaignProperties;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class CompaignElementController extends Controller
+class CampaignElementController extends Controller
 {
-    function compaignElement($slug)
+    function campaignElement($slug)
     {
         $elements = CampaignElement::where('element_slug', $slug)->first();
         if ($elements) {
@@ -25,7 +25,7 @@ class CompaignElementController extends Controller
             }
         }
     }
-    function createCompaign(Request $request)
+    function createCampaign(Request $request)
     {
         $all_request = $request->all();
         $final_array = $all_request['final_array'];
@@ -33,26 +33,26 @@ class CompaignElementController extends Controller
         $linkedin_setting = $all_request['linkedin_setting'];
         $user_id = Auth::user()->id;
         if ($user_id) {
-            $compaign = new Campaign();
-            $compaign->compaign_name = $linkedin_setting['campaign_name'];
+            $campaign = new Campaign();
+            $campaign->campaign_name = $linkedin_setting['campaign_name'];
             unset($linkedin_setting['campaign_name']);
-            $compaign->compaign_type = $linkedin_setting['campaign_type'];
+            $campaign->campaign_type = $linkedin_setting['campaign_type'];
             unset($linkedin_setting['campaign_type']);
-            $compaign->compaign_url = $linkedin_setting['campaign_url'];
+            $campaign->campaign_url = $linkedin_setting['campaign_url'];
             unset($linkedin_setting['campaign_url']);
-            $compaign->compaign_connection = $linkedin_setting['connections'];
+            $campaign->campaign_connection = $linkedin_setting['connections'];
             unset($linkedin_setting['connections']);
-            $compaign->user_id = $user_id;
-            $compaign->seat_id = 1;
-            $compaign->description = 'This compaign is the test compaign';
-            $compaign->modified_date = date('Y-m-d');
-            $compaign->start_date = date('Y-m-d');
-            $compaign->end_date = date('Y-m-d');
-            $compaign->save();
-            if ($compaign->id) {
+            $campaign->user_id = $user_id;
+            $campaign->seat_id = 1;
+            $campaign->description = 'This campaign is the test campaign';
+            $campaign->modified_date = date('Y-m-d');
+            $campaign->start_date = date('Y-m-d');
+            $campaign->end_date = date('Y-m-d');
+            $campaign->save();
+            if ($campaign->id) {
                 foreach ($linkedin_setting as $key => $value) {
                     $setting = new LinkedinSetting();
-                    $setting->compaign_id = $compaign->id;
+                    $setting->campaign_id = $campaign->id;
                     $setting->setting_slug = $key;
                     $setting->user_id = $user_id;
                     $setting->seat_id = 1;
@@ -77,17 +77,17 @@ class CompaignElementController extends Controller
                     if ($value != 'step' || $value != 'step-1') {
                         $element = CampaignElement::where('element_slug', $value)->first();
                         if ($element) {
-                            $element_item = new UpdatedCompaignElements();
+                            $element_item = new UpdatedCampaignElements();
                             $element_item->element_id = $element->id;
-                            $element_item->compaign_id = $compaign->id;
-                            $element_item->compaign_element_id = ++$count;
+                            $element_item->campaign_id = $campaign->id;
+                            $element_item->campaign_element_id = ++$count;
                             $element_item->user_id = $user_id;
                             $element_item->seat_id = 1;
                             $element_item->save();
                             if (isset($final_data[$final_array[$count]])) {
                                 $property_item = $final_data[$final_array[$count]];
                                 foreach ($property_item as $key => $value) {
-                                    $element_property = new UpdatedCompaignProperties();
+                                    $element_property = new UpdatedCampaignProperties();
                                     $property = ElementProperties::where('property_name', $key)->first();
                                     if ($property) {
                                         $element_property->element_id = $element_item->id;

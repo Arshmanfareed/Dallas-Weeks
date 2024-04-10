@@ -14,7 +14,7 @@ class AddNewColumnToLinkedinSetting extends Migration
     public function up()
     {
         Schema::table('linkedin_setting', function (Blueprint $table) {
-            $table->string('compaign_id');
+            $table->string('campaign_id');
         });
     }
 
@@ -26,7 +26,7 @@ class AddNewColumnToLinkedinSetting extends Migration
     public function down()
     {
         Schema::table('linkedin_setting', function (Blueprint $table) {
-            $table->dropColumn('compaign_id');
+            $table->dropColumn('campaign_id');
         });
     }
 }

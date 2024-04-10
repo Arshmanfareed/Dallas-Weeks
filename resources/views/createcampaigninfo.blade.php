@@ -1,6 +1,6 @@
 @extends('partials/dashboard_header')
 @section('content')
-    <section class="main_dashboard blacklist  compaign_sec">
+    <section class="main_dashboard blacklist  campaign_sec">
         <div class="container_fluid">
             <div class="row">
                 <div class="col-lg-1">
@@ -113,7 +113,7 @@
                                             </div>
                                         </div>
                                         <div class="cmp_btns d-flex justify-content-center align-items-center">
-                                            <a href="{{ url('/compaign/createcompaign') }}" class="btn"><i
+                                            <a href="{{ url('/campaign/createcampaign') }}" class="btn"><i
                                                     class="fa-solid fa-arrow-left"></i>Back</a>
                                             <a href="javascript:;" class="btn next_tab nxt_btn">Next<i
                                                     class="fa-solid fa-arrow-right"></i></a>

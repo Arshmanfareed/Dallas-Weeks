@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCompaignElementsTable extends Migration
+class CreateCampaignElementsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateCompaignElementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('compaign_elements', function (Blueprint $table) {
+        Schema::create('campaign_elements', function (Blueprint $table) {
             $table->id();
             $table->string('element_id');
-            $table->string('compaign_id');
-            $table->string('compaign_element_id');
+            $table->string('campaign_id');
+            $table->string('campaign_element_id');
             $table->string('user_id');
             $table->string('seat_id');
             $table->timestamps();
@@ -31,6 +31,6 @@ class CreateCompaignElementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('compaign_elements');
+        Schema::dropIfExists('campaign_elements');
     }
 }

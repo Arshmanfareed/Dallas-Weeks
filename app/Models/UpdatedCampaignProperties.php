@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UpdatedCompaignElements extends Model
+class UpdatedCampaignProperties extends Model
 {
     use HasFactory;
-    protected $table = 'compaign_elements';
+    protected $table = 'campaign_properties';
     protected $guarded = [];
 }

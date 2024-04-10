@@ -63,27 +63,27 @@
                 </div>
                 <div class="col-lg-7 col-sm-12">
                     <div class="border_box">
-                        <div class="compaign_box">
+                        <div class="campaign_box">
                             <div class="d-flex justify-content-between">
                                 <span>Campaign stats</span><a href="javascript:;"><img src="assets/img/settings.svg"
                                         alt=""></a>
                             </div>
-                            <div class="compaign_data">
-                                @foreach ($compaigns as $compaign)
-                                    <ul class="compaign_list">
-                                        <li>{{ $compaign->compaign_name }}</li>
+                            <div class="campaign_data">
+                                @foreach ($campaigns as $campaign)
+                                    <ul class="campaign_list">
+                                        <li>{{ $campaign->campaign_name }}</li>
                                         <li>44</li>
-                                        <li><a href="javascript:;" class="compaign_stat">48%</a></li>
-                                        <li><a href="javascript:;" class="compaign_stat down">23%</a></li>
+                                        <li><a href="javascript:;" class="campaign_stat">48%</a></li>
+                                        <li><a href="javascript:;" class="campaign_stat down">23%</a></li>
                                         <li>
                                             <div class="switch_box">
-                                                @if ($compaign->is_active == 1)
-                                                    <input type="checkbox" class="switch" id="switch{{ $compaign->id }}"
+                                                @if ($campaign->is_active == 1)
+                                                    <input type="checkbox" class="switch" id="switch{{ $campaign->id }}"
                                                         checked />
                                                 @else
-                                                    <input type="checkbox" class="switch" id="switch{{ $compaign->id }}" />
+                                                    <input type="checkbox" class="switch" id="switch{{ $campaign->id }}" />
                                                 @endif
-                                                <label for="switch{{ $compaign->id }}">Toggle</label>
+                                                <label for="switch{{ $campaign->id }}">Toggle</label>
                                             </div>
                                         </li>
                                     </ul>
@@ -93,12 +93,12 @@
 
                     </div>
                     <div class="border_box">
-                        <div class="compaign_box">
+                        <div class="campaign_box">
                             <div class="d-flex justify-content-between">
                                 <span>Messages</span><a href="javascript:;"><img src="assets/img/settings.svg"
                                         alt=""></a>
                             </div>
-                            <div class="compaign_data">
+                            <div class="campaign_data">
                                 @for ($i = 0; $i <= 7; $i++)
                                     <ul class="message_list">
                                         <li> <a href="/message"><img src="assets/img/acc_img{{ $i + 1 }}.png"

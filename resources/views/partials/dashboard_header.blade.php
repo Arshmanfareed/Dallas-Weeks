@@ -37,7 +37,7 @@
                 });
             });
         </script>
-        @if (Str::contains(request()->url(), 'createcompaignfromscratch'))
+        @if (Str::contains(request()->url(), 'createcampaignfromscratch'))
             <script>
                 $(document).ready(function() {
                     var chooseElement = null;
@@ -74,7 +74,7 @@
                             alert('Select Step 1 First');
                         } else {
                             $.ajax({
-                                url: "{{ route('createCompaign') }}",
+                                url: "{{ route('createCampaign') }}",
                                 type: 'POST',
                                 dataType: 'json',
                                 contentType: 'application/json',
@@ -88,7 +88,7 @@
                                 },
                                 success: function(response) {
                                     if (response.success) {
-                                        window.location = "{{ route('compaigns') }}";
+                                        window.location = "{{ route('campaigns') }}";
                                     } else {
                                         toastr.error(response.properties);
                                     }
@@ -156,7 +156,7 @@
                         var name_html = '';
                         if (!final_data[item_id]) {
                             $.ajax({
-                                url: "{{ route('getcompaignelementbyslug', ':slug') }}".replace(':slug', item_slug),
+                                url: "{{ route('getcampaignelementbyslug', ':slug') }}".replace(':slug', item_slug),
                                 type: 'GET',
                                 dataType: 'json',
                                 success: function(response) {
@@ -826,18 +826,18 @@
                     }
                 });
             </script>
-        @elseif (Str::contains(request()->url(), 'createcompaign'))
+        @elseif (Str::contains(request()->url(), 'createcampaign'))
             <script>
                 $(document).ready(function() {
                     var details = {};
                     $('.tab-pane.active').find('.connections').on('change', changeConnections);
                     $('.tab-pane.active').find('.campaign_name').on('change', changeName);
-                    $('.compaign_tab').on('click', function(e) {
+                    $('.campaign_tab').on('click', function(e) {
                         e.preventDefault();
-                        $('.compaign_tab').removeClass('active');
+                        $('.campaign_tab').removeClass('active');
                         $(this).addClass('active');
                         var id = $(this).data('bs-target');
-                        $('.compaign_pane').removeClass('active');
+                        $('.campaign_pane').removeClass('active');
                         $('#' + id).addClass('active');
                         if (details['campaign_name']) {
                             $('#' + id).find('#campaign_name').val(details['campaign_name']);
@@ -861,7 +861,7 @@
                         var csrfToken = $('meta[name="csrf-token"]').attr('content');
                         var form = document.createElement('form');
                         form.setAttribute('method', 'POST');
-                        form.setAttribute('action', "{{ route('compaigninfo') }}");
+                        form.setAttribute('action', "{{ route('campaigninfo') }}");
                         var csrfInput = document.createElement('input');
                         csrfInput.setAttribute('type', 'hidden');
                         csrfInput.setAttribute('name', '_token');
@@ -893,7 +893,7 @@
                     });
                 });
             </script>
-        @elseif (Str::contains(request()->url(), 'compaigninfo'))
+        @elseif (Str::contains(request()->url(), 'campaigninfo'))
             <script>
                 $(document).ready(function() {
                     var linkedin_settings = [];
@@ -931,7 +931,7 @@
                         var csrfToken = $('meta[name="csrf-token"]').attr('content');
                         var form = document.createElement('form');
                         form.setAttribute('method', 'POST');
-                        form.setAttribute('action', "{{ route('createcompaignfromscratch') }}");
+                        form.setAttribute('action', "{{ route('createcampaignfromscratch') }}");
                         var csrfInput = document.createElement('input');
                         csrfInput.setAttribute('type', 'hidden');
                         csrfInput.setAttribute('name', '_token');

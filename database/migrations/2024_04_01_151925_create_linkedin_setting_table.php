@@ -19,7 +19,7 @@ class CreateLinkedinSettingTable extends Migration
             $table->string('setting_slug');
             $table->string('user_id');
             $table->string('seat_id');
-            $table->string('compaign_id');
+            $table->string('campaign_id');
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

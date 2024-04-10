@@ -1,6 +1,6 @@
 @extends('partials/dashboard_header')
 @section('content')
-    <section class="main_dashboard blacklist  compaign_sec">
+    <section class="main_dashboard blacklist  campaign_sec">
         <div class="container_fluid">
             <div class="row">
                 <div class="col-lg-1">
@@ -80,42 +80,42 @@
                                     <ul class="nav nav-tabs list-unstyled d-flex justify-content-between align-items-center"
                                         role="tablist">
                                         <li class="nav-item border_box">
-                                            <a class="nav-link compaign_tab active" data-toggle="tab" href="javascript:;"
+                                            <a class="nav-link campaign_tab active" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-1" role="tab">
                                                 <img src="/assets/img/linkedin.svg" alt="">
                                                 <title>Linkedin search result</title>
                                             </a>
                                         </li>
                                         <li class="nav-item border_box">
-                                            <a class="nav-link compaign_tab" data-toggle="tab" href="javascript:;"
+                                            <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-2" role="tab">
                                                 <img src="/assets/img/navigation.svg" alt="">
                                                 <title>Sales navigator search result</title>
                                             </a>
                                         </li>
                                         <li class="nav-item border_box">
-                                            <a class="nav-link compaign_tab" data-toggle="tab" href="javascript:;"
+                                            <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-3" role="tab">
                                                 <img src="/assets/img/recruiter.svg" alt="">
                                                 <title>Recruiter search result</title>
                                             </a>
                                         </li>
                                         <li class="nav-item border_box">
-                                            <a class="nav-link compaign_tab" data-toggle="tab" href="javascript:;"
+                                            <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-4" role="tab">
                                                 <img src="/assets/img/import.svg" alt="">
                                                 <title>Import</title>
                                             </a>
                                         </li>
                                         <li class="nav-item border_box">
-                                            <a class="nav-link compaign_tab" data-toggle="tab" href="javascript:;"
+                                            <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-5" role="tab">
                                                 <img src="/assets/img/engagement.svg" alt="">
                                                 <title>Post engagement</title>
                                             </a>
                                         </li>
                                         <li class="nav-item border_box">
-                                            <a class="nav-link compaign_tab" data-toggle="tab" href="javascript:;"
+                                            <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-6" role="tab">
                                                 <img src="/assets/img/list.svg" alt="">
                                                 <title>Leads list</title>
@@ -123,7 +123,7 @@
                                         </li>
                                     </ul><!-- Tab panes -->
                                     <div class="tab-content">
-                                        <div class="tab-pane compaign_pane active" id="tabs-1" role="tabpanel">
+                                        <div class="tab-pane campaign_pane active" id="tabs-1" role="tabpanel">
                                             <form id="campaign_form" class="campaign_form">
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
@@ -151,7 +151,7 @@
                                                 </div>
                                             </form>
                                         </div>
-                                        <div class="tab-pane compaign_pane" id="tabs-2" role="tabpanel">
+                                        <div class="tab-pane campaign_pane" id="tabs-2" role="tabpanel">
                                             <form id="campaign_form" class="campaign_form">
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
@@ -179,7 +179,7 @@
                                                 </div>
                                             </form>
                                         </div>
-                                        <div class="tab-pane compaign_pane" id="tabs-3" role="tabpanel">
+                                        <div class="tab-pane campaign_pane" id="tabs-3" role="tabpanel">
                                             <form id="campaign_form" class="campaign_form">
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
@@ -207,7 +207,7 @@
                                                 </div>
                                             </form>
                                         </div>
-                                        <div class="tab-pane compaign_pane" id="tabs-4" role="tabpanel">
+                                        <div class="tab-pane campaign_pane" id="tabs-4" role="tabpanel">
                                             <form id="campaign_form" class="campaign_form">
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
@@ -250,7 +250,7 @@
                                                 </div>
                                             </form>
                                         </div>
-                                        <div class="tab-pane compaign_pane" id="tabs-5" role="tabpanel">
+                                        <div class="tab-pane campaign_pane" id="tabs-5" role="tabpanel">
                                             <form id="campaign_form" class="campaign_form">
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
@@ -278,7 +278,7 @@
                                                 </div>
                                             </form>
                                         </div>
-                                        <div class="tab-pane compaign_pane" id="tabs-6" role="tabpanel">
+                                        <div class="tab-pane campaign_pane" id="tabs-6" role="tabpanel">
                                             <form id="campaign_form" class="campaign_form">
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"

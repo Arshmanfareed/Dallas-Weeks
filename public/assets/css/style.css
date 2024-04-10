@@ -1383,7 +1383,7 @@ td {
     width: 50%;
 }
 
-.compaign_data .compaign_list {
+.campaign_data .campaign_list {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -1396,7 +1396,7 @@ td {
     padding: 24px 30px;
     margin-bottom: 18px;
 }
-.compaign_data .compaign_list li:first-child {
+.campaign_data .campaign_list li:first-child {
     width: 50%;
     line-height: 2;
 }
@@ -1409,34 +1409,34 @@ td {
     margin: 0;
 }
 
-.compaign_data .compaign_list li:first-child {
+.campaign_data .campaign_list li:first-child {
     font-size: 18px;
 }
-.compaign_data .compaign_list li {
+.campaign_data .campaign_list li {
     font-size: 16px !important;
     display: flex;
     line-height: 1.5;
     -webkit-align-items: center;
 }
-.compaign_data .compaign_list li a {
+.campaign_data .campaign_list li a {
     font-size: 16px;
     padding: 11px 22px;
     border-radius: 100px;
     background: lch(65.82 33.17 171.76 / 0.2);
     color: #53ae94;
 }
-.compaign_box span {
+.campaign_box span {
     font-size: 22px;
     display: block;
     margin-bottom: 35px;
 }
-.compaign_box {
+.campaign_box {
     padding: 20px;
     height: 560px;
     overflow-y: scroll;
 }
 
-.compaign_data .message_list {
+.campaign_data .message_list {
     display: flex;
     width: 100%;
     justify-content: space-between;
@@ -1449,30 +1449,30 @@ td {
     border-radius: 50px;
     margin-bottom: 18px;
 }
-.compaign_data .message_list img {
+.campaign_data .message_list img {
     width: 54px;
     height: 54px;
     margin-right: 13px;
 }
-.compaign_data .message_list li {
+.campaign_data .message_list li {
     font-size: 18px;
     line-height: 1;
 }
-.compaign_data .message_list li p {
+.campaign_data .message_list li p {
     margin: 0;
     font-size: 16px;
     opacity: 0.3;
 }
-.compaign_data .message_list li i {
+.campaign_data .message_list li i {
     font-size: 31px;
     padding-right: 20px;
     color: #2177b4;
 }
-.compaign_box .d-flex {
+.campaign_box .d-flex {
     -webkit-align-items: center;
     margin-bottom: 30px;
 }
-.compaign_box .d-flex a {
+.campaign_box .d-flex a {
     height: 44px;
     width: 44px;
     display: block;
@@ -1482,7 +1482,7 @@ td {
     align-content: center;
     justify-content: center;
 }
-.compaign_box .d-flex a img {
+.campaign_box .d-flex a img {
     object-fit: scale-down;
     width: 16px;
     height: 16px;
@@ -1566,10 +1566,10 @@ header nav.navbar .right_nav ul .acc span {
 .sidebar_menu .logout a:hover {
     background: #111317;
 }
-.compaign_sec .dashboard_box strong {
+.campaign_sec .dashboard_box strong {
     font-size: 86px;
 }
-.compaign_sec .filtr_desc .filter {
+.campaign_sec .filtr_desc .filter {
     width: 40%;
 }
 .data_table tbody tr td {
@@ -1844,7 +1844,7 @@ select {
     transition: 0.5s;
     color: #000 !important;
 }
-.compaign_sec .container_fluid {
+.campaign_sec .container_fluid {
     padding: 0 18px;
 }
 .comp_tabs .nav-tabs {
@@ -4094,26 +4094,26 @@ header nav.navbar a.nav-link.active {
     .border_box .invite_date_box {
         padding: 27px 16px;
     }
-    .compaign_box {
+    .campaign_box {
         padding: 20px 0;
     }
-    .compaign_data .message_list img {
+    .campaign_data .message_list img {
         width: 44px;
         height: 44px;
     }
-    .compaign_data .message_list li p {
+    .campaign_data .message_list li p {
         width: 85%;
         margin: 0 auto;
         line-height: 1.5;
     }
-    .compaign_box .d-flex {
+    .campaign_box .d-flex {
         margin-bottom: 15px;
     }
-    .compaign_box span {
+    .campaign_box span {
         font-size: 18px;
         margin-bottom: 15px;
     }
-    .compaign_data .compaign_list {
+    .campaign_data .campaign_list {
         padding: 20px 20px;
     }
     .messages_box .border_box {
@@ -4206,10 +4206,10 @@ header nav.navbar a.nav-link.active {
     .blacklist .filtr_desc .d-flex {
         margin-bottom: 20px;
     }
-    .compaign_sec .filtr_desc .filter {
+    .campaign_sec .filtr_desc .filter {
         width: 50%;
     }
-    .compaign_sec .dashboard_box strong {
+    .campaign_sec .dashboard_box strong {
         font-size: 70px;
     }
     .data_table td .per {
@@ -4379,7 +4379,7 @@ header nav.navbar a.nav-link.active {
     color: #e86868 !important;
     opacity: 1 !important;
 }
-.compaign_data .message_list a {
+.campaign_data .message_list a {
     color: #fff;
 }
 div#chartContainer {
@@ -4401,7 +4401,7 @@ div#chartContainer {
 .contact_sec .conversation_box {
     padding-right: 20px;
 }
-.compaign_list {
+.campaign_list {
     /* height: 500px;
     overflow-y: scroll;
     padding-right: 10px; */
@@ -4495,14 +4495,14 @@ body.light-mode span {
 body.light-mode .dashboard_box strong {
     color: #1c1e22;
 }
-body.light-mode .compaign_box .d-flex a {
+body.light-mode .campaign_box .d-flex a {
     background: #e3c935 !important;
 }
-body.light-mode .compaign_data .compaign_list {
+body.light-mode .campaign_data .campaign_list {
     background: #f2f2f2;
     border: 1px solid #dedede;
 }
-.light-mode .compaign_data .compaign_list li {
+.light-mode .campaign_data .campaign_list li {
     color: #1c1e22;
 }
 .light-mode .switch_box label {
@@ -4541,13 +4541,13 @@ body.light-mode .border_box .invite_date_box .date li.invites {
 body.light-mode .border_box .invite_date_box .date li {
     color: #1c1e22;
 }
-body.light-mode .compaign_data .message_list {
+body.light-mode .campaign_data .message_list {
     background: #f2f2f2;
 }
-body.light-mode .compaign_data .message_list a {
+body.light-mode .campaign_data .message_list a {
     color: #1c1e22;
 }
-body.light-mode .compaign_data .message_list li p {
+body.light-mode .campaign_data .message_list li p {
     color: oklab(0.23 0 -0.01 / 0.7);
     opacity: 1;
 }

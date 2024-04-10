@@ -6,7 +6,7 @@
         <li><a href="/accdashboard"
                 class="nav_link {{ Str::contains(request()->url(), 'accdashboard') ? 'active' : '' }}"><img
                     src="{{ asset('assets/img/home.svg') }}" alt=""></a></li>
-        <li><a href="/compaign" class="nav_link {{ Str::contains(request()->url(), 'compaign') ? 'active' : '' }}"><img
+        <li><a href="/campaign" class="nav_link {{ Str::contains(request()->url(), 'campaign') ? 'active' : '' }}"><img
                     src="{{ asset('assets/img/speaker.svg') }}" alt=""></a></li>
         <li><a href="#" class="nav_link"><img src="{{ asset('assets/img/leads.svg') }}" alt=""></a></li>
         <li><a href="#" class="nav_link"><img src="{{ asset('assets/img/stat.svg') }}" alt=""></a></li>

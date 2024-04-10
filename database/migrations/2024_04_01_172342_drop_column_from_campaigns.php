@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCompaignPropertiesTable extends Migration
+class DropColumnFromCampaigns extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateCompaignPropertiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('compaign_properties', function (Blueprint $table) {
-            $table->id();
-            $table->string('element_id');
-            $table->string('property_id');
-            $table->string('value');
-            $table->timestamps();
+        Schema::table('campaigns', function (Blueprint $table) {
+            $table->dropColumn('linkedin_setting');
         });
     }
 
@@ -29,6 +25,8 @@ class CreateCompaignPropertiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('compaign_properties');
+        Schema::table('campaigns', function (Blueprint $table) {
+            $table->string('linkedin_setting');
+        });
     }
 }

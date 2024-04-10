@@ -7,26 +7,26 @@ use App\Models\CampaignElement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class CompaignController extends Controller
+class CampaignController extends Controller
 {
-    function compaign()
+    function campaign()
     {
         $user_id = Auth::user()->id;
-        $compaigns = Campaign::where('user_id', $user_id)->get();
+        $campaigns = Campaign::where('user_id', $user_id)->get();
         $data = [
-            'title' => 'Compaign',
-            'compaigns' => $compaigns,
+            'title' => 'Campaign',
+            'campaigns' => $campaigns,
         ];
-        return view('compaign', $data);
+        return view('campaign', $data);
     }
-    function compaigncreate()
+    function campaigncreate()
     {
         $data = [
-            'title' => 'Create Compaign'
+            'title' => 'Create Campaign'
         ];
-        return view('compaigncreate', $data);
+        return view('campaigncreate', $data);
     }
-    function compaigninfo(Request $request)
+    function campaigninfo(Request $request)
     {
         $all = $request->except('_token');
         $campaign_details = [];
@@ -34,10 +34,10 @@ class CompaignController extends Controller
             $campaign_details[$key] = $value;
         }
         $data = [
-            'title' => 'Create Compaign Info',
+            'title' => 'Create Campaign Info',
             'campaign_details' => $campaign_details,
         ];
-        return view('createcompaigninfo', $data);
+        return view('createcampaigninfo', $data);
     }
     function fromscratch(Request $request)
     {
@@ -47,10 +47,10 @@ class CompaignController extends Controller
             $linkedin_setting[$key] = $value;
         }
         $data = [
-            'compaigns' => CampaignElement::all(),
-            'title' => 'Create Compaign Info',
+            'campaigns' => CampaignElement::all(),
+            'title' => 'Create Campaign Info',
             'linkedin_setting' => $linkedin_setting,
         ];
-        return view('createcompaignfromscratch', $data);
+        return view('createcampaignfromscratch', $data);
     }
 }
