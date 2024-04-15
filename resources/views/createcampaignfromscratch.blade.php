@@ -1,5 +1,8 @@
 @extends('partials/dashboard_header')
 @section('content')
+    @php
+        $linkedin_setting_json = json_encode($linkedin_setting);
+    @endphp
     <section class="main_dashboard blacklist  campaign_sec">
         <div class="container_fluid">
             <div class="row">
@@ -25,7 +28,7 @@
                         <div class="col-lg-9 drop-pad">
                             <h5>Sequence Steps</h5>
                             <div class="task-list">
-                                <div class="step-1" id="step-1">
+                                <div class="step-1 element_item" id="step-1">
                                     <div class="list-icon">
                                         <i class="fa-solid fa-certificate"></i>
                                     </div>
@@ -34,7 +37,7 @@
                                         <p class="item_desc">Lorem ipsum dolor sit amet consectetur
                                             adipisicing elit.</p>
                                     </div>
-                                    <div class="attach-elements-out"></div>
+                                    <div class="element_change_output attach-elements-out condition_true"></div>
                                 </div>
                             </div>
                         </div>
@@ -45,36 +48,83 @@
                                 <button class="element-btn" id="properties-btn" data-tab="properties">Properties</button>
                             </div>
                             <div class="element-list element-content active" id="element-list">
-                                <ul class='drop-list'>
-                                    @php
-                                        $linkedin_setting_json = json_encode($linkedin_setting);
-                                    @endphp
+                                <div class="element_div">
                                     @if (!empty($campaigns))
-                                        @foreach ($campaigns as $campaign)
-                                            <li>
-                                                <div class="element" id="{{ $campaign['element_slug'] }}" data-filter-item
-                                                    data-filter-name="{{ $campaign['element_slug'] }}">
-                                                    <div class="attach-elements attach-elements-in"></div>
-                                                    <div class="cancel-icon">
-                                                        <i class="fa-solid fa-x"></i>
-                                                    </div>
-                                                    <div class="list-icon">
-                                                        {!! $campaign['element_icon'] !!}
-                                                    </div>
-                                                    <div class="item_details">
-                                                        <p class="item_name">{{ $campaign['element_name'] }}</p>
-                                                        <p class="item_desc">Lorem ipsum dolor sit amet consectetur
-                                                            adipisicing elit.</p>
-                                                    </div>
-                                                    <div class="menu-icon">
-                                                        <i class="fa-solid fa-bars"></i>
-                                                    </div>
-                                                    <div class="attach-elements attach-elements-out"></div>
-                                                </div>
-                                            </li>
-                                        @endforeach
+                                        <div class="action_elements">
+                                            <p>Actions</p>
+                                            <ul class='drop-list'>
+                                                @foreach ($campaigns as $campaign)
+                                                    <li>
+                                                        <div class="element element_item"
+                                                            id="{{ $campaign['element_slug'] }}" data-filter-item
+                                                            data-filter-name="{{ $campaign['element_slug'] }}">
+                                                            <div
+                                                                class="element_change_input attach-elements attach-elements-in">
+                                                            </div>
+                                                            <div class="cancel-icon">
+                                                                <i class="fa-solid fa-x"></i>
+                                                            </div>
+                                                            <div class="list-icon">
+                                                                {!! $campaign['element_icon'] !!}
+                                                            </div>
+                                                            <div class="item_details">
+                                                                <p class="item_name">{{ $campaign['element_name'] }}</p>
+                                                                <p class="item_desc">Lorem ipsum dolor sit amet consectetur
+                                                                    adipisicing elit.</p>
+                                                            </div>
+                                                            <div class="menu-icon">
+                                                                <i class="fa-solid fa-bars"></i>
+                                                            </div>
+                                                            <div
+                                                                class="element_change_output attach-elements attach-elements-out condition_true">
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
                                     @endif
-                                </ul>
+                                    @if (!empty($conditional_campaigns))
+                                        <div class="conditional_elements">
+                                            <p>Conditions</p>
+                                            <ul class='drop-list'>
+                                                @foreach ($conditional_campaigns as $campaign)
+                                                    <li>
+                                                        <div class="element element_item"
+                                                            id="{{ $campaign['element_slug'] }}" data-filter-item
+                                                            data-filter-name="{{ $campaign['element_slug'] }}">
+                                                            <div
+                                                                class="element_change_input conditional-elements conditional-elements-in">
+                                                            </div>
+                                                            <div class="cancel-icon">
+                                                                <i class="fa-solid fa-x"></i>
+                                                            </div>
+                                                            <div class="list-icon">
+                                                                {!! $campaign['element_icon'] !!}
+                                                            </div>
+                                                            <div class="item_details">
+                                                                <p class="item_name">{{ $campaign['element_name'] }}</p>
+                                                                <p class="item_desc">Lorem ipsum dolor sit amet consectetur
+                                                                    adipisicing elit.</p>
+                                                            </div>
+                                                            <div class="menu-icon">
+                                                                <i class="fa-solid fa-bars"></i>
+                                                            </div>
+                                                            <div class="conditional-elements conditional-elements-out">
+                                                                <div class="element_change_output condition_true">
+                                                                    <i class="fa-solid fa-check"></i>
+                                                                </div>
+                                                                <div class="element_change_output condition_false">
+                                                                    <i class="fa-solid fa-xmark"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+                                </div>
                                 <div class="save-btns">
                                     <button id="save-changes">Save Changes</button>
                                 </div>
@@ -86,7 +136,4 @@
             </div>
         </div>
     </section>
-    <script>
-        var linkedin_setting = {!! $linkedin_setting_json !!};
-    </script>
 @endsection

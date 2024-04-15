@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Campaign;
 use App\Models\CampaignElement;
+use App\Models\CampaignPath;
 use App\Models\ElementProperties;
 use App\Models\LinkedinSetting;
 use App\Models\UpdatedCampaignElements;
@@ -64,18 +65,11 @@ class CampaignElementController extends Controller
                     $setting->setting_name = ucwords(str_replace('_', ' ', $key));
                     $setting->save();
                 }
-                $elements = [];
-                foreach ($final_array as $value) {
-                    $reverse = strrev($value);
-                    $first_index = strpos($reverse, '_');
-                    $second_index = strlen($value) - $first_index - 1;
-                    $string = substr($value, 0, $second_index);
-                    $elements[] = $string;
-                }
+                $path_array = [];
                 $count = 0;
-                foreach ($elements as $value) {
-                    if ($value != 'step' || $value != 'step-1') {
-                        $element = CampaignElement::where('element_slug', $value)->first();
+                foreach ($final_array as $key => $value) {
+                    if ($key != 'step' || $key != 'step-1') {
+                        $element = CampaignElement::where('element_slug', $this->remove_prefix($key))->first();
                         if ($element) {
                             $element_item = new UpdatedCampaignElements();
                             $element_item->element_id = $element->id;
@@ -84,8 +78,9 @@ class CampaignElementController extends Controller
                             $element_item->user_id = $user_id;
                             $element_item->seat_id = 1;
                             $element_item->save();
-                            if (isset($final_data[$final_array[$count]])) {
-                                $property_item = $final_data[$final_array[$count]];
+                            $path_array[$key] = $element_item->id;
+                            if (isset($final_data[$key])) {
+                                $property_item = $final_data[$key];
                                 foreach ($property_item as $key => $value) {
                                     $element_property = new UpdatedCampaignProperties();
                                     $property = ElementProperties::where('property_name', $key)->first();
@@ -102,11 +97,38 @@ class CampaignElementController extends Controller
                         }
                     }
                 }
+                foreach ($final_array as $key => $value) {
+                    if (isset($path_array[$key])) {
+                        $path = new CampaignPath();
+                        $path->current_element_id = $path_array[$key];
+                        if ($final_array[$key]['0'] == '' && $final_array[$key]['1'] == '') {
+                            continue;
+                        } else if ($final_array[$key]['0'] == '') {
+                            $path->next_true_element_id = $path_array[$value['1']];
+                            $path->next_false_element_id = '';
+                        } else if ($final_array[$key]['1'] == '') {
+                            $path->next_true_element_id = '';
+                            $path->next_false_element_id = $path_array[$value['0']];
+                        } else {
+                            $path->next_true_element_id = $path_array[$value['1']];
+                            $path->next_false_element_id = $path_array[$value['0']];
+                        }
+                        $path->save();
+                    }
+                }
             }
             $request->session()->flash('success', 'Campaign succesfully saved!');
             return response()->json(['success' => true]);
         } else {
             return response()->json(['success' => false, 'properties' => 'User login first!']);
         }
+    }
+    private function remove_prefix($value)
+    {
+        $reverse = strrev($value);
+        $first_index = strpos($reverse, '_');
+        $second_index = strlen($value) - $first_index - 1;
+        $string = substr($value, 0, $second_index);
+        return $string;
     }
 }
