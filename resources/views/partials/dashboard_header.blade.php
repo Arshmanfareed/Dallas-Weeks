@@ -69,14 +69,17 @@
                             choosedElement.addClass('drop-pad-element');
                             choosedElement.removeClass('element');
 
+
                             $(document).on('mousemove', function(e) {
                                 var x = e.pageX;
                                 var y = e.pageY;
                                 var element = $('.drop-pad').offset();
                                 var element_x = element.left;
-                                var max_x = element_x + $('.drop-pad').outerWidth();
+                                var max_x = element_x + $('.drop-pad').outerWidth() - choosedElement
+                                    .width();
                                 var element_y = element.top;
-                                var max_y = element_y + $('.drop-pad').outerHeight();
+                                var max_y = element_y + $('.drop-pad').outerHeight() - choosedElement
+                                    .height();
                                 if (x < element_x && y < element_y) {
                                     choosedElement.css({
                                         left: element_x,
@@ -85,41 +88,66 @@
                                 } else if (x < element_x && y > max_y) {
                                     choosedElement.css({
                                         left: element_x,
-                                        top: max_y - choosedElement.height()
+                                        top: max_y - 20
                                     });
-                                } else if (x > max_x && y < element_y) {
-                                    choosedElement.css({
-                                        left: max_x - choosedElement.width(),
-                                        top: element_y
+                                    var newDropPadHeight = $('.drop-pad').height() + choosedElement
+                                        .height();
+                                    $('.drop-pad').css('height', newDropPadHeight + 'px');
+                                    var choosedElementOffset = choosedElement.offset();
+                                    window.scrollTo({
+                                        top: choosedElementOffset.top,
+                                        left: choosedElementOffset.left
                                     });
-                                } else if (x > max_x && y > max_y) {
-                                    choosedElement.css({
-                                        left: max_x - choosedElement.width(),
-                                        top: max_y - choosedElement.height()
-                                    });
-                                } else if (x < element_x && y > element_y && y < max_y) {
+                                } else if (x < element_x && (y > element_y && y < max_y)) {
                                     choosedElement.css({
                                         left: element_x,
                                         top: y
                                     });
-                                } else if (y < element_y && x > element_x && x < max_x) {
+                                } else if (y < element_y && (x > element_x && x < max_x)) {
                                     choosedElement.css({
                                         left: x,
                                         top: element_y
                                     });
-                                } else if (x > max_x && y > element_y && y < max_y) {
+                                } else if (y > max_y && (x > element_x && x < max_x)) {
                                     choosedElement.css({
-                                        left: max_x - choosedElement.width(),
+                                        left: element_x,
+                                        top: max_y - 20
+                                    });
+                                    var newDropPadHeight = $('.drop-pad').height() + choosedElement
+                                        .height();
+                                    $('.drop-pad').css('height', newDropPadHeight + 'px');
+                                    var choosedElementOffset = choosedElement.offset();
+                                    window.scrollTo({
+                                        top: choosedElementOffset.top,
+                                        left: choosedElementOffset.left
+                                    });
+                                } else if ((x > element_x && x < max_x) && (y > element_y && y <
+                                        max_y)) {
+                                    choosedElement.css({
+                                        left: x,
                                         top: y
                                     });
-                                } else if (y > max_y && x > element_x && x < max_x) {
+                                } else if (x > max_x && y > max_y) {
                                     choosedElement.css({
-                                        left: x,
-                                        top: max_y - choosedElement.height()
+                                        left: element_x - 20,
+                                        top: max_y - 20
                                     });
-                                } else if (x > element_x && x < max_x && y > element_y && y < max_y) {
+                                    var newDropPadHeight = $('.drop-pad').height() + choosedElement
+                                        .height();
+                                    $('.drop-pad').css('height', newDropPadHeight + 'px');
+                                    var choosedElementOffset = choosedElement.offset();
+                                    window.scrollTo({
+                                        top: choosedElementOffset.top,
+                                        left: choosedElementOffset.left
+                                    });
+                                } else if (x > max_x && y < element_y) {
                                     choosedElement.css({
-                                        left: x,
+                                        left: max_x - 20,
+                                        top: element_y
+                                    });
+                                } else if (x > max_x && (y > element_y && y < max_y)) {
+                                    choosedElement.css({
+                                        left: max_x - 20,
                                         top: y
                                     });
                                 } else {
@@ -157,9 +185,10 @@
                                 var y = e.pageY;
                                 var element = $('.drop-pad').offset();
                                 var element_x = element.left;
-                                var max_x = element_x + $('.drop-pad').outerWidth();
+                                var max_x = element_x + $('.drop-pad').outerWidth() - choosedElement.width();
                                 var element_y = element.top;
-                                var max_y = element_y + $('.drop-pad').outerHeight();
+                                var max_y = element_y + $('.drop-pad').outerHeight() - choosedElement
+                                    .height();
                                 if (x < element_x && y < element_y) {
                                     choosedElement.css({
                                         left: 0,
@@ -169,55 +198,55 @@
                                 } else if (x < element_x && y > max_y) {
                                     choosedElement.css({
                                         left: 0,
-                                        top: max_y - choosedElement.height() - 360,
-                                        'border': 'none',
-                                    });
-                                } else if (x > max_x && y < element_y) {
-                                    choosedElement.css({
-                                        left: max_x - choosedElement.width() - 230,
-                                        top: element_y - 350,
+                                        top: max_y - 310,
                                         'border': 'none',
                                     });
                                 } else if (x > max_x && y > max_y) {
                                     choosedElement.css({
-                                        left: max_x - choosedElement.width() - 230,
-                                        top: max_y - choosedElement.height() - 350,
+                                        left: max_x - 130,
+                                        top: max_y - 310,
                                         'border': 'none',
                                     });
-                                } else if (x < element_x && y > element_y && y < max_y) {
+                                } else if (x < element_x && (y > element_y && y < max_y)) {
                                     choosedElement.css({
-                                        left: element_x - 230,
-                                        top: y - 350,
+                                        left: 0,
+                                        top: y - 330,
                                         'border': 'none',
                                     });
-                                } else if (y < element_y && x > element_x && x < max_x) {
+                                } else if (y < element_y && (x > element_x && x < max_x)) {
                                     choosedElement.css({
-                                        left: x - 230,
-                                        top: element_y - 350,
+                                        left: x - 210,
+                                        top: 0,
                                         'border': 'none',
                                     });
-                                } else if (x > max_x && y > element_y && y < max_y) {
+                                } else if (y > max_y && (x > element_x && x < max_x)) {
                                     choosedElement.css({
-                                        left: max_x - choosedElement.width() - 230,
-                                        top: y - 350,
+                                        left: x - 210,
+                                        top: max_y - 310,
                                         'border': 'none',
                                     });
-                                } else if (y > max_y && x > element_x && x < max_x) {
+                                } else if ((x > element_x && x < max_x) && (y > element_y && y < max_y)) {
                                     choosedElement.css({
-                                        left: x - 230,
-                                        top: max_y - choosedElement.height() - 350,
+                                        left: x - 210,
+                                        top: y - 330,
                                         'border': 'none',
                                     });
-                                } else if (x > element_x && x < max_x && y > element_y && y < max_y) {
+                                } else if (x > max_x && y < element_y) {
                                     choosedElement.css({
-                                        left: x - 230,
-                                        top: y - 350,
+                                        left: max_x - 130,
+                                        top: 0,
+                                        'border': 'none',
+                                    });
+                                } else if (x > max_x && (y > element_y && y < max_y)) {
+                                    choosedElement.css({
+                                        left: max_x - 130,
+                                        top: y - 330,
                                         'border': 'none',
                                     });
                                 } else {
                                     choosedElement.css({
                                         left: 0,
-                                        top: 30,
+                                        top: 0,
                                         'border': 'none',
                                     });
                                 }
@@ -570,16 +599,14 @@
                     function startDragging(e) {
                         e.preventDefault();
                         var currentElement = $(this);
-
                         $(document).on('mousemove', function(e) {
                             var x = e.pageX;
                             var y = e.pageY;
                             var element = $('.drop-pad').offset();
                             var element_x = element.left;
-                            var max_x = element_x + $('.drop-pad').outerWidth();
+                            var max_x = element_x + $('.drop-pad').outerWidth() - currentElement.width();
                             var element_y = element.top;
-                            var max_y = element_y + $('.drop-pad').outerHeight();
-
+                            var max_y = element_y + $('.drop-pad').outerHeight() - currentElement.height();
                             if (x < element_x && y < element_y) {
                                 currentElement.css({
                                     left: 0,
@@ -589,57 +616,82 @@
                             } else if (x < element_x && y > max_y) {
                                 currentElement.css({
                                     left: 0,
-                                    top: max_y - currentElement.height() - 330,
+                                    top: max_y - 310,
+                                    'border': 'none',
+                                });
+                                var newDropPadHeight = $('.drop-pad').height() + currentElement
+                                    .height();
+                                $('.drop-pad').css('height', newDropPadHeight + 'px');
+                                var currentElementOffset = currentElement.offset();
+                                window.scrollTo({
+                                    top: currentElementOffset.top,
+                                    left: currentElementOffset.left
+                                });
+                            } else if (x > max_x && y > max_y) {
+                                currentElement.css({
+                                    left: max_x - 240,
+                                    top: max_y - 310,
+                                    'border': 'none',
+                                });
+                                var newDropPadHeight = $('.drop-pad').height() + currentElement
+                                    .height();
+                                $('.drop-pad').css('height', newDropPadHeight + 'px');
+                                var currentElementOffset = currentElement.offset();
+                                window.scrollTo({
+                                    top: currentElementOffset.top,
+                                    left: currentElementOffset.left
+                                });
+                            } else if (x < element_x && (y > element_y && y < max_y)) {
+                                currentElement.css({
+                                    left: 0,
+                                    top: y - 350,
+                                    'border': 'none',
+                                });
+                            } else if (y < element_y && (x > element_x && x < max_x)) {
+                                currentElement.css({
+                                    left: x - 210,
+                                    top: 0,
+                                    'border': 'none',
+                                });
+                            } else if (y > max_y && (x > element_x && x < max_x)) {
+                                currentElement.css({
+                                    left: x - 210,
+                                    top: max_y - 350,
+                                    'border': 'none',
+                                });
+                                var newDropPadHeight = $('.drop-pad').height() + currentElement
+                                    .height();
+                                $('.drop-pad').css('height', newDropPadHeight + 'px');
+                                var currentElementOffset = currentElement.offset();
+                                window.scrollTo({
+                                    top: currentElementOffset.top,
+                                    left: currentElementOffset.left
+                                });
+                            } else if (x > element_x && x < max_x && y > element_y && y < max_y) {
+                                currentElement.css({
+                                    left: x - 210,
+                                    top: y - 350,
                                     'border': 'none',
                                 });
                             } else if (x > max_x && y < element_y) {
                                 currentElement.css({
-                                    left: max_x - currentElement.width() - 240,
-                                    top: element_y - 330,
+                                    left: max_x - 240,
+                                    top: 0,
                                     'border': 'none',
                                 });
-                            } else if (x > max_x && y > max_y) {
+                            } else if (x > max_x && (y > element_y && y < max_y)) {
                                 currentElement.css({
-                                    left: max_x - currentElement.width() - 240,
-                                    top: max_y - currentElement.height() - 330,
-                                    'border': 'none',
-                                });
-                            } else if (x < element_x && y > element_y && y < max_y) {
-                                currentElement.css({
-                                    left: element_x - 230,
+                                    left: max_x - 240,
                                     top: y - 350,
                                     'border': 'none',
-                                });
-                            } else if (y < element_y && x > element_x && x < max_x) {
-                                currentElement.css({
-                                    left: x - 230,
-                                    top: element_y - 350,
-                                    'border': 'none',
-                                });
-                            } else if (x > max_x && y > element_y && y < max_y) {
-                                currentElement.css({
-                                    left: max_x - currentElement.width() - 230,
-                                    top: y - 350,
-                                    'border': 'none',
-                                });
-                            } else if (y > max_y && x > element_x && x < max_x) {
-                                currentElement.css({
-                                    left: x - 230,
-                                    top: max_y - currentElement.height() - 350,
-                                    'border': 'none',
-                                });
-                            } else if (x > element_x && x < max_x && y > element_y && y < max_y) {
-                                currentElement.css({
-                                    left: x - 230,
-                                    top: y - 350
                                 });
                             } else {
                                 currentElement.css({
                                     left: 0,
-                                    top: 30
+                                    top: 0,
+                                    'border': 'none',
                                 });
                             }
-
                             var current_element_id = currentElement.attr('id');
                             var next_false_element_id = elements_array[current_element_id][0];
                             var next_true_element_id = elements_array[current_element_id][1];
@@ -660,12 +712,10 @@
                                     if (attachInputElement.length && attachOutputElement.length) {
                                         var inputPosition = attachInputElement.offset();
                                         var outputPosition = attachOutputElement.offset();
-
                                         var x1 = inputPosition.left;
                                         var y1 = inputPosition.top;
                                         var x2 = outputPosition.left;
                                         var y2 = outputPosition.top;
-
                                         var distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
                                         var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
                                         var lineId = prev_element_id + '-to-' + current_element_id;

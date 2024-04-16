@@ -4927,11 +4927,13 @@ body.light-mode.register h6 {
 body.light-mode.register label {
     color: #fff;
 }
+
 .sequence-steps {
     border: 2px solid #ccc;
     border-radius: 15px;
-    height: 80vh;
+    height: fit-content;
     padding: 35px;
+    position: relative;
 }
 
 .add-elements {
@@ -4940,9 +4942,9 @@ body.light-mode.register label {
     border: 2px solid #111317;
     border-radius: 15px;
     padding: 15px;
-    /* display: flex;
-    flex-direction: column;
-    justify-content: space-between; */
+    position: sticky !important;
+    top: 0;
+    bottom: 0;
 }
 
 .element-list {
@@ -4950,7 +4952,7 @@ body.light-mode.register label {
 }
 
 .element_div {
-    height: calc(100% - 120px);
+    height: 60vh;
     margin-bottom: 17px;
     overflow: auto;
 }
@@ -4960,13 +4962,14 @@ body.light-mode.register label {
 }
 
 .drop-pad {
-    overflow: auto;
+    overflow: hidden;
+    max-height: 4000px;
 }
 
 .drop-list {
     padding-left: 0px;
     list-style: none;
-    height: 55vh;
+    height: fit-content;
 }
 
 .drop-list li > div {
