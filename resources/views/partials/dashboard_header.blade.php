@@ -805,23 +805,63 @@
         @elseif (Str::contains(request()->url(), 'createcampaign'))
             <script>
                 $(document).ready(function() {
+                    var campaign_details = JSON.parse(sessionStorage.getItem('campaign_details')) || {};
+                    if (campaign_details['campaign_type'] == undefined) {
+                        campaign_details['campaign_type'] = 'linkedin';
+                    }
+                    var campaign_pane = $('.campaign_pane');
+                    for (var i = 0; i < campaign_pane.length; i++) {
+                        var campaignType = $(campaign_pane[i]).find('#campaign_type').val();
+                        if (campaignType == campaign_details['campaign_type']) {
+                            $(campaign_pane[i]).addClass('active');
+                            $('[data-bs-target="' + $(campaign_pane[i]).attr('id') + '"]').addClass('active');
+                        }
+                    }
+                    if (campaign_details['campaign_name'] == undefined || campaign_details['campaign_url'] == undefined ||
+                        campaign_details['connections'] == undefined) {
+                        campaign_details['campaign_name'] = '';
+                        campaign_details['campaign_url'] = '';
+                        campaign_details['connections'] = '1';
+                    } else {
+                        var active_form = $('.campaign_pane.active').find('form');
+                        active_form.find('#campaign_name').val(campaign_details['campaign_name']);
+                        if (active_form.attr('id') != 'campaign_form_4') {
+                            active_form.find('#campaign_url').val(campaign_details['campaign_url']);
+                        }
+                        if (active_form.attr('id') != 'campaign_form_4' && active_form.attr('id') != 'campaign_form_3') {
+                            active_form.find('#connections').val(campaign_details['connections']);
+                        }
+                    }
+                    $('.campaign_name').on('change', function(e) {
+                        campaign_details['campaign_name'] = $(this).val();
+                        sessionStorage.setItem('campaign_details', JSON.stringify(campaign_details));
+                    });
+                    $('.campaign_url').on('change', function(e) {
+                        campaign_details['campaign_url'] = $(this).val();
+                        sessionStorage.setItem('campaign_details', JSON.stringify(campaign_details));
+                    });
+                    $('.connections').on('change', function(e) {
+                        campaign_details['connections'] = $(this).val();
+                        sessionStorage.setItem('campaign_details', JSON.stringify(campaign_details));
+                    });
                     $('.campaign_tab').on('click', function(e) {
                         e.preventDefault();
-                        var active_form = $('.campaign_pane.active').find('form');
                         $('.campaign_tab').removeClass('active');
                         $(this).addClass('active');
                         var id = $(this).data('bs-target');
                         $('.campaign_pane').removeClass('active');
                         $('#' + id).addClass('active');
                         var new_form = $('#' + id).find('form');
-                        new_form.find('#campaign_name').val(active_form.find('#campaign_name').val());
-                        if (new_form.attr('id') != 'campaign_form_4' && active_form.attr('id') !=
-                            'campaign_form_4') {
-                            new_form.find('#campaign_url').val(active_form.find('#campaign_url').val());
+                        campaign_details['campaign_type'] = new_form.find('#campaign_type').val();
+                        sessionStorage.setItem('campaign_details', JSON.stringify(campaign_details));
+                        new_form.find('#campaign_name').val(campaign_details['campaign_name']);
+                        if (new_form.attr('id') != 'campaign_form_4') {
+                            new_form.find('#campaign_url').val(campaign_details['campaign_url']);
                         }
-                        new_form.find('#connections').val(active_form.find('#connections').val());
+                        if (new_form.attr('id') != 'campaign_form_4' && new_form.attr('id') != 'campaign_form_3') {
+                            new_form.find('#connections').val(campaign_details['connections']);
+                        }
                     });
-
                     $('.nxt_btn').on('click', function(e) {
                         e.preventDefault();
                         var form = $('.campaign_pane.active').find('form');
@@ -852,6 +892,13 @@
                     });
                     $('.prev_tab').on('click', function(e) {
                         $(this).closest('.comp_tabs').find('.nav-tabs .nav-link.active').prev().click();
+                    });
+                    $('.schedule-btn').on('click', function() {
+                        var targetTab = $(this).data('tab');
+                        $('.schedule-content').removeClass('active');
+                        $('#' + targetTab).addClass('active');
+                        $('.schedule-btn').removeClass('active');
+                        $(this).addClass('active');
                     });
                 });
             </script>

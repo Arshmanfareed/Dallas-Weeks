@@ -44,89 +44,169 @@
                                             aria-controls="nav-global" aria-selected="false">Global settings</button>
                                     </div>
                                 </nav>
-                                <div class="tab-content" id="nav-tabContent">
-                                    <div class="tab-pane fade show active" id="nav-email" role="tabpanel"
-                                        aria-labelledby="nav-email-tab">
-                                        <div class="accordion" id="accordionExample">
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingOne">
-                                                    <button class="accordion-button collapsed" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                                                        aria-expanded="true" aria-controls="collapseOne">
-                                                        Email accounts to use for this campaign
-                                                    </button>
-                                                </h2>
-                                                <div id="collapseTwo" class="accordion-collapse collapse"
-                                                    aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body">
-                                                        <strong>This is the second item's accordion body.</strong> It is
-                                                        hidden by default, until the collapse plugin adds the appropriate
-                                                        classes that we use to style each element. These classes control the
-                                                        overall appearance, as well as the showing and hiding via CSS
-                                                        transitions. You can modify any of this with custom CSS or
-                                                        overriding our default variables. It's also worth noting that just
-                                                        about any HTML can go within the <code>.accordion-body</code>,
-                                                        though the transition does limit overflow.
+                                <form id="linkedin_settings" method="POST"
+                                    action="{{ route('createcampaignfromscratch') }}">
+                                    @csrf
+                                    <div class="tab-content" id="nav-tabContent">
+                                        <div class="tab-pane fade show active" id="nav-email" role="tabpanel"
+                                            aria-labelledby="nav-email-tab">
+                                            <div class="accordion" id="accordionExample">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingOne">
+                                                        <button class="accordion-button collapsed" type="button"
+                                                            data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                                            aria-expanded="true" aria-controls="collapseOne">
+                                                            Email accounts to use for this campaign
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseOne" class="accordion-collapse collapse"
+                                                        aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                        <div class="accordion-body">
+                                                            <strong>This is the second item's accordion body.</strong> It is
+                                                            hidden by default, until the collapse plugin adds the
+                                                            appropriate
+                                                            classes that we use to style each element. These classes control
+                                                            the
+                                                            overall appearance, as well as the showing and hiding via CSS
+                                                            transitions. You can modify any of this with custom CSS or
+                                                            overriding our default variables. It's also worth noting that
+                                                            just
+                                                            about any HTML can go within the <code>.accordion-body</code>,
+                                                            though the transition does limit overflow.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingTwo">
+                                                        <button class="accordion-button collapsed" type="button"
+                                                            data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                                                            aria-expanded="false" aria-controls="collapseTwo">
+                                                            Schedule email
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseTwo" class="accordion-collapse collapse"
+                                                        aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                        <div class="accordion-body">
+                                                            <div class="schedule-tab">
+                                                                <button class="schedule-btn active" id="my_schedule_btn"
+                                                                    data-tab="my_schedule">My Schedules</button>
+                                                                <button class="schedule-btn " id="team_schedule_btn"
+                                                                    data-tab="team_schedule">Team schedules</button>
+                                                            </div>
+                                                            <div class="active schedule-content" id="my_schedule">
+                                                                <div class="schedule_content_row1">
+                                                                    <p>Manage your schedules.</p>
+                                                                    <button>Create Schedule</button>
+                                                                </div>
+                                                                <div class="schedule_content_row2">
+                                                                    <input type="text"
+                                                                        placeholder="Search schedules here...">
+                                                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                                                </div>
+                                                                @if (!empty($campaign_schedule))
+                                                                    <ul class="schedule_list">
+                                                                        @foreach ($campaign_schedule as $schedule)
+                                                                            <li>
+                                                                                <div class="row schedule_list_item">
+                                                                                    <div class="col-lg-1 schedule_item">
+                                                                                        <input type="radio"
+                                                                                            name="schedule"
+                                                                                            class="schedule" checked>
+                                                                                    </div>
+                                                                                    <div class="col-lg-1 schedule_avatar">S
+                                                                                    </div>
+                                                                                    <div class="col-lg-3 schedule_name">
+                                                                                        <i class="fa-solid fa-circle-check"
+                                                                                            style="color: #4bcea6;"></i>
+                                                                                        <span>{{ $schedule['schedule_name'] }}</span>
+                                                                                    </div>
+                                                                                    <div class="col-lg-6 schedule_days">
+                                                                                        @php
+                                                                                            $schedule_days = App\Models\ScheduleDays::where(
+                                                                                                'schedule_id',
+                                                                                                $schedule['id'],
+                                                                                            )->get();
+                                                                                        @endphp
+                                                                                        <ul class="schedule_day_list">
+                                                                                            @foreach ($schedule_days as $day)
+                                                                                                <li
+                                                                                                    class="schedule_day {{ $day['is_active'] == '1' ? 'selected_day' : '' }}">
+                                                                                                    {{ ucfirst($day['schedule_day']) }}
+                                                                                                </li>
+                                                                                            @endforeach
+                                                                                            <li class="schedule_time">
+                                                                                                <a href=""><i
+                                                                                                        class="fa-solid fa-globe"
+                                                                                                        style="color: #16adcb;"></i></a>
+                                                                                            </li>
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                    <div
+                                                                                        class="col-lg-1 schedule_menu_btn">
+                                                                                        <i class="fa-solid fa-ellipsis-vertical"
+                                                                                            style="color: #ffffff;"></i>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                @endif
+                                                            </div>
+                                                            <div class=" schedule-content" id="team_schedule">Hwllo</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingThree">
+                                                        <button class="accordion-button collapsed" type="button"
+                                                            data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                                                            aria-expanded="false" aria-controls="collapseThree">
+                                                            Email tracking preference
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseThree" class="accordion-collapse collapse"
+                                                        aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                                        <div class="accordion-body">
+                                                            <div class="linked_set d-flex justify-content-between">
+                                                                <p> Track the number of email link clicks </p>
+                                                                <div class="switch_box"><input type="checkbox"
+                                                                        name="track_the_number_of_email_link_clicks"
+                                                                        class="linkedin_setting_switch"
+                                                                        id="track_the_number_of_email_link_clicks"><label
+                                                                        for="track_the_number_of_email_link_clicks">Toggle</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="linked_set d-flex justify-content-between">
+                                                                <p> Track the number of opened emails </p>
+                                                                <div class="switch_box"><input type="checkbox"
+                                                                        name="track_the_number_of_opened_emails"
+                                                                        class="linkedin_setting_switch"
+                                                                        id="track_the_number_of_opened_emails"><label
+                                                                        for="track_the_number_of_opened_emails">Toggle</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="linked_set d-flex justify-content-between">
+                                                                <p> Text only email (no HTML) <span>!</span></p>
+                                                                <div class="switch_box"><input type="checkbox"
+                                                                        name="text_only_email_no_html"
+                                                                        class="linkedin_setting_switch"
+                                                                        id="text_only_email_no_html"><label
+                                                                        for="text_only_email_no_html">Toggle</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingTwo">
-                                                    <button class="accordion-button collapsed" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapseTwo"
-                                                        aria-expanded="false" aria-controls="collapseTwo">
-                                                        Schedule email
-                                                    </button>
-                                                </h2>
-                                                <div id="collapseTwo" class="accordion-collapse collapse"
-                                                    aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body">
-                                                        <strong>This is the second item's accordion body.</strong> It is
-                                                        hidden by default, until the collapse plugin adds the appropriate
-                                                        classes that we use to style each element. These classes control the
-                                                        overall appearance, as well as the showing and hiding via CSS
-                                                        transitions. You can modify any of this with custom CSS or
-                                                        overriding our default variables. It's also worth noting that just
-                                                        about any HTML can go within the <code>.accordion-body</code>,
-                                                        though the transition does limit overflow.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingThree">
-                                                    <button class="accordion-button collapsed" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapseThree"
-                                                        aria-expanded="false" aria-controls="collapseThree">
-                                                        Email tracking preference
-                                                    </button>
-                                                </h2>
-                                                <div id="collapseThree" class="accordion-collapse collapse"
-                                                    aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body">
-                                                        <strong>This is the third item's accordion body.</strong> It is
-                                                        hidden by default, until the collapse plugin adds the appropriate
-                                                        classes that we use to style each element. These classes control the
-                                                        overall appearance, as well as the showing and hiding via CSS
-                                                        transitions. You can modify any of this with custom CSS or
-                                                        overriding our default variables. It's also worth noting that just
-                                                        about any HTML can go within the <code>.accordion-body</code>,
-                                                        though the transition does limit overflow.
-                                                    </div>
-                                                </div>
+                                            <div class="cmp_btns d-flex justify-content-center align-items-center">
+                                                <a href="{{ url('/campaign/createcampaign') }}" class="btn"><i
+                                                        class="fa-solid fa-arrow-left"></i>Back</a>
+                                                <a href="javascript:;" class="btn next_tab nxt_btn">Next<i
+                                                        class="fa-solid fa-arrow-right"></i></a>
                                             </div>
                                         </div>
-                                        <div class="cmp_btns d-flex justify-content-center align-items-center">
-                                            <a href="{{ url('/campaign/createcampaign') }}" class="btn"><i
-                                                    class="fa-solid fa-arrow-left"></i>Back</a>
-                                            <a href="javascript:;" class="btn next_tab nxt_btn">Next<i
-                                                    class="fa-solid fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-linkedin" role="tabpanel"
-                                        aria-labelledby="nav-linkedin-tab">
-                                        <form id="linkedin_settings" method="POST"
-                                            action="{{ route('createcampaignfromscratch') }}">
-                                            @csrf
+                                        <div class="tab-pane fade" id="nav-linkedin" role="tabpanel"
+                                            aria-labelledby="nav-linkedin-tab">
                                             <div class="linked_set d-flex justify-content-between">
                                                 <p> Discover Premium Linked accounts only </p>
                                                 <div class="switch_box"><input type="checkbox"
@@ -159,72 +239,100 @@
                                                         id="remove_leads_with_pending_connections"><label
                                                         for="remove_leads_with_pending_connections">Toggle</label></div>
                                             </div>
-                                        </form>
-                                        <div class="cmp_btns d-flex justify-content-center align-items-center">
-                                            <a href="javascript:;" class="btn prev_tab"><i
-                                                    class="fa-solid fa-arrow-left"></i>Back</a>
-                                            <a href="javascript:;" class="btn next_tab nxt_btn">Next<i
-                                                    class="fa-solid fa-arrow-right"></i></a>
+                                            <div class="cmp_btns d-flex justify-content-center align-items-center">
+                                                <a href="javascript:;" class="btn prev_tab"><i
+                                                        class="fa-solid fa-arrow-left"></i>Back</a>
+                                                <a href="javascript:;" class="btn next_tab nxt_btn">Next<i
+                                                        class="fa-solid fa-arrow-right"></i></a>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-global" role="tabpanel"
-                                        aria-labelledby="nav-global-tab">
+                                        <div class="tab-pane fade" id="nav-global" role="tabpanel"
+                                            aria-labelledby="nav-global-tab">
 
-                                        <div class="accordion" id="accordionExample">
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingOne">
-                                                    <button class="accordion-button collapsed" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapse1"
-                                                        aria-expanded="true" aria-controls="collapse1">
-                                                        Targeting options
-                                                    </button>
-                                                </h2>
-                                                <div id="collapse1" class="accordion-collapse collapse"
-                                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body">
-                                                        <strong>This is the first item's accordion body.</strong> It is
-                                                        shown by default, until the collapse plugin adds the appropriate
-                                                        classes that we use to style each element. These classes control the
-                                                        overall appearance, as well as the showing and hiding via CSS
-                                                        transitions. You can modify any of this with custom CSS or
-                                                        overriding our default variables. It's also worth noting that just
-                                                        about any HTML can go within the <code>.accordion-body</code>,
-                                                        though the transition does limit overflow.
+                                            <div class="accordion" id="accordionExample">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingOne">
+                                                        <button class="accordion-button collapsed" type="button"
+                                                            data-bs-toggle="collapse" data-bs-target="#collapse1"
+                                                            aria-expanded="true" aria-controls="collapse1">
+                                                            Targeting options
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapse1" class="accordion-collapse collapse"
+                                                        aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                        <div class="accordion-body">
+                                                            <div class="linked_set d-flex justify-content-between">
+                                                                <p> Include leads that replied to your messages
+                                                                    <span>!</span>
+                                                                </p>
+                                                                <div class="switch_box"><input type="checkbox"
+                                                                        name="include_leads_that_replied_to_your_messages"
+                                                                        class="linkedin_setting_switch"
+                                                                        id="include_leads_that_replied_to_your_messages"><label
+                                                                        for="include_leads_that_replied_to_your_messages">Toggle</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="linked_set d-flex justify-content-between">
+                                                                <p> Include leads also found in campaigns across your team
+                                                                    seats
+                                                                    <span>!</span>
+                                                                </p>
+                                                                <div class="switch_box"><input type="checkbox"
+                                                                        name="include_leads_also_found_in_campaigns_across_your_team_seats"
+                                                                        class="linkedin_setting_switch"
+                                                                        id="include_leads_also_found_in_campaigns_across_your_team_seats"><label
+                                                                        for="include_leads_also_found_in_campaigns_across_your_team_seats">Toggle</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="linked_set d-flex justify-content-between">
+                                                                <p> Discover new leads only <span>!</span>
+                                                                </p>
+                                                                <div class="switch_box"><input type="checkbox"
+                                                                        name="discover_new_leads_only"
+                                                                        class="linkedin_setting_switch"
+                                                                        id="discover_new_leads_only"><label
+                                                                        for="discover_new_leads_only">Toggle</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingTwo">
+                                                        <button class="accordion-button collapsed" type="button"
+                                                            data-bs-toggle="collapse" data-bs-target="#collapse2"
+                                                            aria-expanded="false" aria-controls="collapse2">
+                                                            Schedule campaign
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapse2" class="accordion-collapse collapse"
+                                                        aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                        <div class="accordion-body">
+                                                            <strong>This is the second item's accordion body.</strong> It is
+                                                            hidden by default, until the collapse plugin adds the
+                                                            appropriate
+                                                            classes that we use to style each element. These classes control
+                                                            the
+                                                            overall appearance, as well as the showing and hiding via CSS
+                                                            transitions. You can modify any of this with custom CSS or
+                                                            overriding our default variables. It's also worth noting that
+                                                            just
+                                                            about any HTML can go within the <code>.accordion-body</code>,
+                                                            though the transition does limit overflow.
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingTwo">
-                                                    <button class="accordion-button collapsed" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapse2"
-                                                        aria-expanded="false" aria-controls="collapse2">
-                                                        Schedule campaign
-                                                    </button>
-                                                </h2>
-                                                <div id="collapse2" class="accordion-collapse collapse"
-                                                    aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body">
-                                                        <strong>This is the second item's accordion body.</strong> It is
-                                                        hidden by default, until the collapse plugin adds the appropriate
-                                                        classes that we use to style each element. These classes control the
-                                                        overall appearance, as well as the showing and hiding via CSS
-                                                        transitions. You can modify any of this with custom CSS or
-                                                        overriding our default variables. It's also worth noting that just
-                                                        about any HTML can go within the <code>.accordion-body</code>,
-                                                        though the transition does limit overflow.
-                                                    </div>
-                                                </div>
+                                            <div class="cmp_btns d-flex justify-content-center align-items-center">
+                                                <a href="javascript:;" class="btn prev_tab"><i
+                                                        class="fa-solid fa-arrow-left"></i>Back</a>
+                                                <a href="javascript:;" type="button" class="btn nxt_btn"
+                                                    data-bs-toggle="modal" data-bs-target="#sequance_modal">Create
+                                                    sequence<i class="fa-solid fa-arrow-right"></i></a>
                                             </div>
-                                        </div>
-                                        <div class="cmp_btns d-flex justify-content-center align-items-center">
-                                            <a href="javascript:;" class="btn prev_tab"><i
-                                                    class="fa-solid fa-arrow-left"></i>Back</a>
-                                            <a href="javascript:;" type="button" class="btn nxt_btn"
-                                                data-bs-toggle="modal" data-bs-target="#sequance_modal">Create sequence<i
-                                                    class="fa-solid fa-arrow-right"></i></a>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
