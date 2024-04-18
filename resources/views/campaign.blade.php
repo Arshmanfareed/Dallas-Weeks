@@ -9,6 +9,7 @@
         </div>
         @php
             session()->forget('success');
+            session()->forget('campaign_details');
         @endphp
     @endif
     <section class="main_dashboard blacklist  campaign_sec">

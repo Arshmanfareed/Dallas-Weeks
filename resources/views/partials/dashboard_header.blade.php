@@ -40,7 +40,7 @@
         @if (Str::contains(request()->url(), 'createcampaignfromscratch'))
             <script>
                 $(document).ready(function() {
-                    var linkedin_setting = {!! $linkedin_setting_json !!};
+                    var settings = {!! $settings !!};
                     var choosedElement = null;
                     var inputElement = null;
                     var outputElement = null;
@@ -415,13 +415,14 @@
                             data: JSON.stringify({
                                 'final_data': elements_data_array,
                                 'final_array': elements_array,
-                                'linkedin_setting': linkedin_setting
+                                'settings': settings
                             }),
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
                             success: function(response) {
                                 if (response.success) {
+                                    sessionStorage.removeItem('campaign_details');
                                     window.location = "{{ route('campaigns') }}";
                                 } else {
                                     toastr.error(response.properties);
@@ -873,18 +874,20 @@
             <script>
                 $(document).ready(function() {
                     var campaign_details = {!! $campaign_details_json !!};
-                    var form = $('#linkedin_settings');
+                    var form = $('#settings');
                     form.append($('<input>').attr('type', 'hidden').attr('name', 'campaign_type').val(campaign_details[
                         'campaign_type']));
                     form.append($('<input>').attr('type', 'hidden').attr('name', 'campaign_name').val(campaign_details[
                         'campaign_name']));
                     form.append($('<input>').attr('type', 'hidden').attr('name', 'campaign_url').val(campaign_details[
                         'campaign_url']));
-                    form.append($('<input>').attr('type', 'hidden').attr('name', 'connections').val(campaign_details[
-                        'connections']));
+                    if (campaign_details['connections'] != undefined) {
+                        form.append($('<input>').attr('type', 'hidden').attr('name', 'connections').val(campaign_details[
+                            'connections']));
+                    }
                     $('#create_sequence').on('click', function(e) {
                         e.preventDefault();
-                        var form = $('#linkedin_settings');
+                        var form = $('#settings');
                         form.submit();
                     });
                     $('.next_tab').on('click', function(e) {

@@ -5421,7 +5421,7 @@ div > h5 {
     align-items: center;
 }
 
-.schedule-content .schedule_list .schedule_time>a {
+.schedule-content .schedule_list .schedule_time > a {
     font-size: 25px;
 }
 

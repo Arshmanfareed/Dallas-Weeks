@@ -1,7 +1,7 @@
 @extends('partials/dashboard_header')
 @section('content')
     @php
-        $linkedin_setting_json = json_encode($linkedin_setting);
+        $settings = json_encode($settings);
     @endphp
     <section class="main_dashboard blacklist  campaign_sec">
         <div class="container_fluid">

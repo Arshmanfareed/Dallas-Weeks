@@ -44,8 +44,7 @@
                                             aria-controls="nav-global" aria-selected="false">Global settings</button>
                                     </div>
                                 </nav>
-                                <form id="linkedin_settings" method="POST"
-                                    action="{{ route('createcampaignfromscratch') }}">
+                                <form id="settings" method="POST" action="{{ route('createcampaignfromscratch') }}">
                                     @csrf
                                     <div class="tab-content" id="nav-tabContent">
                                         <div class="tab-pane fade show active" id="nav-email" role="tabpanel"
@@ -110,8 +109,10 @@
                                                                                 <div class="row schedule_list_item">
                                                                                     <div class="col-lg-1 schedule_item">
                                                                                         <input type="radio"
-                                                                                            name="schedule"
-                                                                                            class="schedule" checked>
+                                                                                            name="email_settings_schedule_id"
+                                                                                            class="schedule_id"
+                                                                                            {{ $schedule['user_id'] == '0' ? 'checked' : '' }}
+                                                                                            value="{{ $schedule['id'] }}">
                                                                                     </div>
                                                                                     <div class="col-lg-1 schedule_avatar">S
                                                                                     </div>
@@ -170,7 +171,7 @@
                                                             <div class="linked_set d-flex justify-content-between">
                                                                 <p> Track the number of email link clicks </p>
                                                                 <div class="switch_box"><input type="checkbox"
-                                                                        name="track_the_number_of_email_link_clicks"
+                                                                        name="email_settings_track_the_number_of_email_link_clicks"
                                                                         class="linkedin_setting_switch"
                                                                         id="track_the_number_of_email_link_clicks"><label
                                                                         for="track_the_number_of_email_link_clicks">Toggle</label>
@@ -179,7 +180,7 @@
                                                             <div class="linked_set d-flex justify-content-between">
                                                                 <p> Track the number of opened emails </p>
                                                                 <div class="switch_box"><input type="checkbox"
-                                                                        name="track_the_number_of_opened_emails"
+                                                                        name="email_settings_track_the_number_of_opened_emails"
                                                                         class="linkedin_setting_switch"
                                                                         id="track_the_number_of_opened_emails"><label
                                                                         for="track_the_number_of_opened_emails">Toggle</label>
@@ -188,7 +189,7 @@
                                                             <div class="linked_set d-flex justify-content-between">
                                                                 <p> Text only email (no HTML) <span>!</span></p>
                                                                 <div class="switch_box"><input type="checkbox"
-                                                                        name="text_only_email_no_html"
+                                                                        name="email_settings_text_only_email_no_html"
                                                                         class="linkedin_setting_switch"
                                                                         id="text_only_email_no_html"><label
                                                                         for="text_only_email_no_html">Toggle</label>
@@ -210,7 +211,7 @@
                                             <div class="linked_set d-flex justify-content-between">
                                                 <p> Discover Premium Linked accounts only </p>
                                                 <div class="switch_box"><input type="checkbox"
-                                                        name="discover_premium_linked_accounts_only"
+                                                        name="linkedin_settings_discover_premium_linked_accounts_only"
                                                         class="linkedin_setting_switch"
                                                         id="discover_premium_linked_accounts_only"><label
                                                         for="discover_premium_linked_accounts_only">Toggle</label></div>
@@ -218,7 +219,7 @@
                                             <div class="linked_set d-flex justify-content-between">
                                                 <p> Discover Leads with Open Profile status only </p>
                                                 <div class="switch_box"><input type="checkbox"
-                                                        name="discover_leads_with_open_profile_status_only"
+                                                        name="linkedin_settings_discover_leads_with_open_profile_status_only"
                                                         class="linkedin_setting_switch"
                                                         id="discover_leads_with_open_profile_status_only"><label
                                                         for="discover_leads_with_open_profile_status_only">Toggle</label>
@@ -227,14 +228,15 @@
                                             <div class="linked_set d-flex justify-content-between">
                                                 <p> Collect contact information <span>!</span></p>
                                                 <div class="switch_box"><input type="checkbox"
-                                                        name="collect_contact_information" class="linkedin_setting_switch"
+                                                        name="linkedin_settings_collect_contact_information"
+                                                        class="linkedin_setting_switch"
                                                         id="collect_contact_information"><label
                                                         for="collect_contact_information">Toggle</label></div>
                                             </div>
                                             <div class="linked_set d-flex justify-content-between">
                                                 <p> Remove leads with pending connections <span>!</span></p>
                                                 <div class="switch_box"><input type="checkbox"
-                                                        name="remove_leads_with_pending_connections"
+                                                        name="linkedin_settings_remove_leads_with_pending_connections"
                                                         class="linkedin_setting_switch"
                                                         id="remove_leads_with_pending_connections"><label
                                                         for="remove_leads_with_pending_connections">Toggle</label></div>
@@ -266,7 +268,7 @@
                                                                     <span>!</span>
                                                                 </p>
                                                                 <div class="switch_box"><input type="checkbox"
-                                                                        name="include_leads_that_replied_to_your_messages"
+                                                                        name="global_settings_include_leads_that_replied_to_your_messages"
                                                                         class="linkedin_setting_switch"
                                                                         id="include_leads_that_replied_to_your_messages"><label
                                                                         for="include_leads_that_replied_to_your_messages">Toggle</label>
@@ -278,7 +280,7 @@
                                                                     <span>!</span>
                                                                 </p>
                                                                 <div class="switch_box"><input type="checkbox"
-                                                                        name="include_leads_also_found_in_campaigns_across_your_team_seats"
+                                                                        name="global_settings_include_leads_also_found_in_campaigns_across_your_team_seats"
                                                                         class="linkedin_setting_switch"
                                                                         id="include_leads_also_found_in_campaigns_across_your_team_seats"><label
                                                                         for="include_leads_also_found_in_campaigns_across_your_team_seats">Toggle</label>
@@ -288,7 +290,7 @@
                                                                 <p> Discover new leads only <span>!</span>
                                                                 </p>
                                                                 <div class="switch_box"><input type="checkbox"
-                                                                        name="discover_new_leads_only"
+                                                                        name="global_settings_discover_new_leads_only"
                                                                         class="linkedin_setting_switch"
                                                                         id="discover_new_leads_only"><label
                                                                         for="discover_new_leads_only">Toggle</label>

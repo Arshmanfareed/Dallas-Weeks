@@ -32,7 +32,7 @@ class CampaignController extends Controller
     {
         $validated = $request->validate([
             'campaign_name' => 'required|string|max:255',
-            'campaign_url' => 'required|url'
+            'campaign_url' => 'required'
         ]);
         if ($validated) {
             $user_id = Auth::user()->id;
@@ -53,15 +53,15 @@ class CampaignController extends Controller
     function fromscratch(Request $request)
     {
         $all = $request->except('_token');
-        $linkedin_setting = [];
+        $settings = [];
         foreach ($all as $key => $value) {
-            $linkedin_setting[$key] = $value;
+            $settings[$key] = $value;
         }
         $data = [
             'campaigns' => CampaignElement::where('is_conditional', '0')->get(),
             'conditional_campaigns' => CampaignElement::where('is_conditional', '1')->get(),
             'title' => 'Create Campaign Info',
-            'linkedin_setting' => $linkedin_setting,
+            'settings' => $settings,
         ];
         return view('createcampaignfromscratch', $data);
     }
