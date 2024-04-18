@@ -4934,6 +4934,7 @@ body.light-mode.register label {
     height: fit-content;
     padding: 35px;
     position: relative;
+    min-height: 595px;
 }
 
 .add-elements {
@@ -4945,6 +4946,8 @@ body.light-mode.register label {
     position: sticky !important;
     top: 0;
     bottom: 0;
+    min-height: 700px !important;
+    height: 100%;
 }
 
 .element-list {
@@ -5092,9 +5095,9 @@ div > h5 {
     justify-content: space-between;
     align-items: stretch;
     background-color: #1c1e22;
-    min-height: 100px;
+    min-height: 70px;
     max-height: fit-content;
-    width: 350px;
+    width: fit-content;
     padding: 7px;
     border-radius: 17px;
     margin: 14px 0;
@@ -5104,11 +5107,10 @@ div > h5 {
 .task-list .item_details p,
 .drop_element .item_details p {
     margin: 0;
-    width: 80%;
 }
 
 .task-list .item_name {
-    font-size: 20px;
+    font-size: 18px;
     color: #ccc;
 }
 
@@ -5118,6 +5120,12 @@ div > h5 {
     max-width: 100%;
     text-overflow: ellipsis;
     font-size: 15px;
+    font-style: oblique;
+}
+
+.task-list .item_details {
+    width: 90%;
+    padding: 12px 12px 12px 0px;
 }
 
 .task-list .list-icon {
@@ -5127,7 +5135,7 @@ div > h5 {
     align-items: center;
     justify-content: center;
     background-color: #15171c;
-    border-radius: 25%;
+    border-radius: 25px;
     margin-right: 25px;
 }
 
@@ -5148,7 +5156,6 @@ div > h5 {
     right: -7px;
     position: absolute;
     background-color: #fff;
-    display: flex;
     align-items: center;
     justify-content: center;
 }
@@ -5217,21 +5224,23 @@ div > h5 {
 }
 
 .task-list .element_change_input.selected {
-    background-color: #fff !important;
+    background-color: #e2c64d !important;
 }
 
 .task-list .element_change_output.selected {
-    background-color: #fff !important;
+    background-color: #e2c64d !important;
 }
 
 .task-list .conditional-elements-out .condition_false.selected {
+    background-color: #fff !important;
     color: #ad0d0d;
-    border: 3px solid #ad0d0d;
+    border: 1px solid #ad0d0d;
 }
 
 .task-list .conditional-elements-out .condition_true.selected {
+    background-color: #fff !important;
     color: #2c9d0d;
-    border: 3px solid #2c9d0d;
+    border: 1px solid #2c9d0d;
 }
 
 .task-list .attach-elements:hover {
@@ -5451,11 +5460,11 @@ div > h5 {
     all: unset;
     position: relative;
     background-color: #000;
-    width: 20px;
+    width: 16px;
     height: 14px;
     left: calc(-50%);
     border-radius: 100%;
-    top: 88px;
+    top: 76px;
 }
 
 .task-list .step-1 .attach-elements-out:hover {
@@ -5539,4 +5548,8 @@ button#save {
 
 .accordion-body > div > * {
     margin-bottom: 0 !important;
+}
+
+.line {
+    background-color: #e2c64d !important;
 }

@@ -68,8 +68,19 @@
                             choosedElement.addClass('drop_element');
                             choosedElement.addClass('drop-pad-element');
                             choosedElement.removeClass('element');
-
-
+                            choosedElement.css({
+                                'width': 'fit-content',
+                                'min-height': '70px',
+                            });
+                            choosedElement.find('.item_details').css({
+                                'padding': '12px 12px 12px 0px',
+                            });
+                            choosedElement.find('.item_name').css({
+                                'font-size': '18px',
+                            });
+                            choosedElement.find('.list-icon').css({
+                                'min-height': '70px',
+                            });
                             $(document).on('mousemove', function(e) {
                                 var x = e.pageX;
                                 var y = e.pageY;
@@ -179,7 +190,7 @@
                                 });
                                 cancel_icon = choosedElement.find('.cancel-icon');
                                 cancel_icon.css({
-                                    'display': 'flex',
+                                    'display': 'none',
                                 });
                                 var x = e.pageX;
                                 var y = e.pageY;
@@ -383,7 +394,6 @@
 
                                     var lineId = outputElement.attr('id') + '-to-' + inputElement.attr('id');
                                     var line = $('#' + lineId);
-
                                     line.css({
                                         'width': distance + 'px',
                                         'transform': 'rotate(' + angle + 'deg)',
@@ -422,7 +432,6 @@
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    sessionStorage.removeItem('campaign_details');
                                     window.location = "{{ route('campaigns') }}";
                                 } else {
                                     toastr.error(response.properties);
@@ -468,6 +477,9 @@
                     }
 
                     function elementProperties(e) {
+                        $('.drop-pad-element .cancel-icon').css({
+                            'display': 'none',
+                        });
                         $('#properties').empty();
                         var item = $(this);
                         $('.drop-pad-element').css({
@@ -477,6 +489,10 @@
                         item.css({
                             "z-index": "999",
                             "border": "1px solid rgb(23, 172, 203)",
+                        });
+                        var cancel_icon = $(this).find('.cancel-icon');
+                        cancel_icon.css({
+                            'display': 'flex',
                         });
                         var item_slug = item.data('filterName');
                         var item_name = item.find('.item_name').text();
@@ -588,6 +604,9 @@
                             $.when.apply($, ajaxRequests).then(function() {
                                 name_html += '</div><div class="save-btns"><button id="save">Save</button></div>';
                                 $('#properties').html(name_html);
+                                // $('.property_input').on('input', function() {
+                                //     console.log('hey');
+                                // });
                                 $('#save').on('click', onSave);
                                 $('#element-list').removeClass('active');
                                 $('#properties').addClass('active');

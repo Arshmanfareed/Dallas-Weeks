@@ -1,5 +1,8 @@
 @extends('partials/dashboard_header')
 @section('content')
+    <script>
+        sessionStorage.removeItem('campaign_details');
+    </script>
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <strong>{{ session('success') }}</strong>
