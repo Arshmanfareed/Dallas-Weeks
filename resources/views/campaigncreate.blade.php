@@ -1,5 +1,21 @@
 @extends('partials/dashboard_header')
 @section('content')
+    @error('campaign_name')
+        <style>
+            #campaign_name {
+                border: 1px solid red;
+                margin-bottom: 7px !important;
+            }
+        </style>
+    @enderror
+    @error('campaign_url')
+        <style>
+            #campaign_url {
+                border: 1px solid red;
+                margin-bottom: 7px !important;
+            }
+        </style>
+    @enderror
     <section class="main_dashboard blacklist  campaign_sec">
         <div class="container_fluid">
             <div class="row">
@@ -32,7 +48,7 @@
                                     <ul class="nav nav-tabs list-unstyled d-flex justify-content-between align-items-center"
                                         role="tablist">
                                         <li class="nav-item border_box">
-                                            <a class="nav-link campaign_tab active" data-toggle="tab" href="javascript:;"
+                                            <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-1" role="tab">
                                                 <img src="/assets/img/linkedin.svg" alt="">
                                                 <title>Linkedin search result</title>
@@ -75,31 +91,51 @@
                                         </li>
                                     </ul><!-- Tab panes -->
                                     <div class="tab-content">
-                                        <div class="tab-pane campaign_pane active" id="tabs-1" role="tabpanel">
+                                        <div class="tab-pane campaign_pane" id="tabs-1" role="tabpanel">
                                             <form method="POST" id="campaign_form_1" class="campaign_form"
                                                 action="{{ route('campaigninfo') }}">
                                                 @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
-                                                        value="linkedin">
+                                                        value="linkedin" required>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="campaign_name">Campaign Name:</label>
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
-                                                            placeholder="Campaign name ex. Los angeles lead" required>
+                                                            placeholder="Campaign name ex. Los angeles lead"
+                                                            value="{{ old('campaign_name') }}" required>
+                                                        @error('campaign_name')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="campaign_url">LinkedIn URL:</label>
-                                                        <input type="url" id="campaign_url" name="campaign_url"
-                                                            placeholder="LinkedIn search URL" required>
+                                                        <input type="url" id="campaign_url" class="campaign_url"
+                                                            name="campaign_url" placeholder="LinkedIn search URL"
+                                                            value="{{ old('campaign_url') }}" required>
+                                                        @error('campaign_url')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="connections">Connections:</label>
                                                         <select id="connections" name="connections" class="connections">
-                                                            <option value="1">1st-degree</option>
-                                                            <option value="2">2nd-degree</option>
-                                                            <option value="3">3rd-degree</option>
-                                                            <option value="other">Other</option>
+                                                            <option value="1"
+                                                                {{ old('connections') == '1' ? 'selected' : '' }}
+                                                                {{ old('connections') == '' ? 'selected' : '' }}>
+                                                                1st-degree
+                                                            </option>
+                                                            <option value="2"
+                                                                {{ old('connections') == '2' ? 'selected' : '' }}>
+                                                                2nd-degree
+                                                            </option>
+                                                            <option value="3"
+                                                                {{ old('connections') == '3' ? 'selected' : '' }}>
+                                                                3rd-degree
+                                                            </option>
+                                                            <option value="o"
+                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>Other
+                                                            </option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -111,25 +147,45 @@
                                                 @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
-                                                        value="sales_navigator">
+                                                        value="sales_navigator" required>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="campaign_name">Campaign Name:</label>
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
-                                                            placeholder="Campaign name ex. Los angeles lead" required>
+                                                            placeholder="Campaign name ex. Los angeles lead"
+                                                            value="{{ old('campaign_name') }}" required>
+                                                        @error('campaign_name')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="campaign_url">Navigator URL:</label>
-                                                        <input type="url" id="campaign_url" name="campaign_url"
-                                                            placeholder="LinkedIn search URL" required>
+                                                        <input type="url" id="campaign_url" class="campaign_url"
+                                                            name="campaign_url" placeholder="LinkedIn search URL"
+                                                            value="{{ old('campaign_url') }}" required>
+                                                        @error('campaign_url')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="connections">Connections:</label>
                                                         <select id="connections" name="connections" class="connections">
-                                                            <option value="1">1st-degree</option>
-                                                            <option value="2">2nd-degree</option>
-                                                            <option value="3">3rd-degree</option>
-                                                            <option value="other">Other</option>
+                                                            <option value="1"
+                                                                {{ old('connections') == '1' ? 'selected' : '' }}
+                                                                {{ old('connections') == '' ? 'selected' : '' }}>
+                                                                1st-degree
+                                                            </option>
+                                                            <option value="2"
+                                                                {{ old('connections') == '2' ? 'selected' : '' }}>
+                                                                2nd-degree
+                                                            </option>
+                                                            <option value="3"
+                                                                {{ old('connections') == '3' ? 'selected' : '' }}>
+                                                                3rd-degree
+                                                            </option>
+                                                            <option value="o"
+                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>Other
+                                                            </option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -141,26 +197,25 @@
                                                 @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
-                                                        value="recruiter">
-                                                    <div class="col-lg-4 col-sm-12">
+                                                        value="recruiter" required>
+                                                    <div class="col-lg-6 col-sm-12">
                                                         <label for="campaign_name">Campaign Name:</label>
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
-                                                            placeholder="Campaign name ex. Los angeles lead" required>
+                                                            placeholder="Campaign name ex. Los angeles lead"
+                                                            value="{{ old('campaign_name') }}" required>
+                                                        @error('campaign_name')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
-                                                    <div class="col-lg-4 col-sm-12">
+                                                    <div class="col-lg-6 col-sm-12">
                                                         <label for="campaign_url">Recruiter URL:</label>
-                                                        <input type="url" id="campaign_url" name="campaign_url"
-                                                            placeholder="LinkedIn search URL" required>
-                                                    </div>
-                                                    <div class="col-lg-4 col-sm-12">
-                                                        <label for="connections">Connections:</label>
-                                                        <select id="connections" name="connections" class="connections">
-                                                            <option value="1">1st-degree</option>
-                                                            <option value="2">2nd-degree</option>
-                                                            <option value="3">3rd-degree</option>
-                                                            <option value="other">Other</option>
-                                                        </select>
+                                                        <input type="url" id="campaign_url" class="campaign_url"
+                                                            name="campaign_url" placeholder="LinkedIn search URL"
+                                                            value="{{ old('campaign_url') }}" required>
+                                                        @error('campaign_url')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
                                                 </div>
                                             </form>
@@ -171,19 +226,24 @@
                                                 @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
-                                                        value="import">
-                                                    <div class="col-lg-4 col-sm-12">
+                                                        value="import" required>
+                                                    <div class="col-lg-6 col-sm-12">
                                                         <label for="campaign_name">Campaign Name:</label>
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
-                                                            placeholder="Campaign name ex. Los angeles lead" required>
+                                                            placeholder="Campaign name ex. Los angeles lead"
+                                                            value="{{ old('campaign_name') }}" required>
+                                                        @error('campaign_name')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
-                                                    <div class="col-lg-4 col-sm-12">
+                                                    <div class="col-lg-6 col-sm-12">
                                                         <label for="campaign_url">Import URL:</label>
                                                         <div class="import_field">
                                                             <input type="file" id="campaign_url"
-                                                                class="file-input__input" name="campaign_url"
-                                                                placeholder="LinkedIn search URL" required>
+                                                                class="file-input__input" class="campaign_url"
+                                                                name="campaign_url" placeholder="LinkedIn search URL"
+                                                                required>
                                                             <label class="file-input__label" for="file-input">
                                                                 <svg aria-hidden="true" focusable="false"
                                                                     data-prefix="fas" data-icon="upload"
@@ -198,15 +258,6 @@
                                                             </label>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-4 col-sm-12">
-                                                        <label for="connections">Connections:</label>
-                                                        <select id="connections" name="connections" class="connections">
-                                                            <option value="1">1st-degree</option>
-                                                            <option value="2">2nd-degree</option>
-                                                            <option value="3">3rd-degree</option>
-                                                            <option value="other">Other</option>
-                                                        </select>
-                                                    </div>
                                                 </div>
                                             </form>
                                         </div>
@@ -216,25 +267,45 @@
                                                 @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
-                                                        value="post_engagement">
+                                                        value="post_engagement" required>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="campaign_name">Campaign Name:</label>
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
-                                                            placeholder="Campaign name ex. Los angeles lead" required>
+                                                            placeholder="Campaign name ex. Los angeles lead"
+                                                            value="{{ old('campaign_name') }}" required>
+                                                        @error('campaign_name')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="campaign_url">Post engagement:</label>
-                                                        <input type="url" id="campaign_url" name="campaign_url"
-                                                            placeholder="LinkedIn search URL" required>
+                                                        <input type="url" id="campaign_url" class="campaign_url"
+                                                            name="campaign_url" placeholder="LinkedIn search URL"
+                                                            value="{{ old('campaign_url') }}" required>
+                                                        @error('campaign_url')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="connections">Connections:</label>
                                                         <select id="connections" name="connections" class="connections">
-                                                            <option value="1">1st-degree</option>
-                                                            <option value="2">2nd-degree</option>
-                                                            <option value="3">3rd-degree</option>
-                                                            <option value="other">Other</option>
+                                                            <option value="1"
+                                                                {{ old('connections') == '1' ? 'selected' : '' }}
+                                                                {{ old('connections') == '' ? 'selected' : '' }}>
+                                                                1st-degree
+                                                            </option>
+                                                            <option value="2"
+                                                                {{ old('connections') == '2' ? 'selected' : '' }}>
+                                                                2nd-degree
+                                                            </option>
+                                                            <option value="3"
+                                                                {{ old('connections') == '3' ? 'selected' : '' }}>
+                                                                3rd-degree
+                                                            </option>
+                                                            <option value="o"
+                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>Other
+                                                            </option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -246,37 +317,56 @@
                                                 @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
-                                                        value="leads_list">
+                                                        value="leads_list" required>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="campaign_name">Campaign Name:</label>
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
-                                                            placeholder="Campaign name ex. Los angeles lead" required>
+                                                            placeholder="Campaign name ex. Los angeles lead"
+                                                            value="{{ old('campaign_name') }}" required>
+                                                        @error('campaign_name')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="campaign_url">Leads list :</label>
-                                                        <input type="url" id="campaign_url" name="campaign_url"
-                                                            placeholder="LinkedIn search URL" required>
+                                                        <input type="url" id="campaign_url" class="campaign_url"
+                                                            name="campaign_url" placeholder="LinkedIn search URL"
+                                                            value="{{ old('campaign_url') }}" required>
+                                                        @error('campaign_url')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-lg-4 col-sm-12">
                                                         <label for="connections">Connections:</label>
                                                         <select id="connections" name="connections" class="connections">
-                                                            <option value="1">1st-degree</option>
-                                                            <option value="2">2nd-degree</option>
-                                                            <option value="3">3rd-degree</option>
-                                                            <option value="other">Other</option>
+                                                            <option value="1"
+                                                                {{ old('connections') == '1' ? 'selected' : '' }}
+                                                                {{ old('connections') == '' ? 'selected' : '' }}>
+                                                                1st-degree
+                                                            </option>
+                                                            <option value="2"
+                                                                {{ old('connections') == '2' ? 'selected' : '' }}>
+                                                                2nd-degree
+                                                            </option>
+                                                            <option value="3"
+                                                                {{ old('connections') == '3' ? 'selected' : '' }}>
+                                                                3rd-degree
+                                                            </option>
+                                                            <option value="o"
+                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>Other
+                                                            </option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
-                                    <!--  -->
                                 </div>
                             </div>
-
                             <div class="cmp_btns d-flex justify-content-center align-items-center">
-                                <a href="" class="btn"><i class="fa-solid fa-arrow-left"></i>Back</a>
+                                <a href="{{ route('campaigns') }}" class="btn"><i
+                                        class="fa-solid fa-arrow-left"></i>Back</a>
                                 <a class="btn nxt_btn">Next<i class="fa-solid fa-arrow-right"></i></a>
                             </div>
                         </div>

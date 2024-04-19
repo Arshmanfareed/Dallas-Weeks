@@ -1,5 +1,8 @@
 @extends('partials/dashboard_header')
 @section('content')
+    <script>
+        sessionStorage.removeItem('campaign_details');
+    </script>
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <strong>{{ session('success') }}</strong>
@@ -9,6 +12,7 @@
         </div>
         @php
             session()->forget('success');
+            session()->forget('campaign_details');
         @endphp
     @endif
     <section class="main_dashboard blacklist  campaign_sec">

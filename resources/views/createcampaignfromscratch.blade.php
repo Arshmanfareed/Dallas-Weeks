@@ -1,7 +1,7 @@
 @extends('partials/dashboard_header')
 @section('content')
     @php
-        $linkedin_setting_json = json_encode($linkedin_setting);
+        $settings = json_encode($settings);
     @endphp
     <section class="main_dashboard blacklist  campaign_sec">
         <div class="container_fluid">
@@ -34,8 +34,8 @@
                                     </div>
                                     <div class="item_details">
                                         <p class="item_name">Lead Source (Step 1)</p>
-                                        <p class="item_desc">Lorem ipsum dolor sit amet consectetur
-                                            adipisicing elit.</p>
+                                        <p class="item_desc">Wait for: <span class="item_days">0</span> days <span
+                                                class="item_hours">0</span> hours</p>
                                     </div>
                                     <div class="element_change_output attach-elements-out condition_true"></div>
                                 </div>
@@ -69,8 +69,9 @@
                                                             </div>
                                                             <div class="item_details">
                                                                 <p class="item_name">{{ $campaign['element_name'] }}</p>
-                                                                <p class="item_desc">Lorem ipsum dolor sit amet consectetur
-                                                                    adipisicing elit.</p>
+                                                                <p class="item_desc">Wait for: <span
+                                                                        class="item_days">0</span> days <span
+                                                                        class="item_hours">0</span> hours</p>
                                                             </div>
                                                             <div class="menu-icon">
                                                                 <i class="fa-solid fa-bars"></i>
@@ -104,8 +105,9 @@
                                                             </div>
                                                             <div class="item_details">
                                                                 <p class="item_name">{{ $campaign['element_name'] }}</p>
-                                                                <p class="item_desc">Lorem ipsum dolor sit amet consectetur
-                                                                    adipisicing elit.</p>
+                                                                <p class="item_desc">Check after: <span
+                                                                        class="item_days">0</span> days <span
+                                                                        class="item_hours">0</span> hours</p>
                                                             </div>
                                                             <div class="menu-icon">
                                                                 <i class="fa-solid fa-bars"></i>

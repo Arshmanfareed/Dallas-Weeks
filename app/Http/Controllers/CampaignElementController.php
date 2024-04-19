@@ -6,6 +6,8 @@ use App\Models\Campaign;
 use App\Models\CampaignElement;
 use App\Models\CampaignPath;
 use App\Models\ElementProperties;
+use App\Models\EmailSetting;
+use App\Models\GlobalSetting;
 use App\Models\LinkedinSetting;
 use App\Models\UpdatedCampaignElements;
 use App\Models\UpdatedCampaignProperties;
@@ -31,18 +33,18 @@ class CampaignElementController extends Controller
         $all_request = $request->all();
         $final_array = $all_request['final_array'];
         $final_data = $all_request['final_data'];
-        $linkedin_setting = $all_request['linkedin_setting'];
+        $settings = $all_request['settings'];
         $user_id = Auth::user()->id;
         if ($user_id) {
             $campaign = new Campaign();
-            $campaign->campaign_name = $linkedin_setting['campaign_name'];
-            unset($linkedin_setting['campaign_name']);
-            $campaign->campaign_type = $linkedin_setting['campaign_type'];
-            unset($linkedin_setting['campaign_type']);
-            $campaign->campaign_url = $linkedin_setting['campaign_url'];
-            unset($linkedin_setting['campaign_url']);
-            $campaign->campaign_connection = $linkedin_setting['connections'];
-            unset($linkedin_setting['connections']);
+            $campaign->campaign_name = $settings['campaign_name'];
+            unset($settings['campaign_name']);
+            $campaign->campaign_type = $settings['campaign_type'];
+            unset($settings['campaign_type']);
+            $campaign->campaign_url = $settings['campaign_url'];
+            unset($settings['campaign_url']);
+            $campaign->campaign_connection = $settings['connections'];
+            unset($settings['connections']);
             $campaign->user_id = $user_id;
             $campaign->seat_id = 1;
             $campaign->description = 'This campaign is the test campaign';
@@ -51,17 +53,21 @@ class CampaignElementController extends Controller
             $campaign->end_date = date('Y-m-d');
             $campaign->save();
             if ($campaign->id) {
-                foreach ($linkedin_setting as $key => $value) {
-                    $setting = new LinkedinSetting();
+                foreach ($settings as $key => $value) {
+                    if (str_contains($key, 'email_settings_')) {
+                        $setting = new EmailSetting();
+                    }
+                    if (str_contains($key, 'linkedin_settings_')) {
+                        $setting = new LinkedinSetting();
+                    }
+                    if (str_contains($key, 'global_settings_')) {
+                        $setting = new GlobalSetting();
+                    }
                     $setting->campaign_id = $campaign->id;
                     $setting->setting_slug = $key;
                     $setting->user_id = $user_id;
                     $setting->seat_id = 1;
-                    if ($value == 'false') {
-                        $setting->is_active = 0;
-                    } else {
-                        $setting->is_active = 1;
-                    }
+                    $setting->value = $value;
                     $setting->setting_name = ucwords(str_replace('_', ' ', $key));
                     $setting->save();
                 }
@@ -87,7 +93,11 @@ class CampaignElementController extends Controller
                                     if ($property) {
                                         $element_property->element_id = $element_item->id;
                                         $element_property->property_id = $property->id;
-                                        $element_property->value = $value;
+                                        if ($value != null) {
+                                            $element_property->value = $value;
+                                        } else {
+                                            $element_property->value = '';
+                                        }
                                         $element_property->save();
                                     } else {
                                         return response()->json(['success' => false, 'properties' => 'Properties not found!']);

@@ -93,7 +93,7 @@ Route::controller(StripePaymentController::class)->group(function () {
 });
 
 Route::get('/campaign', [CampaignController::class, 'campaign'])->name('campaigns');
-Route::get('/campaign/createcampaign', [CampaignController::class, 'campaigncreate']);
+Route::get('/campaign/createcampaign', [CampaignController::class, 'campaigncreate'])->name('campaigncreate');
 Route::post('/campaign/campaigninfo', [CampaignController::class, 'campaigninfo'])->name('campaigninfo');
 Route::post('/campaign/createcampaignfromscratch', [CampaignController::class, 'fromscratch'])->name('createcampaignfromscratch');
 Route::get('/campaign/getcampaignelementbyslug/{slug}', [CampaignElementController::class, 'campaignElement'])->name('getcampaignelementbyslug');
