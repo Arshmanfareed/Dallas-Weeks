@@ -34,8 +34,8 @@
                                     </div>
                                     <div class="item_details">
                                         <p class="item_name">Lead Source (Step 1)</p>
-                                        <p class="item_desc">Wait for: <span class="item_days">0</span> days <span
-                                                class="item_hours">0</span> hours</p>
+                                        <p class="item_desc"><i class="fa-solid fa-clock"></i>Wait for: <span
+                                                class="item_days">0</span> days <span class="item_hours">0</span> hours</p>
                                     </div>
                                     <div class="element_change_output attach-elements-out condition_true"></div>
                                 </div>
@@ -69,8 +69,8 @@
                                                             </div>
                                                             <div class="item_details">
                                                                 <p class="item_name">{{ $campaign['element_name'] }}</p>
-                                                                <p class="item_desc">Wait for: <span
-                                                                        class="item_days">0</span> days <span
+                                                                <p class="item_desc"><i class="fa-solid fa-clock"></i>Wait
+                                                                    for: <span class="item_days">0</span> days <span
                                                                         class="item_hours">0</span> hours</p>
                                                             </div>
                                                             <div class="menu-icon">
@@ -82,6 +82,13 @@
                                                         </div>
                                                     </li>
                                                 @endforeach
+                                            </ul>
+                                        </div>
+                                    @else
+                                        <div class="action_elements">
+                                            <p>Actions</p>
+                                            <ul class='drop-list'>
+                                                <li>No Elemenets Found</li>
                                             </ul>
                                         </div>
                                     @endif
@@ -105,8 +112,8 @@
                                                             </div>
                                                             <div class="item_details">
                                                                 <p class="item_name">{{ $campaign['element_name'] }}</p>
-                                                                <p class="item_desc">Check after: <span
-                                                                        class="item_days">0</span> days <span
+                                                                <p class="item_desc"><i class="fa-solid fa-clock"></i>Check
+                                                                    after: <span class="item_days">0</span> days <span
                                                                         class="item_hours">0</span> hours</p>
                                                             </div>
                                                             <div class="menu-icon">
@@ -123,6 +130,13 @@
                                                         </div>
                                                     </li>
                                                 @endforeach
+                                            </ul>
+                                        </div>
+                                    @else
+                                        <div class="action_elements">
+                                            <p>Conditions</p>
+                                            <ul class='drop-list'>
+                                                <li>No Elemenets Found</li>
                                             </ul>
                                         </div>
                                     @endif

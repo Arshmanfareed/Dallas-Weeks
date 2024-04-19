@@ -81,6 +81,9 @@
                             choosedElement.find('.list-icon').css({
                                 'min-height': '70px',
                             });
+                            choosedElement.find('.cancel-icon').css({
+                                'display': 'none',
+                            });
                             $(document).on('mousemove', function(e) {
                                 var x = e.pageX;
                                 var y = e.pageY;
@@ -310,6 +313,10 @@
                         delete elements_array[id];
                         delete elements_data_array[id];
                         $(this).parent().remove();
+                        $('.element-content').removeClass('active');
+                        $('#element-list').addClass('active');
+                        $('.element-btn').removeClass('active');
+                        $('#element-list-btn').addClass('active');
                     }
 
                     function removePath(e) {
@@ -501,13 +508,15 @@
                         var name_html = '';
                         if (!elements_data_array[item_id]) {
                             $.ajax({
-                                url: "{{ route('getcampaignelementbyslug', ':slug') }}".replace(':slug', item_slug),
+                                url: "{{ route('getcampaignelementbyslug', ':slug') }}".replace(':slug',
+                                    item_slug),
                                 type: 'GET',
                                 dataType: 'json',
                                 success: function(response) {
                                     if (response.success) {
                                         name_html += '<div class="element_properties">';
-                                        name_html += '<div class="element_name" data-bs-target="' + item_id +
+                                        name_html += '<div class="element_name" data-bs-target="' +
+                                            item_id +
                                             '">' +
                                             list_icon +
                                             '<p>' + item_name + '</p></div>';
@@ -516,7 +525,8 @@
                                             name_html += '<div class="property_item">';
                                             name_html += '<p>' + property['property_name'] + '</p>';
                                             if (property['data_type'] == 'text') {
-                                                name_html += '<input type="' + property['data_type'] +
+                                                name_html += '<input type="' + property[
+                                                        'data_type'] +
                                                     '" placeholder="Enter your ' +
                                                     property['property_name'] +
                                                     '" class="property_input"';
@@ -527,7 +537,8 @@
                                                 name_html += '</div>';
                                                 arr[property['property_name']] = '';
                                             } else {
-                                                name_html += '<input type="' + property['data_type'] +
+                                                name_html += '<input type="' + property[
+                                                        'data_type'] +
                                                     '" placeholder="0" class="property_input"';
                                                 if (property['optional'] == '1') {
                                                     name_html += 'required';
@@ -604,7 +615,8 @@
                                 }));
                             }
                             $.when.apply($, ajaxRequests).then(function() {
-                                name_html += '</div><div class="save-btns"><button id="save">Save</button></div>';
+                                name_html +=
+                                    '</div><div class="save-btns"><button id="save">Save</button></div>';
                                 $('#properties').html(name_html);
                                 $('#save').on('click', onSave);
                                 $('#element-list').removeClass('active');
@@ -646,6 +658,9 @@
                             var max_x = element_x + $('.drop-pad').outerWidth() - currentElement.width();
                             var element_y = element.top;
                             var max_y = element_y + $('.drop-pad').outerHeight() - currentElement.height();
+                            currentElement.find('.cancel-icon').css({
+                                'display': 'none',
+                            });
                             if (x < element_x && y < element_y) {
                                 currentElement.css({
                                     left: 0,

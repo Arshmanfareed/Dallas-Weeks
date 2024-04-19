@@ -18,24 +18,27 @@ class CampaignElementController extends Controller
 {
     function campaignElement($slug)
     {
-        $elements = CampaignElement::where('element_slug', $slug)->first();
-        if ($elements) {
-            $properties = ElementProperties::where('element_id', $elements->id)->get();
-            if ($properties->isNotEmpty()) {
-                return response()->json(['success' => true, 'properties' => $properties]);
-            } else {
-                return response()->json(['success' => false, 'message' => 'No Properties Found']);
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $elements = CampaignElement::where('element_slug', $slug)->first();
+            if ($elements) {
+                $properties = ElementProperties::where('element_id', $elements->id)->get();
+                if ($properties->isNotEmpty()) {
+                    return response()->json(['success' => true, 'properties' => $properties]);
+                } else {
+                    return response()->json(['success' => false, 'message' => 'No Properties Found']);
+                }
             }
         }
     }
     function createCampaign(Request $request)
     {
-        $all_request = $request->all();
-        $final_array = $all_request['final_array'];
-        $final_data = $all_request['final_data'];
-        $settings = $all_request['settings'];
         $user_id = Auth::user()->id;
         if ($user_id) {
+            $all_request = $request->all();
+            $final_array = $all_request['final_array'];
+            $final_data = $all_request['final_data'];
+            $settings = $all_request['settings'];
             $campaign = new Campaign();
             $campaign->campaign_name = $settings['campaign_name'];
             unset($settings['campaign_name']);
