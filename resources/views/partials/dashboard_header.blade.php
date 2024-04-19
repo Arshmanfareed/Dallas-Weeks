@@ -507,7 +507,8 @@
                                 success: function(response) {
                                     if (response.success) {
                                         name_html += '<div class="element_properties">';
-                                        name_html += '<div class="element_name" id="' + item_id + '">' +
+                                        name_html += '<div class="element_name" data-bs-target="' + item_id +
+                                            '">' +
                                             list_icon +
                                             '<p>' + item_name + '</p></div>';
                                         arr = {};
@@ -552,6 +553,7 @@
                                     $('#properties').addClass('active');
                                     $('#element-list-btn').removeClass('active');
                                     $('#properties-btn').addClass('active');
+                                    $('.property_input').on('input', propertyInput);
                                 },
                                 error: function(xhr, status, error) {
                                     console.error(xhr.responseText);
@@ -559,7 +561,7 @@
                             });
                         } else {
                             name_html += '<div class="element_properties">';
-                            name_html += '<div class="element_name" id="' + item_id + '">' +
+                            name_html += '<div class="element_name" data-bs-target="' + item_id + '">' +
                                 list_icon +
                                 '<p>' + item_name + '</p></div>';
                             elements = elements_data_array[item_id];
@@ -604,15 +606,32 @@
                             $.when.apply($, ajaxRequests).then(function() {
                                 name_html += '</div><div class="save-btns"><button id="save">Save</button></div>';
                                 $('#properties').html(name_html);
-                                // $('.property_input').on('input', function() {
-                                //     console.log('hey');
-                                // });
                                 $('#save').on('click', onSave);
                                 $('#element-list').removeClass('active');
                                 $('#properties').addClass('active');
                                 $('#element-list-btn').removeClass('active');
                                 $('#properties-btn').addClass('active');
+                                $('.property_input').on('input', propertyInput);
                             });
+                        }
+                    }
+
+                    function propertyInput(e) {
+                        var element_id = $(this).parent().parent().find('.element_name').data('bs-target');
+                        if (element_id != undefined) {
+                            if ($(this).parent().find('p').text() == 'Days') {
+                                if ($(this).val() != '') {
+                                    $('#' + element_id).find('.item_days').html($(this).val());
+                                } else {
+                                    $('#' + element_id).find('.item_days').html(0);
+                                }
+                            } else if ($(this).parent().find('p').text() == 'Hours') {
+                                if ($(this).val() != '') {
+                                    $('#' + element_id).find('.item_hours').html($(this).val());
+                                } else {
+                                    $('#' + element_id).find('.item_hours').html(0);
+                                }
+                            }
                         }
                     }
 
