@@ -63,12 +63,6 @@ Route::get('/auth/linkedin/callback', function () {
 
 Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']);
 Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']);
-Route::get('/campaign/createcampaign', [CampaignController::class, 'campaigncreate']);
-Route::post('/campaign/campaigninfo', [CampaignController::class, 'campaigninfo'])->name('campaigninfo');
-Route::post('/campaign/createcampaignfromscratch', [CampaignController::class, 'fromscratch'])->name('createcampaignfromscratch');
-Route::get('/campaign/getcampaignelementbyslug/{slug}', [CampaignElementController::class, 'campaignElement'])->name('getcampaignelementbyslug');
-Route::post('/campaign/createCampaign', [CampaignElementController::class, 'createCampaign'])->name('createCampaign');
-Route::get('/campaign/getPropertyDatatype/{name}/{element_slug}', [PropertiesController::class, 'getPropertyDatatype'])->name('getPropertyDatatype');
 Route::get('/leads', [LeadsController::class, 'leads']);
 Route::get('/report', [ReportController::class, 'report']);
 Route::get('/message', [MessageController::class, 'message']);
@@ -91,10 +85,17 @@ Route::get('/invoice', [InvoiceController::class, 'invoice']);
 // Route::get('/rolesandpermission',[RolespermissionController::class,'rolespermission']);
 Route::get('/setting', [SettingController::class, 'setting']);
 Route::get('/accdashboard', [MaindashboardController::class, 'maindasboard']);
-Route::get('/campaign', [CampaignController::class, 'campaign'])->name('campaigns');
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
 
 Route::controller(StripePaymentController::class)->group(function () {
     Route::get('stripe', 'stripe');
     Route::post('stripe', 'stripePost')->name('stripe.post');
 });
+
+Route::get('/campaign', [CampaignController::class, 'campaign'])->name('campaigns');
+Route::get('/campaign/createcampaign', [CampaignController::class, 'campaigncreate']);
+Route::post('/campaign/campaigninfo', [CampaignController::class, 'campaigninfo'])->name('campaigninfo');
+Route::post('/campaign/createcampaignfromscratch', [CampaignController::class, 'fromscratch'])->name('createcampaignfromscratch');
+Route::get('/campaign/getcampaignelementbyslug/{slug}', [CampaignElementController::class, 'campaignElement'])->name('getcampaignelementbyslug');
+Route::post('/campaign/createCampaign', [CampaignElementController::class, 'createCampaign'])->name('createCampaign');
+Route::get('/campaign/getPropertyDatatype/{name}/{element_slug}', [PropertiesController::class, 'getPropertyDatatype'])->name('getPropertyDatatype');

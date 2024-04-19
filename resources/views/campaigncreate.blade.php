@@ -29,54 +29,6 @@
                             <div class="insrt_cont">
                                 <p>What type of the campaign you will be running?</p>
                                 <div class="crt_cmp_opt">
-                                    <!-- <ul class="list-unstyled d-flex justify-content-between align-items-center">
-                            <li class="border_box">
-                            <a href="javascript:;"><img src="/assets/img/linkedin.svg" alt=""></a>
-                            <title>LinkedIn search result</title>
-                            </li>
-                            <li class="border_box">
-                            <a href="javascript:;"><img src="/assets/img/navigation.svg" alt=""></a>
-                            <title>Sales navigator search result</title>
-                            </li>
-                            <li class="border_box">
-                            <a href="javascript:;"><img src="/assets/img/recruiter.svg" alt=""></a>
-                            <title>Recruiter search result</title>
-                            </li>
-                            <li class="border_box">
-                            <a href="javascript:;"><img src="/assets/img/import.svg" alt=""></a>
-                            <title>Import</title>
-                            </li>
-                            <li class="border_box">
-                            <a href="javascript:;"><img src="/assets/img/engagement.svg" alt=""></a>
-                            <title>Post engagement</title>
-                            </li>
-                            <li class="border_box">
-                            <a href="javascript:;"><img src="/assets/img/list.svg" alt=""></a>
-                            <title>Leads list</title>
-                            </li>
-                            </ul>
-                            <form id="campaign-form" class="campaign-form">
-                            <div class="row">
-                            <div class="col-lg-4 col-sm-12">
-                            <label for="campaign-name">Campaign Name:</label>
-                            <input type="text" id="campaign-name" name="campaign-name" placeholder="Campaign name ex. Los angeles lead" required>
-                            </div>
-                            <div class="col-lg-4 col-sm-12">
-                            <label for="linkedin-url">LinkedIn URL:</label>
-                            <input type="url" id="linkedin-url" name="linkedin-url" placeholder="LinkedIn search URL" required>
-                            </div>
-                            <div class="col-lg-4 col-sm-12">
-                            <label for="connections">Connections:</label>
-                            <select id="connections" name="connections">
-                            <option value="1">1st-degree</option>
-                            <option value="2">2nd-degree</option>
-                            <option value="3">3rd-degree</option>
-                            <option value="other">Other</option>
-                            </select>
-                            </div>
-                            </div>
-                            </form> -->
-                                    <!--  -->
                                     <ul class="nav nav-tabs list-unstyled d-flex justify-content-between align-items-center"
                                         role="tablist">
                                         <li class="nav-item border_box">
@@ -124,7 +76,9 @@
                                     </ul><!-- Tab panes -->
                                     <div class="tab-content">
                                         <div class="tab-pane campaign_pane active" id="tabs-1" role="tabpanel">
-                                            <form id="campaign_form" class="campaign_form">
+                                            <form method="POST" id="campaign_form_1" class="campaign_form"
+                                                action="{{ route('campaigninfo') }}">
+                                                @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
                                                         value="linkedin">
@@ -152,7 +106,9 @@
                                             </form>
                                         </div>
                                         <div class="tab-pane campaign_pane" id="tabs-2" role="tabpanel">
-                                            <form id="campaign_form" class="campaign_form">
+                                            <form method="POST" id="campaign_form_2" class="campaign_form"
+                                                action="{{ route('campaigninfo') }}">
+                                                @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
                                                         value="sales_navigator">
@@ -180,7 +136,9 @@
                                             </form>
                                         </div>
                                         <div class="tab-pane campaign_pane" id="tabs-3" role="tabpanel">
-                                            <form id="campaign_form" class="campaign_form">
+                                            <form method="POST" id="campaign_form_3" class="campaign_form"
+                                                action="{{ route('campaigninfo') }}">
+                                                @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
                                                         value="recruiter">
@@ -208,7 +166,9 @@
                                             </form>
                                         </div>
                                         <div class="tab-pane campaign_pane" id="tabs-4" role="tabpanel">
-                                            <form id="campaign_form" class="campaign_form">
+                                            <form method="POST" id="campaign_form_4" class="campaign_form"
+                                                action="{{ route('campaigninfo') }}">
+                                                @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
                                                         value="import">
@@ -251,7 +211,9 @@
                                             </form>
                                         </div>
                                         <div class="tab-pane campaign_pane" id="tabs-5" role="tabpanel">
-                                            <form id="campaign_form" class="campaign_form">
+                                            <form method="POST" id="campaign_form_5" class="campaign_form"
+                                                action="{{ route('campaigninfo') }}">
+                                                @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
                                                         value="post_engagement">
@@ -279,7 +241,9 @@
                                             </form>
                                         </div>
                                         <div class="tab-pane campaign_pane" id="tabs-6" role="tabpanel">
-                                            <form id="campaign_form" class="campaign_form">
+                                            <form method="POST" id="campaign_form_6" class="campaign_form"
+                                                action="{{ route('campaigninfo') }}">
+                                                @csrf
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
                                                         value="leads_list">

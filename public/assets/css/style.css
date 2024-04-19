@@ -4949,6 +4949,16 @@ body.light-mode.register label {
     height: 100%;
 }
 
+.element_div {
+    height: calc(100% - 120px);
+    margin-bottom: 17px;
+    overflow: auto;
+}
+
+.element_div::-webkit-scrollbar {
+    width: 0;
+}
+
 .drop-pad {
     overflow: auto;
 }
@@ -5000,7 +5010,16 @@ div > h5 {
     height: 35px;
 }
 
-.drop-list li .cancel-icon {
+.drop-list li .cancel-icon,
+.drop_element .cancel-icon {
+    display: none;
+}
+
+.drop_element .element_change_input {
+    display: none;
+}
+
+.drop_element .element_change_output {
     display: none;
 }
 
@@ -5008,8 +5027,44 @@ div > h5 {
     display: none;
 }
 
+.drop-list li .conditional-elements {
+    display: none;
+}
+
+.drop_element {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1c1e22;
+    min-height: 100px;
+    max-height: fit-content;
+    width: 350px;
+    padding: 7px;
+    border-radius: 17px;
+    margin: 14px 0;
+    cursor: pointer;
+    border: 1px solid rgb(23, 172, 203);
+}
+
+.drop_element p {
+    color: #fff;
+    width: fit-content;
+}
+
+.drop_element .list-icon {
+    padding: 7px;
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #15171c;
+    border-radius: 25%;
+    margin-right: 25px;
+}
+
 .drop-list li .list-icon i,
-.task-list .list-icon i {
+.task-list .list-icon i,
+.drop_element .list-icon i {
     color: #17accb;
 }
 
@@ -5043,7 +5098,8 @@ div > h5 {
     cursor: pointer;
 }
 
-.task-list .item_details p {
+.task-list .item_details p,
+.drop_element .item_details p {
     margin: 0;
     width: 80%;
 }
@@ -5053,7 +5109,8 @@ div > h5 {
     color: #ccc;
 }
 
-.task-list .item_desc {
+.task-list .item_desc,
+.drop_element .item_desc {
     display: block;
     max-width: 100%;
     text-overflow: ellipsis;
@@ -5071,7 +5128,8 @@ div > h5 {
     margin-right: 25px;
 }
 
-.task-list .menu-icon {
+.task-list .menu-icon,
+.drop_element .menu-icon {
     display: none;
 }
 
@@ -5100,14 +5158,77 @@ div > h5 {
     border-radius: 100%;
 }
 
+.task-list .conditional-elements {
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    border-radius: 100%;
+}
+
 .task-list .attach-elements-in {
     top: -7px;
     left: calc(50% - 14px);
 }
 
+.task-list .conditional-elements-in {
+    top: -7px;
+    left: calc(50% - 14px);
+    background-color: #000;
+}
+
+.task-list .conditional-elements-in:hover {
+    background-color: #fff;
+}
+
 .task-list .attach-elements-out {
     bottom: -7px;
     left: calc(50% - 14px);
+}
+
+.task-list .conditional-elements-out {
+    bottom: -7px;
+    width: 140px;
+    height: fit-content;
+    left: calc(50% - 77px);
+    display: flex;
+    justify-content: space-between;
+}
+
+.task-list .conditional-elements-out > div {
+    color: #fff;
+    font-size: 13px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-list .conditional-elements-out .condition_false {
+    background-color: #ad0d0d;
+}
+
+.task-list .conditional-elements-out .condition_true {
+    background-color: #2c9d0d;
+}
+
+.task-list .element_change_input.selected {
+    background-color: #fff !important;
+}
+
+.task-list .element_change_output.selected {
+    background-color: #fff !important;
+}
+
+.task-list .conditional-elements-out .condition_false.selected {
+    color: #ad0d0d;
+    border: 3px solid #ad0d0d;
+}
+
+.task-list .conditional-elements-out .condition_true.selected {
+    color: #2c9d0d;
+    border: 3px solid #2c9d0d;
 }
 
 .task-list .attach-elements:hover {
@@ -5235,10 +5356,6 @@ button#save {
     justify-content: center;
 }
 
-/* .drop-list .path-cancel-icon i {
-    color: #000 !important;
-} */
-
 .linked_set.d-flex.justify-content-between {
     border-bottom: 1px solid #ddd;
     padding: 15px 0;
@@ -5251,4 +5368,3 @@ button#save {
 .accordion-body > div > * {
     margin-bottom: 0 !important;
 }
-

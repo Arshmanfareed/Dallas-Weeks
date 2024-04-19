@@ -47,7 +47,8 @@ class CampaignController extends Controller
             $linkedin_setting[$key] = $value;
         }
         $data = [
-            'campaigns' => CampaignElement::all(),
+            'campaigns' => CampaignElement::where('is_conditional', '0')->get(),
+            'conditional_campaigns' => CampaignElement::where('is_conditional', '1')->get(),
             'title' => 'Create Campaign Info',
             'linkedin_setting' => $linkedin_setting,
         ];

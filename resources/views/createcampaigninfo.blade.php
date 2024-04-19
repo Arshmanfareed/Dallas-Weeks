@@ -56,14 +56,17 @@
                                                         Email accounts to use for this campaign
                                                     </button>
                                                 </h2>
-                                                <div id="collapseOne" class="accordion-collapse collapse"
-                                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                <div id="collapseTwo" class="accordion-collapse collapse"
+                                                    aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
-                                                        <div>
-                                                            <label for="email_accounts">Toggle</label>
-                                                            <input type="email" class="accordian_inputs"
-                                                                name="email_accounts" id="email_accounts">
-                                                        </div>
+                                                        <strong>This is the second item's accordion body.</strong> It is
+                                                        hidden by default, until the collapse plugin adds the appropriate
+                                                        classes that we use to style each element. These classes control the
+                                                        overall appearance, as well as the showing and hiding via CSS
+                                                        transitions. You can modify any of this with custom CSS or
+                                                        overriding our default variables. It's also worth noting that just
+                                                        about any HTML can go within the <code>.accordion-body</code>,
+                                                        though the transition does limit overflow.
                                                     </div>
                                                 </div>
                                             </div>
@@ -121,37 +124,42 @@
                                     </div>
                                     <div class="tab-pane fade" id="nav-linkedin" role="tabpanel"
                                         aria-labelledby="nav-linkedin-tab">
-                                        <div class="linked_set d-flex justify-content-between">
-                                            <p> Discover Premium Linked accounts only </p>
-                                            <div class="switch_box"><input type="checkbox"
-                                                    name="discover_premium_linked_accounts_only"
-                                                    class="linkedin_setting_switch"
-                                                    id="discover_premium_linked_accounts_only"><label
-                                                    for="discover_premium_linked_accounts_only">Toggle</label></div>
-                                        </div>
-                                        <div class="linked_set d-flex justify-content-between">
-                                            <p> Discover Leads with Open Profile status only </p>
-                                            <div class="switch_box"><input type="checkbox"
-                                                    name="discover_leads_with_open_profile_status_only"
-                                                    class="linkedin_setting_switch"
-                                                    id="discover_leads_with_open_profile_status_only"><label
-                                                    for="discover_leads_with_open_profile_status_only">Toggle</label></div>
-                                        </div>
-                                        <div class="linked_set d-flex justify-content-between">
-                                            <p> Collect contact information <span>!</span></p>
-                                            <div class="switch_box"><input type="checkbox"
-                                                    name="collect_contact_information" class="linkedin_setting_switch"
-                                                    id="collect_contact_information"><label
-                                                    for="collect_contact_information">Toggle</label></div>
-                                        </div>
-                                        <div class="linked_set d-flex justify-content-between">
-                                            <p> Remove leads with pending connections <span>!</span></p>
-                                            <div class="switch_box"><input type="checkbox"
-                                                    name="remove_leads_with_pending_connections"
-                                                    class="linkedin_setting_switch"
-                                                    id="remove_leads_with_pending_connections"><label
-                                                    for="remove_leads_with_pending_connections">Toggle</label></div>
-                                        </div>
+                                        <form id="linkedin_settings" method="POST"
+                                            action="{{ route('createcampaignfromscratch') }}">
+                                            @csrf
+                                            <div class="linked_set d-flex justify-content-between">
+                                                <p> Discover Premium Linked accounts only </p>
+                                                <div class="switch_box"><input type="checkbox"
+                                                        name="discover_premium_linked_accounts_only"
+                                                        class="linkedin_setting_switch"
+                                                        id="discover_premium_linked_accounts_only"><label
+                                                        for="discover_premium_linked_accounts_only">Toggle</label></div>
+                                            </div>
+                                            <div class="linked_set d-flex justify-content-between">
+                                                <p> Discover Leads with Open Profile status only </p>
+                                                <div class="switch_box"><input type="checkbox"
+                                                        name="discover_leads_with_open_profile_status_only"
+                                                        class="linkedin_setting_switch"
+                                                        id="discover_leads_with_open_profile_status_only"><label
+                                                        for="discover_leads_with_open_profile_status_only">Toggle</label>
+                                                </div>
+                                            </div>
+                                            <div class="linked_set d-flex justify-content-between">
+                                                <p> Collect contact information <span>!</span></p>
+                                                <div class="switch_box"><input type="checkbox"
+                                                        name="collect_contact_information" class="linkedin_setting_switch"
+                                                        id="collect_contact_information"><label
+                                                        for="collect_contact_information">Toggle</label></div>
+                                            </div>
+                                            <div class="linked_set d-flex justify-content-between">
+                                                <p> Remove leads with pending connections <span>!</span></p>
+                                                <div class="switch_box"><input type="checkbox"
+                                                        name="remove_leads_with_pending_connections"
+                                                        class="linkedin_setting_switch"
+                                                        id="remove_leads_with_pending_connections"><label
+                                                        for="remove_leads_with_pending_connections">Toggle</label></div>
+                                            </div>
+                                        </form>
                                         <div class="cmp_btns d-flex justify-content-center align-items-center">
                                             <a href="javascript:;" class="btn prev_tab"><i
                                                     class="fa-solid fa-arrow-left"></i>Back</a>
@@ -257,7 +265,4 @@
             </div>
         </div>
     </div>
-    <script>
-        var campaign_details = {!! $campaign_details_json !!};
-    </script>
 @endsection

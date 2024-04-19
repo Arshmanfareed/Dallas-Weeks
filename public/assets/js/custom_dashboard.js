@@ -1,3 +1,7 @@
+{/* <script type="text/javascript" src="https://js.stripe.com/v2/"></script> */}
+    
+// <script type="text/javascript">
+
 $(function() {
   
     /*------------------------------------------
@@ -63,13 +67,6 @@ $(function() {
     }
      
   });
-
-/*------------------------------------------
---------------------------------------------
-STRIPE SCRIPT END
---------------------------------------------
---------------------------------------------*/
-
 
 // jQuery('.setting_btn').each(function () {
 //     jQuery(this).on('click', function () {
