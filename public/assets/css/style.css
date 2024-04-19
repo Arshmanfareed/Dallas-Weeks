@@ -5123,6 +5123,11 @@ div > h5 {
     font-style: oblique;
 }
 
+.task-list .item_desc i {
+    margin-right: 10px;
+    color: #16adcb;
+}
+
 .task-list .item_details {
     width: 90%;
     padding: 12px 12px 12px 0px;
@@ -5152,11 +5157,12 @@ div > h5 {
     width: 24px;
     height: 24px;
     border-radius: 100%;
-    top: -7px;
-    right: -7px;
+    top: -13px;
+    right: -13px;
     position: absolute;
-    background-color: #fff;
+    background-color: #16adcb;
     align-items: center;
+    color: #fff;
     justify-content: center;
 }
 
