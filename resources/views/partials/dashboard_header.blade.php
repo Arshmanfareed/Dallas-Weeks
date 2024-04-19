@@ -446,7 +446,7 @@
                     function onSave() {
                         var property = $('.element_properties');
                         var elements = property.find('.property_item');
-                        var element_name = property.find('.element_name').attr('id');
+                        var element_name = property.find('.element_name').data('bs-target');
                         elements.each(function(index, element) {
                             var input = $(element).find('input').val();
                             var p = $(element).find('p').text();
