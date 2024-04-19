@@ -7,6 +7,53 @@
 
 
 <body>
+<style>
+        #loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 9999;
+    display: none; /* Initially hide the loader */
+        }
+
+        .loader-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script>
+        window.addEventListener("load", function () {
+        // When the page is fully loaded, hide the loader
+        var loader = document.getElementById("loader");
+        loader.style.display = "none";
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // When DOM content is loaded (before images and other resources), show the loader
+            var loader = document.getElementById("loader");
+            loader.style.display = "block";
+        });
+    </script>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-dark justify-content-between dashboard_header">
             <a class="navbar-brand" href="#">Networked</a>
@@ -26,6 +73,9 @@
         @yield('content')
     </main>
     <footer>
+    <div id="loader">
+        <div class="loader-inner"></div>
+    </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script>
             $("a.setting_btn").on('click', function() {
@@ -943,7 +993,10 @@
                     });
                 });
             </script>
+
+            
         @endif
+        
     </footer>
 </body>
 

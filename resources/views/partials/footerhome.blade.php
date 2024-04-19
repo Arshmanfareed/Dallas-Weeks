@@ -63,10 +63,26 @@
             </div>
         </div>
     </div>
+    <div id="loader">
+        <div class="loader-inner"></div>
+    </div>
 </footer>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script src="assets/js/owl.carousel.min.js"></script>
 <script src="assets/js/custom.js"></script>
+<script>
+    window.addEventListener("load", function () {
+    // When the page is fully loaded, hide the loader
+    var loader = document.getElementById("loader");
+    loader.style.display = "none";
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // When DOM content is loaded (before images and other resources), show the loader
+        var loader = document.getElementById("loader");
+        loader.style.display = "block";
+    });
+</script>
 </body>
 </html>
