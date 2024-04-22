@@ -80,13 +80,11 @@ $(function() {
 //         });
 //         });
 $(document).ready(function () {
-    $('.setting_btn').each(function () {
-        $(this).on('click', function () {
-            $(this).siblings('.setting_list').toggle();
-        });
+    $('.setting_btn').on('click', function () {
+        $('.setting_list').not($(this).siblings('.setting_list')).hide();
+        $(this).siblings('.setting_list').toggle();
     });
 });
-
 
 
 const prevBtns = document.querySelectorAll(".btn-prev");

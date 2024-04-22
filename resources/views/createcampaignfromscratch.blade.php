@@ -25,7 +25,7 @@
                         </div>
                     </div>
                     <div class="row crt_cmp_r sequence-steps">
-                        <div class="col-lg-9 drop-pad">
+                        <div class="col-lg-9 drop-pad" id="capture">
                             <h5>Sequence Steps</h5>
                             <div class="task-list">
                                 <div class="step-1 element_item" id="step-1">

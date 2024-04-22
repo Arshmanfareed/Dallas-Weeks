@@ -164,11 +164,15 @@
                                                         <a href="javascript:;" type="button" class="setting setting_btn"
                                                             id=""><i class="fa-solid fa-gear"></i></a>
                                                         <ul class="setting_list">
-                                                            <li><a href="#">Check campaign details</a></li>
+                                                            <li><a
+                                                                    href="{{ route('campaignDetails', ['campaign_id' => $campaign->id]) }}">Check
+                                                                    campaign details</a></li>
                                                             <li><a href="#">Edit campaign</a></li>
-                                                            <li><a href="#">Duplicate campaign steps</a></li>
-                                                            <li><a href="#">Add new leads</a></li>
-                                                            <li><a href="#">Export data</a></li>
+                                                            {{-- <li><a href="#">Duplicate campaign steps</a></li> --}}
+                                                            {{-- <li><a href="javascript:;" data-bs-toggle="modal"
+                                                                    data-bs-target="#add_new_leads_modal">Add new leads</a>
+                                                            </li> --}}
+                                                            {{-- <li><a href="#">Export data</a></li> --}}
                                                             <li><a href="#">Archive campaign</a></li>
                                                             <li><a href="#">Delete campaign</a></li>
                                                         </ul>
@@ -185,4 +189,30 @@
             </div>
         </div>
     </section>
+    {{-- <div class="modal fade create_add_new_leads_modal" id="add_new_leads_modal" tabindex="-1"
+        aria-labelledby="add_new_leads_modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="add_new_leads_modal">Add New Leads</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
+                            class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="schedule-tab">
+                            <button class="schedule-btn active" id="my_schedule_btn" data-tab="from_csv_file">From CSV File</button>
+                            <button class="schedule-btn " id="team_schedule_btn" data-tab="from_url">From URL</button>
+                        </div>
+                        <div class="active schedule-content" id="from_csv_file">
+                            
+                        </div>
+                        <div class=" schedule-content" id="from_url">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> --}}
 @endsection

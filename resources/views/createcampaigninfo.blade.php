@@ -95,7 +95,10 @@
                                                             <div class="active schedule-content" id="my_schedule">
                                                                 <div class="schedule_content_row1">
                                                                     <p>Manage your schedules.</p>
-                                                                    <button>Create Schedule</button>
+                                                                    <button href="javascript:;" type="button"
+                                                                        class="btn" data-bs-toggle="modal"
+                                                                        data-bs-target="#schedule_modal">Create
+                                                                        Schedule</button>
                                                                 </div>
                                                                 <div class="schedule_content_row2">
                                                                     <input type="text"
@@ -136,9 +139,13 @@
                                                                                                 </li>
                                                                                             @endforeach
                                                                                             <li class="schedule_time">
-                                                                                                <a href=""><i
+                                                                                                <button href="javascript:;"
+                                                                                                    type="button"
+                                                                                                    class="btn"
+                                                                                                    data-bs-toggle="modal"
+                                                                                                    data-bs-target="#time_modal"><i
                                                                                                         class="fa-solid fa-globe"
-                                                                                                        style="color: #16adcb;"></i></a>
+                                                                                                        style="color: #16adcb;"></i></button>
                                                                                             </li>
                                                                                         </ul>
                                                                                     </div>
@@ -153,7 +160,7 @@
                                                                     </ul>
                                                                 @endif
                                                             </div>
-                                                            <div class=" schedule-content" id="team_schedule">Hwllo</div>
+                                                            <div class=" schedule-content" id="team_schedule">Hello</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -375,4 +382,59 @@
             </div>
         </div>
     </div>
+    {{-- <div class="modal fade create_schedule_modal" id="schedule_modal" tabindex="-1" aria-labelledby="schedule_modal"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="schedule_modal">Create a Schedule</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
+                            class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade create_time_modal" id="time_modal" tabindex="-1" aria-labelledby="time_modal"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="time_modal">Schedule Timing</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
+                            class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="col-lg-6 schedule_days">
+                                @php
+                                    $schedule_days = App\Models\ScheduleDays::where(
+                                        'schedule_id',
+                                        $schedule['id'],
+                                    )->get();
+                                @endphp
+                                <ul class="schedule_day_list">
+                                    @foreach ($schedule_days as $day)
+                                        <li class="schedule_day {{ $day['is_active'] == '1' ? 'selected_day' : '' }}">
+                                            {{ ucfirst($day['schedule_day']) }}
+                                        </li>
+                                    @endforeach
+                                    <li class="schedule_time">
+                                        <a href=""><i class="fa-solid fa-globe" style="color: #16adcb;"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> --}}
 @endsection

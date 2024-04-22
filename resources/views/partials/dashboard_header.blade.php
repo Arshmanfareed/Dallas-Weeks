@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
 
 <body>
@@ -77,6 +79,10 @@
                             });
                             choosedElement.find('.item_name').css({
                                 'font-size': '18px',
+                            });
+                            choosedElement.find('.item_desc i').css({
+                                'margin-right': '10px',
+                                'color': '#16adcb',
                             });
                             choosedElement.find('.list-icon').css({
                                 'min-height': '70px',
@@ -424,30 +430,35 @@
                     });
 
                     $('#save-changes').on('click', function() {
-                        $.ajax({
-                            url: "{{ route('createCampaign') }}",
-                            type: 'POST',
-                            dataType: 'json',
-                            contentType: 'application/json',
-                            data: JSON.stringify({
-                                'final_data': elements_data_array,
-                                'final_array': elements_array,
-                                'settings': settings
-                            }),
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    window.location = "{{ route('campaigns') }}";
-                                } else {
-                                    toastr.error(response.properties);
+                        html2canvas(document.getElementById('capture')).then(function(canvas) {
+                            var img = canvas.toDataURL();
+                            $.ajax({
+                                url: "{{ route('createCampaign') }}",
+                                type: 'POST',
+                                dataType: 'json',
+                                contentType: 'application/json',
+                                data: JSON.stringify({
+                                    'final_data': elements_data_array,
+                                    'final_array': elements_array,
+                                    'settings': settings,
+                                    'img_url': img
+                                }),
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        window.location = "{{ route('campaigns') }}";
+                                    } else {
+                                        toastr.error(response.properties);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(xhr.responseText);
                                 }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error(xhr.responseText);
-                            }
+                            });
                         });
+
                     });
 
                     function onSave() {
@@ -455,9 +466,19 @@
                         var elements = property.find('.property_item');
                         var element_name = property.find('.element_name').data('bs-target');
                         elements.each(function(index, element) {
-                            var input = $(element).find('input').val();
+                            var input = $(element).find('.property_input').val();
+                            $(element).find('.property_input').css({
+                                'border': '2px solid #ddd',
+                                'box-shadow': 'none',
+                            });
                             var p = $(element).find('p').text();
                             elements_data_array[element_name][p] = input;
+                        });
+                        $('#' + element_name).css({
+                            'border': '1px solid rgb(23, 172, 203)',
+                        });
+                        $('#' + element_name).find('.item_name').css({
+                            'color': '#fff',
                         });
                         if (true) {
                             toastr.options = {
@@ -484,50 +505,73 @@
                     }
 
                     function elementProperties(e) {
-                        $('.drop-pad-element .cancel-icon').css({
-                            'display': 'none',
-                        });
-                        $('#properties').empty();
-                        var item = $(this);
-                        $('.drop-pad-element').css({
-                            "z-index": "0",
-                            "border": "none",
-                        });
-                        item.css({
-                            "z-index": "999",
-                            "border": "1px solid rgb(23, 172, 203)",
-                        });
-                        var cancel_icon = $(this).find('.cancel-icon');
-                        cancel_icon.css({
-                            'display': 'flex',
-                        });
-                        var item_slug = item.data('filterName');
-                        var item_name = item.find('.item_name').text();
-                        var list_icon = item.find('.list-icon').html();
-                        var item_id = item.attr('id');
-                        var name_html = '';
-                        if (!elements_data_array[item_id]) {
-                            $.ajax({
-                                url: "{{ route('getcampaignelementbyslug', ':slug') }}".replace(':slug',
-                                    item_slug),
-                                type: 'GET',
-                                dataType: 'json',
-                                success: function(response) {
-                                    if (response.success) {
-                                        name_html += '<div class="element_properties">';
-                                        name_html += '<div class="element_name" data-bs-target="' +
-                                            item_id +
-                                            '">' +
-                                            list_icon +
-                                            '<p>' + item_name + '</p></div>';
-                                        arr = {};
-                                        response.properties.forEach(property => {
-                                            name_html += '<div class="property_item">';
-                                            name_html += '<p>' + property['property_name'] + '</p>';
-                                            if (property['data_type'] == 'text') {
-                                                name_html += '<input type="' + property[
-                                                        'data_type'] +
-                                                    '" placeholder="Enter your ' +
+                        var allow_element = true;
+                        $('#element-list').removeClass('active');
+                        $('#properties').addClass('active');
+                        $('#element-list-btn').removeClass('active');
+                        $('#properties-btn').addClass('active');
+                        var property_input = $('.property_input');
+                        if (property_input.length > 0 && $(this).prop('id') != $('.element_name').data('bs-target')) {
+                            for (var i = 0; i < property_input.length; i++) {
+                                var input = property_input.eq(i);
+                                if (input.prop('required') && input.val() == '') {
+                                    input.addClass('error');
+                                }
+                                allow_element = false;
+                            }
+                            var target_element = $(property_input[0]).closest('.element_properties').find('.element_name').data(
+                                'bs-target');
+                            $('#' + target_element).css({
+                                'border': '3px solid #f93f3fb3',
+                            });
+                            $('#' + target_element).find('.item_name').addClass('error');
+                        }
+                        if (allow_element) {
+                            $('.drop-pad-element .cancel-icon').css({
+                                'display': 'none',
+                            });
+                            $('#properties').empty();
+                            var item = $(this);
+                            $('.drop-pad-element').css({
+                                "z-index": "0",
+                                "border": "none",
+                            });
+                            item.css({
+                                "z-index": "999",
+                                "border": "1px solid rgb(23, 172, 203)",
+                            });
+                            var cancel_icon = $(this).find('.cancel-icon');
+                            cancel_icon.css({
+                                'display': 'flex',
+                            });
+                            $('.item_name').css({
+                                'color': '#fff',
+                            });
+                            var item_slug = item.data('filterName');
+                            var item_name = item.find('.item_name').text();
+                            var list_icon = item.find('.list-icon').html();
+                            var item_id = item.attr('id');
+                            var name_html = '';
+                            if (!elements_data_array[item_id]) {
+                                $.ajax({
+                                    url: "{{ route('getcampaignelementbyslug', ':slug') }}".replace(':slug',
+                                        item_slug),
+                                    type: 'GET',
+                                    dataType: 'json',
+                                    success: function(response) {
+                                        if (response.success) {
+                                            name_html += '<div class="element_properties">';
+                                            name_html += '<div class="element_name" data-bs-target="' +
+                                                item_id +
+                                                '">' +
+                                                list_icon +
+                                                '<p>' + item_name + '</p></div>';
+                                            arr = {};
+                                            response.properties.forEach(property => {
+                                                name_html += '<div class="property_item">';
+                                                name_html += '<p>' + property['property_name'] + '</p>';
+                                                name_html += '<input type="' + property['data_type'] +
+                                                    '" placeholder="Enter the ' +
                                                     property['property_name'] +
                                                     '" class="property_input"';
                                                 if (property['optional'] == '1') {
@@ -536,95 +580,72 @@
                                                 name_html += '>';
                                                 name_html += '</div>';
                                                 arr[property['property_name']] = '';
+                                            });
+                                            elements_data_array[item_id] = arr;
+                                            name_html +=
+                                                '</div><div class="save-btns"><button id="save">Save</button></div>';
+                                        } else {
+                                            name_html += '<div class="element_properties">';
+                                            name_html += '<div class="element_name">' + list_icon +
+                                                '<p>' + item_name + '</p></div>';
+                                            name_html += '<div class="text-center">' + response.message +
+                                                '</div></div>';
+                                        }
+                                        $('#properties').html(name_html);
+                                        $('#save').on('click', onSave);
+                                        $('.property_input').on('input', propertyInput);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error(xhr.responseText);
+                                    },
+                                });
+                            } else {
+                                name_html += '<div class="element_properties">';
+                                name_html += '<div class="element_name" data-bs-target="' + item_id + '">' +
+                                    list_icon +
+                                    '<p>' + item_name + '</p></div>';
+                                elements = elements_data_array[item_id];
+                                var ajaxRequests = [];
+                                for (const key in elements) {
+                                    ajaxRequests.push($.ajax({
+                                        url: "{{ route('getPropertyDatatype', [':name', ':element_slug']) }}"
+                                            .replace(':name', key).replace(':element_slug', item_slug),
+                                        type: 'GET',
+                                        dataType: 'json'
+                                    }).then(function(response) {
+                                        if (response.success) {
+                                            const value = elements[key];
+                                            name_html += '<div class="property_item">';
+                                            name_html += '<p>' + key + '</p>';
+                                            name_html += '<input type="' + response.properties;
+                                            if (value == '') {
+                                                name_html += '" placeholder="Enter the ' + key +
+                                                    '" class="property_input"';
                                             } else {
-                                                name_html += '<input type="' + property[
-                                                        'data_type'] +
-                                                    '" placeholder="0" class="property_input"';
-                                                if (property['optional'] == '1') {
-                                                    name_html += 'required';
-                                                }
-                                                name_html += '>';
-                                                name_html += '</div>';
-                                                arr[property['property_name']] = 0;
+                                                name_html += '" value="' + value + '" class="property_input"';
                                             }
-                                        });
-                                        elements_data_array[item_id] = arr;
-                                        name_html +=
-                                            '</div><div class="save-btns"><button id="save">Save</button></div>';
-                                    } else {
-                                        name_html += '<div class="element_properties">';
-                                        name_html += '<div class="element_name">' + list_icon +
-                                            '<p>' + item_name + '</p></div>';
-                                        name_html += '<div class="text-center">' + response.message +
-                                            '</div></div>';
-                                    }
+                                            if (response.optional == '1') {
+                                                name_html += 'required';
+                                            }
+                                            name_html += '>';
+                                            name_html += '</div>';
+                                        } else {
+                                            name_html += '<div class="property_item">';
+                                            name_html += '<p>' + key + '</p>';
+                                            name_html += '<input type="text" placeholder="' + value +
+                                                '" class="property_input">';
+                                            name_html += '</div>';
+                                        }
+                                    }));
+                                }
+                                $.when.apply($, ajaxRequests).then(function() {
+                                    name_html +=
+                                        '</div><div class="save-btns"><button id="save">Save</button></div>';
                                     $('#properties').html(name_html);
                                     $('#save').on('click', onSave);
-                                    $('#element-list').removeClass('active');
-                                    $('#properties').addClass('active');
-                                    $('#element-list-btn').removeClass('active');
-                                    $('#properties-btn').addClass('active');
                                     $('.property_input').on('input', propertyInput);
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error(xhr.responseText);
-                                },
-                            });
-                        } else {
-                            name_html += '<div class="element_properties">';
-                            name_html += '<div class="element_name" data-bs-target="' + item_id + '">' +
-                                list_icon +
-                                '<p>' + item_name + '</p></div>';
-                            elements = elements_data_array[item_id];
-                            var ajaxRequests = [];
-                            for (const key in elements) {
-                                ajaxRequests.push($.ajax({
-                                    url: "{{ route('getPropertyDatatype', [':name', ':element_slug']) }}"
-                                        .replace(':name', key).replace(':element_slug', item_slug),
-                                    type: 'GET',
-                                    dataType: 'json'
-                                }).then(function(response) {
-                                    if (response.success) {
-                                        const value = elements[key];
-                                        name_html += '<div class="property_item">';
-                                        name_html += '<p>' + key + '</p>';
-                                        if (response.properties == 'text') {
-                                            name_html += '<input type="' + response.properties +
-                                                '" value="' + value +
-                                                '" class="property_input"';
-                                            if (response.optional == '1') {
-                                                name_html += 'required';
-                                            }
-                                            name_html += '>';
-                                        } else {
-                                            name_html += '<input type="' + response.properties +
-                                                '" value="' + value + '" class="property_input"';
-                                            if (response.optional == '1') {
-                                                name_html += 'required';
-                                            }
-                                            name_html += '>';
-                                        }
-                                        name_html += '</div>';
-                                    } else {
-                                        name_html += '<div class="property_item">';
-                                        name_html += '<p>' + key + '</p>';
-                                        name_html += '<input type="text" placeholder="' + value +
-                                            '" class="property_input">';
-                                        name_html += '</div>';
-                                    }
-                                }));
+                                });
                             }
-                            $.when.apply($, ajaxRequests).then(function() {
-                                name_html +=
-                                    '</div><div class="save-btns"><button id="save">Save</button></div>';
-                                $('#properties').html(name_html);
-                                $('#save').on('click', onSave);
-                                $('#element-list').removeClass('active');
-                                $('#properties').addClass('active');
-                                $('#element-list-btn').removeClass('active');
-                                $('#properties-btn').addClass('active');
-                                $('.property_input').on('input', propertyInput);
-                            });
                         }
                     }
 
@@ -941,6 +962,15 @@
                     $('#create_sequence').on('click', function(e) {
                         e.preventDefault();
                         var form = $('#settings');
+                        var inputs = form.find('input[type="checkbox"]');
+                        inputs.each(function() {
+                            if ($(this).is(':checked')) {
+                                $(this).attr('value', 'yes');
+                            } else {
+                                $(this).prop('checked', true);
+                                $(this).attr('value', 'no');
+                            }
+                        });
                         form.submit();
                     });
                     $('.next_tab').on('click', function(e) {
