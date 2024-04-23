@@ -70,6 +70,24 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script src="assets/js/owl.carousel.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+    document.getElementById('captureButton').addEventListener('click', function() {
+        
+        html2canvas(document.getElementById('capture')).then(function(canvas) {
+            console.log('adsadsa');
+            var img = canvas.toDataURL();
+            console.log(img);
+            // Do something with the image like displaying it on the page or saving it
+            var screenshotImage = document.createElement('img');
+            screenshotImage.src = img;
+            // document.body.appendChild(screenshotImage);
+            document.querySelector('.canvas').appendChild(screenshotImage);
+        });
+    });
+</script>
+
 <script src="assets/js/custom.js"></script>
 <script>
     window.addEventListener("load", function () {
