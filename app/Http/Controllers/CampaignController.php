@@ -4,7 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Campaign;
 use App\Models\CampaignElement;
+use App\Models\CampaignPath;
 use App\Models\CampaignSchedule;
+use App\Models\EmailSetting;
+use App\Models\GlobalSetting;
+use App\Models\LinkedinSetting;
+use App\Models\UpdatedCampaignElements;
+use App\Models\UpdatedCampaignProperties;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -15,7 +21,7 @@ class CampaignController extends Controller
     {
         $user_id = Auth::user()->id;
         if ($user_id) {
-            $campaigns = Campaign::where('user_id', $user_id)->get();
+            $campaigns = Campaign::where('user_id', $user_id)->where('is_active', 1)->where('is_archive', 0)->get();
             $data = [
                 'title' => 'Campaign',
                 'campaigns' => $campaigns,
@@ -83,6 +89,79 @@ class CampaignController extends Controller
                 'campaign' => Campaign::where('id', $campaign_id)->first(),
             ];
             return view('campaignDetails', $data);
+        }
+    }
+    function changeCampaignStatus($campaign_id)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $campaign = Campaign::where('id', $campaign_id)->first();
+            if ($campaign->is_active == 1) {
+                $campaign->is_active = 0;
+                $campaign->save();
+                return response()->json(['success' => true, 'active' => $campaign->is_active]);
+            } else {
+                $campaign->is_active = 1;
+                $campaign->save();
+                return response()->json(['success' => true, 'active' => $campaign->is_active]);
+            }
+        }
+    }
+    function deleteCampaign($campaign_id)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $campaign = Campaign::where('id', $campaign_id)->first();
+            if ($campaign) {
+                LinkedinSetting::where('campaign_id', $campaign->id)->delete();
+                GlobalSetting::where('campaign_id', $campaign->id)->delete();
+                EmailSetting::where('campaign_id', $campaign->id)->delete();
+                $elements = UpdatedCampaignElements::where('campaign_id', $campaign->id)->get();
+                if ($elements) {
+                    foreach ($elements as $element) {
+                        UpdatedCampaignProperties::where('element_id', $element->id)->delete();
+                        CampaignPath::where('current_element_id', $element->id)->delete();
+                        $element->delete();
+                    }
+                }
+                $campaign->delete();
+                return response()->json(['success' => true]);
+            }
+            return response()->json(['error' => 'Campaign not found'], 404);
+        }
+    }
+    function archiveCampaign($campaign_id)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $campaign = Campaign::where('id', $campaign_id)->first();
+            if ($campaign->is_archive == 1) {
+                $campaign->is_archive = 0;
+                $campaign->save();
+                return response()->json(['success' => true, 'archive' => $campaign->is_archive]);
+            } else {
+                $campaign->is_archive = 1;
+                $campaign->save();
+                return response()->json(['success' => true, 'archive' => $campaign->is_archive]);
+            }
+        }
+    }
+    function filterCampaign($filter)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $campaigns = null;
+            if ($filter == 'active') {
+                $campaigns = Campaign::where('user_id', $user_id)->where('is_active', 1)->where('is_archive', 0)->get();
+                return response()->json(['success' => true, 'campaigns' => $campaigns]);
+            } else if ($filter == 'inactive') {
+                $campaigns = Campaign::where('user_id', $user_id)->where('is_active', 0)->where('is_archive', 0)->get();
+                return response()->json(['success' => true, 'campaigns' => $campaigns]);
+            } else if ($filter == 'archive') {
+                $campaigns = Campaign::where('user_id', $user_id)->where('is_archive', 1)->get();
+                return response()->json(['success' => true, 'campaigns' => $campaigns]);
+            }
+            return response()->json(['error' => 'Campaign not found'], 404);
         }
     }
 }

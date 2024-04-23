@@ -5660,3 +5660,25 @@ button#save {
     height: 2px;
     transform-origin: left center;
 }
+
+.schedule_div {
+    display: flex;
+    align-items: center;
+}
+
+.schedule_table td,
+.schedule_table th {
+    padding: 7px;
+}
+
+#filterSelect {
+    position: absolute;
+    margin: 0;
+    background: #7d7d7d9c;
+    border-radius: 40px;
+    width: 260px;
+    z-index: 10;
+    backdrop-filter: brightness(150%) saturate(76%) blur(6px) !important;
+    right: 670px;
+    top: 43px;
+}

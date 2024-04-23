@@ -85,7 +85,12 @@
                                 <div class="d-flex">
                                     <strong>Campaigns</strong>
                                     <div class="filter">
-                                        <a href="#"><i class="fa-solid fa-filter"></i></a>
+                                        <a id="filterToggle"><i class="fa-solid fa-filter"></i></a>
+                                        <select id="filterSelect" style="display: none">
+                                            <option value="active">Active Campaigns</option>
+                                            <option value="inactive">InActive Campaigns</option>
+                                            <option value="archive">Archive Campaigns</option>
+                                        </select>
                                         <form action="/search" method="get" class="search-form">
                                             <input type="text" name="q" placeholder="Search Campaig here...">
                                             <button type="submit">
@@ -123,62 +128,80 @@
                                                 <th width="5%">Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            @foreach ($campaigns as $campaign)
+                                        <tbody id="campaign_table_body">
+                                            @if (!empty($campaigns->first()))
+                                                @foreach ($campaigns as $campaign)
+                                                    <tr id="{{ 'table_row_' . $campaign->id }}" class="campaign_table_row">
+                                                        <td>
+                                                            <div class="switch_box">
+                                                                @if ($campaign->is_active == 1)
+                                                                    <input type="checkbox" class="switch"
+                                                                        id="switch{{ $campaign->id }}" checked>
+                                                                @else
+                                                                    <input type="checkbox" class="switch"
+                                                                        id="switch{{ $campaign->id }}">
+                                                                @endif
+                                                                <label for="switch{{ $campaign->id }}">Toggle</label>
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ $campaign->campaign_name }}</td>
+                                                        <td>44</td>
+                                                        <td>105</td>
+                                                        <td class="stats">
+                                                            <ul
+                                                                class="status_list d-flex align-items-center list-unstyled p-0 m-0">
+                                                                <li><span><img src="/assets/img/eye.svg"
+                                                                            alt="">10</span></li>
+                                                                <li><span><img src="/assets/img/request.svg"
+                                                                            alt="">42</span></li>
+                                                                <li><span><img src="/assets/img/mailmsg.svg"
+                                                                            alt="">10</span></li>
+                                                                <li><span><img src="/assets/img/mailopen.svg"
+                                                                            alt="">16</span></li>
+                                                            </ul>
+                                                        </td>
+                                                        <td>
+                                                            <div class="per up">34%</div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="per down">23%</div>
+                                                        </td>
+                                                        <td>
+                                                            <a href="javascript:;" type="button"
+                                                                class="setting setting_btn" id=""><i
+                                                                    class="fa-solid fa-gear"></i></a>
+                                                            <ul class="setting_list">
+                                                                <li><a
+                                                                        href="{{ route('campaignDetails', ['campaign_id' => $campaign->id]) }}">Check
+                                                                        campaign details</a></li>
+                                                                {{-- <li><a href="#">Edit campaign</a></li> --}}
+                                                                {{-- <li><a href="#">Duplicate campaign steps</a></li> --}}
+                                                                {{-- <li><a href="javascript:;" data-bs-toggle="modal"
+                                                                        data-bs-target="#add_new_leads_modal">Add new leads</a>
+                                                                </li> --}}
+                                                                {{-- <li><a href="#">Export data</a></li> --}}
+                                                                <li><a class="archive_campaign"
+                                                                        id="{{ 'archive' . $campaign->id }}">Archive
+                                                                        campaign</a>
+                                                                </li>
+                                                                <li><a class="delete_campaign"
+                                                                        id="{{ 'delete' . $campaign->id }}">Delete
+                                                                        campaign</a>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
                                                 <tr>
-                                                    <td>
-                                                        <div class="switch_box">
-                                                            @if ($campaign->is_active == 1)
-                                                                <input type="checkbox" class="switch"
-                                                                    id="switch{{ $campaign->id }}" checked>
-                                                            @else
-                                                                <input type="checkbox" class="switch"
-                                                                    id="switch{{ $campaign->id }}">
-                                                            @endif
-                                                            <label for="switch{{ $campaign->id }}">Toggle</label>
+                                                    <td colspan="8">
+                                                        <div class="text-center text-danger"
+                                                            style="font-size: 25px; font-weight: bold; font-style: italic;">
+                                                            Not Found!
                                                         </div>
                                                     </td>
-                                                    <td>{{ $campaign->campaign_name }}</td>
-                                                    <td>44</td>
-                                                    <td>105</td>
-                                                    <td class="stats">
-                                                        <ul
-                                                            class="status_list d-flex align-items-center list-unstyled p-0 m-0">
-                                                            <li><span><img src="/assets/img/eye.svg"
-                                                                        alt="">10</span></li>
-                                                            <li><span><img src="/assets/img/request.svg"
-                                                                        alt="">42</span></li>
-                                                            <li><span><img src="/assets/img/mailmsg.svg"
-                                                                        alt="">10</span></li>
-                                                            <li><span><img src="/assets/img/mailopen.svg"
-                                                                        alt="">16</span></li>
-                                                        </ul>
-                                                    </td>
-                                                    <td>
-                                                        <div class="per up">34%</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="per down">23%</div>
-                                                    </td>
-                                                    <td>
-                                                        <a href="javascript:;" type="button" class="setting setting_btn"
-                                                            id=""><i class="fa-solid fa-gear"></i></a>
-                                                        <ul class="setting_list">
-                                                            <li><a
-                                                                    href="{{ route('campaignDetails', ['campaign_id' => $campaign->id]) }}">Check
-                                                                    campaign details</a></li>
-                                                            <li><a href="#">Edit campaign</a></li>
-                                                            {{-- <li><a href="#">Duplicate campaign steps</a></li> --}}
-                                                            {{-- <li><a href="javascript:;" data-bs-toggle="modal"
-                                                                    data-bs-target="#add_new_leads_modal">Add new leads</a>
-                                                            </li> --}}
-                                                            {{-- <li><a href="#">Export data</a></li> --}}
-                                                            <li><a href="#">Archive campaign</a></li>
-                                                            <li><a href="#">Delete campaign</a></li>
-                                                        </ul>
-                                                    </td>
                                                 </tr>
-                                            @endforeach
+                                            @endif
                                         </tbody>
                                     </table>
                                 </div>

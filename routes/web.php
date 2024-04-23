@@ -100,3 +100,7 @@ Route::get('/campaign/getcampaignelementbyslug/{slug}', [CampaignElementControll
 Route::post('/campaign/createCampaign', [CampaignElementController::class, 'createCampaign'])->name('createCampaign');
 Route::get('/campaign/getPropertyDatatype/{name}/{element_slug}', [PropertiesController::class, 'getPropertyDatatype'])->name('getPropertyDatatype');
 Route::get('/campaign/campaignDetails/{campaign_id}', [CampaignController::class, 'getCampaignDetails'])->name('campaignDetails');
+Route::get('/campaign/changeCampaignStatus/{campaign_id}', [CampaignController::class, 'changeCampaignStatus'])->name('changeCampaignStatus');
+Route::get('/campaign/{campaign_id}', [CampaignController::class, 'deleteCampaign'])->name('deleteCampaign');
+Route::get('/campaign/archive/{campaign_id}', [CampaignController::class, 'archiveCampaign'])->name('archiveCampaign');
+Route::get('/filterCampaign/{filter}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');

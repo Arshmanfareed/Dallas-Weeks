@@ -368,6 +368,13 @@
                     $('#save-changes').on('click', function() {
                         html2canvas(document.getElementById('capture')).then(function(canvas) {
                             var img = canvas.toDataURL();
+                            $('.drop-pad-element .cancel-icon').css({
+                                'display': 'none',
+                            });
+                            $('.drop-pad-element').css({
+                                "z-index": "0",
+                                "border": "none",
+                            });
                             $.ajax({
                                 url: "{{ route('createCampaign') }}",
                                 type: 'POST',
@@ -452,16 +459,17 @@
                                 var input = property_input.eq(i);
                                 if (input.prop('required') && input.val() == '') {
                                     input.addClass('error');
+                                    var target_element = $(property_input[0]).closest('.element_properties').find(
+                                            '.element_name')
+                                        .data(
+                                            'bs-target');
+                                    $('#' + target_element).css({
+                                        'border': '3px solid #f93f3fb3',
+                                    });
+                                    $('#' + target_element).find('.item_name').addClass('error');
+                                    allow_element = false;
                                 }
-                                allow_element = false;
                             }
-                            var target_element = $(property_input[0]).closest('.element_properties').find('.element_name')
-                                .data(
-                                    'bs-target');
-                            $('#' + target_element).css({
-                                'border': '3px solid #f93f3fb3',
-                            });
-                            $('#' + target_element).find('.item_name').addClass('error');
                         }
                         if (allow_element) {
                             $('.drop-pad-element .cancel-icon').css({
@@ -938,10 +946,231 @@
             <script>
                 $(document).ready(function() {
                     /* Action toggle on Campaign list */
-                    $('.setting_btn').on('click', function() {
+                    $(document).on('click', '.setting_btn', function(e) {
                         $('.setting_list').not($(this).siblings('.setting_list')).hide();
                         $(this).siblings('.setting_list').toggle();
                     });
+                    $(document).on('change', '.switch', function(e) {
+                        var campaign_id = $(this).attr('id').replace('switch', '');
+                        $.ajax({
+                            url: "{{ route('changeCampaignStatus', ':campaign_id') }}".replace(
+                                ':campaign_id', campaign_id),
+                            type: 'GET',
+                            success: function(response) {
+                                if (response.success && response.active == 1) {
+                                    toastr.options = {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "3000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    }
+                                    toastr.success('Campaign successfully Activated');
+                                } else {
+                                    toastr.info('Campaign successfully Deactivated');
+                                }
+                                if ($('#filterSelect').val() != 'archive') {
+                                    $('#table_row_' + campaign_id).remove();
+                                }
+                                if ($('.campaign_table_row').length <= 0) {
+                                    html = '';
+                                    html += '<tr><td colspan="8">';
+                                    html +=
+                                        '<div class="text-center text-danger" style="font-size: 25px; font-weight: bold; font-style: italic;">Not Found!</div>';
+                                    html += '</td></tr>';
+                                    $('#campaign_table_body').html(html);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(xhr.responseText);
+                            },
+                        });
+                    });
+                    $(document).on('click', '.delete_campaign', function(e) {
+                        if (confirm('Are you sure to delete this campaign?')) {
+                            var campaign_id = $(this).attr('id').replace('delete', '');
+                            $.ajax({
+                                url: "{{ route('deleteCampaign', ':id') }}".replace(':id', campaign_id),
+                                type: 'GET',
+                                success: function(response) {
+                                    if (response.success) {
+                                        toastr.options = {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "3000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        }
+                                        toastr.success('Campaign successfully Deleted');
+                                    } else {
+                                        toastr.error('Campaign cannot be Deleted');
+                                    }
+                                    $('#table_row_' + campaign_id).remove();
+                                    if ($('.campaign_table_row').length == 0) {
+                                        html = '';
+                                        html += '<tr><td colspan="8">';
+                                        html +=
+                                            '<div class="text-center text-danger" style="font-size: 25px; font-weight: bold; font-style: italic;">Not Found!</div>';
+                                        html += '</td></tr>';
+                                        $('#campaign_table_body').html(html);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(error);
+                                },
+                            });
+                        }
+                    });
+                    $(document).on('click', '.archive_campaign', function(e) {
+                        if (confirm('Are you sure to archive this campaign?')) {
+                            var campaign_id = $(this).attr('id').replace('archive', '');
+                            $.ajax({
+                                url: "{{ route('archiveCampaign', ':id') }}".replace(':id', campaign_id),
+                                type: 'GET',
+                                success: function(response) {
+                                    if (response.success && response.archive == 1) {
+                                        toastr.options = {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "3000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        }
+                                        toastr.success('Campaign successfully Archived');
+                                    } else {
+                                        toastr.info('Campaign successfully Archived');
+                                    }
+                                    $('#table_row_' + campaign_id).remove();
+                                    if ($('.campaign_table_row').length == 0) {
+                                        html = '';
+                                        html += '<tr><td colspan="8">';
+                                        html +=
+                                            '<div class="text-center text-danger" style="font-size: 25px; font-weight: bold; font-style: italic;">Not Found!</div>';
+                                        html += '</td></tr>';
+                                        $('#campaign_table_body').html(html);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(error);
+                                },
+                            });
+                        }
+                    });
+                    $(document).on('click', '#filterToggle', function(e) {
+                        e.preventDefault();
+                        $('#filterSelect').toggle();
+                    });
+                    $('#filterSelect').on('change', function(e) {
+                        e.preventDefault();
+                        var filter = $(this).val();
+                        $.ajax({
+                            url: "{{ route('filterCampaign', ':filter') }}".replace(':filter', filter),
+                            type: 'GET',
+                            success: function(response) {
+                                if (response.success) {
+                                    var campaigns = response.campaigns;
+                                    var html = ``;
+                                    if (campaigns.length != 0) {
+                                        for (let i = 0; i < campaigns.length; i++) {
+                                            let campaign = campaigns[i];
+                                            html += `<tr id="` + 'table_row_' + campaign['id'] +
+                                                `" class="campaign_table_row"><td><div class="switch_box">`;
+                                            if (campaign['is_active'] == 1) {
+                                                html +=
+                                                    `<input type="checkbox" class="switch" id="switch` +
+                                                    campaign['id'] + `" checked>`;
+                                            } else {
+                                                html +=
+                                                    `<input type="checkbox" class="switch" id="switch` +
+                                                    campaign['id'] + `">`;
+                                            }
+                                            html += `<label for="switch` + campaign['id'] +
+                                                `">Toggle</label></div></td>`;
+                                            html += `<td>` + campaign['campaign_name'] + `</td>`;
+                                            html += `<td>44</td>`;
+                                            html += `<td>105</td>`;
+                                            html +=
+                                                `<td class="stats"><ul class="status_list d-flex align-items-center list-unstyled p-0 m-0">`;
+                                            html +=
+                                                `<li><span><img src="/assets/img/eye.svg" alt="">10</span></li>`;
+                                            html +=
+                                                `<li><span><img src="/assets/img/request.svg" alt="">42</span></li>`;
+                                            html +=
+                                                `<li><span><img src="/assets/img/mailmsg.svg" alt="">10</span></li>`;
+                                            html +=
+                                                `<li><span><img src="/assets/img/mailopen.svg" alt="">16</span></li></ul></td>`;
+                                            html += `<td><div class="per up">34%</div></td>`;
+                                            html += `<td><div class="per down">23%</div></td>`;
+                                            html +=
+                                                `<td><a href="javascript:;" type="button" class="setting setting_btn" id=""><i class="fa-solid fa-gear"></i></a>`;
+                                            html += `<ul class="setting_list">`;
+                                            html += `<li><a href="/campaign/campaignDetails/` +
+                                                campaign['id'] + `">Check campaign details</a></li>`;
+                                            // html += '<li><a href="#">Edit campaign</a></li>';
+                                            // html += '<li><a href="#">Duplicate campaign steps</a></li>';
+                                            // html += '<li><a href="javascript:;" data-bs-toggle="modal" data-bs-target="#add_new_leads_modal">Add new leads</a></li>';
+                                            // html += '<li><a href="#">Export data</a></li>';
+                                            html += `<li><a class="archive_campaign" id="` + "archive" +
+                                                campaign['id'] + `">Archive campaign</a></li>`;
+                                            html += `<li><a class="delete_campaign" id="` + "delete" +
+                                                campaign['id'] + `">Delete campaign</a></li>`;
+                                            html += `</ul></td></tr>`;
+                                        }
+                                    } else {
+                                        html += '<tr><td colspan="8">';
+                                        html +=
+                                            '<div class="text-center text-danger" style="font-size: 25px; font-weight: bold; font-style: italic;">Not Found!</div>';
+                                        html += '</td></tr>';
+                                    }
+                                    $('#campaign_table_body').html(html);
+                                }
+                                if ($('#filterSelect').val() == 'archive') {
+                                    $('.archive_campaign').html('Remove From Archive');
+                                } else {
+                                    $('.archive_campaign').html('Archive campaign');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(error);
+                            },
+                        });
+                    });
+                });
+            </script>
+        @elseif (Str::contains(request()->url(), 'accdashboard'))
+            <script>
+                $(document).ready(function() {
+                    $('.switch').prop('disabled', true);
                 });
             </script>
         @endif
