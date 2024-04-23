@@ -10,15 +10,23 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <h1>Turning connections into clients</h1>
-                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-                        totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.</p>
-                    <div class="btn btn-blue btn-yellow">
-                        <a href="javascript:;"><i class="fa-solid fa-plus"></i>get Started</a>
+                    <div id="capture">
+                        <h1>Turning connections into clients</h1>
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+                            totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.</p>
+                        <div class="btn btn-blue btn-yellow">
+                            <a href="javascript:;"><i class="fa-solid fa-plus"></i>get Started</a>
+                        </div>
+                        <div class="img3">
+                            <img src="assets/images/img1.png" alt="">
+                        </div>
                     </div>
-                    <div class="img3">
-                        <img src="assets/images/img1.png" alt="">
+                    <button id="captureButton">Capture</button>
+                    <div class="canvas">
+                        
                     </div>
+
+                    
                 </div>
             </div>
         </div>
