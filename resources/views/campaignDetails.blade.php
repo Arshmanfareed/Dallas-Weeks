@@ -70,7 +70,8 @@
                                                 <div class="switch_box"><input type="checkbox"
                                                         name="{{ $item->setting_slug }}" class="linkedin_setting_switch"
                                                         id="{{ $item->setting_slug }}"
-                                                        {{ $item->value == 'yes' ? 'checked' : '' }}><label
+                                                        {{ $item->value == 'yes' ? 'checked' : '' }}
+                                                        data-id="{{ $item->id }}"><label
                                                         for="{{ $item->setting_slug }}">Toggle</label>
                                                 </div>
                                             </div>
@@ -90,7 +91,8 @@
                                             <p>{{ str_replace('Linkedin Settings ', '', $item->setting_name) }}</p>
                                             <div class="switch_box"><input type="checkbox" name="{{ $item->setting_slug }}"
                                                     class="linkedin_setting_switch" id="{{ $item->setting_slug }}"
-                                                    {{ $item->value == 'yes' ? 'checked' : '' }}><label
+                                                    {{ $item->value == 'yes' ? 'checked' : '' }}
+                                                    data-id="{{ $item->id }}"><label
                                                     for="{{ $item->setting_slug }}">Toggle</label>
                                             </div>
                                         </div>
@@ -108,7 +110,8 @@
                                             <p>{{ str_replace('Global Settings ', '', $item->setting_name) }}</p>
                                             <div class="switch_box"><input type="checkbox" name="{{ $item->setting_slug }}"
                                                     class="linkedin_setting_switch" id="{{ $item->setting_slug }}"
-                                                    {{ $item->value == 'yes' ? 'checked' : '' }}><label
+                                                    {{ $item->value == 'yes' ? 'checked' : '' }}
+                                                    data-id="{{ $item->id }}"><label
                                                     for="{{ $item->setting_slug }}">Toggle</label>
                                             </div>
                                         </div>

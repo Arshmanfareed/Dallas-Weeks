@@ -29,16 +29,6 @@
     </main>
     <footer>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-        <script>
-            $("a.setting_btn").on('click', function() {
-                $(this).siblings().toggle();
-            });
-            $('.setting_btn').each(function() {
-                $(this).on('click', function() {
-                    $(this).siblings('.setting_list').toggle();
-                });
-            });
-        </script>
         @if (Str::contains(request()->url(), 'createcampaignfromscratch'))
             <script>
                 $(document).ready(function() {
@@ -70,26 +60,6 @@
                             choosedElement.addClass('drop_element');
                             choosedElement.addClass('drop-pad-element');
                             choosedElement.removeClass('element');
-                            choosedElement.css({
-                                'width': 'fit-content',
-                                'min-height': '70px',
-                            });
-                            choosedElement.find('.item_details').css({
-                                'padding': '12px 12px 12px 0px',
-                            });
-                            choosedElement.find('.item_name').css({
-                                'font-size': '18px',
-                            });
-                            choosedElement.find('.item_desc i').css({
-                                'margin-right': '10px',
-                                'color': '#16adcb',
-                            });
-                            choosedElement.find('.list-icon').css({
-                                'min-height': '70px',
-                            });
-                            choosedElement.find('.cancel-icon').css({
-                                'display': 'none',
-                            });
                             $(document).on('mousemove', function(e) {
                                 var x = e.pageX;
                                 var y = e.pageY;
@@ -181,26 +151,8 @@
 
                         $(document).on('mouseup', function(e) {
                             if (choosedElement) {
-                                choosedElement.css({
-                                    'align-items': 'stretch',
-                                });
+                                choosedElement.addClass('placedElement');
                                 choosedElement.removeClass('drop_element');
-                                attach_in = choosedElement.find('.element_change_input');
-                                attach_in.css({
-                                    'display': 'flex',
-                                    'justify-content': 'center',
-                                    'align-items': 'center'
-                                });
-                                attach_on = choosedElement.find('.element_change_output');
-                                attach_on.css({
-                                    'display': 'flex',
-                                    'justify-content': 'center',
-                                    'align-items': 'center'
-                                });
-                                cancel_icon = choosedElement.find('.cancel-icon');
-                                cancel_icon.css({
-                                    'display': 'none',
-                                });
                                 var x = e.pageX;
                                 var y = e.pageY;
                                 var element = $('.drop-pad').offset();
@@ -213,61 +165,51 @@
                                     choosedElement.css({
                                         left: 0,
                                         top: 0,
-                                        'border': 'none',
                                     });
                                 } else if (x < element_x && y > max_y) {
                                     choosedElement.css({
                                         left: 0,
                                         top: max_y - 310,
-                                        'border': 'none',
                                     });
                                 } else if (x > max_x && y > max_y) {
                                     choosedElement.css({
                                         left: max_x - 130,
                                         top: max_y - 310,
-                                        'border': 'none',
                                     });
                                 } else if (x < element_x && (y > element_y && y < max_y)) {
                                     choosedElement.css({
                                         left: 0,
                                         top: y - 330,
-                                        'border': 'none',
                                     });
                                 } else if (y < element_y && (x > element_x && x < max_x)) {
                                     choosedElement.css({
                                         left: x - 210,
                                         top: 0,
-                                        'border': 'none',
                                     });
                                 } else if (y > max_y && (x > element_x && x < max_x)) {
                                     choosedElement.css({
                                         left: x - 210,
                                         top: max_y - 310,
-                                        'border': 'none',
                                     });
                                 } else if ((x > element_x && x < max_x) && (y > element_y && y < max_y)) {
                                     choosedElement.css({
                                         left: x - 210,
                                         top: y - 330,
-                                        'border': 'none',
                                     });
                                 } else if (x > max_x && y < element_y) {
                                     choosedElement.css({
                                         left: max_x - 130,
                                         top: 0,
-                                        'border': 'none',
                                     });
                                 } else if (x > max_x && (y > element_y && y < max_y)) {
                                     choosedElement.css({
                                         left: max_x - 130,
                                         top: y - 330,
-                                        'border': 'none',
                                     });
                                 } else {
                                     choosedElement.css({
                                         left: 0,
                                         top: 0,
-                                        'border': 'none',
                                     });
                                 }
                                 $(document).off('mousemove');
@@ -386,12 +328,6 @@
                                     inputElement.attr('id') +
                                     '"><div class="path-cancel-icon"><i class="fa-solid fa-xmark"></i></div></div>');
                                 $('.path-cancel-icon').on('click', removePath);
-                                $('.line').css({
-                                    'position': 'absolute',
-                                    'background-color': 'white',
-                                    'height': '2px',
-                                    'transform-origin': 'left center'
-                                });
                                 var attachInputElement = $(inputElement).find('.element_change_input');
                                 if (attachInputElement && attachOutputElement) {
                                     var inputPosition = attachInputElement.offset();
@@ -519,8 +455,9 @@
                                 }
                                 allow_element = false;
                             }
-                            var target_element = $(property_input[0]).closest('.element_properties').find('.element_name').data(
-                                'bs-target');
+                            var target_element = $(property_input[0]).closest('.element_properties').find('.element_name')
+                                .data(
+                                    'bs-target');
                             $('#' + target_element).css({
                                 'border': '3px solid #f93f3fb3',
                             });
@@ -959,6 +896,7 @@
                         form.append($('<input>').attr('type', 'hidden').attr('name', 'connections').val(campaign_details[
                             'connections']));
                     }
+                    /* Before submitting make every checkbox having valing */
                     $('#create_sequence').on('click', function(e) {
                         e.preventDefault();
                         var form = $('#settings');
@@ -979,12 +917,30 @@
                     $('.prev_tab').on('click', function(e) {
                         $(this).closest('.comp_tabs').find('.nav-tabs .nav-link.active').prev().click();
                     });
+                    /* Changing tabs among settings */
                     $('.schedule-btn').on('click', function() {
                         var targetTab = $(this).data('tab');
                         $('.schedule-content').removeClass('active');
                         $('#' + targetTab).addClass('active');
                         $('.schedule-btn').removeClass('active');
                         $(this).addClass('active');
+                    });
+                });
+            </script>
+        @elseif (Str::contains(request()->url(), 'campaignDetails'))
+            <script>
+                $(document).ready(function() {
+                    /* Making every setting to unchangable */
+                    $('.linkedin_setting_switch').prop('disabled', true);
+                });
+            </script>
+        @elseif (Str::contains(request()->url(), 'campaign'))
+            <script>
+                $(document).ready(function() {
+                    /* Action toggle on Campaign list */
+                    $('.setting_btn').on('click', function() {
+                        $('.setting_list').not($(this).siblings('.setting_list')).hide();
+                        $(this).siblings('.setting_list').toggle();
                     });
                 });
             </script>

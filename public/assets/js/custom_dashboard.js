@@ -79,12 +79,12 @@ $(function() {
 //         jQuery(this).siblings('.setting_list').toggle();
 //         });
 //         });
-$(document).ready(function () {
-    $('.setting_btn').on('click', function () {
-        $('.setting_list').not($(this).siblings('.setting_list')).hide();
-        $(this).siblings('.setting_list').toggle();
-    });
-});
+// $(document).ready(function () {
+//     $('.setting_btn').on('click', function () {
+//         $('.setting_list').not($(this).siblings('.setting_list')).hide();
+//         $(this).siblings('.setting_list').toggle();
+//     });
+// });
 
 
 const prevBtns = document.querySelectorAll(".btn-prev");

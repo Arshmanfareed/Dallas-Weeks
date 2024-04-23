@@ -5611,3 +5611,52 @@ button#save {
 .item_name.error {
     color: red !important;
 }
+
+.drop-pad-element {
+    width: fit-content;
+    min-height: 70px;
+}
+
+.drop-pad-element .item_details {
+    padding: 12px 12px 12px 0px;
+}
+
+.drop-pad-element .item_name {
+    font-size: 18px;
+}
+
+.drop-pad-element .item_details i {
+    margin-right: 10px;
+    color: #16adcb;
+}
+
+.drop-pad-element .list-icon {
+    min-height: 70px;
+}
+
+.drop-pad-element .cancel-icon {
+    display: none;
+}
+
+.placedElement {
+    align-items: stretch;
+    border: none;
+}
+
+.placedElement .element_change_input,
+.placedElement .element_change_output {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.placedElement .cancel-icon {
+    display: none;
+}
+
+.line {
+    position: absolute;
+    background-color: white;
+    height: 2px;
+    transform-origin: left center;
+}
