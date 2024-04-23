@@ -75,4 +75,14 @@ class CampaignController extends Controller
             return view('createcampaignfromscratch', $data);
         }
     }
+    function getCampaignDetails($campaign_id)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $data = [
+                'campaign' => Campaign::where('id', $campaign_id)->first(),
+            ];
+            return view('campaignDetails', $data);
+        }
+    }
 }

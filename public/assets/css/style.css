@@ -1997,7 +1997,6 @@ select {
     font-family: "FontAwesome";
     color: #e3c935;
 }
-
 .create_sequence_modal .modal-body .border_box a.btn {
     padding: 20px 40px;
     font-size: 18px;
@@ -5558,4 +5557,106 @@ button#save {
 
 .line {
     background-color: #e2c64d !important;
+}
+
+.campaign_detail_sec .details_table td {
+    padding: 10px 15px;
+}
+
+.campaign_detail_sec .details_table td.item_name {
+    font-size: 18px;
+}
+
+.campaign_detail_sec .details_table .campaign_url {
+    color: #16adcb;
+}
+
+.campaign_detail_sec .details_table .item_value {
+    color: #ccc;
+}
+
+.comp_tabs .tab-content .tab-pane {
+    padding: 0px 25px;
+}
+
+.camp_details {
+    padding: 0px 30px;
+}
+
+.camp_details h4 {
+    padding: 0px 15px;
+}
+
+.drop-pad {
+    background-color: #111317;
+}
+
+.camp_sequence {
+    padding: 0px 55px;
+}
+
+.camp_sequence img {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 35px;
+    padding: 15px 0px 0px 15px;
+}
+
+.property_input.error {
+    outline: none;
+    border: 2px solid #f93f3fb3 !important;
+    box-shadow: 7px 7px 15px #fd4d4d2e;
+}
+
+.item_name.error {
+    color: red !important;
+}
+
+.drop-pad-element {
+    width: fit-content;
+    min-height: 70px;
+}
+
+.drop-pad-element .item_details {
+    padding: 12px 12px 12px 0px;
+}
+
+.drop-pad-element .item_name {
+    font-size: 18px;
+}
+
+.drop-pad-element .item_details i {
+    margin-right: 10px;
+    color: #16adcb;
+}
+
+.drop-pad-element .list-icon {
+    min-height: 70px;
+}
+
+.drop-pad-element .cancel-icon {
+    display: none;
+}
+
+.placedElement {
+    align-items: stretch;
+    border: none;
+}
+
+.placedElement .element_change_input,
+.placedElement .element_change_output {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.placedElement .cancel-icon {
+    display: none;
+}
+
+.line {
+    position: absolute;
+    background-color: white;
+    height: 2px;
+    transform-origin: left center;
 }

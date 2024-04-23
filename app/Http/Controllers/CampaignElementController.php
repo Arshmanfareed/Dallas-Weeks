@@ -39,6 +39,7 @@ class CampaignElementController extends Controller
             $final_array = $all_request['final_array'];
             $final_data = $all_request['final_data'];
             $settings = $all_request['settings'];
+            $img_path = $all_request['img_url'];
             $campaign = new Campaign();
             $campaign->campaign_name = $settings['campaign_name'];
             unset($settings['campaign_name']);
@@ -50,10 +51,11 @@ class CampaignElementController extends Controller
             unset($settings['connections']);
             $campaign->user_id = $user_id;
             $campaign->seat_id = 1;
-            $campaign->description = 'This campaign is the test campaign';
+            $campaign->description = '';
             $campaign->modified_date = date('Y-m-d');
             $campaign->start_date = date('Y-m-d');
             $campaign->end_date = date('Y-m-d');
+            $campaign->img_path = $img_path;
             $campaign->save();
             if ($campaign->id) {
                 foreach ($settings as $key => $value) {
