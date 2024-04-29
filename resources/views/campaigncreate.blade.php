@@ -50,42 +50,42 @@
                                         <li class="nav-item border_box">
                                             <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-1" role="tab">
-                                                <img src="/assets/img/linkedin.svg" alt="">
+                                                <img src="{{ asset('assets/img/linkedin.svg') }}" alt="">
                                                 <title>Linkedin search result</title>
                                             </a>
                                         </li>
                                         <li class="nav-item border_box">
                                             <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-2" role="tab">
-                                                <img src="/assets/img/navigation.svg" alt="">
+                                                <img src="{{ asset('assets/img/navigation.svg') }}" alt="">
                                                 <title>Sales navigator search result</title>
                                             </a>
                                         </li>
                                         <li class="nav-item border_box">
                                             <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-3" role="tab">
-                                                <img src="/assets/img/recruiter.svg" alt="">
+                                                <img src="{{ asset('assets/img/recruiter.svg') }}" alt="">
                                                 <title>Recruiter search result</title>
                                             </a>
                                         </li>
                                         <li class="nav-item border_box">
                                             <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-4" role="tab">
-                                                <img src="/assets/img/import.svg" alt="">
+                                                <img src="{{ asset('assets/img/import.svg') }}" alt="">
                                                 <title>Import</title>
                                             </a>
                                         </li>
                                         <li class="nav-item border_box">
                                             <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-5" role="tab">
-                                                <img src="/assets/img/engagement.svg" alt="">
+                                                <img src="{{ asset('assets/img/engagement.svg') }}" alt="">
                                                 <title>Post engagement</title>
                                             </a>
                                         </li>
                                         <li class="nav-item border_box">
                                             <a class="nav-link campaign_tab" data-toggle="tab" href="javascript:;"
                                                 data-bs-target="tabs-6" role="tab">
-                                                <img src="/assets/img/list.svg" alt="">
+                                                <img src="{{ asset('assets/img/list.svg') }}" alt="">
                                                 <title>Leads list</title>
                                             </a>
                                         </li>

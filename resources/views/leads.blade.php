@@ -16,14 +16,15 @@
                                         <select name="campaign" id="campaign">
                                             <option value="01">All Campaigns</option>
                                             <option value="02">All Campaigns</option>
-                                            <option value="03">3All Campaigns0</option>
+                                            <option value="03">All Campaigns</option>
                                             <option value="04">All Campaigns</option>
                                         </select>
                                     </div>
                                     <div class="add_btn ">
                                         <a href="javascript:;" class="" type="button" data-bs-toggle="modal"
                                             data-bs-target="#export_modal"><img class="img-fluid"
-                                                src="/assets/img/importexport.svg" alt=""></a>Export from campaigns
+                                                src="{{ asset('assets/img/importexport.svg') }}" alt=""></a>Export
+                                        from campaigns
                                     </div>
                                 </div>
                             </div>
@@ -63,22 +64,26 @@
                             <div class="comp_tabs">
                                 <ul class="nav nav-tabs" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active" data-toggle="tab" href="#Leads" role="tab">Leads</a>
+                                        <a class="nav-link lead_tab active" data-toggle="tab" href="javascript:;"
+                                            role="tab" data-bs-target="Leads">Leads</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#Steps" role="tab">Steps</a>
+                                        <a class="nav-link lead_tab" data-toggle="tab" href="javascript:;" role="tab"
+                                            data-bs-target="Steps">Steps</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#Stats" role="tab">Stats</a>
+                                        <a class="nav-link lead_tab" data-toggle="tab" href="javascript:;" role="tab"
+                                            data-bs-target="Stats">Stats</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#integration" role="tab">Campaign
+                                        <a class="nav-link lead_tab" data-toggle="tab" href="javascript:;" role="tab"
+                                            data-bs-target="integration">Campaign
                                             integration</a>
                                     </li>
                                 </ul><!-- Tab panes -->
                                 <div class="tab-content">
                                     <!-- Leads Content -->
-                                    <div class="tab-pane active" id="Leads" role="tabpanel">
+                                    <div class="tab-pane lead_pane active" id="Leads" role="tabpanel">
                                         <div class="border_box">
                                             <div class="scroll_div">
                                                 <table class="data_table w-100">
@@ -87,7 +92,7 @@
                                                             <th width="5%">Status</th>
                                                             <th width="20%">Contact</th>
                                                             <th width="25%">Title/Company</th>
-                                                            <th width="15%" class="">Send Connections</th>
+                                                            <th width="15%">Send Connections</th>
                                                             <th width="10%">Current step</th>
                                                             <th width="10%">Next step</th>
                                                             <th width="10%">Executed time</th>
@@ -143,7 +148,7 @@
                                         </div>
                                     </div>
                                     <!-- Step Content -->
-                                    <div class="tab-pane" id="Steps" role="tabpanel">
+                                    <div class="tab-pane lead_pane" id="Steps" role="tabpanel">
                                         <div class="lead_step_cont">
                                             <div class="border_box">
                                                 <form id="" class="lead_step_form">
@@ -301,7 +306,7 @@
                                         </div>
                                     </div>
                                     <!-- Stats Content -->
-                                    <div class="tab-pane" id="Stats" role="tabpanel">
+                                    <div class="tab-pane lead_pane" id="Stats" role="tabpanel">
                                         <div class="chart_box">
                                             <div class="border_box">
                                                 <div class="chart_filter d-flex justify-content-between">
@@ -333,7 +338,7 @@
                                                 <div class="chart_canvas_report">
                                                     <div id="chartContainer" style="height: 388px; width: 100%;"></div>
                                                 </div>
-                                                <!-- <img src="/assets/img/chart.png" alt=""> -->
+                                                <!-- <img src="{{ asset('assets/img/chart.png') }}" alt=""> -->
                                                 <ul class="chart_status d-flex justify-content-between list-unstyled p-0">
                                                     <li><span></span>Views</li>
                                                     <li><span></span>Follows</li>
@@ -396,14 +401,14 @@
                                         </div>
                                         <div class="chart_last_box">
                                             <div class="border_box">
-                                                <img src="/assets/img/temp.png" alt="">
+                                                <img src="{{ asset('assets/img/temp.png') }}" alt="">
                                                 <p class="text-center">you need to choose some campaign to check out
                                                     statistics by step.</p>
                                             </div>
                                         </div>
                                     </div>
                                     <!-- Campaign Integration Content -->
-                                    <div class="tab-pane" id="integration" role="tabpanel">
+                                    <div class="tab-pane lead_pane" id="integration" role="tabpanel">
                                         <div class="leads_int">
                                             <div class="border_box">
                                                 <div class="int_box">

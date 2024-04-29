@@ -20,7 +20,7 @@
                     <div class="dashboard_cont">
                         <div class="row_filter d-flex align-items-center justify-content-between">
                             <div class="account d-flex align-items-center">
-                                <img src="assets/img/account_img.png" alt=""><span>John dow</span>
+                                <img src="{{ asset('assets/img/account_img.png') }}" alt=""><span>John dow</span>
                             </div>
                             <div class="form_add d-flex">
                                 <form action="/search" method="get" class="search-form">
@@ -38,7 +38,7 @@
                         <hr>
                         <div class="row_table">
                             <div class="add_account_div">
-                                <img src="assets/img/empty.png" alt="">
+                                <img src="{{ asset('assets/img/empty.png') }}" alt="">
                                 <p class="text-center">You don't hanve any account yet. Start by adding your first account.
                                 </p>
                                 <div class="add_btn">
@@ -235,8 +235,8 @@
 
                             </div>
                             <!--  <div class="add-experience">
-                                        <a class="add-exp-btn"> + Add Experience</a>
-                                    </div> -->
+                                                <a class="add-exp-btn"> + Add Experience</a>
+                                            </div> -->
                             <div class="btn-group">
                                 <a class="btn btn-prev">Previous</a>
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Pay Now</button>
@@ -248,9 +248,9 @@
                     </form>
                 </div>
                 <!-- <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div> -->
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                </div> -->
             </div>
         </div>
     </div>

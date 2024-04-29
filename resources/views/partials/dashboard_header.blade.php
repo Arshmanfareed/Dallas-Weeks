@@ -29,14 +29,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <script src="/assets/js/custom_dashboard.js"></script>
+    <script src="{{ asset('assets/js/custom_dashboard.js') }}"></script>
     <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 
     @if (request()->is('accdashboard', 'report', 'leads'))
-        <script src="assets/js/chart_query.js"></script>
+        <script src="{{ asset('assets/js/chart_query.js') }}"></script>
     @endif
 
     <title>Dashboard</title>
@@ -97,15 +97,18 @@
     </script>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-dark justify-content-between dashboard_header">
-            <a class="navbar-brand" href="#">Networked</a>
+            <a class="navbar-brand" href="{{ route('dashobardz') }}">Networked</a>
 
             <div class="right_nav">
                 <ul class="d-flex list-unstyled">
                     <li><a href="#"><i class="fa-regular fa-envelope"></i></a></li>
                     <li><a href="#"><i class="fa-regular fa-bell"></i></a></li>
                     <li class="acc d-flex align-item-center">
-                        <img src="{{ asset('/public/assets/img/acc.png') }}" alt="">
-                        <span>John Doe</span>
+                        <img src="{{ asset('/assets/img/acc.png') }}" alt="">
+                        @php
+                            $user = auth()->user();
+                        @endphp
+                        <span>{{ $user->name }}</span>
                         <i class="fa-solid fa-chevron-down"></i>
                     </li>
                     <li class="darkmode"><a href="#"><i class="fa-solid fa-sun"></i></a></li>
@@ -1365,6 +1368,36 @@
             <script>
                 $(document).ready(function() {
                     $('.switch').prop('disabled', true);
+                });
+            </script>
+        @elseif (Str::contains(request()->url(), 'leads'))
+            <script>
+                $('.lead_tab').on('click', function(e) {
+                    e.preventDefault();
+                    $('.lead_tab').removeClass('active');
+                    $(this).addClass('active');
+                    var id = $(this).data('bs-target');
+                    $('.lead_pane').removeClass('active');
+                    $('#' + id).addClass('active');
+                });
+            </script>
+        @elseif (Str::contains(request()->url(), 'setting'))
+            <script>
+                $('.setting_tab').on('click', function(e) {
+                    e.preventDefault();
+                    $('.setting_tab').removeClass('active');
+                    $(this).addClass('active');
+                    var id = $(this).data('bs-target');
+                    $('.setting_pane').removeClass('active');
+                    $('#' + id).addClass('active');
+                });
+                $('.linkedin_setting').on('click', function(e) {
+                    e.preventDefault();
+                    $('.linkedin_setting').removeClass('active');
+                    $(this).addClass('active');
+                    var id = $(this).data('bs-target');
+                    $('.linkedin_pane').removeClass('active');
+                    $('#' + id).addClass('active');
                 });
             </script>
         @endif

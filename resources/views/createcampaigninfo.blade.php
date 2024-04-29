@@ -439,14 +439,14 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="border_box">
-                                <img src="/assets/img/temp.png" alt="">
+                                <img src="{{ asset('assets/img/temp.png') }}" alt="">
                                 <a href="javascript:;" class="btn">From template</a>
                                 <p>Create a sequence from our suggested templates.</p>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="border_box">
-                                <img src="/assets/img/creat_temp.png" alt="">
+                                <img src="{{ asset('assets/img/creat_temp.png') }}" alt="">
                                 <a id="create_sequence" class="btn">From scratch</a>
                                 <p>Create a sequence from scratch specify steps and everything.</p>
                             </div>

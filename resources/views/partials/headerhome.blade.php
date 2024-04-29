@@ -17,21 +17,22 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style_home.css">
-    <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/style_home.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.min.css') }}">
 </head>
 
 <body>
     <style>
         #loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.7);
-    z-index: 9999;
-    display: none; /* Initially hide the loader */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            display: none;
+            /* Initially hide the loader */
         }
 
         .loader-inner {
@@ -51,6 +52,7 @@
             0% {
                 transform: rotate(0deg);
             }
+
             100% {
                 transform: rotate(360deg);
             }
@@ -114,8 +116,8 @@
                 </div>
                 <div class="col-md-2">
                     <div class="logomain">
-                        <a class="navbar-brand" href="{{ URL('/') }}"><img src="assets/images/logo.png"
-                                alt=""></a>
+                        <a class="navbar-brand" href="{{ URL('/') }}"><img
+                                src="{{ asset('assets/images/logo.png') }}" alt=""></a>
                     </div>
                 </div>
                 <div class="col-md-5">

@@ -20,7 +20,7 @@
                         </div>
                         <div class="darkgrey_div">
                             <div class="d-flex justify-content-between">
-                                <img src="assets/img/people.png" alt="">
+                                <img src="{{ asset('assets/img/people.png') }}" alt="">
                                 <div class="cont">Manage Connections<i class="fa-solid fa-arrow-right"></i></div>
                             </div>
                         </div>
@@ -29,13 +29,13 @@
                     <div class="border_box">
                         <div class="chart_box">
                             <div class="d-flex justify-content-between">
-                                <span>Campaign stats</span><a href="javascript:;"><img src="assets/img/settings.svg"
-                                        alt=""></a>
+                                <span>Campaign stats</span><a href="javascript:;"><img
+                                        src="{{ asset('assets/img/settings.svg') }}" alt=""></a>
                             </div>
                             <div class="chart_canvas">
                                 <div id="chartContainer" style="height: 350px; width: 100%;"></div>
                             </div>
-                            <!-- <img src="/assets/img/chart_1.png" alt=""> -->
+                            <!-- <img src="{{ asset('assets/img/chart_1.png') }}" alt=""> -->
                         </div>
                         <div class="invite_date_box">
                             @for ($i = 0; $i <= 3; $i++)
@@ -65,8 +65,8 @@
                     <div class="border_box">
                         <div class="campaign_box">
                             <div class="d-flex justify-content-between">
-                                <span>Campaign stats</span><a href="javascript:;"><img src="assets/img/settings.svg"
-                                        alt=""></a>
+                                <span>Campaign stats</span><a href="javascript:;"><img
+                                        src="{{ asset('assets/img/settings.svg') }}" alt=""></a>
                             </div>
                             <div class="campaign_data">
                                 @foreach ($campaigns as $campaign)
@@ -95,14 +95,18 @@
                     <div class="border_box">
                         <div class="campaign_box">
                             <div class="d-flex justify-content-between">
-                                <span>Messages</span><a href="javascript:;"><img src="assets/img/settings.svg"
-                                        alt=""></a>
+                                <span>Messages</span><a href="javascript:;"><img
+                                        src="{{ asset('assets/img/settings.svg') }}" alt=""></a>
                             </div>
                             <div class="campaign_data">
                                 @for ($i = 0; $i <= 7; $i++)
+                                    @php
+                                        $asset_id = $i + 1;
+                                        $asset = 'assets/img/acc_img' . $asset_id . '.png';
+                                    @endphp
                                     <ul class="message_list">
-                                        <li> <a href="/message"><img src="assets/img/acc_img{{ $i + 1 }}.png"
-                                                    alt="">John doe </a></li>
+                                        <li> <a href="/message"><img src="{{ asset($asset) }}" alt="">John doe </a>
+                                        </li>
                                         <li>
                                             <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem</p>
                                         </li>

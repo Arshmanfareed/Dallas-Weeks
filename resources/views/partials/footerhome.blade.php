@@ -12,7 +12,7 @@
                             <a href="javascript:;"><i class="fa-solid fa-plus"></i>Get started</a>
                         </div>
                         <div class="ratingimg">
-                            <img src="assets/images/rating.png" alt="">
+                            <img src="{{ asset('assets/images/rating.png') }}" alt="">
                         </div>
                     </div>
                 </div>
@@ -22,11 +22,14 @@
             <div class="row">
                 <div class="col-md-3 revealleft">
                     <div class="col1">
-                        <a class="navbar-brand" href="{{ URL('/') }}"><img src="assets/images/logo.png" alt=""></a>
+                        <a class="navbar-brand" href="{{ URL('/') }}"><img
+                                src="{{ asset('assets/images/logo.png') }}" alt=""></a>
                         <div class="socialicons">
                             <ul>
-                                <li><a href="https://www.facebook.com/networkedsite.admin/" target="_blank"><i class="fa-brands fa-facebook"></i></a></li>
-                                <li><a href="https://www.linkedin.com/company/networked-turning-connections-into-clients/" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li>
+                                <li><a href="https://www.facebook.com/networkedsite.admin/" target="_blank"><i
+                                            class="fa-brands fa-facebook"></i></a></li>
+                                <li><a href="https://www.linkedin.com/company/networked-turning-connections-into-clients/"
+                                        target="_blank"><i class="fa-brands fa-linkedin"></i></a></li>
                             </ul>
                         </div>
                         <p>© 2023 <a href="javascript:;">Networked.</a> All Rights Reserved.</p>
@@ -68,13 +71,15 @@
     </div>
 </footer>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-<script src="assets/js/owl.carousel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+</script>
+<script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script>
     document.getElementById('captureButton').addEventListener('click', function() {
-        
+
         html2canvas(document.getElementById('capture')).then(function(canvas) {
             console.log('adsadsa');
             var img = canvas.toDataURL();
@@ -88,19 +93,20 @@
     });
 </script>
 
-<script src="assets/js/custom.js"></script>
+<script src="{{ asset('assets/js/custom.js') }}"></script>
 <script>
-    window.addEventListener("load", function () {
-    // When the page is fully loaded, hide the loader
-    var loader = document.getElementById("loader");
-    loader.style.display = "none";
+    window.addEventListener("load", function() {
+        // When the page is fully loaded, hide the loader
+        var loader = document.getElementById("loader");
+        loader.style.display = "none";
     });
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         // When DOM content is loaded (before images and other resources), show the loader
         var loader = document.getElementById("loader");
         loader.style.display = "block";
     });
 </script>
 </body>
+
 </html>

@@ -28,6 +28,6 @@
         {{-- <li><a href="#" class="nav_link"><img src="{{ asset('assets/img/calendar.svg') }}" alt=""></a></li> --}}
     </ul>
     <div class="logout">
-        <a href="#"><img src="assets/img/logout.svg" alt=""></a>
+        <a href="#"><img src="{{ asset('assets/img/logout.svg') }}" alt=""></a>
     </div>
 </div>

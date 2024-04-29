@@ -148,13 +148,13 @@
                                                         <td class="stats">
                                                             <ul
                                                                 class="status_list d-flex align-items-center list-unstyled p-0 m-0">
-                                                                <li><span><img src="/assets/img/eye.svg"
+                                                                <li><span><img src="{{ asset('assets/img/eye.svg') }}"
                                                                             alt="">10</span></li>
-                                                                <li><span><img src="/assets/img/request.svg"
+                                                                <li><span><img src="{{ asset('assets/img/request.svg') }}"
                                                                             alt="">42</span></li>
-                                                                <li><span><img src="/assets/img/mailmsg.svg"
+                                                                <li><span><img src="{{ asset('assets/img/mailmsg.svg') }}"
                                                                             alt="">10</span></li>
-                                                                <li><span><img src="/assets/img/mailopen.svg"
+                                                                <li><span><img src="{{ asset('assets/img/mailopen.svg') }}"
                                                                             alt="">16</span></li>
                                                             </ul>
                                                         </td>

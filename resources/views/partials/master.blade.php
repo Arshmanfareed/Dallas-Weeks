@@ -29,12 +29,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <script src="/assets/js/custom_dashboard.js"></script>
+    <script src="{{ asset('assets/js/custom_dashboard.js') }}"></script>
     <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
     <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 
     @if (request()->is('accdashboard', 'report', 'leads'))
-        <script src="assets/js/chart_query.js"></script>
+        <script src="{{ asset('assets/js/chart_query.js') }}"></script>
     @endif
 
 
