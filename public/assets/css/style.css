@@ -1622,10 +1622,16 @@ header nav.navbar .right_nav ul .acc span {
     margin: 0 auto;
     padding: 11px 22px;
     font-size: 16px;
-    background: lch(65.82 33.17 171.76 / 0.2);
     width: fit-content;
     border-radius: 100px;
+}
+.data_table td .per.connected {
+    background: lch(65.82 33.17 171.76 / 0.2);
     color: #57b096;
+}
+.data_table td .per.discovered {
+    background: lch(65.82 33.17 171.76 / 0.2);
+    color: #28594b;
 }
 .data_table th.stat {
     padding-right: 20px;
@@ -1940,8 +1946,8 @@ select {
     overflow: hidden;
 }
 
-.create_sequence_modal .modal-dialog {
-    max-width: 69%;
+.create_sequence_modal .modal-dialog,
+.create_schedule_modal .modal-dialog {
     text-align: center;
     transform: translate(0, 3%) !important;
     overflow: hidden;
@@ -1956,14 +1962,22 @@ select {
     font-size: 16px;
     line-height: 1.5;
 }
-.create_sequence_modal .modal-dialog .modal-header {
+.create_sequence_modal .modal-dialog {
+    max-width: 69%;
+}
+.create_schedule_modal .modal-dialog {
+    max-width: 40%;
+}
+.create_sequence_modal .modal-dialog .modal-header,
+.create_schedule_modal .modal-dialog .modal-header {
     text-align: center;
     justify-content: center;
     padding: 35px 0;
     width: 97%;
     margin: 0 auto;
 }
-.create_sequence_modal .modal-dialog button.btn-close {
+.create_sequence_modal .modal-dialog button.btn-close,
+.create_schedule_modal .modal-dialog button.btn-close {
     padding: 0;
     width: 64px;
     height: 64px;
@@ -1981,7 +1995,12 @@ select {
     border: none;
     font-size: 22px;
 }
-.create_sequence_modal .modal-dialog .modal-header h5 {
+.create_schedule_modal .modal-dialog button.btn-close {
+    margin-top: 14px;
+    margin-right: 14px;
+}
+.create_sequence_modal .modal-dialog .modal-header h5,
+.create_schedule_modal .modal-dialog .modal-header h5 {
     font-size: 24px;
     font-weight: 700;
 }
@@ -4412,8 +4431,7 @@ div#chartContainer {
     color: #fff;
 }
 .scroll_div {
-    height: 500px;
-    overflow-y: scroll;
+    overflow-y: auto;
     scroll-behavior: smooth;
     padding-right: 8px;
 }
@@ -5373,7 +5391,7 @@ div > h5 {
     border-radius: 100%;
     background-color: #fff;
     color: #000;
-    margin: 0 20px;
+    margin: 0 10px;
 }
 
 .schedule-content .schedule_list .schedule_list_item {
@@ -5681,4 +5699,63 @@ button#save {
     backdrop-filter: brightness(150%) saturate(76%) blur(6px) !important;
     right: 670px;
     top: 43px;
+}
+
+.create_schedule_modal .schedule_form .schedule_days {
+    list-style-type: none;
+    padding-left: 0px;
+    padding-right: 26px;
+}
+
+.create_schedule_modal .schedule_form .schedule_days li {
+    height: 50px !important;
+}
+
+.create_schedule_modal .schedule_form .schedule_days li .row input {
+    margin-bottom: 0 !important;
+}
+
+.create_schedule_modal .schedule_form .schedule_days .day_input {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.create_schedule_modal .schedule_form .schedule_days .day_input input {
+    width: 16px;
+    height: 16px;
+}
+
+.create_schedule_modal .schedule_form .schedule_days .day_name {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.create_schedule_modal .schedule_form .schedule_days .day_start_time input,
+.create_schedule_modal .schedule_form .schedule_days .day_end_time input {
+    height: 40px;
+}
+
+.create_schedule_modal .schedule_form .schedule_name_label {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+}
+
+.create_schedule_modal .schedule_form .schedule_name_input {
+    height: 40px;
+    margin-bottom: 0px !important;
+}
+
+.create_schedule_modal .schedule_form .schedule_name {
+    padding: 22px 36px;
+}
+
+.create_schedule_modal .schedule_form .btn {
+    border-radius: 20px;
+    padding: 10px 25px;
+    background-color: #16adcb89;
+    border: none;
+    color: #fff;
 }

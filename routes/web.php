@@ -21,6 +21,7 @@ use App\http\Controllers\IntegrationController;
 use App\http\Controllers\HomeController;
 use App\http\Controllers\FeatureController;
 use App\Http\Controllers\PropertiesController;
+use App\Http\Controllers\ScheduleCampaign;
 use App\http\Controllers\SocialController;
 
 /*
@@ -63,12 +64,12 @@ Route::get('/auth/linkedin/callback', function () {
 
 Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']);
 Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']);
-Route::get('/leads', [LeadsController::class, 'leads']);
-Route::get('/report', [ReportController::class, 'report']);
-Route::get('/message', [MessageController::class, 'message']);
+Route::get('/leads', [LeadsController::class, 'leads'])->name('dash-leads');
+Route::get('/report', [ReportController::class, 'report'])->name('dash-reports');
+Route::get('/message', [MessageController::class, 'message'])->name('dash-messages');
 Route::get('/contacts', [ContactController::class, 'contact']);
-Route::get('/integration', [IntegrationController::class, 'integration']);
-Route::get('/feature-suggestion', [FeatureController::class, 'featuresuggestions']);
+Route::get('/integration', [IntegrationController::class, 'integration'])->name('dash-integrations');
+Route::get('/feature-suggestion', [FeatureController::class, 'featuresuggestions'])->name('dash-feature-suggestions');
 
 Route::get('/', [HomeController::class, 'home']);
 Route::get('/about', [HomeController::class, 'about']);
@@ -83,8 +84,8 @@ Route::get('/blacklist', [BlacklistController::class, 'blacklist']);
 Route::get('/team', [TeamController::class, 'team']);
 Route::get('/invoice', [InvoiceController::class, 'invoice']);
 // Route::get('/rolesandpermission',[RolespermissionController::class,'rolespermission']);
-Route::get('/setting', [SettingController::class, 'setting']);
-Route::get('/accdashboard', [MaindashboardController::class, 'maindasboard']);
+Route::get('/setting', [SettingController::class, 'setting'])->name('dash-settings');
+Route::get('/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash');
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
 
 Route::controller(StripePaymentController::class)->group(function () {
@@ -103,4 +104,6 @@ Route::get('/campaign/campaignDetails/{campaign_id}', [CampaignController::class
 Route::get('/campaign/changeCampaignStatus/{campaign_id}', [CampaignController::class, 'changeCampaignStatus'])->name('changeCampaignStatus');
 Route::get('/campaign/{campaign_id}', [CampaignController::class, 'deleteCampaign'])->name('deleteCampaign');
 Route::get('/campaign/archive/{campaign_id}', [CampaignController::class, 'archiveCampaign'])->name('archiveCampaign');
-Route::get('/filterCampaign/{filter}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
+Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
+Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');
+Route::get('/campaign/scheduleDays/{schedule_id}', [ScheduleCampaign::class, 'scheduleDays'])->name('scheduleDays');

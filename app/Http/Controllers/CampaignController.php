@@ -146,22 +146,26 @@ class CampaignController extends Controller
             }
         }
     }
-    function filterCampaign($filter)
+    function filterCampaign($filter, $search)
     {
         $user_id = Auth::user()->id;
         if ($user_id) {
-            $campaigns = null;
-            if ($filter == 'active') {
-                $campaigns = Campaign::where('user_id', $user_id)->where('is_active', 1)->where('is_archive', 0)->get();
-                return response()->json(['success' => true, 'campaigns' => $campaigns]);
-            } else if ($filter == 'inactive') {
-                $campaigns = Campaign::where('user_id', $user_id)->where('is_active', 0)->where('is_archive', 0)->get();
-                return response()->json(['success' => true, 'campaigns' => $campaigns]);
-            } else if ($filter == 'archive') {
-                $campaigns = Campaign::where('user_id', $user_id)->where('is_archive', 1)->get();
-                return response()->json(['success' => true, 'campaigns' => $campaigns]);
+            $campaigns = Campaign::where('user_id', $user_id);
+            if ($search != 'null') {
+                $campaigns = $campaigns->where('campaign_name', 'LIKE', '%' . $search . '%');
             }
-            return response()->json(['error' => 'Campaign not found'], 404);
+            if ($filter == 'active') {
+                $campaigns = $campaigns->where('is_active', 1)->where('is_archive', 0)->get();
+            } else if ($filter == 'inactive') {
+                $campaigns = $campaigns->where('is_active', 0)->where('is_archive', 0)->get();
+            } else if ($filter == 'archive') {
+                $campaigns = $campaigns->where('is_archive', 1)->get();
+            }
+            if (count($campaigns) != 0) {
+                return response()->json(['success' => true, 'campaigns' => $campaigns]);
+            } else {
+                return response()->json(['error' => 'Campaign not Found'], 404);
+            }
         }
     }
 }

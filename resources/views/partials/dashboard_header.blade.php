@@ -3,12 +3,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="{{ csrf_token() }}">
+
 <head>
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap-grid.min.css"
         integrity="sha512-ZuRTqfQ3jNAKvJskDAU/hxbX1w25g41bANOVd1Co6GahIe2XjM6uVZ9dh0Nt3KFCOA061amfF2VeL60aJXdwwQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
         integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -43,49 +45,51 @@
 
 
 <body>
-<style>
-    #loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.7);
-    z-index: 9999;
-    display: none; /* Initially hide the loader */
+    <style>
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            display: none;
+            /* Initially hide the loader */
         }
 
-    .loader-inner {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        border: 5px solid #f3f3f3;
-        border-radius: 50%;
-        border-top: 5px solid #3498db;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite;
-    }
+        .loader-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
 
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-</style>
+    </style>
 
     <script>
-        window.addEventListener("load", function () {
-        // When the page is fully loaded, hide the loader
-        var loader = document.getElementById("loader");
-        loader.style.display = "none";
+        window.addEventListener("load", function() {
+            // When the page is fully loaded, hide the loader
+            var loader = document.getElementById("loader");
+            loader.style.display = "none";
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             // When DOM content is loaded (before images and other resources), show the loader
             var loader = document.getElementById("loader");
             loader.style.display = "block";
@@ -100,7 +104,7 @@
                     <li><a href="#"><i class="fa-regular fa-envelope"></i></a></li>
                     <li><a href="#"><i class="fa-regular fa-bell"></i></a></li>
                     <li class="acc d-flex align-item-center">
-                        <img src="{{asset('/public/assets/img/acc.png')}}" alt="">
+                        <img src="{{ asset('/public/assets/img/acc.png') }}" alt="">
                         <span>John Doe</span>
                         <i class="fa-solid fa-chevron-down"></i>
                     </li>
@@ -113,9 +117,9 @@
         @yield('content')
     </main>
     <footer>
-    <div id="loader">
-        <div class="loader-inner"></div>
-    </div>
+        <div id="loader">
+            <div class="loader-inner"></div>
+        </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         @if (Str::contains(request()->url(), 'createcampaignfromscratch'))
             <script>
@@ -1014,17 +1018,101 @@
                         $(this).closest('.comp_tabs').find('.nav-tabs .nav-link.active').prev().click();
                     });
                     /* Changing tabs among settings */
-                    $('.schedule-btn').on('click', function() {
-                        var targetTab = $(this).data('tab');
-                        $('.schedule-content').removeClass('active');
-                        $('#' + targetTab).addClass('active');
-                        $('.schedule-btn').removeClass('active');
+                    $('.schedule-btn').on('click', function(e) {
+                        e.preventDefault();
+                        var targetTab = $('#' + $(this).data('tab'));
+                        var parent = $(this).parent().parent();
+                        $(parent).find('.schedule-content.active').removeClass('active');
+                        $(targetTab).addClass('active');
+                        $(parent).find('.schedule-btn.active').removeClass('active');
                         $(this).addClass('active');
+                    });
+                    $('.schedule_days').on('change', function(e) {
+                        var day = $(this).val();
+                        if ($(this).prop('checked')) {
+                            $('#' + day + '_start_time').val('09:00:00');
+                            $('#' + day + '_end_time').val('17:00:00');
+                        } else {
+                            $('#' + day + '_start_time').val('');
+                            $('#' + day + '_end_time').val('');
+                        }
+                    });
+                    $('.add_schedule').on('click', function(e) {
+                        e.preventDefault();
+                        var form = $('.schedule_form');
+                        var csrfToken = "{{ csrf_token() }}";
+                        var scheduleDays = form.find('input[type="checkbox"]');
+                        scheduleDays.each(function() {
+                            if ($(this).is(':checked')) {
+                                $(this).attr('value', 'true');
+                            } else {
+                                $(this).prop('checked', true);
+                                $(this).attr('value', 'false');
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('createSchedule') }}",
+                            method: "POST",
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken
+                            },
+                            data: form.serialize(),
+                            success: function(response) {
+                                if (response.success) {
+                                    $('#schedule_modal').modal('hide');
+                                    schedules = response.schedules;
+                                    html = ``;
+                                    for (var i = 0; i < schedules.length; i++) {
+                                        schedule = schedules[i];
+                                        html +=
+                                            `<li><div class="row schedule_list_item"><div class="col-lg-1 schedule_item">`;
+                                        html +=
+                                            `<input type="radio" name="email_settings_schedule_id" class="schedule_id"`;
+                                        if (schedule['user_id'] == 0) {
+                                            html += `checked `;
+                                        }
+                                        html += `value=` + schedule['id'] + `></div>`;
+                                        html += `<div class="col-lg-1 schedule_avatar">S</div>`;
+                                        html +=
+                                            `<div class="col-lg-3 schedule_name"><i class="fa-solid fa-circle-check"`;
+                                        html += `style="color: #4bcea6;"></i>`;
+                                        html += `<span>` + schedule['schedule_name'] + `</span></div>`;
+                                        html += `<div class="col-lg-6 schedule_days">`;
+                                        var schedule_days = schedule['Days'];
+                                        html += `<ul class="schedule_day_list">`;
+                                        for (var j = 0; j < schedule_days.length; j++) {
+                                            html += `<li `;
+                                            html += `class="schedule_day `;
+                                            day = schedule_days[j];
+                                            if (day['is_active'] == '1') {
+                                                html += `selected_day`;
+                                            }
+                                            html += `">`;
+                                            html += day['schedule_day'].toUpperCase() + `</li>`;
+                                        }
+                                        html += `<li class="schedule_time"><button href="javascript:;"`;
+                                        html += `type="button" class="btn" data-bs-toggle="modal"`;
+                                        html +=
+                                            `data-bs-target="#time_modal"><i class="fa-solid fa-globe"`;
+                                        html += `style="color: #16adcb;"></i></button></li></ul>`;
+                                        html += `</div><div class="col-lg-1 schedule_menu_btn">`;
+                                        html +=
+                                            `<i class="fa-solid fa-ellipsis-vertical" style="color: #ffffff;"></i>`;
+                                        html += `</div></div></li>`;
+                                    }
+                                    $('#schedule_list_1').html(html);
+                                    $('#schedule_list_2').html(html.replace(
+                                        'email_settings_schedule_id',
+                                        'global_settings_schedule_id'));
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(error);
+                            },
+                        });
                     });
                 });
             </script>
-
-            
         @elseif (Str::contains(request()->url(), 'campaignDetails'))
             <script>
                 $(document).ready(function() {
@@ -1180,17 +1268,26 @@
                         e.preventDefault();
                         $('#filterSelect').toggle();
                     });
-                    $('#filterSelect').on('change', function(e) {
+
+                    $('#filterSelect').on('change', filter_seacrh);
+                    $('#search_campaign').on('input', filter_seacrh);
+
+                    function filter_seacrh(e) {
                         e.preventDefault();
-                        var filter = $(this).val();
+                        var filter = $('#filterSelect').val();
+                        var search = $('#search_campaign').val();
+                        if (search === '') {
+                            search = 'null';
+                        }
                         $.ajax({
-                            url: "{{ route('filterCampaign', ':filter') }}".replace(':filter', filter),
+                            url: "{{ route('filterCampaign', [':filter', ':search']) }}".replace(':filter', filter)
+                                .replace(':search', search),
                             type: 'GET',
                             success: function(response) {
                                 if (response.success) {
                                     var campaigns = response.campaigns;
                                     var html = ``;
-                                    if (campaigns.length != 0) {
+                                    if (campaigns.length > 0) {
                                         for (let i = 0; i < campaigns.length; i++) {
                                             let campaign = campaigns[i];
                                             html += `<tr id="` + 'table_row_' + campaign['id'] +
@@ -1237,10 +1334,12 @@
                                             html += `</ul></td></tr>`;
                                         }
                                     } else {
+                                        var html = ``;
                                         html += '<tr><td colspan="8">';
                                         html +=
                                             '<div class="text-center text-danger" style="font-size: 25px; font-weight: bold; font-style: italic;">Not Found!</div>';
                                         html += '</td></tr>';
+                                        $('#campaign_table_body').html(html);
                                     }
                                     $('#campaign_table_body').html(html);
                                 }
@@ -1251,10 +1350,15 @@
                                 }
                             },
                             error: function(xhr, status, error) {
-                                console.error(error);
+                                var html = ``;
+                                html += '<tr><td colspan="8">';
+                                html +=
+                                    '<div class="text-center text-danger" style="font-size: 25px; font-weight: bold; font-style: italic;">Not Found!</div>';
+                                html += '</td></tr>';
+                                $('#campaign_table_body').html(html);
                             },
                         });
-                    });
+                    }
                 });
             </script>
         @elseif (Str::contains(request()->url(), 'accdashboard'))
@@ -1264,7 +1368,6 @@
                 });
             </script>
         @endif
-        
     </footer>
 </body>
 

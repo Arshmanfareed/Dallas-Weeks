@@ -87,12 +87,13 @@
                                                         aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
                                                             <div class="schedule-tab">
-                                                                <button class="schedule-btn active" id="my_schedule_btn"
-                                                                    data-tab="my_schedule">My Schedules</button>
-                                                                <button class="schedule-btn " id="team_schedule_btn"
-                                                                    data-tab="team_schedule">Team schedules</button>
+                                                                <button class="schedule-btn active"
+                                                                    id="my_email_schedule_btn"
+                                                                    data-tab="my_email_schedule">My Schedules</button>
+                                                                <button class="schedule-btn " id="team_email_schedule_btn"
+                                                                    data-tab="team_email_schedule">Team schedules</button>
                                                             </div>
-                                                            <div class="active schedule-content" id="my_schedule">
+                                                            <div class="active schedule-content" id="my_email_schedule">
                                                                 <div class="schedule_content_row1">
                                                                     <p>Manage your schedules.</p>
                                                                     <button href="javascript:;" type="button"
@@ -106,7 +107,7 @@
                                                                     <i class="fa-solid fa-magnifying-glass"></i>
                                                                 </div>
                                                                 @if (!empty($campaign_schedule))
-                                                                    <ul class="schedule_list">
+                                                                    <ul class="schedule_list" id="schedule_list_1">
                                                                         @foreach ($campaign_schedule as $schedule)
                                                                             <li>
                                                                                 <div class="row schedule_list_item">
@@ -114,8 +115,8 @@
                                                                                         <input type="radio"
                                                                                             name="email_settings_schedule_id"
                                                                                             class="schedule_id"
-                                                                                            {{ $schedule['user_id'] == '0' ? 'checked' : '' }}
-                                                                                            value="{{ $schedule['id'] }}">
+                                                                                            value="{{ $schedule['id'] }}"
+                                                                                            {{ $schedule['user_id'] == '0' ? 'checked' : '' }}>
                                                                                     </div>
                                                                                     <div class="col-lg-1 schedule_avatar">S
                                                                                     </div>
@@ -129,7 +130,9 @@
                                                                                             $schedule_days = App\Models\ScheduleDays::where(
                                                                                                 'schedule_id',
                                                                                                 $schedule['id'],
-                                                                                            )->get();
+                                                                                            )
+                                                                                                ->orderBy('id')
+                                                                                                ->get();
                                                                                         @endphp
                                                                                         <ul class="schedule_day_list">
                                                                                             @foreach ($schedule_days as $day)
@@ -160,7 +163,8 @@
                                                                     </ul>
                                                                 @endif
                                                             </div>
-                                                            <div class=" schedule-content" id="team_schedule">Hello</div>
+                                                            <div class=" schedule-content" id="team_email_schedule">Hello
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -194,7 +198,9 @@
                                                                 </div>
                                                             </div>
                                                             <div class="linked_set d-flex justify-content-between">
-                                                                <p> Text only email (no HTML) <span>!</span></p>
+                                                                <p> Text only email (no HTML) <span
+                                                                        title="Send email messages that only include text without images, graphics or formatting. If you enable this option, you won't be able to track open and link click rates.">!</span>
+                                                                </p>
                                                                 <div class="switch_box"><input type="checkbox"
                                                                         name="email_settings_text_only_email_no_html"
                                                                         class="linkedin_setting_switch"
@@ -233,7 +239,9 @@
                                                 </div>
                                             </div>
                                             <div class="linked_set d-flex justify-content-between">
-                                                <p> Collect contact information <span>!</span></p>
+                                                <p> Collect contact information <span
+                                                        title="Collect publicly available contact information Collect publicly available contact information from the leads' Linkedin profiles (e.g. email, phone number, Twitter, or website). This option automatically adds a View profile after the Invite to connect step into the campaign.">!</span>
+                                                </p>
                                                 <div class="switch_box"><input type="checkbox"
                                                         name="linkedin_settings_collect_contact_information"
                                                         class="linkedin_setting_switch"
@@ -257,7 +265,6 @@
                                         </div>
                                         <div class="tab-pane fade" id="nav-global" role="tabpanel"
                                             aria-labelledby="nav-global-tab">
-
                                             <div class="accordion" id="accordionExample">
                                                 <div class="accordion-item">
                                                     <h2 class="accordion-header" id="headingOne">
@@ -317,17 +324,86 @@
                                                     <div id="collapse2" class="accordion-collapse collapse"
                                                         aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <strong>This is the second item's accordion body.</strong> It is
-                                                            hidden by default, until the collapse plugin adds the
-                                                            appropriate
-                                                            classes that we use to style each element. These classes control
-                                                            the
-                                                            overall appearance, as well as the showing and hiding via CSS
-                                                            transitions. You can modify any of this with custom CSS or
-                                                            overriding our default variables. It's also worth noting that
-                                                            just
-                                                            about any HTML can go within the <code>.accordion-body</code>,
-                                                            though the transition does limit overflow.
+                                                            <div class="schedule-tab">
+                                                                <button class="schedule-btn active"
+                                                                    id="my_campaign_schedule_btn"
+                                                                    data-tab="my_campaign_schedule">My Schedules</button>
+                                                                <button class="schedule-btn "
+                                                                    id="team_campaign_schedule_btn"
+                                                                    data-tab="team_campaign_schedule">Team
+                                                                    schedules</button>
+                                                            </div>
+                                                            <div class="active schedule-content"
+                                                                id="my_campaign_schedule">
+                                                                <div class="schedule_content_row1">
+                                                                    <p>Manage your schedules.</p>
+                                                                    <button href="javascript:;" type="button"
+                                                                        class="btn" data-bs-toggle="modal"
+                                                                        data-bs-target="#schedule_modal">Create
+                                                                        Schedule</button>
+                                                                </div>
+                                                                <div class="schedule_content_row2">
+                                                                    <input type="text"
+                                                                        placeholder="Search schedules here...">
+                                                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                                                </div>
+                                                                @if (!empty($campaign_schedule))
+                                                                    <ul class="schedule_list" id="schedule_list_2">
+                                                                        @foreach ($campaign_schedule as $schedule)
+                                                                            <li>
+                                                                                <div class="row schedule_list_item">
+                                                                                    <div class="col-lg-1 schedule_item">
+                                                                                        <input type="radio"
+                                                                                            name="global_settings_schedule_id"
+                                                                                            class="schedule_id"
+                                                                                            value="{{ $schedule['id'] }}"
+                                                                                            {{ $schedule['user_id'] == '0' ? 'checked' : '' }}>
+                                                                                    </div>
+                                                                                    <div class="col-lg-1 schedule_avatar">S
+                                                                                    </div>
+                                                                                    <div class="col-lg-3 schedule_name">
+                                                                                        <i class="fa-solid fa-circle-check"
+                                                                                            style="color: #4bcea6;"></i>
+                                                                                        <span>{{ $schedule['schedule_name'] }}</span>
+                                                                                    </div>
+                                                                                    <div class="col-lg-6 schedule_days">
+                                                                                        @php
+                                                                                            $schedule_days = App\Models\ScheduleDays::where(
+                                                                                                'schedule_id',
+                                                                                                $schedule['id'],
+                                                                                            )->get();
+                                                                                        @endphp
+                                                                                        <ul class="schedule_day_list">
+                                                                                            @foreach ($schedule_days as $day)
+                                                                                                <li
+                                                                                                    class="schedule_day {{ $day['is_active'] == '1' ? 'selected_day' : '' }}">
+                                                                                                    {{ ucfirst($day['schedule_day']) }}
+                                                                                                </li>
+                                                                                            @endforeach
+                                                                                            <li class="schedule_time">
+                                                                                                <button href="javascript:;"
+                                                                                                    type="button"
+                                                                                                    class="btn"
+                                                                                                    data-bs-toggle="modal"
+                                                                                                    data-bs-target="#time_modal"><i
+                                                                                                        class="fa-solid fa-globe"
+                                                                                                        style="color: #16adcb;"></i></button>
+                                                                                            </li>
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                    <div
+                                                                                        class="col-lg-1 schedule_menu_btn">
+                                                                                        <i class="fa-solid fa-ellipsis-vertical"
+                                                                                            style="color: #ffffff;"></i>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                @endif
+                                                            </div>
+                                                            <div class=" schedule-content" id="team_campaign_schedule">
+                                                                Hello</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -382,7 +458,7 @@
             </div>
         </div>
     </div>
-    {{-- <div class="modal fade create_schedule_modal" id="schedule_modal" tabindex="-1" aria-labelledby="schedule_modal"
+    <div class="modal fade create_schedule_modal" id="schedule_modal" tabindex="-1" aria-labelledby="schedule_modal"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -391,17 +467,101 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
                             class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-12">
-
-                        </div>
+                <form class="modal-body schedule_form">
+                    <div class="row schedule_name">
+                        <label class="col-lg-4 schedule_name_label" for="schedule_name">Schedule Name</label>
+                        <input class="col-lg-8 schedule_name_input" type="text" name="schedule_name" id="">
                     </div>
-                </div>
+                    <ul class="schedule_days">
+                        <li>
+                            <div class="row">
+                                <div class="col-lg-2 day_input"><input checked="" type="checkbox"
+                                        class="schedule_days" name="mon_selected_day" class="" value="mon">
+                                </div>
+                                <div class="col-lg-4 day_name">Monday</div>
+                                <div class="col-lg-3 day_start_time"><input type="time" value="09:00:00"
+                                        name="mon_start_time" id="mon_start_time"></div>
+                                <div class="col-lg-3 day_end_time"><input type="time" value="17:00:00"
+                                        name="mon_end_time" id="mon_end_time"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="row">
+                                <div class="col-lg-2 day_input"><input checked="" type="checkbox"
+                                        class="schedule_days" name="tue_selected_day" class="" value="tue">
+                                </div>
+                                <div class="col-lg-4 day_name">Tuesday</div>
+                                <div class="col-lg-3 day_start_time"><input type="time" value="09:00:00"
+                                        name="tue_start_time" id="tue_start_time"></div>
+                                <div class="col-lg-3 day_end_time"><input type="time" value="17:00:00"
+                                        name="tue_end_time" id="tue_end_time"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="row">
+                                <div class="col-lg-2 day_input"><input checked="" type="checkbox"
+                                        class="schedule_days" name="wed_selected_day" class="" value="wed">
+                                </div>
+                                <div class="col-lg-4 day_name">Wednesday</div>
+                                <div class="col-lg-3 day_start_time"><input type="time" value="09:00:00"
+                                        name="wed_start_time" id="wed_start_time"></div>
+                                <div class="col-lg-3 day_end_time"><input type="time" value="17:00:00"
+                                        name="wed_end_time" id="wed_end_time"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="row">
+                                <div class="col-lg-2 day_input"><input checked="" type="checkbox"
+                                        class="schedule_days" name="thurs_selected_day" class="" value="thurs">
+                                </div>
+                                <div class="col-lg-4 day_name">Thursday</div>
+                                <div class="col-lg-3 day_start_time"><input type="time" value="09:00:00"
+                                        name="thurs_start_time" id="thurs_start_time"></div>
+                                <div class="col-lg-3 day_end_time"><input type="time" value="17:00:00"
+                                        name="thurs_end_time" id="thurs_end_time"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="row">
+                                <div class="col-lg-2 day_input"><input checked="" type="checkbox"
+                                        class="schedule_days" name="fri_selected_day" class="" value="fri">
+                                </div>
+                                <div class="col-lg-4 day_name">Friday</div>
+                                <div class="col-lg-3 day_start_time"><input type="time" value="09:00:00"
+                                        name="fri_start_time" id="fri_start_time"></div>
+                                <div class="col-lg-3 day_end_time"><input type="time" value="17:00:00"
+                                        name="fri_end_time" id="fri_end_time"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="row">
+                                <div class="col-lg-2 day_input"><input type="checkbox" class="schedule_days"
+                                        name="sat_selected_day" class="" value="sat"></div>
+                                <div class="col-lg-4 day_name">Saturday</div>
+                                <div class="col-lg-3 day_start_time"><input type="time" name="sat_start_time"
+                                        id="sat_start_time"></div>
+                                <div class="col-lg-3 day_end_time"><input type="time" name="sat_end_time"
+                                        id="sat_end_time"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="row">
+                                <div class="col-lg-2 day_input"><input type="checkbox" class="schedule_days"
+                                        name="sun_selected_day" class="" value="sun"></div>
+                                <div class="col-lg-4 day_name">Sunday</div>
+                                <div class="col-lg-3 day_start_time"><input type="time" name="sun_start_time"
+                                        id="sun_start_time"></div>
+                                <div class="col-lg-3 day_end_time"><input type="time" name="sun_end_time"
+                                        id="sun_end_time"></div>
+                            </div>
+                        </li>
+                    </ul>
+                    <button type="button" class="btn add_schedule">Save Changes</button>
+                </form>
             </div>
         </div>
     </div>
-    <div class="modal fade create_time_modal" id="time_modal" tabindex="-1" aria-labelledby="time_modal"
+    {{-- <div class="modal fade create_time_modal" id="time_modal" tabindex="-1" aria-labelledby="time_modal"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

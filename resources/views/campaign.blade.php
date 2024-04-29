@@ -15,7 +15,7 @@
             session()->forget('campaign_details');
         @endphp
     @endif
-    <section class="main_dashboard blacklist  campaign_sec">
+    <section class="main_dashboard blacklist campaign_sec">
         <div class="container_fluid">
             <div class="row">
                 <div class="col-lg-1">
@@ -27,7 +27,6 @@
                             <div class="d-flex align-items-center justify-content-between w-100">
                                 <h3>Campaigns</h3>
                                 <div class="filt_opt d-flex">
-
                                     <div class="add_btn ">
                                         <a href="/campaign/createcampaign" class=""><i
                                                 class="fa-solid fa-plus"></i></a>Add Campaign
@@ -35,7 +34,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-lg-4">
                             <div class="border_box dashboard_box">
                                 <div class="count_div">
@@ -79,7 +77,6 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="filter_head_row d-flex">
-
                             </div>
                             <div class="filtr_desc">
                                 <div class="d-flex">
@@ -91,8 +88,9 @@
                                             <option value="inactive">InActive Campaigns</option>
                                             <option value="archive">Archive Campaigns</option>
                                         </select>
-                                        <form action="/search" method="get" class="search-form">
-                                            <input type="text" name="q" placeholder="Search Campaig here...">
+                                        <form method="get" class="search-form">
+                                            <input id="search_campaign" type="text" name="q"
+                                                placeholder="Search Campaign here...">
                                             <button type="submit">
                                                 <i class="fa fa-search"></i>
                                             </button>
