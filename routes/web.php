@@ -107,3 +107,4 @@ Route::get('/campaign/archive/{campaign_id}', [CampaignController::class, 'archi
 Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
 Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');
 Route::get('/campaign/scheduleDays/{schedule_id}', [ScheduleCampaign::class, 'scheduleDays'])->name('scheduleDays');
+Route::get('/filterSchedule/{search}', [ScheduleCampaign::class, 'filterSchedule'])->name('filterSchedule');

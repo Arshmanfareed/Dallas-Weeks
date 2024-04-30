@@ -111,7 +111,8 @@
                         <span>{{ $user->name }}</span>
                         <i class="fa-solid fa-chevron-down"></i>
                     </li>
-                    <li class="darkmode"><a href="#"><i class="fa-solid fa-sun"></i></a></li>
+                    <li class="darkmode"><a href="javascript:;" id="darkModeToggle"><i class="fa-solid fa-sun"></i></a>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -124,7 +125,7 @@
             <div class="loader-inner"></div>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-        @if (Str::contains(request()->url(), 'createcampaignfromscratch'))
+        @if (Str::contains(request()->url(), URL('campaign/createcampaignfromscratch')))
             <script>
                 $(document).ready(function() {
                     var settings = {!! $settings !!};
@@ -917,7 +918,7 @@
                     }
                 });
             </script>
-        @elseif (Str::contains(request()->url(), 'createcampaign'))
+        @elseif (Str::contains(request()->url(), URL('campaign/createcampaign')))
             <script>
                 $(document).ready(function() {
                     var campaign_details = JSON.parse(sessionStorage.getItem('campaign_details')) || {};
@@ -984,7 +985,7 @@
                     });
                 });
             </script>
-        @elseif (Str::contains(request()->url(), 'campaigninfo'))
+        @elseif (Str::contains(request()->url(), URL('campaign/campaigninfo')))
             <script>
                 $(document).ready(function() {
                     var campaign_details = {!! $campaign_details_json !!};
@@ -1114,23 +1115,86 @@
                             },
                         });
                     });
+                    $('.search_schedule').on('input', function(e) {
+                        var schedule_input = $(this);
+                        var search = $(this).val();
+                        if (search === '') {
+                            search = 'null';
+                        }
+                        $.ajax({
+                            url: "{{ route('filterSchedule', ':search') }}".replace(':search', search),
+                            method: 'GET',
+                            success: function(response) {
+                                if (response.success) {
+                                    schedules = response.schedules;
+                                    var schedule_list = $(schedule_input).parent().next(
+                                        '.schedule_list');
+                                    html = ``;
+                                    for (var i = 0; i < schedules.length; i++) {
+                                        schedule = schedules[i];
+                                        html +=
+                                            `<li><div class="row schedule_list_item"><div class="col-lg-1 schedule_item">`;
+                                        html +=
+                                            `<input type="radio" name="email_settings_schedule_id" class="schedule_id"`;
+                                        if (schedule['user_id'] == 0 || i == 0) {
+                                            html += `checked `;
+                                        }
+                                        html += `value=` + schedule['id'] + `></div>`;
+                                        html += `<div class="col-lg-1 schedule_avatar">S</div>`;
+                                        html +=
+                                            `<div class="col-lg-3 schedule_name"><i class="fa-solid fa-circle-check"`;
+                                        html += `style="color: #4bcea6;"></i>`;
+                                        html += `<span>` + schedule['schedule_name'] + `</span></div>`;
+                                        html += `<div class="col-lg-6 schedule_days">`;
+                                        var schedule_days = schedule['Days'];
+                                        html += `<ul class="schedule_day_list">`;
+                                        for (var j = 0; j < schedule_days.length; j++) {
+                                            html += `<li `;
+                                            html += `class="schedule_day `;
+                                            day = schedule_days[j];
+                                            if (day['is_active'] == '1') {
+                                                html += `selected_day`;
+                                            }
+                                            html += `">`;
+                                            html += day['schedule_day'].toUpperCase() + `</li>`;
+                                        }
+                                        html += `<li class="schedule_time"><button href="javascript:;"`;
+                                        html += `type="button" class="btn" data-bs-toggle="modal"`;
+                                        html +=
+                                            `data-bs-target="#time_modal"><i class="fa-solid fa-globe"`;
+                                        html += `style="color: #16adcb;"></i></button></li></ul>`;
+                                        html += `</div><div class="col-lg-1 schedule_menu_btn">`;
+                                        html +=
+                                            `<i class="fa-solid fa-ellipsis-vertical" style="color: #ffffff;"></i>`;
+                                        html += `</div></div></li>`;
+                                    }
+                                    if (schedule_list.attr('id') == 'schedule_list_2') {
+                                        $('#schedule_list_2').html(html.replace(
+                                            'email_settings_schedule_id',
+                                            'global_settings_schedule_id'));
+                                    } else {
+                                        $('#schedule_list_1').html(html);
+                                    }
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(error);
+                            }
+                        });
+                    });
                 });
             </script>
-        @elseif (Str::contains(request()->url(), 'campaignDetails'))
+        @elseif (Str::contains(request()->url(), URL('campaign/campaignDetails')))
             <script>
                 $(document).ready(function() {
                     /* Making every setting to unchangable */
                     $('.linkedin_setting_switch').prop('disabled', true);
                 });
             </script>
-        @elseif (Str::contains(request()->url(), 'campaign'))
+        @elseif (Str::contains(request()->url(), URL('campaign')))
             <script>
                 $(document).ready(function() {
                     /* Action toggle on Campaign list */
-                    $(document).on('click', '.setting_btn', function(e) {
-                        $('.setting_list').not($(this).siblings('.setting_list')).hide();
-                        $(this).siblings('.setting_list').toggle();
-                    });
                     $(document).on('change', '.switch', function(e) {
                         var campaign_id = $(this).attr('id').replace('switch', '');
                         $.ajax({
@@ -1364,13 +1428,13 @@
                     }
                 });
             </script>
-        @elseif (Str::contains(request()->url(), 'accdashboard'))
+        @elseif (Str::contains(request()->url(), URL('accdashboard')))
             <script>
                 $(document).ready(function() {
                     $('.switch').prop('disabled', true);
                 });
             </script>
-        @elseif (Str::contains(request()->url(), 'leads'))
+        @elseif (Str::contains(request()->url(), URL('leads')))
             <script>
                 $('.lead_tab').on('click', function(e) {
                     e.preventDefault();
@@ -1381,7 +1445,7 @@
                     $('#' + id).addClass('active');
                 });
             </script>
-        @elseif (Str::contains(request()->url(), 'setting'))
+        @elseif (Str::contains(request()->url(), URL('setting')))
             <script>
                 $('.setting_tab').on('click', function(e) {
                     e.preventDefault();

@@ -583,8 +583,8 @@ textarea {
     top: calc(60% + 0.2rem);
     font-size: 0.85rem;
     color: #000;
-    font-size: 11px;
-    width: 74px;
+    font-size: 17px;
+    width: fit-content;
     text-align: center;
 }
 
@@ -690,6 +690,8 @@ textarea {
 }
 .step_form div#progress {
     height: 0.5rem !important;
+    width: 170px;
+    background-color: #e3c935;
 }
 .step_form_popup .modal-dialog {
     max-width: 70%;
@@ -4431,8 +4433,6 @@ div#chartContainer {
     color: #fff;
 }
 .scroll_div {
-    overflow-y: auto;
-    scroll-behavior: smooth;
     padding-right: 8px;
 }
 span.url {
@@ -4967,6 +4967,11 @@ body.light-mode.register label {
     height: 100%;
 }
 
+body.light-mode .add-elements {
+    background-color: #fff;
+    border: 2px solid #ddd;
+}
+
 .element-list {
     height: 100%;
 }
@@ -5033,6 +5038,10 @@ div > h5 {
     height: 35px;
 }
 
+body.light-mode .drop-list li .list-icon {
+    background-color: #16adcb;
+}
+
 .drop-list li .cancel-icon,
 .drop_element .cancel-icon {
     display: none;
@@ -5069,6 +5078,10 @@ div > h5 {
     border: 1px solid rgb(23, 172, 203);
 }
 
+body.light-mode .drop_element {
+    background-color: #fff;
+}
+
 .drop_element p {
     color: #fff;
     width: fit-content;
@@ -5081,14 +5094,25 @@ div > h5 {
     align-items: center;
     justify-content: center;
     background-color: #15171c;
-    border-radius: 25%;
+    border-radius: 25px;
     margin-right: 25px;
+}
+
+body.light-mode .drop_element .list-icon {
+    background-color: #16adcb;
+    color: #fff;
 }
 
 .drop-list li .list-icon i,
 .task-list .list-icon i,
 .drop_element .list-icon i {
     color: #17accb;
+}
+
+body.light-mode .drop-list li .list-icon i,
+body.light-mode .task-list .list-icon i,
+body.light-mode .drop_element .list-icon i {
+    color: #fff;
 }
 
 .drop-list li .menu-icon {
@@ -5119,6 +5143,11 @@ div > h5 {
     border-radius: 17px;
     margin: 14px 0;
     cursor: pointer;
+}
+
+body.light-mode .task-list > div {
+    background-color: #fff;
+    box-shadow: 3px 3px 15px #ddd;
 }
 
 .task-list .item_details p,
@@ -5159,6 +5188,10 @@ div > h5 {
     background-color: #15171c;
     border-radius: 25px;
     margin-right: 25px;
+}
+
+body.light-mode .task-list .list-icon {
+    background-color: #16adcb;
 }
 
 .task-list .menu-icon,
@@ -5250,8 +5283,16 @@ div > h5 {
     background-color: #e2c64d !important;
 }
 
+body.light-mode .task-list .element_change_input.selected {
+    background-color: #ccc !important;
+}
+
 .task-list .element_change_output.selected {
     background-color: #e2c64d !important;
+}
+
+body.light-mode .task-list .element_change_output.selected {
+    background-color: #ccc !important;
 }
 
 .task-list .conditional-elements-out .condition_false.selected {
@@ -5268,6 +5309,10 @@ div > h5 {
 
 .task-list .attach-elements:hover {
     background-color: #fff;
+}
+
+body.light-mode .task-list .attach-elements:hover {
+    background-color: #aaa;
 }
 
 .drop-list .element:hover {
@@ -5292,6 +5337,12 @@ div > h5 {
     transition: background-color 0.3s ease;
 }
 
+body.light-mode .element-tab button {
+    background-color: #fff;
+    color: #000;
+    font-weight: 600;
+}
+
 .schedule-tab button {
     padding: 10px 20px;
     background-color: #111317;
@@ -5303,6 +5354,14 @@ div > h5 {
 
 .element-tab button.active {
     background-color: #15171c;
+}
+
+body.light-mode .element-tab button.active {
+    color: #16adcb;
+    font-weight: 600;
+    border-bottom: 5px solid #16adcb;
+    border-radius: 0px;
+    background-color: #00000012;
 }
 
 .schedule-tab button.active {
@@ -5494,6 +5553,10 @@ div > h5 {
     background-color: #fff;
 }
 
+body.light-mode .task-list .step-1 .attach-elements-out:hover {
+    background-color: #aaa;
+}
+
 .element_properties .element_name {
     padding-top: 15px;
     padding-right: 15px;
@@ -5560,6 +5623,11 @@ button#save {
     justify-content: center;
 }
 
+body.light-mode .path-cancel-icon {
+    background-color: #16adcb;
+    color: #fff;
+}
+
 .linked_set.d-flex.justify-content-between {
     border-bottom: 1px solid #ddd;
     padding: 15px 0;
@@ -5575,6 +5643,10 @@ button#save {
 
 .line {
     background-color: #e2c64d !important;
+}
+
+body.light-mode .line {
+    background-color: #ccc !important;
 }
 
 .campaign_detail_sec .details_table td {
@@ -5607,6 +5679,14 @@ button#save {
 
 .drop-pad {
     background-color: #111317;
+}
+
+body.light-mode .drop-pad {
+    background-color: #fff;
+}
+
+body.light-mode .drop-pad > h5 {
+    color: #000;
 }
 
 .camp_sequence {
@@ -5758,4 +5838,9 @@ button#save {
     background-color: #16adcb89;
     border: none;
     color: #fff;
+}
+
+.custom-center {
+    display: flex;
+    justify-content: center;
 }

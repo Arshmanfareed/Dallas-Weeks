@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
@@ -28,7 +27,6 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
     <script src="{{ asset('assets/js/custom_dashboard.js') }}"></script>
     <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
     <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
@@ -36,10 +34,7 @@
     @if (request()->is('accdashboard', 'report', 'leads'))
         <script src="{{ asset('assets/js/chart_query.js') }}"></script>
     @endif
-
-
 </head>
-
 
 <body>
     @if (request()->is('login', 'register'))
@@ -90,11 +85,8 @@
             </nav>
         </header>
     @endif
-
-
     @yield('content')
     <footer>
-
     </footer>
 </body>
 

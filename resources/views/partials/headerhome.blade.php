@@ -96,19 +96,23 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="{{ URL('/') }}">Home</a>
+                                    <a class="nav-link {{ request()->url() === URL('/') ? 'active' : '' }}"
+                                        aria-current="page" href="{{ URL('/') }}">Home</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ URL('/about') }}">About Us</a>
+                                    <a class="nav-link {{ request()->url() === URL('/about') ? 'active' : '' }}"
+                                        href="{{ URL('/about') }}">About Us</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="javascript:;">Services</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ URL('/pricing') }}">Pricing</a>
+                                    <a class="nav-link {{ request()->url() === URL('/pricing') ? 'active' : '' }}"
+                                        href="{{ URL('/pricing') }}">Pricing</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ URL('/faq') }}">FAQ's</a>
+                                    <a class="nav-link {{ request()->url() === URL('/faq') ? 'active' : '' }}"
+                                        href="{{ URL('/faq') }}">FAQ's</a>
                                 </li>
                             </ul>
                         </div>

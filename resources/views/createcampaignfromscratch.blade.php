@@ -27,6 +27,15 @@
                     <div class="row crt_cmp_r sequence-steps">
                         <div class="col-lg-9 drop-pad" id="capture">
                             <h5>Sequence Steps</h5>
+                            <div class="custom-center">
+                                <div class="cmp_opt_link d-flex">
+                                    <ul class="d-flex list-unstyled justify-content-end align-items-center">
+                                        <li class="active prev full"><span>1</span><a href="javascript:;">Campaign info</a></li>
+                                        <li class="active prev full"><span>2</span><a href="javascript:;">Campaign settings</a></li>
+                                        <li class="active"><span>3</span><a href="javascript:;">Campaign steps</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                             <div class="task-list">
                                 <div class="step-1 element_item" id="step-1">
                                     <div class="list-icon">

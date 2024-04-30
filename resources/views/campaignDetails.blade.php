@@ -87,7 +87,9 @@
                                                         $schedules = App\Models\ScheduleDays::where(
                                                             'schedule_id',
                                                             $item->value,
-                                                        )->get();
+                                                        )
+                                                            ->orderBy('id')
+                                                            ->get();
                                                     @endphp
                                                     @if ($schedules)
                                                         <tbody>
@@ -135,15 +137,50 @@
                                         )->get();
                                     @endphp
                                     @foreach ($global_settings as $item)
-                                        <div class="linked_set d-flex justify-content-between">
-                                            <p>{{ str_replace('Global Settings ', '', $item->setting_name) }}</p>
-                                            <div class="switch_box"><input type="checkbox" name="{{ $item->setting_slug }}"
-                                                    class="linkedin_setting_switch" id="{{ $item->setting_slug }}"
-                                                    {{ $item->value == 'yes' ? 'checked' : '' }}
-                                                    data-id="{{ $item->id }}"><label
-                                                    for="{{ $item->setting_slug }}">Toggle</label>
+                                        @if ($item->setting_slug != 'global_settings_schedule_id')
+                                            <div class="linked_set d-flex justify-content-between">
+                                                <p>{{ str_replace('Global Settings ', '', $item->setting_name) }}</p>
+                                                <div class="switch_box"><input type="checkbox"
+                                                        name="{{ $item->setting_slug }}" class="linkedin_setting_switch"
+                                                        id="{{ $item->setting_slug }}"
+                                                        {{ $item->value == 'yes' ? 'checked' : '' }}
+                                                        data-id="{{ $item->id }}"><label
+                                                        for="{{ $item->setting_slug }}">Toggle</label>
+                                                </div>
                                             </div>
-                                        </div>
+                                        @else
+                                            <div class="schedule_div">
+                                                <table class="schedule_table">
+                                                    <thead>
+                                                        <th>Day</th>
+                                                        <th>Start Time</th>
+                                                        <th>End Time</th>
+                                                        <th>Status</th>
+                                                    </thead>
+                                                    @php
+                                                        $schedules = App\Models\ScheduleDays::where(
+                                                            'schedule_id',
+                                                            $item->value,
+                                                        )
+                                                            ->orderBy('id')
+                                                            ->get();
+                                                    @endphp
+                                                    @if ($schedules)
+                                                        <tbody>
+                                                            @foreach ($schedules as $day)
+                                                                <tr>
+                                                                    <td>{{ ucfirst($day->schedule_day) }}</td>
+                                                                    <td>{{ date('h:i A', strtotime($day->start_time)) }}
+                                                                    </td>
+                                                                    <td>{{ date('h:i A', strtotime($day->end_time)) }}</td>
+                                                                    <td>{{ $day->is_active == 1 ? 'Open' : 'Closed' }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    @endif
+                                                </table>
+                                            </div>
+                                        @endif
                                     @endforeach
                                 </div>
                             </div>

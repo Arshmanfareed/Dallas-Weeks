@@ -210,6 +210,20 @@
             </div>
         </div>
     </section>
+    <script>
+        $(document).ready(function() {
+            $(".setting_list").hide();
+            $(".setting_btn").on("click", function(e) {
+                $(".setting_list").not($(this).siblings(".setting_list")).hide();
+                $(this).siblings(".setting_list").toggle();
+            });
+            $(document).on("click", function(e) {
+                if (!$(event.target).closest(".setting").length) {
+                    $(".setting_list").hide();
+                }
+            });
+        });
+    </script>
     {{-- <div class="modal fade create_add_new_leads_modal" id="add_new_leads_modal" tabindex="-1"
         aria-labelledby="add_new_leads_modal" aria-hidden="true">
         <div class="modal-dialog">

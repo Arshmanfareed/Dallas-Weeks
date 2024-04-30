@@ -70,4 +70,27 @@ class ScheduleCampaign extends Controller
             return response()->json(['success' => true, 'schedules' => $schedules]);
         }
     }
+    function filterSchedule($search)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $schedules = CampaignSchedule::where('user_id', $user_id);
+            if ($search != 'null') {
+                $schedules = $schedules->where('schedule_name', 'LIKE', '%' . $search . '%');
+            }
+            $schedules = $schedules->orWhere('user_id', 0);
+            if ($search != 'null') {
+                $schedules = $schedules->where('schedule_name', 'LIKE', '%' . $search . '%');
+            }
+            $schedules = $schedules->orderBy('created_at')->get();
+            foreach ($schedules as $schedule) {
+                $schedule['Days'] = ScheduleDays::where('schedule_id', $schedule->id)->orderBy('id')->get();
+            }
+            if (count($schedules) != 0) {
+                return response()->json(['success' => true, 'schedules' => $schedules]);
+            } else {
+                return response()->json(['error' => 'Schedule not Found'], 404);
+            }
+        }
+    }
 }

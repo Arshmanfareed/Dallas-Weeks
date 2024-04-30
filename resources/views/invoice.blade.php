@@ -24,19 +24,19 @@
                         </div>
                     </div>
                     <!-- <div class="filtr_desc">
-                        <div class="d-flex">
-                            <strong>Team members</strong>
-                            <div class="filter">
-                                <form action="/search" method="get" class="search-form">
-            <input type="text" name="q" placeholder="Search...">
-            <button type="submit">
-            <i class="fa fa-search"></i>
-            </button>
-           </form>
-                                <a href="javascript:;" class="roles_btn">Roles & permissions</a>
-                            </div>
-                        </div>
-                    </div> -->
+                                <div class="d-flex">
+                                    <strong>Team members</strong>
+                                    <div class="filter">
+                                        <form action="/search" method="get" class="search-form">
+                    <input type="text" name="q" placeholder="Search...">
+                    <button type="submit">
+                    <i class="fa fa-search"></i>
+                    </button>
+                   </form>
+                                        <a href="javascript:;" class="roles_btn">Roles & permissions</a>
+                                    </div>
+                                </div>
+                            </div> -->
                     <div class="data_row">
                         <div class="data_head">
 
@@ -58,7 +58,7 @@
                                         @endphp
                                         <tr>
                                             <td>
-                                                <div class="d-flex align-items-center"><img src="{{ asset('asset') }}"
+                                                <div class="d-flex align-items-center"><img src="{{ asset($asset) }}"
                                                         alt=""><strong>John doe</strong></div>
                                             </td>
                                             <td>info@johndoe.com</td>
@@ -72,8 +72,6 @@
                                     @endfor
                                 </tbody>
                             </table>
-
-
                         </div>
                     </div>
                 </div>

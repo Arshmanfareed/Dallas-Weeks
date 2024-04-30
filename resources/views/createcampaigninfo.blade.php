@@ -103,7 +103,8 @@
                                                                 </div>
                                                                 <div class="schedule_content_row2">
                                                                     <input type="text"
-                                                                        placeholder="Search schedules here...">
+                                                                        placeholder="Search schedules here..."
+                                                                        class="search_schedule">
                                                                     <i class="fa-solid fa-magnifying-glass"></i>
                                                                 </div>
                                                                 @if (!empty($campaign_schedule))
@@ -344,7 +345,8 @@
                                                                 </div>
                                                                 <div class="schedule_content_row2">
                                                                     <input type="text"
-                                                                        placeholder="Search schedules here...">
+                                                                        placeholder="Search schedules here..."
+                                                                        class="search_schedule">
                                                                     <i class="fa-solid fa-magnifying-glass"></i>
                                                                 </div>
                                                                 @if (!empty($campaign_schedule))

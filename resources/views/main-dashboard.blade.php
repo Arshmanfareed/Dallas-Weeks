@@ -99,7 +99,7 @@
                                         src="{{ asset('assets/img/settings.svg') }}" alt=""></a>
                             </div>
                             <div class="campaign_data">
-                                @for ($i = 0; $i <= 7; $i++)
+                                @for ($i = 0; $i < 7; $i++)
                                     @php
                                         $asset_id = $i + 1;
                                         $asset = 'assets/img/acc_img' . $asset_id . '.png';

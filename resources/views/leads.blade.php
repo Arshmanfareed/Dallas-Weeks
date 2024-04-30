@@ -130,11 +130,11 @@
                                                                     </td>
                                                                     <!-- <td><div class="per">23%</div> -->
                                                                     </td>
-                                                                    <td class="setting">
+                                                                    <td>
                                                                         <a href="javascript:;" type="button"
                                                                             class="setting setting_btn" id=""><i
                                                                                 class="fa-solid fa-gear"></i></a>
-                                                                        <ul class="setting_list">
+                                                                        <ul class="setting_list" style="display: block;">
                                                                             <li><a href="#">Edit</a></li>
                                                                             <li><a href="#">Delete</a></li>
                                                                         </ul>
@@ -590,4 +590,18 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $(".setting_list").hide();
+            $(".setting_btn").on("click", function(e) {
+                $(".setting_list").not($(this).siblings(".setting_list")).hide();
+                $(this).siblings(".setting_list").toggle();
+            });
+            $(document).on("click", function(e) {
+                if (!$(event.target).closest(".setting").length) {
+                    $(".setting_list").hide();
+                }
+            });
+        });
+    </script>
 @endsection

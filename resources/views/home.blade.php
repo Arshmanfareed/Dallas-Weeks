@@ -21,12 +21,6 @@
                             <img src="{{ asset('assets/images/img1.png') }}" alt="">
                         </div>
                     </div>
-                    <button id="captureButton">Capture</button>
-                    <div class="canvas">
-
-                    </div>
-
-
                 </div>
             </div>
         </div>

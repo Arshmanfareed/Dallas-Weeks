@@ -5,13 +5,9 @@
             color: white !important;
         }
     </style>
-    <?php
-    if (!empty($user->token)) {
-        echo '<p>Connacted.</p>';
-    }
-    
-    ?>
-
+    @if (!empty($user->token))
+        {!! '<p>Connacted.</p>' !!}
+    @endif
     <section class="dashboard">
         <div class="container-fluid">
             <div class="row">
@@ -20,7 +16,11 @@
                     <div class="dashboard_cont">
                         <div class="row_filter d-flex align-items-center justify-content-between">
                             <div class="account d-flex align-items-center">
-                                <img src="{{ asset('assets/img/account_img.png') }}" alt=""><span>John dow</span>
+                                @php
+                                    $user = auth()->user();
+                                @endphp
+                                <img src="{{ asset('assets/img/account_img.png') }}"
+                                    alt=""><span>{{ $user->name }}</span>
                             </div>
                             <div class="form_add d-flex">
                                 <form action="/search" method="get" class="search-form">
@@ -30,8 +30,8 @@
                                     </button>
                                 </form>
                                 <div class="add_btn">
-                                    <a href="#" class="" data-toggle="modal" data-target="#addaccount"><i
-                                            class="fa-solid fa-plus"></i></a>Add account
+                                    <a href="javascript:;" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>Add account
                                 </div>
                             </div>
                         </div>
@@ -42,8 +42,8 @@
                                 <p class="text-center">You don't hanve any account yet. Start by adding your first account.
                                 </p>
                                 <div class="add_btn">
-                                    <a href="#" data-toggle="modal" data-target="#addaccount"><i
-                                            class="fa-solid fa-plus"></i></a>
+                                    <a href="javascript:;" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -70,13 +70,11 @@
     <!-- basic modal -->
     <div class="modal fade step_form_popup" id="addaccount" tabindex="-1" role="dialog" aria-labelledby="addaccount"
         aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog" style="border-radius: 45px">
             <div class="modal-content">
                 <div class="modal-header">
-
-
                     <h4 class="text-center">Add Account</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss=    "modal" aria-label="Close">
                         <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
                     </button>
                 </div>
@@ -113,7 +111,7 @@
                                 <a class="btn btn-next">Next</a>
                             </div>
                         </div>
-                        <div class="form-step">
+                        <div class="form-step ">
                             <h3>Personal Informations</h3>
                             <div class="form_row row">
                                 <div class="input-group col-12">
@@ -158,13 +156,10 @@
                                 <a class="btn btn-next">Next</a>
                             </div>
                         </div>
-
                         <div class="form-step ">
-
                             <h3>Connect Linkedin</h3>
                             <a href="{{ URL('auth/linkedin/redirect') }}">Login Via LinkedIn</a>
                             <h3>Social Links</h3>
-
                             <div class="input-group">
                                 <label for="linkedin">LinkedIn</label>
                                 <div class="input-box">
@@ -200,7 +195,6 @@
                                         <input class='form-control' size='4' type='text'>
                                     </div>
                                 </div>
-
                                 <div class='form-row row'>
                                     <div class='col-xs-12 form-group  required'>
                                         <label class='control-label'>Card Number</label>
@@ -208,7 +202,6 @@
                                             type='text'>
                                     </div>
                                 </div>
-
                                 <div class='form-row row'>
                                     <div class='col-xs-12 col-md-4 form-group cvc required'>
                                         <label class='control-label'>CVC</label>
@@ -226,17 +219,15 @@
                                             type='text'>
                                     </div>
                                 </div>
-
-                                <div class='form-row '>
+                                {{-- <div class='form-row '>
                                     <div class='col-md-12 error form-group hide'>
                                         <div class='alert-danger alert'>Please correct the errors and try again.</div>
                                     </div>
-                                </div>
-
+                                </div> --}}
                             </div>
                             <!--  <div class="add-experience">
-                                                <a class="add-exp-btn"> + Add Experience</a>
-                                            </div> -->
+                                                                                                                                                                                                                <a class="add-exp-btn"> + Add Experience</a>
+                                                                                                                                                                                                            </div> -->
                             <div class="btn-group">
                                 <a class="btn btn-prev">Previous</a>
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Pay Now</button>
@@ -244,13 +235,12 @@
 
                             </div>
                         </div>
-
                     </form>
                 </div>
                 <!-- <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                </div> -->
+                                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                                                                                                                                                                                </div> -->
             </div>
         </div>
     </div>
@@ -262,7 +252,6 @@
             // Attach a click event to the LinkedIn authentication button
             jQuery('#linkedin-auth-btn').click(function(e) {
                 e.preventDefault();
-
                 // Perform the AJAX request to the LinkedIn authentication route
                 jQuery.ajax({
                     type: 'GET',
@@ -270,7 +259,6 @@
                     success: function(response) {
                         // Handle the success response if needed
                         console.log(response);
-
                         // After successful authentication, you can redirect to the callback route
                         window.location.href = '/auth/linkedin/callback';
                     },
@@ -283,31 +271,49 @@
         });
     </script>
 
+    <script>
+        $('.btn-next').on('click', function(e) {
+            var progress_step = $('.progress-step.active');
+            var form_step = $('.form-step.active');
+            $(form_step).removeClass('active');
+            $(progress_step).removeClass('active');
+            $(form_step).next('.form-step').addClass('active');
+            $(progress_step).next('.progress-step').addClass('active');
+            $('#progress').css({
+                'width': $('.progress-step.active').position().left + 170,
+            });
+        });
+        $('.btn-prev').on('click', function(e) {
+            var progress_step = $('.progress-step.active');
+            var form_step = $('.form-step.active');
+            $(form_step).removeClass('active');
+            $(progress_step).removeClass('active');
+            $(form_step).prev('.form-step').addClass('active');
+            $(progress_step).prev('.progress-step').addClass('active');
+            $('#progress').css({
+                'width': $('.progress-step.active').position().left + 170,
+            });
+        });
+    </script>
 
-    <!-- <script>
+    <script>
         $(document).ready(function() {
             $('#payment-form').on('submit', function(event) {
                 event.preventDefault();
-
-                // Collect form data
                 var formData = $(this).serialize();
-
-                // Send data via AJAX
                 $.ajax({
                     type: 'POST',
                     url: '{{ route('stripe.post') }}',
                     data: formData,
                     success: function(response) {
-                        // Handle success response
                         console.log(response);
                     },
                     error: function(error) {
-                        // Handle error response
                         console.log(error);
                     }
                 });
             });
         });
-    </script> -->
+    </script>
 
 @endsection
