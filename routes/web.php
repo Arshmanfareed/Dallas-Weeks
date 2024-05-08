@@ -76,7 +76,7 @@ Route::get('/about', [HomeController::class, 'about']);
 Route::get('/pricing', [HomeController::class, 'pricing']);
 Route::get('/faq', [HomeController::class, 'faq']);
 Route::get('/login', [LoginController::class, 'login']);
-Route::post('logout', [LoginController::class, 'logoutUser'])->name('logout-user');
+Route::post('/logout', [LoginController::class, 'logoutUser'])->name('logout-user');
 Route::get('/register', [RegisterController::class, 'register']);
 Route::post('/register-user', [RegisterController::class, 'registerUser'])->name('register-user');
 Route::get('/dashboard', [DasboardController::class, 'dashboard'])->name('dashobardz');
@@ -99,7 +99,7 @@ Route::post('/campaign/campaigninfo', [CampaignController::class, 'campaigninfo'
 Route::post('/campaign/createcampaignfromscratch', [CampaignController::class, 'fromscratch'])->name('createcampaignfromscratch');
 Route::get('/campaign/getcampaignelementbyslug/{slug}', [CampaignElementController::class, 'campaignElement'])->name('getcampaignelementbyslug');
 Route::post('/campaign/createCampaign', [CampaignElementController::class, 'createCampaign'])->name('createCampaign');
-Route::get('/campaign/getPropertyDatatype/{name}/{element_slug}', [PropertiesController::class, 'getPropertyDatatype'])->name('getPropertyDatatype');
+Route::get('/campaign/getPropertyDatatype/{id}/{element_slug}', [PropertiesController::class, 'getPropertyDatatype'])->name('getPropertyDatatype');
 Route::get('/campaign/campaignDetails/{campaign_id}', [CampaignController::class, 'getCampaignDetails'])->name('campaignDetails');
 Route::get('/campaign/changeCampaignStatus/{campaign_id}', [CampaignController::class, 'changeCampaignStatus'])->name('changeCampaignStatus');
 Route::get('/campaign/{campaign_id}', [CampaignController::class, 'deleteCampaign'])->name('deleteCampaign');
@@ -108,3 +108,7 @@ Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'fil
 Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');
 Route::get('/campaign/scheduleDays/{schedule_id}', [ScheduleCampaign::class, 'scheduleDays'])->name('scheduleDays');
 Route::get('/filterSchedule/{search}', [ScheduleCampaign::class, 'filterSchedule'])->name('filterSchedule');
+Route::get('/getElements/{campaign_id}', [CampaignElementController::class, 'getElements'])->name('getElements');
+Route::get('/campaign/editcampaign/{campaign_id}', [CampaignController::class, 'editCampaign'])->name('editCampaign');
+Route::post('/campaign/editCampaignInfo/{campaign_id}', [CampaignController::class, 'editCampaignInfo'])->name('editCampaignInfo');
+Route::post('/campaign/editCampaignSequence/{campaign_id}', [CampaignController::class, 'editCampaignSequence'])->name('editCampaignSequence');

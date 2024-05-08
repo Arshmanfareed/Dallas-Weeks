@@ -8,16 +8,16 @@ use Illuminate\Http\Request;
 
 class PropertiesController extends Controller
 {
-    function getPropertyDatatype($name, $element_slug)
+    function getPropertyDatatype($id, $element_slug)
     {
         $string = $element_slug;
         $element = CampaignElement::where('element_slug', $string)->first();
         if ($element) {
-            $property = ElementProperties::where('element_id', $element->id)->where('property_name', $name)->first();
+            $property = ElementProperties::where('element_id', $element->id)->where('id', $id)->first();
             if ($property) {
-                return response()->json(['success' => true, 'properties' => $property->data_type, 'optional' => $property->optional]);
+                return response()->json(['success' => true, 'property' => $property]);
             } else {
-                return response()->json(['success' => false, 'properties' => 'Properties not found!']);
+                return response()->json(['success' => false, 'property' => 'Properties not found!']);
             }
         } else {
             return response()->json(['success' => false, 'properties' => 'Element not found!' . $string]);

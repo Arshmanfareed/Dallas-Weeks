@@ -74,7 +74,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="text-center">Add Account</h4>
-                    <button type="button" class="close" data-bs-dismiss=    "modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
                     </button>
                 </div>
@@ -226,8 +226,8 @@
                                 </div> --}}
                             </div>
                             <!--  <div class="add-experience">
-                                                                                                                                                                                                                <a class="add-exp-btn"> + Add Experience</a>
-                                                                                                                                                                                                            </div> -->
+                                                                                                                                                                                                                                    <a class="add-exp-btn"> + Add Experience</a>
+                                                                                                                                                                                                                                </div> -->
                             <div class="btn-group">
                                 <a class="btn btn-prev">Previous</a>
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Pay Now</button>
@@ -238,9 +238,9 @@
                     </form>
                 </div>
                 <!-- <div class="modal-footer">
-                                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                                                                                                                                                                                </div> -->
+                                                                                                                                                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                                                                                                                                                                                                    </div> -->
             </div>
         </div>
     </div>
@@ -290,6 +290,8 @@
             $(progress_step).removeClass('active');
             $(form_step).prev('.form-step').addClass('active');
             $(progress_step).prev('.progress-step').addClass('active');
+            console.log($('.progress-step.active').position().left);
+            console.log($('.progress-step.active').next('.progress-step').position().left);
             $('#progress').css({
                 'width': $('.progress-step.active').position().left + 170,
             });

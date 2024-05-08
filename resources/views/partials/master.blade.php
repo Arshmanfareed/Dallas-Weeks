@@ -49,25 +49,30 @@
                 <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="/blacklist">Blacklist</a>
+                            <a class="nav-link {{ request()->url() === URL('blacklist') ? 'active' : '' }}"
+                                href="/blacklist">Blacklist</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/team">Team</a>
+                            <a class="nav-link {{ request()->url() === URL('team') ? 'active' : '' }}"
+                                href="/team">Team</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/invoice">Invoice</a>
+                            <a class="nav-link {{ request()->url() === URL('invoice') ? 'active' : '' }}"
+                                href="/invoice">Invoice</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/roles-and-permission-setting">Settings</a>
+                            <a class="nav-link {{ request()->url() === URL('roles-and-permission-setting') ? 'active' : '' }}"
+                                href="/roles-and-permission-setting">Settings</a>
                         </li>
-                        <?php $user = auth()->user(); ?>
+                        @php
+                            $user = auth()->user();
+                        @endphp
                         @if ($user)
                             <a href="{{ route('logout-user') }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 LOGOUT
                             </a>
                         @endif
-
                         <form id="logout-form" action="{{ route('logout-user') }}" method="POST"
                             style="display: none;">
                             @csrf

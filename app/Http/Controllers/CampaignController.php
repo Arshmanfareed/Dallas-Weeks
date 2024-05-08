@@ -164,8 +164,74 @@ class CampaignController extends Controller
             if (count($campaigns) != 0) {
                 return response()->json(['success' => true, 'campaigns' => $campaigns]);
             } else {
-                return response()->json(['error' => 'Campaign not Found'], 404);
+                return response()->json(['success' => false, 'campaigns' => 'Campaign not Found']);
             }
         }
+    }
+    function editCampaign($campaign_id)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $campaign = Campaign::where('user_id', $user_id)->where('id', $campaign_id)->first();
+            $data = [
+                'title' => 'Edit Campaign',
+                'campaign' => $campaign,
+            ];
+            return view('editCampaign', $data);
+        }
+    }
+    function editCampaignInfo(Request $request, $campaign_id)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $validated = $request->validate([
+                'campaign_name' => 'required|string|max:255',
+                'campaign_url' => 'required'
+            ]);
+            if ($validated) {
+                $email_settings = EmailSetting::where('user_id', $user_id)->where('campaign_id', $campaign_id)->get();
+                $linkedin_settings = LinkedinSetting::where('user_id', $user_id)->where('campaign_id', $campaign_id)->get();
+                $global_settings = GlobalSetting::where('user_id', $user_id)->where('campaign_id', $campaign_id)->get();
+                $schedules = CampaignSchedule::where('user_id', $user_id)->orWhere('user_id', 0)->get();
+                $all = $request->except('_token');
+                $campaign_details = [];
+                foreach ($all as $key => $value) {
+                    $campaign_details[$key] = $value;
+                }
+                $data = [
+                    'title' => 'Create Campaign Info',
+                    'email_settings' => $email_settings,
+                    'linkedin_settings' => $linkedin_settings,
+                    'global_settings' => $global_settings,
+                    'campaign_details' => $campaign_details,
+                    'campaign_schedule' => $schedules,
+                    'campaign_id' => $campaign_id
+                ];
+                return view('editCampaignInfo', $data);
+            }
+        }
+    }
+    function editCampaignSequence(Request $request, $campaign_id)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $all = $request->except('_token');
+            $settings = [];
+            foreach ($all as $key => $value) {
+                $settings[$key] = $value;
+            }
+            $data = [
+                'campaigns' => CampaignElement::where('is_conditional', '0')->get(),
+                'conditional_campaigns' => CampaignElement::where('is_conditional', '1')->get(),
+                'title' => 'Edit Campaign Sequence',
+                'settings' => $settings,
+                'campaign_id' => $campaign_id
+            ];
+            return view('editCampaignSequence', $data);
+        }
+    }
+    function saveUpdates()
+    {
+        
     }
 }

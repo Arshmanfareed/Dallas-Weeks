@@ -5715,6 +5715,15 @@ body.light-mode .drop-pad > h5 {
     min-height: 70px;
 }
 
+.drop-pad-element.error {
+    border: 1px solid #f93f3fb3 !important;
+    box-shadow: 7px 7px 15px #fd4d4d2e;
+}
+
+.drop-pad-element.error .list-icon i {
+    color: #f93f3fb3;
+}
+
 .drop-pad-element .item_details {
     padding: 12px 12px 12px 0px;
 }

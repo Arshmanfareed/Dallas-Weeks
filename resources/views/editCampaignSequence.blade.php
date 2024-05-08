@@ -26,7 +26,7 @@
                     </div>
                     <div class="row crt_cmp_r sequence-steps">
                         <div class="col-lg-9 drop-pad" id="capture">
-                            <h5>Sequence Steps</h5>
+                            {{-- <h5>Sequence Steps</h5>
                             <div class="custom-center">
                                 <div class="cmp_opt_link d-flex">
                                     <ul class="d-flex list-unstyled justify-content-end align-items-center">
@@ -37,19 +37,12 @@
                                         <li class="active"><span>3</span><a href="javascript:;">Campaign steps</a></li>
                                     </ul>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="task-list">
-                                <div class="step-1 element_item" id="step-1">
-                                    <div class="list-icon">
-                                        <i class="fa-solid fa-certificate"></i>
-                                    </div>
-                                    <div class="item_details">
-                                        <p class="item_name">Lead Source (Step 1)</p>
-                                        <p class="item_desc"><i class="fa-solid fa-clock"></i>Wait for: <span
-                                                class="item_days">0</span> days <span class="item_hours">0</span> hours</p>
-                                    </div>
-                                    <div class="element_change_output attach-elements-out condition_true"></div>
-                                </div>
+                                @php
+                                    $img = App\Models\Campaign::where('id', $campaign_id)->first();
+                                @endphp
+                                <img src="{{ $img->img_path }}" alt="">
                             </div>
                         </div>
                         <div class="col-lg-3 add-elements">

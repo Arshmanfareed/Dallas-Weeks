@@ -2,6 +2,7 @@
 @section('content')
     <script>
         sessionStorage.removeItem('campaign_details');
+        sessionStorage.removeItem('edit_campaign_details');
     </script>
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -12,9 +13,12 @@
         </div>
         @php
             session()->forget('success');
-            session()->forget('campaign_details');
         @endphp
     @endif
+    @php
+        session()->forget('campaign_details');
+        session()->forget('edit_campaign_details');
+    @endphp
     <section class="main_dashboard blacklist campaign_sec">
         <div class="container_fluid">
             <div class="row">
@@ -168,11 +172,13 @@
                                                             <a href="javascript:;" type="button"
                                                                 class="setting setting_btn" id=""><i
                                                                     class="fa-solid fa-gear"></i></a>
-                                                            <ul class="setting_list">
+                                                            <ul class="setting_list" style="display: none">
                                                                 <li><a
                                                                         href="{{ route('campaignDetails', ['campaign_id' => $campaign->id]) }}">Check
                                                                         campaign details</a></li>
-                                                                {{-- <li><a href="#">Edit campaign</a></li> --}}
+                                                                <li><a
+                                                                        href="{{ route('editCampaign', ['campaign_id' => $campaign->id]) }}">Edit
+                                                                        campaign</a></li>
                                                                 {{-- <li><a href="#">Duplicate campaign steps</a></li> --}}
                                                                 {{-- <li><a href="javascript:;" data-bs-toggle="modal"
                                                                         data-bs-target="#add_new_leads_modal">Add new leads</a>
