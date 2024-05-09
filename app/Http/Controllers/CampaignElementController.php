@@ -152,7 +152,7 @@ class CampaignElementController extends Controller
     {
         $user_id = Auth::user()->id;
         if ($user_id) {
-            $elements = UpdatedCampaignElements::where('campaign_id', $campaign_id)->orderBy('element_id')->get();
+            $elements = UpdatedCampaignElements::where('campaign_id', $campaign_id)->orderBy('id')->get();
             foreach ($elements as $element) {
                 $element['original_element'] = CampaignElement::where('id', $element->element_id)->first();
                 $element['properties'] = UpdatedCampaignProperties::where('element_id', $element->id)->get();
@@ -162,6 +162,17 @@ class CampaignElementController extends Controller
             }
             $path = CampaignPath::where('campaign_id', $campaign_id)->orderBy('id')->get();
             return response()->json(['success' => true, 'elements_array' => $elements, 'path' => $path]);
+        }
+    }
+    function getcampaignelementbyid($element_id)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $properties = UpdatedCampaignProperties::where('element_id', $element_id)->get();
+            foreach ($properties as $property) {
+                $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
+            }
+            return response()->json(['success' => true, 'properties' => $properties]);
         }
     }
 }

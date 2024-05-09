@@ -5138,7 +5138,7 @@ body.light-mode .drop_element .list-icon i {
     background-color: #1c1e22;
     min-height: 70px;
     max-height: fit-content;
-    width: fit-content;
+    width: max-content;
     padding: 7px;
     border-radius: 17px;
     margin: 14px 0;

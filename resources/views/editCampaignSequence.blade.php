@@ -26,7 +26,7 @@
                     </div>
                     <div class="row crt_cmp_r sequence-steps">
                         <div class="col-lg-9 drop-pad" id="capture">
-                            {{-- <h5>Sequence Steps</h5>
+                            <h5>Sequence Steps</h5>
                             <div class="custom-center">
                                 <div class="cmp_opt_link d-flex">
                                     <ul class="d-flex list-unstyled justify-content-end align-items-center">
@@ -37,13 +37,8 @@
                                         <li class="active"><span>3</span><a href="javascript:;">Campaign steps</a></li>
                                     </ul>
                                 </div>
-                            </div> --}}
-                            <div class="task-list">
-                                @php
-                                    $img = App\Models\Campaign::where('id', $campaign_id)->first();
-                                @endphp
-                                <img src="{{ $img->img_path }}" alt="">
                             </div>
+                            <div class="task-list"></div>
                         </div>
                         <div class="col-lg-3 add-elements">
                             <div class="element-tab">

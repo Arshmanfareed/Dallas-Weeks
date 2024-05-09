@@ -44,7 +44,8 @@
                                             aria-controls="nav-global" aria-selected="false">Global settings</button>
                                     </div>
                                 </nav>
-                                <form id="settings" method="POST" action="{{ route('editCampaignSequence', ['campaign_id' => $campaign_id]) }}">
+                                <form id="settings" method="POST"
+                                    action="{{ route('editCampaignSequence', ['campaign_id' => $campaign_id]) }}">
                                     @csrf
                                     <div class="tab-content" id="nav-tabContent">
                                         <div class="tab-pane fade show active" id="nav-email" role="tabpanel"
@@ -371,8 +372,7 @@
                                             <div class="cmp_btns d-flex justify-content-center align-items-center">
                                                 <a href="javascript:;" class="btn prev_tab"><i
                                                         class="fa-solid fa-arrow-left"></i>Back</a>
-                                                <a href="javascript:;" type="button" class="btn nxt_btn"
-                                                    data-bs-toggle="modal" data-bs-target="#sequance_modal">Create
+                                                <a id="create_sequence" type="button" class="btn nxt_btn">Edit
                                                     sequence<i class="fa-solid fa-arrow-right"></i></a>
                                             </div>
                                         </div>
@@ -386,38 +386,6 @@
         </div>
     </section>
     <!-- Modal Create sequence -->
-    <div class="modal fade create_sequence_modal" id="sequance_modal" tabindex="-1" aria-labelledby="sequance_modal"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="sequance_modal">Create a sequence</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
-                            class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="border_box">
-                                <img src="{{ asset('assets/img/temp.png') }}" alt="">
-                                <a href="javascript:;" class="btn">From template</a>
-                                <p>Create a sequence from our suggested templates.</p>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="border_box">
-                                <img src="{{ asset('assets/img/creat_temp.png') }}" alt="">
-                                <a id="create_sequence" class="btn">From scratch</a>
-                                <p>Create a sequence from scratch specify steps and everything.</p>
-                            </div>
-                        </div>
-                        <a href="javascript:;" class="crt_btn ">Create sequence<i
-                                class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="modal fade create_schedule_modal" id="schedule_modal" tabindex="-1" aria-labelledby="schedule_modal"
         aria-hidden="true">
         <div class="modal-dialog">

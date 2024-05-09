@@ -186,17 +186,19 @@
                             </div>
                         </div>
                         <div class="row camp_sequence">
-                            <div class="col-lg-9 drop-pad">
-                                {{-- <h5>Sequence Steps</h5>
-                                <div class="task-list"></div> --}}
+                            {{-- <div class="col-lg-9">
                                 <img src="{{ $campaign->img_path }}" alt="">
+                            </div> --}}
+                            <div class="col-lg-9 drop-pad">
+                                <h5>Sequence Steps</h5>
+                                <div class="task-list"></div>
                             </div>
                             <div class="col-lg-3 add-elements">
                                 <div class="element-tab">
-                                    <button class="element-btn" id="properties-btn"
+                                    <button class="element-btn active" id="properties-btn"
                                         data-tab="properties">Properties</button>
                                 </div>
-                                <div class="properties element-content" id="properties"></div>
+                                <div class="properties active" id="properties"></div>
                             </div>
                         </div>
                     </div>

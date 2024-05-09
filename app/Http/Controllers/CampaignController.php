@@ -225,13 +225,49 @@ class CampaignController extends Controller
                 'conditional_campaigns' => CampaignElement::where('is_conditional', '1')->get(),
                 'title' => 'Edit Campaign Sequence',
                 'settings' => $settings,
-                'campaign_id' => $campaign_id
+                'campaign_id' => $campaign_id,
+                'campaign_time' => Campaign::select('start_date')->where('id', $campaign_id)->first()->start_date,
             ];
             return view('editCampaignSequence', $data);
         }
     }
-    function saveUpdates()
+    function updateCampaign(Request $request, $campaign_id)
     {
-        
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $all = $request->all();
+            $settings = $all['settings'];
+            $campaign = Campaign::where('id', $campaign_id)->first();
+            $campaign->campaign_name = $settings['campaign_name'];
+            unset($settings['campaign_name']);
+            $campaign->campaign_type = $settings['campaign_type'];
+            unset($settings['campaign_type']);
+            $campaign->campaign_url = $settings['campaign_url'];
+            unset($settings['campaign_url']);
+            $campaign->campaign_connection = $settings['campaign_connection'];
+            unset($settings['campaign_connection']);
+            $campaign->save();
+            if ($campaign->id) {
+                foreach ($settings as $key => $value) {
+                    if (str_contains($key, 'email_settings_')) {
+                        $str_key = str_replace('email_settings_', '', $key);
+                        $setting = EmailSetting::where('id', $str_key)->where('campaign_id', $campaign_id)->first();
+                    }
+                    if (str_contains($key, 'linkedin_settings_')) {
+                        $str_key = str_replace('linkedin_settings_', '', $key);
+                        $setting = LinkedinSetting::where('id', $str_key)->where('campaign_id', $campaign_id)->first();
+                    }
+                    if (str_contains($key, 'global_settings_')) {
+                        $str_key = str_replace('global_settings_', '', $key);
+                        $setting = GlobalSetting::where('id', $str_key)->where('campaign_id', $campaign_id)->first();
+                    }
+                    $setting->value = $value;
+                    $setting->save();
+                }
+                $request->session()->flash('success', 'Campaign succesfully updated!');
+                return response()->json(['success' => true]);
+            }
+            return response()->json(['success' => false, 'properties' => 'User login first!']);
+        }
     }
 }
