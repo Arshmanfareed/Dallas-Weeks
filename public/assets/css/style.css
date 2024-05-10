@@ -4986,11 +4986,6 @@ body.light-mode .add-elements {
     width: 0;
 }
 
-.drop-pad {
-    overflow: hidden;
-    max-height: 4000px;
-}
-
 .drop-list {
     padding-left: 0px;
     list-style: none;
@@ -5534,7 +5529,7 @@ body.light-mode .element-tab button.active {
 
 .task-list {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
 }
 
@@ -5679,6 +5674,8 @@ body.light-mode .line {
 
 .drop-pad {
     background-color: #111317;
+    top: 0 !important;
+    left: 0 !important;
 }
 
 body.light-mode .drop-pad {
@@ -5852,4 +5849,10 @@ body.light-mode .drop-pad > h5 {
 .custom-center {
     display: flex;
     justify-content: center;
+}
+
+#capture {
+    height: 720px;
+    overflow-y: scroll;
+    max-height: 4000px;
 }

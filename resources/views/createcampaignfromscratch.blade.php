@@ -163,4 +163,7 @@
             </div>
         </div>
     </section>
+    <script>
+        var settings = {!! $settings !!};
+    </script>
 @endsection
