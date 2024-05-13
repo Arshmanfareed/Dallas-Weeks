@@ -205,8 +205,8 @@
                                                 </div>
                                             </div>
                                             <div class="cmp_btns d-flex justify-content-center align-items-center">
-                                                <a href="{{ url('/campaign/createcampaign') }}" class="btn"><i
-                                                        class="fa-solid fa-arrow-left"></i>Back</a>
+                                                <a href="{{ route('editCampaign', ['campaign_id' => $campaign_id]) }}"
+                                                    class="btn"><i class="fa-solid fa-arrow-left"></i>Back</a>
                                                 <a href="javascript:;" class="btn next_tab nxt_btn">Next<i
                                                         class="fa-solid fa-arrow-right"></i></a>
                                             </div>
