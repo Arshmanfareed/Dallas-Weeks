@@ -10,12 +10,16 @@ class LeadsController extends Controller
 {
     function leads()
     {
-        $user_id = Auth::user()->id;
-        $leads = Leads::where('user_id', $user_id)->get();
-        $data = [
-            'title' => 'Leads',
-            'leads' => $leads,
-        ];
-        return view('leads', $data);
+        if (Auth::check()) {
+            $user_id = Auth::user()->id;
+            $leads = Leads::where('user_id', $user_id)->get();
+            $data = [
+                'title' => 'Leads',
+                'leads' => $leads,
+            ];
+            return view('leads', $data);
+        } else {
+            return redirect(url('/'));
+        }
     }
 }

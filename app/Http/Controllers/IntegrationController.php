@@ -6,10 +6,11 @@ use Illuminate\Http\Request;
 
 class IntegrationController extends Controller
 {
-   function integration(){
-    $data=[
-        'title'=>'Integration'
-    ];
-    return view('integrations',$data);
-   }
+    function integration()
+    {
+        $data = [
+            'title' => 'Integration'
+        ];
+        return view('integrations', $data);
+    }
 }

@@ -106,7 +106,7 @@ Route::get('/campaign/{campaign_id}', [CampaignController::class, 'deleteCampaig
 Route::get('/campaign/archive/{campaign_id}', [CampaignController::class, 'archiveCampaign'])->name('archiveCampaign');
 Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
 Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');
-Route::get('/campaign/scheduleDays/{schedule_id}', [ScheduleCampaign::class, 'scheduleDays'])->name('scheduleDays');
+// Route::get('/campaign/scheduleDays/{schedule_id}', [ScheduleCampaign::class, 'scheduleDays'])->name('scheduleDays');
 Route::get('/filterSchedule/{search}', [ScheduleCampaign::class, 'filterSchedule'])->name('filterSchedule');
 Route::get('/getElements/{campaign_id}', [CampaignElementController::class, 'getElements'])->name('getElements');
 Route::get('/campaign/editcampaign/{campaign_id}', [CampaignController::class, 'editCampaign'])->name('editCampaign');

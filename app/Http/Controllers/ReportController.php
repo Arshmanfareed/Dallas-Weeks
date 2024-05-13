@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-    function report(){
-        $data=[
-            'title'=>'Report'
+    function report()
+    {
+        $data = [
+            'title' => 'Report'
         ];
-        return view('reports',$data);
-
+        return view('reports', $data);
     }
 }

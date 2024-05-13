@@ -151,4 +151,13 @@
             </div>
         </div>
     </section>
+    <script>
+        var campaign_id = {!! $campaign_id !!};
+        var settings = {!! $settings !!};
+        var campaign_time = "{{ $campaign_time }}";
+        var updateCampaignRoute = "{{ route('updateCampaign', ':campaign_id') }}";
+        var getElementsRoute = "{{ route('getElements', ':campaign_id') }}";
+        var getElementByIdRoute = "{{ route('getcampaignelementbyid', ':element_id') }}";
+        var campaignRoute = "{{ route('campaigns') }}";
+    </script>
 @endsection
