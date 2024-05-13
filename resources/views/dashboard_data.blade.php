@@ -18,7 +18,7 @@
 								</button>
 							</form>
 							<div class="add_btn">
-								<a href="#"  class="" data-toggle="modal" data-target="#addaccount"><i class="fa-solid fa-plus"></i></a>Add account
+								<a href="javascript:;"  class="" data-toggle="modal" data-target="#addaccount"><i class="fa-solid fa-plus"></i></a>Add account
 							</div>
 						</div>
 					</div>

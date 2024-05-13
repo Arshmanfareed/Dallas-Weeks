@@ -30,7 +30,7 @@ if(!empty($user->token)){
                                 </button>
                             </form>
                             <div class="add_btn">
-                                <a href="#"  class="" data-toggle="modal" data-target="#addaccount"><i class="fa-solid fa-plus"></i></a>Add account
+                                <a href="javascript:;"  class="" data-toggle="modal" data-target="#addaccount"><i class="fa-solid fa-plus"></i></a>Add account
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@ if(!empty($user->token)){
                             <img src="assets/img/empty.png" alt="">
                             <p class="text-center" >You don't hanve any account yet. Start by adding your first account.</p>
                             <div class="add_btn">
-                                <a href="#" data-toggle="modal" data-target="#addaccount"><i class="fa-solid fa-plus"></i></a>
+                                <a href="javascript:;" data-toggle="modal" data-target="#addaccount"><i class="fa-solid fa-plus"></i></a>
                                 </div>
                             </div>
                         </div>

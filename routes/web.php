@@ -10,18 +10,18 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\RolespermissionController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\MaindashboardController;
-use App\http\Controllers\CampaignController;
+use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CampaignElementController;
-use App\http\Controllers\StripePaymentController;
-use App\http\Controllers\LeadsController;
-use App\http\Controllers\ReportController;
-use App\http\Controllers\MessageController;
-use App\http\Controllers\ContactController;
-use App\http\Controllers\IntegrationController;
-use App\http\Controllers\HomeController;
-use App\http\Controllers\FeatureController;
+use App\Http\Controllers\StripePaymentController;
+use App\Http\Controllers\LeadsController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\IntegrationController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\PropertiesController;
-use App\http\Controllers\SocialController;
+use App\Http\Controllers\SocialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,12 +63,12 @@ Route::get('/auth/linkedin/callback', function () {
 
 Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']);
 Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']);
-Route::get('/leads', [LeadsController::class, 'leads']);
-Route::get('/report', [ReportController::class, 'report']);
-Route::get('/message', [MessageController::class, 'message']);
+Route::get('/leads', [LeadsController::class, 'leads'])->name('dash-leads');
+Route::get('/report', [ReportController::class, 'report'])->name('dash-reports');
+Route::get('/message', [MessageController::class, 'message'])->name('dash-messages');
 Route::get('/contacts', [ContactController::class, 'contact']);
-Route::get('/integration', [IntegrationController::class, 'integration']);
-Route::get('/feature-suggestion', [FeatureController::class, 'featuresuggestions']);
+Route::get('/integration', [IntegrationController::class, 'integration'])->name('dash-integrations');
+Route::get('/feature-suggestion', [FeatureController::class, 'featuresuggestions'])->name('dash-feature-suggestions');
 
 Route::get('/', [HomeController::class, 'home']);
 Route::get('/about', [HomeController::class, 'about']);
@@ -83,8 +83,8 @@ Route::get('/blacklist', [BlacklistController::class, 'blacklist']);
 Route::get('/team', [TeamController::class, 'team']);
 Route::get('/invoice', [InvoiceController::class, 'invoice']);
 // Route::get('/rolesandpermission',[RolespermissionController::class,'rolespermission']);
-Route::get('/setting', [SettingController::class, 'setting']);
-Route::get('/accdashboard', [MaindashboardController::class, 'maindasboard']);
+Route::get('/setting', [SettingController::class, 'setting'])->name('dash-settings');
+Route::get('/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash');
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
 
 Route::controller(StripePaymentController::class)->group(function () {
