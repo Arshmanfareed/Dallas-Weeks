@@ -28,4 +28,17 @@ class PropertiesController extends Controller
             return redirect(url('/'));
         }
     }
+    function getPropertyRequired($id)
+    {
+        if (Auth::check()) {
+            $property = ElementProperties::where('id', $id)->first();
+            if ($property) {
+                return response()->json(['success' => true, 'property' => $property]);
+            } else {
+                return response()->json(['success' => false, 'property' => 'Properties not found!']);
+            }
+        } else {
+            return redirect(url('/'));
+        }
+    }
 }

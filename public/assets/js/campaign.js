@@ -1,5 +1,9 @@
 $(document).ready(function () {
     /* Action toggle on Campaign list */
+    localStorage.removeItem("settings");
+    localStorage.removeItem("elements_array");
+    localStorage.removeItem("elements_data_array");
+
     $(".setting_btn").on("click", setting_list);
     $("#filterSelect").on("change", filter_search);
     $("#search_campaign").on("input", filter_search);
@@ -250,8 +254,10 @@ $(document).ready(function () {
 
     function setting_list(e) {
         $(".setting_list").hide();
-        $(".setting_list").not($(this).siblings(".setting_list")).hide();
-        $(this).siblings(".setting_list").toggle();
+        $(".setting_btn").on("click", function (e) {
+            $(".setting_list").not($(this).siblings(".setting_list")).hide();
+            $(this).siblings(".setting_list").toggle();
+        });
         $(document).on("click", function (e) {
             if (!$(e.target).closest(".setting").length) {
                 $(".setting_list").hide();

@@ -2,7 +2,6 @@
 @section('content')
     <section class="main_dashboard">
         <div class="container_fluid">
-
             <div class="row">
                 <div class="col-lg-1">
                     @include('partials/dashboard_sidebar_menu')
@@ -90,7 +89,6 @@
                                 @endforeach
                             </div>
                         </div>
-
                     </div>
                     <div class="border_box">
                         <div class="campaign_box">
@@ -115,12 +113,14 @@
                                 @endfor
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
-        </div>
-        </div>
     </section>
+    <script>
+        $(document).ready(function() {
+            $('.switch').prop('disabled', true);
+        });
+    </script>
 @endsection

@@ -525,4 +525,10 @@
             </div>
         </div>
     </div> --}}
+    <script>
+        var campaign_details = {!! $campaign_details_json !!};
+        var createSchedulePath = "{{ route('createSchedule') }}";
+        var filterSchedulePath = "{{ route('filterSchedule', ':search') }}";
+        var csrfToken = "{{ csrf_token() }}";
+    </script>
 @endsection

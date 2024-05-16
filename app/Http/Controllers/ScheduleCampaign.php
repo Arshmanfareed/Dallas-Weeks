@@ -91,7 +91,7 @@ class ScheduleCampaign extends Controller
             if (count($schedules) != 0) {
                 return response()->json(['success' => true, 'schedules' => $schedules]);
             } else {
-                return response()->json(['error' => 'Schedule not Found'], 404);
+                return response()->json(['success' => false]);
             }
         } else {
             return redirect(url('/'));

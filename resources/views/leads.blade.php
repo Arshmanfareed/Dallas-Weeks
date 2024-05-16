@@ -13,12 +13,15 @@
                                 <h3>Leads</h3>
                                 <div class="filt_opt d-flex">
                                     <div class="filt_opt">
-                                        <select name="campaign" id="campaign">
-                                            <option value="01">All Campaigns</option>
-                                            <option value="02">All Campaigns</option>
-                                            <option value="03">All Campaigns</option>
-                                            <option value="04">All Campaigns</option>
-                                        </select>
+                                        @if (!empty($campaigns))
+                                            <select name="campaign" id="campaign">
+                                                <option value="all">All Campaigns</option>
+                                                @foreach ($campaigns as $campaign)
+                                                    <option value="{{ $campaign->id }}">{{ $campaign->campaign_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        @endif
                                     </div>
                                     <div class="add_btn ">
                                         <a href="javascript:;" class="" type="button" data-bs-toggle="modal"
@@ -85,7 +88,7 @@
                                     <!-- Leads Content -->
                                     <div class="tab-pane lead_pane active" id="Leads" role="tabpanel">
                                         <div class="border_box">
-                                            <div class="scroll_div">
+                                            <div class="scroll_div leads_list">
                                                 <table class="data_table w-100">
                                                     <thead>
                                                         <tr>
@@ -106,7 +109,8 @@
                                                                     <td>
                                                                         <div class="switch_box"><input type="checkbox"
                                                                                 class="switch"
-                                                                                id="{{ 'swicth' . $lead['id'] }}"><label
+                                                                                id="{{ 'swicth' . $lead['id'] }}"
+                                                                                {{ $lead['is_active'] == 1 ? 'checked' : '' }}><label
                                                                                 for="{{ 'swicth' . $lead['id'] }}">Toggle</label>
                                                                         </div>
                                                                     </td>
@@ -141,6 +145,14 @@
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
+                                                        @else
+                                                            <tr>
+                                                                <td colspan="8">
+                                                                    <div class="text-center text-danger"
+                                                                        style="font-size: 25px; font-weight: bold; font-style: italic;">
+                                                                        Not Found!</div>
+                                                                </td>
+                                                            </tr>
                                                         @endif
                                                     </tbody>
                                                 </table>
@@ -591,6 +603,7 @@
         </div>
     </div>
     <script>
+        var leadsCampaignFilterPath = "{{ route('getLeadsByCampaign', ':id') }}";
         $(document).ready(function() {
             $(".setting_list").hide();
             $(".setting_btn").on("click", function(e) {

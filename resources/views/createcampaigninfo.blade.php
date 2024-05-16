@@ -601,4 +601,10 @@
             </div>
         </div>
     </div> --}}
+    <script>
+        var campaign_details = {!! $campaign_details_json !!};
+        var csrfToken = "{{ csrf_token() }}";
+        var createSchedulePath = "{{ route('createSchedule') }}";
+        var filterSchedulePath = "{{ route('filterSchedule', ':search') }}";
+    </script>
 @endsection

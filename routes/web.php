@@ -17,6 +17,7 @@ use App\http\Controllers\LeadsController;
 use App\http\Controllers\ReportController;
 use App\http\Controllers\MessageController;
 use App\http\Controllers\ContactController;
+use App\Http\Controllers\CsvController;
 use App\http\Controllers\IntegrationController;
 use App\http\Controllers\HomeController;
 use App\http\Controllers\FeatureController;
@@ -64,7 +65,6 @@ Route::get('/auth/linkedin/callback', function () {
 
 Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']);
 Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']);
-Route::get('/leads', [LeadsController::class, 'leads'])->name('dash-leads');
 Route::get('/report', [ReportController::class, 'report'])->name('dash-reports');
 Route::get('/message', [MessageController::class, 'message'])->name('dash-messages');
 Route::get('/contacts', [ContactController::class, 'contact']);
@@ -114,3 +114,8 @@ Route::post('/campaign/editCampaignInfo/{campaign_id}', [CampaignController::cla
 Route::post('/campaign/editCampaignSequence/{campaign_id}', [CampaignController::class, 'editCampaignSequence'])->name('editCampaignSequence');
 Route::get('/campaign/getcampaignelementbyid/{element_id}', [CampaignElementController::class, 'getcampaignelementbyid'])->name('getcampaignelementbyid');
 Route::post('/campaign/updateCampaign/{campaign_id}', [CampaignController::class, 'updateCampaign'])->name('updateCampaign');
+Route::post('/import_csv', [CsvController::class, 'import_csv'])->name('import_csv');
+Route::get('/campaign/getPropertyRequired/{id}', [PropertiesController::class, 'getPropertyRequired'])->name('getPropertyRequired');
+
+Route::get('/leads', [LeadsController::class, 'leads'])->name('dash-leads');
+Route::get('/leads/getLeadsByCampaign/{id}', [LeadsController::class, 'getLeadsByCampaign'])->name('getLeadsByCampaign');

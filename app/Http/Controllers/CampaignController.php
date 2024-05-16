@@ -242,6 +242,7 @@ class CampaignController extends Controller
                 'settings' => $settings,
                 'campaign_id' => $campaign_id,
                 'campaign_time' => Campaign::select('start_date')->where('id', $campaign_id)->first()->start_date,
+                'img' => Campaign::select('img_path')->where('id', $campaign_id)->first()->img_path
             ];
             return view('editCampaignSequence', $data);
         } else {
