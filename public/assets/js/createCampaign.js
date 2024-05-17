@@ -1,6 +1,6 @@
 $(document).ready(function () {
     localStorage.removeItem("settings");
-    
+
     $(document).on("change", "#campaign_url", function (e) {
         var file = e.target.files[0];
         if (file) {

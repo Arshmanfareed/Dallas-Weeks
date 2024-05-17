@@ -44,7 +44,9 @@
                                         <a href="javascript:;" type="button" data-bs-toggle="modal"
                                             data-bs-target="#filter_modal"><i class="fa-solid fa-filter"></i></a>
                                         <form action="/search" method="get" class="search-form">
-                                            <input type="text" name="q" placeholder="Search Campaig here...">
+                                            @csrf
+                                            <input type="text" name="q" placeholder="Search Lead here..."
+                                                id="search_lead">
                                             <button type="submit">
                                                 <i class="fa fa-search"></i>
                                             </button>
@@ -180,7 +182,7 @@
                                                         <button>Save changes</button>
                                                     </div>
                                                 </form>
-                                                <div class="date">
+                                                <div class="date" id="created_at">
                                                     <i class="fa-solid fa-calendar-days"></i>Created at: 2023-10-05 16:48
                                                 </div>
                                             </div>
@@ -585,17 +587,19 @@
                             class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="modal-body">
-                    <form action="">
+                    <form id="export_form">
                         <div class="row">
                             <div class="col-12">
                                 <div class="">
                                     <p class="w-75">Once the export is complete, we will send you the exported data is a
                                         CSV file. Please insert the email you would like us to use.</p>
-                                    <input type="email" placeholder="admin@gmail.com">
+                                    <input name="export_email" id="export_email" type="email"
+                                        placeholder="example@gmail.com">
+                                    <span style="color: red; display: none;" id="email_error"></span>
                                 </div>
                             </div>
-
-                            <a href="javascript:;" class="crt_btn ">Submit<i class="fa-solid fa-arrow-right"></i></a>
+                            <a href="javascript:;" id="export_leads" class="crt_btn ">Submit<i
+                                    class="fa-solid fa-arrow-right"></i></a>
                         </div>
                     </form>
                 </div>
@@ -603,8 +607,22 @@
         </div>
     </div>
     <script>
-        var leadsCampaignFilterPath = "{{ route('getLeadsByCampaign', ':id') }}";
+        var leadsCampaignFilterPath = "{{ route('getLeadsByCampaign', [':id', ':search']) }}";
+        var sendLeadsToEmail = "{{ route('sendLeadsToEmail') }}";
         $(document).ready(function() {
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const hours = String(currentDate.getHours()).padStart(2, '0');
+            const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+            const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            $("#created_at").html(
+                '<i class="fa-solid fa-calendar-days"></i>Created at: ' +
+                formattedDate
+            );
+
             $(".setting_list").hide();
             $(".setting_btn").on("click", function(e) {
                 $(".setting_list").not($(this).siblings(".setting_list")).hide();

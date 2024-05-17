@@ -118,4 +118,5 @@ Route::post('/import_csv', [CsvController::class, 'import_csv'])->name('import_c
 Route::get('/campaign/getPropertyRequired/{id}', [PropertiesController::class, 'getPropertyRequired'])->name('getPropertyRequired');
 
 Route::get('/leads', [LeadsController::class, 'leads'])->name('dash-leads');
-Route::get('/leads/getLeadsByCampaign/{id}', [LeadsController::class, 'getLeadsByCampaign'])->name('getLeadsByCampaign');
+Route::get('/leads/getLeadsByCampaign/{id}/{search}', [LeadsController::class, 'getLeadsByCampaign'])->name('getLeadsByCampaign');
+Route::post('/leads/sendLeadsToEmail', [LeadsController::class, 'sendLeadsToEmail'])->name('sendLeadsToEmail');
