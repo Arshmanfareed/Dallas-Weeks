@@ -143,7 +143,15 @@
                                                             </div>
                                                         </td>
                                                         <td>{{ $campaign->campaign_name }}</td>
-                                                        <td>44</td>
+                                                        <td>
+                                                            @php
+                                                                $leads = App\Models\Leads::where(
+                                                                    'campaign_id',
+                                                                    $campaign->id,
+                                                                )->get();
+                                                            @endphp
+                                                            {{ count($leads) }}
+                                                        </td>
                                                         <td>105</td>
                                                         <td class="stats">
                                                             <ul
@@ -175,10 +183,10 @@
                                                                         href="{{ route('editCampaign', ['campaign_id' => $campaign->id]) }}">Edit
                                                                         campaign</a></li>
                                                                 {{-- <li><a href="#">Duplicate campaign steps</a></li> --}}
-                                                                {{-- <li><a href="javascript:;" data-bs-toggle="modal"
+                                                                <li><a href="javascript:;" data-bs-toggle="modal"
                                                                         data-bs-target="#add_new_leads_modal">Add new
                                                                         leads</a>
-                                                                </li> --}}
+                                                                </li>
                                                                 {{-- <li><a href="#">Export data</a></li> --}}
                                                                 <li><a class="archive_campaign"
                                                                         id="{{ 'archive' . $campaign->id }}">Archive
@@ -217,6 +225,7 @@
         var deleteCampaignRoute = "{{ route('deleteCampaign', ':id') }}";
         var activateCampaignRoute = "{{ route('changeCampaignStatus', ':campaign_id') }}";
         var archiveCampaignRoute = "{{ route('archiveCampaign', ':id') }}";
+        var leadsCountRoute = "{{ route('getLeadsCountByCampaign', ':id') }}";
     </script>
     {{-- <div class="modal fade create_sequence_modal" id="sequance_modal" tabindex="-1" aria-labelledby="sequance_modal"
         aria-hidden="true">
@@ -260,7 +269,7 @@
             </div>
         </div>
     </div> --}}
-    {{-- <div class="modal fade create_add_new_leads_modal" id="add_new_leads_modal" tabindex="-1"
+    <div class="modal fade create_add_new_leads_modal" id="add_new_leads_modal" tabindex="-1"
         aria-labelledby="add_new_leads_modal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -287,5 +296,5 @@
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
 @endsection

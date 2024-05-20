@@ -616,13 +616,11 @@
             const day = String(currentDate.getDate()).padStart(2, '0');
             const hours = String(currentDate.getHours()).padStart(2, '0');
             const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-            const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-            const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
             $("#created_at").html(
                 '<i class="fa-solid fa-calendar-days"></i>Created at: ' +
                 formattedDate
             );
-
             $(".setting_list").hide();
             $(".setting_btn").on("click", function(e) {
                 $(".setting_list").not($(this).siblings(".setting_list")).hide();

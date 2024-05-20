@@ -8,6 +8,8 @@ use App\Models\CampaignPath;
 use App\Models\ElementProperties;
 use App\Models\EmailSetting;
 use App\Models\GlobalSetting;
+use App\Models\ImportedLeads;
+use App\Models\Leads;
 use App\Models\LinkedinSetting;
 use App\Models\UpdatedCampaignElements;
 use App\Models\UpdatedCampaignProperties;
@@ -48,8 +50,12 @@ class CampaignElementController extends Controller
             unset($settings['campaign_type']);
             $campaign->campaign_url = $settings['campaign_url'];
             unset($settings['campaign_url']);
-            $campaign->campaign_connection = $settings['connections'];
-            unset($settings['connections']);
+            if ($campaign->campaign_type != 'import') {
+                $campaign->campaign_connection = $settings['connections'];
+                unset($settings['connections']);
+            } else {
+                $campaign->campaign_connection = '0';
+            }
             $campaign->user_id = $user_id;
             $campaign->seat_id = 1;
             $campaign->description = '';
@@ -132,6 +138,45 @@ class CampaignElementController extends Controller
                             $path->next_false_element_id = $path_array[$value['0']];
                         }
                         $path->save();
+                    }
+                }
+                $imported_leads = ImportedLeads::where('user_id', $user_id)->first();
+                $fileHandle = fopen(storage_path('app/uploads/' . $imported_leads->file_path), 'r');
+                if ($fileHandle !== false) {
+                    $csvData = [];
+                    $delimiter = ',';
+                    $enclosure = '"';
+                    $escape = '\\';
+                    $columnNames = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape);
+                    foreach ($columnNames as $colName) {
+                        $csvData[$colName] = [];
+                    }
+                    while (($rowData = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape)) !== false) {
+                        foreach ($columnNames as $index => $colName) {
+                            $csvData[$colName][] = $rowData[$index] ?? null;
+                        }
+                    }
+                    foreach ($csvData as $key => $value) {
+                        foreach ($value as $url) {
+                            $lead = new Leads();
+                            $lead->is_active = 1;
+                            $lead->contact = '';
+                            $lead->title_company = '';
+                            $lead->send_connections = 1;
+                            $lead->next_step = '';
+                            $lead->executed_time = date('H:i:s');
+                            $lead->campaign_id = $campaign->id;
+                            $lead->user_id = $user_id;
+                            $lead->created_at = now();
+                            $lead->updated_at = now();
+                            if (str_contains(strtolower($key), 'url')) {
+                                $lead->profileUrl = $url;
+                                $lead->save();
+                            } else if (str_contains(strtolower($key), 'email')) {
+                                $lead->email = $url;
+                                $lead->save();
+                            }
+                        }
                     }
                 }
             }

@@ -192,7 +192,7 @@ $(document).ready(function () {
                                 `">Toggle</label></div></td>`;
                             html +=
                                 `<td>` + campaign["campaign_name"] + `</td>`;
-                            html += `<td>44</td>`;
+                            html += `<td id="lead_count_${campaign["id"]}">0</td>`;
                             html += `<td>105</td>`;
                             html += `<td class="stats"><ul class="status_list d-flex align-items-center list-unstyled p-0 m-0">`;
                             html += `<li><span><img src="/assets/img/eye.svg" alt="">10</span></li>`;
@@ -223,6 +223,9 @@ $(document).ready(function () {
                                 campaign["id"] +
                                 `">Delete campaign</a></li>`;
                             html += `</ul></td></tr>`;
+                            leads_count(campaign["id"], function (count) {
+                                $("#lead_count_" + campaign["id"]).text(count);
+                            });
                         }
                     }
                     $("#campaign_table_body").html(html);
@@ -262,6 +265,20 @@ $(document).ready(function () {
             if (!$(e.target).closest(".setting").length) {
                 $(".setting_list").hide();
             }
+        });
+    }
+
+    function leads_count(campaign_id, callback) {
+        $.ajax({
+            url: leadsCountRoute.replace(":id", campaign_id),
+            type: "GET",
+            success: function (response) {
+                callback(response.count);
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+                callback(0);
+            },
         });
     }
 });

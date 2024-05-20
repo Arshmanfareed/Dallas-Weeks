@@ -71,7 +71,12 @@
                                 @foreach ($campaigns as $campaign)
                                     <ul class="campaign_list">
                                         <li>{{ $campaign->campaign_name }}</li>
-                                        <li>44</li>
+                                        <li>
+                                            @php
+                                                $leads = App\Models\Leads::where('campaign_id', $campaign->id)->get();
+                                            @endphp
+                                            {{ count($leads) }}
+                                        </li>
                                         <li><a href="javascript:;" class="campaign_stat">48%</a></li>
                                         <li><a href="javascript:;" class="campaign_stat down">23%</a></li>
                                         <li>

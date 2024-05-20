@@ -120,3 +120,4 @@ Route::get('/campaign/getPropertyRequired/{id}', [PropertiesController::class, '
 Route::get('/leads', [LeadsController::class, 'leads'])->name('dash-leads');
 Route::get('/leads/getLeadsByCampaign/{id}/{search}', [LeadsController::class, 'getLeadsByCampaign'])->name('getLeadsByCampaign');
 Route::post('/leads/sendLeadsToEmail', [LeadsController::class, 'sendLeadsToEmail'])->name('sendLeadsToEmail');
+Route::get('/leads/getLeadsCountByCampaign/{id}', [LeadsController::class, 'getLeadsCountByCampaign'])->name('getLeadsCountByCampaign');

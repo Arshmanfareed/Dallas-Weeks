@@ -133,16 +133,42 @@ $(document).ready(function () {
                     if (response.success) {
                         $("#sequance_modal")
                             .find("ul li #total_leads")
-                            .text(response.total_leads + " leads");
+                            .text(response.total + " leads");
                         $("#sequance_modal")
                             .find("ul li #blacklist_leads")
-                            .text(response.blacklist_leads + " leads");
-                        // $('#sequance_modal').find('ul li #duplicate_among_teams').text(response.duplicate_among_teams + ' leads');
-                        // $('#sequance_modal').find('ul li #duplicate_csv_file').text(response.duplicate_csv_file + ' leads');
-                        // $('#sequance_modal').find('ul li #total_without_leads').text(response.total_without_leads + ' leads');
+                            .text(response.global_blacklists + " leads");
+                        $("#sequance_modal")
+                            .find("ul li #duplicate_among_teams")
+                            .text(response.duplicates_across_team + " leads");
+                        $("#sequance_modal")
+                            .find("ul li #duplicate_csv_file")
+                            .text(response.duplicates + " leads");
+                        $("#sequance_modal")
+                            .find("ul li #total_without_leads")
+                            .text(
+                                response.total_without_duplicate_blacklist +
+                                    " leads"
+                            );
                         $("#sequance_modal").modal("show");
                     } else {
-                        console.log(response);
+                        toastr.options = {
+                            closeButton: true,
+                            debug: false,
+                            newestOnTop: false,
+                            progressBar: true,
+                            positionClass: "toast-top-right",
+                            preventDuplicates: false,
+                            onclick: null,
+                            showDuration: "300",
+                            hideDuration: "1000",
+                            timeOut: "5000",
+                            extendedTimeOut: "1000",
+                            showEasing: "swing",
+                            hideEasing: "linear",
+                            showMethod: "fadeIn",
+                            hideMethod: "fadeOut",
+                        };
+                        toastr.error(response.message);
                     }
                 },
                 error: function (xhr, status, error) {
@@ -165,5 +191,10 @@ $(document).ready(function () {
         } else {
             form.submit();
         }
+    });
+    $(".import_btn").on("click", function (e) {
+        e.preventDefault();
+        var form = $(".campaign_pane.active").find("form");
+        form.submit();
     });
 });

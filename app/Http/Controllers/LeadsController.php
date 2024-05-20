@@ -120,4 +120,14 @@ class LeadsController extends Controller
             return redirect(url('/'));
         }
     }
+    function getLeadsCountByCampaign($campaign_id)
+    {
+        if (Auth::check()) {
+            $user_id = Auth::user()->id;
+            $leads = Leads::where('user_id', $user_id)->where('campaign_id', $campaign_id)->get();
+            return response()->json(['success' => true, 'count' => count($leads)]);
+        } else {
+            return redirect(url('/'));
+        }
+    }
 }
