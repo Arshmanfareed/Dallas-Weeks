@@ -1,8 +1,9 @@
 $(document).ready(function () {
     /* Action toggle on Campaign list */
-    localStorage.removeItem("settings");
-    localStorage.removeItem("elements_array");
-    localStorage.removeItem("elements_data_array");
+    sessionStorage.removeItem("campaign_details");
+    sessionStorage.removeItem("settings");
+    sessionStorage.removeItem("elements_array");
+    sessionStorage.removeItem("elements_data_array");
 
     $(".setting_btn").on("click", setting_list);
     $("#filterSelect").on("change", filter_search);

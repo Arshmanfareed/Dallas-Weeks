@@ -263,11 +263,11 @@ $(document).ready(function () {
                         choosedElement.position().left;
                     elements_array[id]["position_y"] =
                         choosedElement.position().top;
-                    localStorage.setItem(
+                    sessionStorage.setItem(
                         "elements_array",
                         JSON.stringify(elements_array)
                     );
-                    localStorage.setItem(
+                    sessionStorage.setItem(
                         "elements_data_array",
                         JSON.stringify(elements_data_array)
                     );
@@ -316,11 +316,11 @@ $(document).ready(function () {
             }
             delete elements_array[id];
             delete elements_data_array[id];
-            localStorage.setItem(
+            sessionStorage.setItem(
                 "elements_array",
                 JSON.stringify(elements_array)
             );
-            localStorage.setItem(
+            sessionStorage.setItem(
                 "elements_data_array",
                 JSON.stringify(elements_data_array)
             );
@@ -353,11 +353,11 @@ $(document).ready(function () {
                 );
                 prev_element.closest(".selected").removeClass("selected");
             }
-            localStorage.setItem(
+            sessionStorage.setItem(
                 "elements_array",
                 JSON.stringify(elements_array)
             );
-            localStorage.setItem(
+            sessionStorage.setItem(
                 "elements_data_array",
                 JSON.stringify(elements_data_array)
             );
@@ -477,11 +477,11 @@ $(document).ready(function () {
                 id = currentElement.attr("id");
                 elements_array[id]["position_x"] = currentElement.offset().left;
                 elements_array[id]["position_y"] = currentElement.offset().top;
-                localStorage.setItem(
+                sessionStorage.setItem(
                     "elements_array",
                     JSON.stringify(elements_array)
                 );
-                localStorage.setItem(
+                sessionStorage.setItem(
                     "elements_data_array",
                     JSON.stringify(elements_data_array)
                 );
@@ -660,7 +660,7 @@ $(document).ready(function () {
                 });
                 var p = $(element).find(".property_input").attr("name");
                 elements_data_array[element_name][p] = input;
-                localStorage.setItem(
+                sessionStorage.setItem(
                     "elements_data_array",
                     JSON.stringify(elements_data_array)
                 );
@@ -1117,7 +1117,7 @@ $(document).ready(function () {
                         name_html += "</div>";
                     }
                     elements_data_array[item_id] = arr;
-                    localStorage.setItem(
+                    sessionStorage.setItem(
                         "elements_data_array",
                         JSON.stringify(elements_data_array)
                     );

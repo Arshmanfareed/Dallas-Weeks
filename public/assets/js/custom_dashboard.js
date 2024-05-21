@@ -202,7 +202,7 @@ jQuery(function ($) {
 // Dark mode
 $(document).ready(function () {
     // Check if user has a preference for dark mode
-    if (localStorage.getItem("lightMode") === "enabled") {
+    if (sessionStorage.getItem("lightMode") === "enabled") {
         enableDarkMode();
     }
 
@@ -218,10 +218,10 @@ $(document).ready(function () {
 
 function enableDarkMode() {
     $("body").addClass("light-mode");
-    localStorage.setItem("lightMode", "enabled");
+    sessionStorage.setItem("lightMode", "enabled");
 }
 
 function disableDarkMode() {
     $("body").removeClass("light-mode");
-    localStorage.setItem("lightMode", null);
+    sessionStorage.setItem("lightMode", null);
 }

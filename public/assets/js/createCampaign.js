@@ -1,5 +1,7 @@
 $(document).ready(function () {
-    localStorage.removeItem("settings");
+    sessionStorage.removeItem("settings");
+    sessionStorage.removeItem("elements_array");
+    sessionStorage.removeItem("elements_data_array");
 
     $(document).on("change", "#campaign_url", function (e) {
         var file = e.target.files[0];
@@ -45,6 +47,9 @@ $(document).ready(function () {
         campaign_details["campaign_url"] = "";
         campaign_details["connections"] = "1";
     } else {
+        $(".campaign_tab.active").parent(".border_box").css({
+            "background-color": "#16adcb",
+        });
         var active_form = $(".campaign_pane.active").find("form");
         active_form
             .find("#campaign_name")
@@ -86,11 +91,17 @@ $(document).ready(function () {
     });
     $(".campaign_tab").on("click", function (e) {
         e.preventDefault();
+        $(".campaign_tab").parent(".border_box").css({
+            "background-color": "rgb(17 19 23)",
+        });
         $(".campaign_tab").removeClass("active");
         $(this).addClass("active");
         var id = $(this).data("bs-target");
         $(".campaign_pane").removeClass("active");
         $("#" + id).addClass("active");
+        $(".campaign_tab.active").parent(".border_box").css({
+            "background-color": "#16adcb",
+        });
         var new_form = $("#" + id).find("form");
         campaign_details["campaign_type"] = new_form
             .find("#campaign_type")

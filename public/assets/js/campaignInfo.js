@@ -1,8 +1,8 @@
 $(document).ready(function () {
-    localStorage.removeItem("elements_array");
-    localStorage.removeItem("elements_data_array");
+    sessionStorage.removeItem("elements_array");
+    sessionStorage.removeItem("elements_data_array");
     
-    var settings = JSON.parse(localStorage.getItem("settings"));
+    var settings = JSON.parse(sessionStorage.getItem("settings"));
 
     if (settings) {
         $(".linkedin_setting_switch").each(function (e) {
@@ -25,7 +25,7 @@ $(document).ready(function () {
             input_value = "no";
             settings[input_name] = input_value;
         });
-        localStorage.setItem("settings", JSON.stringify(settings));
+        sessionStorage.setItem("settings", JSON.stringify(settings));
     }
 
     var form = $("#settings");
@@ -75,7 +75,7 @@ $(document).ready(function () {
             }
             settings[input_name] = input_value;
         });
-        localStorage.setItem("settings", JSON.stringify(settings));
+        sessionStorage.setItem("settings", JSON.stringify(settings));
         form.submit();
     });
     $(".next_tab").on("click", function (e) {

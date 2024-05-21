@@ -1,6 +1,6 @@
 $(document).ready(function () {
-    localStorage.removeItem("elements_array");
-    localStorage.removeItem("elements_data_array");
+    sessionStorage.removeItem("elements_array");
+    sessionStorage.removeItem("elements_data_array");
     var form = $("#settings");
     form.append(
         $("<input>")
