@@ -44,7 +44,8 @@
                                             aria-controls="nav-global" aria-selected="false">Global settings</button>
                                     </div>
                                 </nav>
-                                <form id="settings" method="POST" action="{{ route('createcampaignfromscratch') }}">
+                                <form id="settings" method="POST"
+                                    action="{{ route('editCampaignSequence', ['campaign_id' => $campaign_id]) }}">
                                     @csrf
                                     <div class="tab-content" id="nav-tabContent">
                                         <div class="tab-pane fade show active" id="nav-email" role="tabpanel"
@@ -113,11 +114,15 @@
                                                                             <li>
                                                                                 <div class="row schedule_list_item">
                                                                                     <div class="col-lg-1 schedule_item">
-                                                                                        <input type="radio"
-                                                                                            name="email_settings_schedule_id"
-                                                                                            class="schedule_id"
-                                                                                            value="{{ $schedule['id'] }}"
-                                                                                            {{ $schedule['user_id'] == '0' ? 'checked' : '' }}>
+                                                                                        @foreach ($email_settings as $setting)
+                                                                                            @if ($setting['setting_slug'] == 'email_settings_schedule_id')
+                                                                                                <input type="radio"
+                                                                                                    name="{{ 'email_settings_' . $setting['id'] }}"
+                                                                                                    class="schedule_id"
+                                                                                                    value="{{ $schedule['id'] }}"
+                                                                                                    {{ $schedule['id'] == $setting['value'] ? 'checked' : '' }}>
+                                                                                            @endif
+                                                                                        @endforeach
                                                                                     </div>
                                                                                     <div class="col-lg-1 schedule_avatar">S
                                                                                     </div>
@@ -180,83 +185,49 @@
                                                     <div id="collapseThree" class="accordion-collapse collapse"
                                                         aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <div class="linked_set d-flex justify-content-between">
-                                                                <p> Track the number of email link clicks </p>
-                                                                <div class="switch_box"><input type="checkbox"
-                                                                        name="email_settings_track_the_number_of_email_link_clicks"
-                                                                        class="linkedin_setting_switch"
-                                                                        id="track_the_number_of_email_link_clicks"><label
-                                                                        for="track_the_number_of_email_link_clicks">Toggle</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="linked_set d-flex justify-content-between">
-                                                                <p> Track the number of opened emails </p>
-                                                                <div class="switch_box"><input type="checkbox"
-                                                                        name="email_settings_track_the_number_of_opened_emails"
-                                                                        class="linkedin_setting_switch"
-                                                                        id="track_the_number_of_opened_emails"><label
-                                                                        for="track_the_number_of_opened_emails">Toggle</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="linked_set d-flex justify-content-between">
-                                                                <p> Text only email (no HTML) <span
-                                                                        title="Send email messages that only include text without images, graphics or formatting. If you enable this option, you won't be able to track open and link click rates.">!</span>
-                                                                </p>
-                                                                <div class="switch_box"><input type="checkbox"
-                                                                        name="email_settings_text_only_email_no_html"
-                                                                        class="linkedin_setting_switch"
-                                                                        id="text_only_email_no_html"><label
-                                                                        for="text_only_email_no_html">Toggle</label>
-                                                                </div>
-                                                            </div>
+                                                            @foreach ($email_settings as $setting)
+                                                                @if ($setting['setting_slug'] != 'email_settings_schedule_id')
+                                                                    <div class="linked_set d-flex justify-content-between">
+                                                                        <p> {{ str_replace('Email Settings ', '', $setting['setting_name']) }}
+                                                                        </p>
+                                                                        <div class="switch_box"><input type="checkbox"
+                                                                                name="{{ 'email_settings_' . $setting['id'] }}"
+                                                                                class="linkedin_setting_switch"
+                                                                                id="{{ str_replace('email_settings_', '', $setting['setting_slug']) }}"
+                                                                                {{ $setting['value'] == 'yes' ? 'checked' : '' }}><label
+                                                                                for="{{ str_replace('email_settings_', '', $setting['setting_slug']) }}">Toggle</label>
+                                                                        </div>
+                                                                    </div>
+                                                                @endif
+                                                            @endforeach
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="cmp_btns d-flex justify-content-center align-items-center">
-                                                <a href="{{ url('/campaign/createcampaign') }}" class="btn"><i
-                                                        class="fa-solid fa-arrow-left"></i>Back</a>
+                                                <a href="{{ route('editCampaign', ['campaign_id' => $campaign_id]) }}"
+                                                    class="btn"><i class="fa-solid fa-arrow-left"></i>Back</a>
                                                 <a href="javascript:;" class="btn next_tab nxt_btn">Next<i
                                                         class="fa-solid fa-arrow-right"></i></a>
                                             </div>
                                         </div>
                                         <div class="tab-pane fade" id="nav-linkedin" role="tabpanel"
                                             aria-labelledby="nav-linkedin-tab">
-                                            <div class="linked_set d-flex justify-content-between">
-                                                <p> Discover Premium Linked accounts only </p>
-                                                <div class="switch_box"><input type="checkbox"
-                                                        name="linkedin_settings_discover_premium_linked_accounts_only"
-                                                        class="linkedin_setting_switch"
-                                                        id="discover_premium_linked_accounts_only"><label
-                                                        for="discover_premium_linked_accounts_only">Toggle</label></div>
-                                            </div>
-                                            <div class="linked_set d-flex justify-content-between">
-                                                <p> Discover Leads with Open Profile status only </p>
-                                                <div class="switch_box"><input type="checkbox"
-                                                        name="linkedin_settings_discover_leads_with_open_profile_status_only"
-                                                        class="linkedin_setting_switch"
-                                                        id="discover_leads_with_open_profile_status_only"><label
-                                                        for="discover_leads_with_open_profile_status_only">Toggle</label>
-                                                </div>
-                                            </div>
-                                            <div class="linked_set d-flex justify-content-between">
-                                                <p> Collect contact information <span
-                                                        title="Collect publicly available contact information Collect publicly available contact information from the leads' Linkedin profiles (e.g. email, phone number, Twitter, or website). This option automatically adds a View profile after the Invite to connect step into the campaign.">!</span>
-                                                </p>
-                                                <div class="switch_box"><input type="checkbox"
-                                                        name="linkedin_settings_collect_contact_information"
-                                                        class="linkedin_setting_switch"
-                                                        id="collect_contact_information"><label
-                                                        for="collect_contact_information">Toggle</label></div>
-                                            </div>
-                                            <div class="linked_set d-flex justify-content-between">
-                                                <p> Remove leads with pending connections <span>!</span></p>
-                                                <div class="switch_box"><input type="checkbox"
-                                                        name="linkedin_settings_remove_leads_with_pending_connections"
-                                                        class="linkedin_setting_switch"
-                                                        id="remove_leads_with_pending_connections"><label
-                                                        for="remove_leads_with_pending_connections">Toggle</label></div>
-                                            </div>
+                                            @foreach ($linkedin_settings as $setting)
+                                                @if ($setting['setting_slug'] != 'linkedin_settings_schedule_id')
+                                                    <div class="linked_set d-flex justify-content-between">
+                                                        <p> {{ str_replace('Linkedin Settings ', '', $setting['setting_name']) }}
+                                                        </p>
+                                                        <div class="switch_box"><input type="checkbox"
+                                                                name="{{ 'linkedin_settings_' . $setting['id'] }}"
+                                                                class="linkedin_setting_switch"
+                                                                id="{{ str_replace('linkedin_settings_', '', $setting['setting_slug']) }}"
+                                                                {{ $setting['value'] == 'yes' ? 'checked' : '' }}><label
+                                                                for="{{ str_replace('linkedin_settings_', '', $setting['setting_slug']) }}">Toggle</label>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @endforeach
                                             <div class="cmp_btns d-flex justify-content-center align-items-center">
                                                 <a href="javascript:;" class="btn prev_tab"><i
                                                         class="fa-solid fa-arrow-left"></i>Back</a>
@@ -278,39 +249,21 @@
                                                     <div id="collapse1" class="accordion-collapse collapse"
                                                         aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <div class="linked_set d-flex justify-content-between">
-                                                                <p> Include leads that replied to your messages
-                                                                    <span>!</span>
-                                                                </p>
-                                                                <div class="switch_box"><input type="checkbox"
-                                                                        name="global_settings_include_leads_that_replied_to_your_messages"
-                                                                        class="linkedin_setting_switch"
-                                                                        id="include_leads_that_replied_to_your_messages"><label
-                                                                        for="include_leads_that_replied_to_your_messages">Toggle</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="linked_set d-flex justify-content-between">
-                                                                <p> Include leads also found in campaigns across your team
-                                                                    seats
-                                                                    <span>!</span>
-                                                                </p>
-                                                                <div class="switch_box"><input type="checkbox"
-                                                                        name="global_settings_include_leads_also_found_in_campaigns_across_your_team_seats"
-                                                                        class="linkedin_setting_switch"
-                                                                        id="include_leads_also_found_in_campaigns_across_your_team_seats"><label
-                                                                        for="include_leads_also_found_in_campaigns_across_your_team_seats">Toggle</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="linked_set d-flex justify-content-between">
-                                                                <p> Discover new leads only <span>!</span>
-                                                                </p>
-                                                                <div class="switch_box"><input type="checkbox"
-                                                                        name="global_settings_discover_new_leads_only"
-                                                                        class="linkedin_setting_switch"
-                                                                        id="discover_new_leads_only"><label
-                                                                        for="discover_new_leads_only">Toggle</label>
-                                                                </div>
-                                                            </div>
+                                                            @foreach ($global_settings as $setting)
+                                                                @if ($setting['setting_slug'] != 'global_settings_schedule_id')
+                                                                    <div class="linked_set d-flex justify-content-between">
+                                                                        <p> {{ str_replace('Linkedin Settings ', '', $setting['setting_name']) }}
+                                                                        </p>
+                                                                        <div class="switch_box"><input type="checkbox"
+                                                                                name="{{ 'global_settings_' . $setting['id'] }}"
+                                                                                class="linkedin_setting_switch"
+                                                                                id="{{ str_replace('global_settings_', '', $setting['setting_slug']) }}"
+                                                                                {{ $setting['value'] == 'yes' ? 'checked' : '' }}><label
+                                                                                for="{{ str_replace('global_settings_', '', $setting['setting_slug']) }}">Toggle</label>
+                                                                        </div>
+                                                                    </div>
+                                                                @endif
+                                                            @endforeach
                                                         </div>
                                                     </div>
                                                 </div>
@@ -355,11 +308,15 @@
                                                                             <li>
                                                                                 <div class="row schedule_list_item">
                                                                                     <div class="col-lg-1 schedule_item">
-                                                                                        <input type="radio"
-                                                                                            name="global_settings_schedule_id"
-                                                                                            class="schedule_id"
-                                                                                            value="{{ $schedule['id'] }}"
-                                                                                            {{ $schedule['user_id'] == '0' ? 'checked' : '' }}>
+                                                                                        @foreach ($global_settings as $setting)
+                                                                                            @if ($setting['setting_slug'] == 'global_settings_schedule_id')
+                                                                                                <input type="radio"
+                                                                                                    name="{{ 'global_settings_' . $setting['id'] }}"
+                                                                                                    class="schedule_id"
+                                                                                                    value="{{ $schedule['id'] }}"
+                                                                                                    {{ $schedule['id'] == $setting['value'] ? 'checked' : '' }}>
+                                                                                            @endif
+                                                                                        @endforeach
                                                                                     </div>
                                                                                     <div class="col-lg-1 schedule_avatar">S
                                                                                     </div>
@@ -415,8 +372,7 @@
                                             <div class="cmp_btns d-flex justify-content-center align-items-center">
                                                 <a href="javascript:;" class="btn prev_tab"><i
                                                         class="fa-solid fa-arrow-left"></i>Back</a>
-                                                <a href="javascript:;" type="button" class="btn nxt_btn"
-                                                    data-bs-toggle="modal" data-bs-target="#sequance_modal">Create
+                                                <a id="create_sequence" type="button" class="btn nxt_btn">Edit
                                                     sequence<i class="fa-solid fa-arrow-right"></i></a>
                                             </div>
                                         </div>
@@ -430,38 +386,6 @@
         </div>
     </section>
     <!-- Modal Create sequence -->
-    <div class="modal fade create_sequence_modal" id="sequance_modal" tabindex="-1" aria-labelledby="sequance_modal"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="sequance_modal">Create a sequence</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
-                            class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="border_box">
-                                <img src="{{ asset('assets/img/temp.png') }}" alt="">
-                                <a href="javascript:;" class="btn">From template</a>
-                                <p>Create a sequence from our suggested templates.</p>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="border_box">
-                                <img src="{{ asset('assets/img/creat_temp.png') }}" alt="">
-                                <a id="create_sequence" class="btn">From scratch</a>
-                                <p>Create a sequence from scratch specify steps and everything.</p>
-                            </div>
-                        </div>
-                        <a href="javascript:;" class="crt_btn ">Create sequence<i
-                                class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="modal fade create_schedule_modal" id="schedule_modal" tabindex="-1" aria-labelledby="schedule_modal"
         aria-hidden="true">
         <div class="modal-dialog">

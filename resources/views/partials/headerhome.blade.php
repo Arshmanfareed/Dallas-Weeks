@@ -17,8 +17,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style_home.css">
-    <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/style_home.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.min.css') }}">
 </head>
 
 <body>
@@ -31,7 +31,8 @@
             height: 100%;
             background: rgba(255, 255, 255, 0.7);
             z-index: 9999;
-            display: none; /* Initially hide the loader */
+            display: none;
+            /* Initially hide the loader */
         }
 
         .loader-inner {
@@ -51,6 +52,7 @@
             0% {
                 transform: rotate(0deg);
             }
+
             100% {
                 transform: rotate(360deg);
             }
@@ -94,19 +96,23 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="{{ URL('/') }}">Home</a>
+                                    <a class="nav-link {{ request()->url() === URL('/') ? 'active' : '' }}"
+                                        aria-current="page" href="{{ URL('/') }}">Home</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ URL('/about') }}">About Us</a>
+                                    <a class="nav-link {{ request()->url() === URL('/about') ? 'active' : '' }}"
+                                        href="{{ URL('/about') }}">About Us</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="javascript:;">Services</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ URL('/pricing') }}">Pricing</a>
+                                    <a class="nav-link {{ request()->url() === URL('/pricing') ? 'active' : '' }}"
+                                        href="{{ URL('/pricing') }}">Pricing</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ URL('/faq') }}">FAQ's</a>
+                                    <a class="nav-link {{ request()->url() === URL('/faq') ? 'active' : '' }}"
+                                        href="{{ URL('/faq') }}">FAQ's</a>
                                 </li>
                             </ul>
                         </div>
@@ -114,7 +120,8 @@
                 </div>
                 <div class="col-md-2">
                     <div class="logomain">
-                        <a class="navbar-brand" href="{{ URL('/') }}"><img src="assets/images/logo.png" alt=""></a>
+                        <a class="navbar-brand" href="{{ URL('/') }}"><img
+                                src="{{ asset('assets/images/logo.png') }}" alt=""></a>
                     </div>
                 </div>
                 <div class="col-md-5">

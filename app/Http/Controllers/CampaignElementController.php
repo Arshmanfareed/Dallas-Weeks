@@ -77,7 +77,6 @@ class CampaignElementController extends Controller
                     $setting->save();
                 }
                 $path_array = [];
-                $count = 0;
                 foreach ($final_array as $key => $value) {
                     if ($key != 'step' || $key != 'step-1') {
                         $element = CampaignElement::where('element_slug', $this->remove_prefix($key))->first();
@@ -85,16 +84,18 @@ class CampaignElementController extends Controller
                             $element_item = new UpdatedCampaignElements();
                             $element_item->element_id = $element->id;
                             $element_item->campaign_id = $campaign->id;
-                            $element_item->campaign_element_id = ++$count;
                             $element_item->user_id = $user_id;
                             $element_item->seat_id = 1;
+                            $element_item->position_x = $value['position_x'];
+                            $element_item->position_y = $value['position_y'];
+                            $element_item->element_slug = $key;
                             $element_item->save();
                             $path_array[$key] = $element_item->id;
                             if (isset($final_data[$key])) {
                                 $property_item = $final_data[$key];
                                 foreach ($property_item as $key => $value) {
                                     $element_property = new UpdatedCampaignProperties();
-                                    $property = ElementProperties::where('property_name', $key)->first();
+                                    $property = ElementProperties::where('id', $key)->first();
                                     if ($property) {
                                         $element_property->element_id = $element_item->id;
                                         $element_property->property_id = $property->id;
@@ -115,6 +116,7 @@ class CampaignElementController extends Controller
                 foreach ($final_array as $key => $value) {
                     if (isset($path_array[$key])) {
                         $path = new CampaignPath();
+                        $path->campaign_id = $campaign->id;
                         $path->current_element_id = $path_array[$key];
                         if ($final_array[$key]['0'] == '' && $final_array[$key]['1'] == '') {
                             continue;
@@ -145,5 +147,32 @@ class CampaignElementController extends Controller
         $second_index = strlen($value) - $first_index - 1;
         $string = substr($value, 0, $second_index);
         return $string;
+    }
+    function getElements($campaign_id)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $elements = UpdatedCampaignElements::where('campaign_id', $campaign_id)->orderBy('id')->get();
+            foreach ($elements as $element) {
+                $element['original_element'] = CampaignElement::where('id', $element->element_id)->first();
+                $element['properties'] = UpdatedCampaignProperties::where('element_id', $element->id)->get();
+                foreach ($element['properties'] as $property) {
+                    $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
+                }
+            }
+            $path = CampaignPath::where('campaign_id', $campaign_id)->orderBy('id')->get();
+            return response()->json(['success' => true, 'elements_array' => $elements, 'path' => $path]);
+        }
+    }
+    function getcampaignelementbyid($element_id)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $properties = UpdatedCampaignProperties::where('element_id', $element_id)->get();
+            foreach ($properties as $property) {
+                $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
+            }
+            return response()->json(['success' => true, 'properties' => $properties]);
+        }
     }
 }

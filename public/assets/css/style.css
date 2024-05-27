@@ -583,8 +583,8 @@ textarea {
     top: calc(60% + 0.2rem);
     font-size: 0.85rem;
     color: #000;
-    font-size: 11px;
-    width: 74px;
+    font-size: 17px;
+    width: fit-content;
     text-align: center;
 }
 
@@ -690,6 +690,8 @@ textarea {
 }
 .step_form div#progress {
     height: 0.5rem !important;
+    width: 170px;
+    background-color: #e3c935;
 }
 .step_form_popup .modal-dialog {
     max-width: 70%;
@@ -1622,10 +1624,16 @@ header nav.navbar .right_nav ul .acc span {
     margin: 0 auto;
     padding: 11px 22px;
     font-size: 16px;
-    background: lch(65.82 33.17 171.76 / 0.2);
     width: fit-content;
     border-radius: 100px;
+}
+.data_table td .per.connected {
+    background: lch(65.82 33.17 171.76 / 0.2);
     color: #57b096;
+}
+.data_table td .per.discovered {
+    background: lch(65.82 33.17 171.76 / 0.2);
+    color: #28594b;
 }
 .data_table th.stat {
     padding-right: 20px;
@@ -1940,8 +1948,8 @@ select {
     overflow: hidden;
 }
 
-.create_sequence_modal .modal-dialog {
-    max-width: 69%;
+.create_sequence_modal .modal-dialog,
+.create_schedule_modal .modal-dialog {
     text-align: center;
     transform: translate(0, 3%) !important;
     overflow: hidden;
@@ -1956,14 +1964,22 @@ select {
     font-size: 16px;
     line-height: 1.5;
 }
-.create_sequence_modal .modal-dialog .modal-header {
+.create_sequence_modal .modal-dialog {
+    max-width: 69%;
+}
+.create_schedule_modal .modal-dialog {
+    max-width: 40%;
+}
+.create_sequence_modal .modal-dialog .modal-header,
+.create_schedule_modal .modal-dialog .modal-header {
     text-align: center;
     justify-content: center;
     padding: 35px 0;
     width: 97%;
     margin: 0 auto;
 }
-.create_sequence_modal .modal-dialog button.btn-close {
+.create_sequence_modal .modal-dialog button.btn-close,
+.create_schedule_modal .modal-dialog button.btn-close {
     padding: 0;
     width: 64px;
     height: 64px;
@@ -1981,7 +1997,12 @@ select {
     border: none;
     font-size: 22px;
 }
-.create_sequence_modal .modal-dialog .modal-header h5 {
+.create_schedule_modal .modal-dialog button.btn-close {
+    margin-top: 14px;
+    margin-right: 14px;
+}
+.create_sequence_modal .modal-dialog .modal-header h5,
+.create_schedule_modal .modal-dialog .modal-header h5 {
     font-size: 24px;
     font-weight: 700;
 }
@@ -4412,9 +4433,6 @@ div#chartContainer {
     color: #fff;
 }
 .scroll_div {
-    height: 500px;
-    overflow-y: scroll;
-    scroll-behavior: smooth;
     padding-right: 8px;
 }
 span.url {
@@ -4949,6 +4967,11 @@ body.light-mode.register label {
     height: 100%;
 }
 
+body.light-mode .add-elements {
+    background-color: #fff;
+    border: 2px solid #ddd;
+}
+
 .element-list {
     height: 100%;
 }
@@ -5015,6 +5038,10 @@ div > h5 {
     height: 35px;
 }
 
+body.light-mode .drop-list li .list-icon {
+    background-color: #16adcb;
+}
+
 .drop-list li .cancel-icon,
 .drop_element .cancel-icon {
     display: none;
@@ -5051,6 +5078,10 @@ div > h5 {
     border: 1px solid rgb(23, 172, 203);
 }
 
+body.light-mode .drop_element {
+    background-color: #fff;
+}
+
 .drop_element p {
     color: #fff;
     width: fit-content;
@@ -5063,14 +5094,25 @@ div > h5 {
     align-items: center;
     justify-content: center;
     background-color: #15171c;
-    border-radius: 25%;
+    border-radius: 25px;
     margin-right: 25px;
+}
+
+body.light-mode .drop_element .list-icon {
+    background-color: #16adcb;
+    color: #fff;
 }
 
 .drop-list li .list-icon i,
 .task-list .list-icon i,
 .drop_element .list-icon i {
     color: #17accb;
+}
+
+body.light-mode .drop-list li .list-icon i,
+body.light-mode .task-list .list-icon i,
+body.light-mode .drop_element .list-icon i {
+    color: #fff;
 }
 
 .drop-list li .menu-icon {
@@ -5096,11 +5138,16 @@ div > h5 {
     background-color: #1c1e22;
     min-height: 70px;
     max-height: fit-content;
-    width: fit-content;
+    width: max-content;
     padding: 7px;
     border-radius: 17px;
     margin: 14px 0;
     cursor: pointer;
+}
+
+body.light-mode .task-list > div {
+    background-color: #fff;
+    box-shadow: 3px 3px 15px #ddd;
 }
 
 .task-list .item_details p,
@@ -5141,6 +5188,10 @@ div > h5 {
     background-color: #15171c;
     border-radius: 25px;
     margin-right: 25px;
+}
+
+body.light-mode .task-list .list-icon {
+    background-color: #16adcb;
 }
 
 .task-list .menu-icon,
@@ -5232,8 +5283,16 @@ div > h5 {
     background-color: #e2c64d !important;
 }
 
+body.light-mode .task-list .element_change_input.selected {
+    background-color: #ccc !important;
+}
+
 .task-list .element_change_output.selected {
     background-color: #e2c64d !important;
+}
+
+body.light-mode .task-list .element_change_output.selected {
+    background-color: #ccc !important;
 }
 
 .task-list .conditional-elements-out .condition_false.selected {
@@ -5250,6 +5309,10 @@ div > h5 {
 
 .task-list .attach-elements:hover {
     background-color: #fff;
+}
+
+body.light-mode .task-list .attach-elements:hover {
+    background-color: #aaa;
 }
 
 .drop-list .element:hover {
@@ -5274,6 +5337,12 @@ div > h5 {
     transition: background-color 0.3s ease;
 }
 
+body.light-mode .element-tab button {
+    background-color: #fff;
+    color: #000;
+    font-weight: 600;
+}
+
 .schedule-tab button {
     padding: 10px 20px;
     background-color: #111317;
@@ -5285,6 +5354,14 @@ div > h5 {
 
 .element-tab button.active {
     background-color: #15171c;
+}
+
+body.light-mode .element-tab button.active {
+    color: #16adcb;
+    font-weight: 600;
+    border-bottom: 5px solid #16adcb;
+    border-radius: 0px;
+    background-color: #00000012;
 }
 
 .schedule-tab button.active {
@@ -5373,7 +5450,7 @@ div > h5 {
     border-radius: 100%;
     background-color: #fff;
     color: #000;
-    margin: 0 20px;
+    margin: 0 10px;
 }
 
 .schedule-content .schedule_list .schedule_list_item {
@@ -5476,6 +5553,10 @@ div > h5 {
     background-color: #fff;
 }
 
+body.light-mode .task-list .step-1 .attach-elements-out:hover {
+    background-color: #aaa;
+}
+
 .element_properties .element_name {
     padding-top: 15px;
     padding-right: 15px;
@@ -5542,6 +5623,11 @@ button#save {
     justify-content: center;
 }
 
+body.light-mode .path-cancel-icon {
+    background-color: #16adcb;
+    color: #fff;
+}
+
 .linked_set.d-flex.justify-content-between {
     border-bottom: 1px solid #ddd;
     padding: 15px 0;
@@ -5557,6 +5643,10 @@ button#save {
 
 .line {
     background-color: #e2c64d !important;
+}
+
+body.light-mode .line {
+    background-color: #ccc !important;
 }
 
 .campaign_detail_sec .details_table td {
@@ -5591,6 +5681,14 @@ button#save {
     background-color: #111317;
 }
 
+body.light-mode .drop-pad {
+    background-color: #fff;
+}
+
+body.light-mode .drop-pad > h5 {
+    color: #000;
+}
+
 .camp_sequence {
     padding: 0px 55px;
 }
@@ -5615,6 +5713,15 @@ button#save {
 .drop-pad-element {
     width: fit-content;
     min-height: 70px;
+}
+
+.drop-pad-element.error {
+    border: 1px solid #f93f3fb3 !important;
+    box-shadow: 7px 7px 15px #fd4d4d2e;
+}
+
+.drop-pad-element.error .list-icon i {
+    color: #f93f3fb3;
 }
 
 .drop-pad-element .item_details {
@@ -5681,4 +5788,68 @@ button#save {
     backdrop-filter: brightness(150%) saturate(76%) blur(6px) !important;
     right: 670px;
     top: 43px;
+}
+
+.create_schedule_modal .schedule_form .schedule_days {
+    list-style-type: none;
+    padding-left: 0px;
+    padding-right: 26px;
+}
+
+.create_schedule_modal .schedule_form .schedule_days li {
+    height: 50px !important;
+}
+
+.create_schedule_modal .schedule_form .schedule_days li .row input {
+    margin-bottom: 0 !important;
+}
+
+.create_schedule_modal .schedule_form .schedule_days .day_input {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.create_schedule_modal .schedule_form .schedule_days .day_input input {
+    width: 16px;
+    height: 16px;
+}
+
+.create_schedule_modal .schedule_form .schedule_days .day_name {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.create_schedule_modal .schedule_form .schedule_days .day_start_time input,
+.create_schedule_modal .schedule_form .schedule_days .day_end_time input {
+    height: 40px;
+}
+
+.create_schedule_modal .schedule_form .schedule_name_label {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+}
+
+.create_schedule_modal .schedule_form .schedule_name_input {
+    height: 40px;
+    margin-bottom: 0px !important;
+}
+
+.create_schedule_modal .schedule_form .schedule_name {
+    padding: 22px 36px;
+}
+
+.create_schedule_modal .schedule_form .btn {
+    border-radius: 20px;
+    padding: 10px 25px;
+    background-color: #16adcb89;
+    border: none;
+    color: #fff;
+}
+
+.custom-center {
+    display: flex;
+    justify-content: center;
 }

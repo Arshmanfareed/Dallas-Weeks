@@ -6,18 +6,20 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="imgbanner">
-                        <img src="assets/images/bannerimg.png" alt="">
+                        <img src="{{ asset('assets/images/bannerimg.png') }}" alt="">
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <h1>Turning connections into clients</h1>
-                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-                        totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.</p>
-                    <div class="btn btn-blue btn-yellow">
-                        <a href="javascript:;"><i class="fa-solid fa-plus"></i>get Started</a>
-                    </div>
-                    <div class="img3">
-                        <img src="assets/images/img1.png" alt="">
+                    <div id="capture">
+                        <h1>Turning connections into clients</h1>
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+                            totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.</p>
+                        <div class="btn btn-blue btn-yellow">
+                            <a href="javascript:;"><i class="fa-solid fa-plus"></i>get Started</a>
+                        </div>
+                        <div class="img3">
+                            <img src="{{ asset('assets/images/img1.png') }}" alt="">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -31,25 +33,25 @@
                 <div class="col-md-12">
                     <div class="logonew owl-item owl-carousel">
                         <div class="item">
-                            <img src="assets/images/logo1.png" alt="">
+                            <img src="{{ asset('assets/images/logo1.png') }}" alt="">
                         </div>
                         <div class="item">
-                            <img src="assets/images/logo2.png" alt="">
+                            <img src="{{ asset('assets/images/logo2.png') }}" alt="">
                         </div>
                         <div class="item">
-                            <img src="assets/images/logo3.png" alt="">
+                            <img src="{{ asset('assets/images/logo3.png') }}" alt="">
                         </div>
                         <div class="item">
-                            <img src="assets/images/logo4.png" alt="">
+                            <img src="{{ asset('assets/images/logo4.png') }}" alt="">
                         </div>
                         <div class="item">
-                            <img src="assets/images/logo5.png" alt="">
+                            <img src="{{ asset('assets/images/logo5.png') }}" alt="">
                         </div>
                         <div class="item">
-                            <img src="assets/images/logo6.png" alt="">
+                            <img src="{{ asset('assets/images/logo6.png') }}" alt="">
                         </div>
                         <div class="item">
-                            <img src="assets/images/logo7.png" alt="">
+                            <img src="{{ asset('assets/images/logo7.png') }}" alt="">
                         </div>
                     </div>
                 </div>
@@ -66,7 +68,7 @@
                     <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
                         totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.</p>
                     <div class="laptop">
-                        <img src="assets/images/laptop.png" alt="">
+                        <img src="{{ asset('assets/images/laptop.png') }}" alt="">
                     </div>
                     <div class="btn btn-blue btn-yellow">
                         <a href="javascript:;"><i class="fa-solid fa-plus"></i>Try it now</a>
@@ -86,19 +88,19 @@
                 </div>
                 <div class="col-md-6">
                     <div class="conntImg">
-                        <img src="assets/images/conn.png" alt="">
+                        <img src="{{ asset('assets/images/conn.png') }}" alt="">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="condition">
                         <h3>Conditions</h3>
                         <ul>
-                            <li><img src="assets/images/ic1.png" alt="">Custom condition</li>
-                            <li><img src="assets/images/ic2.png" alt="">If connected</li>
-                            <li><img src="assets/images/ic3.png" alt="">If email is opened</li>
-                            <li><img src="assets/images/ic4.png" alt="">If has imported email</li>
-                            <li><img src="assets/images/ic5.png" alt="">If has verified email</li>
-                            <li><img src="assets/images/ic6.png" alt="">If Free InMail</li>
+                            <li><img src="{{ asset('assets/images/ic1.png') }}" alt="">Custom condition</li>
+                            <li><img src="{{ asset('assets/images/ic2.png') }}" alt="">If connected</li>
+                            <li><img src="{{ asset('assets/images/ic3.png') }}" alt="">If email is opened</li>
+                            <li><img src="{{ asset('assets/images/ic4.png') }}" alt="">If has imported email</li>
+                            <li><img src="{{ asset('assets/images/ic5.png') }}" alt="">If has verified email</li>
+                            <li><img src="{{ asset('assets/images/ic6.png') }}" alt="">If Free InMail</li>
                         </ul>
                     </div>
                 </div>
@@ -135,10 +137,10 @@
                                     laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.</p>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <img src="assets/images/chartnew.png" alt="">
+                                        <img src="{{ asset('assets/images/chartnew.png') }}" alt="">
                                     </div>
                                     <div class="col-md-6">
-                                        <img src="assets/images/chart.png" alt="">
+                                        <img src="{{ asset('assets/images/chart.png') }}" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -149,10 +151,10 @@
                                     laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.</p>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <img src="assets/images/chartnew.png" alt="">
+                                        <img src="{{ asset('assets/images/chartnew.png') }}" alt="">
                                     </div>
                                     <div class="col-md-6">
-                                        <img src="assets/images/chart.png" alt="">
+                                        <img src="{{ asset('assets/images/chart.png') }}" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -163,10 +165,10 @@
                                     laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.</p>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <img src="assets/images/chartnew.png" alt="">
+                                        <img src="{{ asset('assets/images/chartnew.png') }}" alt="">
                                     </div>
                                     <div class="col-md-6">
-                                        <img src="assets/images/chart.png" alt="">
+                                        <img src="{{ asset('assets/images/chart.png') }}" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -177,10 +179,10 @@
                                     laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.</p>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <img src="assets/images/chartnew.png" alt="">
+                                        <img src="{{ asset('assets/images/chartnew.png') }}" alt="">
                                     </div>
                                     <div class="col-md-6">
-                                        <img src="assets/images/chart.png" alt="">
+                                        <img src="{{ asset('assets/images/chart.png') }}" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -204,7 +206,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <img src="assets/images/getimg.png" alt="">
+                    <img src="{{ asset('assets/images/getimg.png') }}" alt="">
                 </div>
             </div>
         </div>
@@ -220,7 +222,7 @@
                         <div class="item">
                             <div class="testimonialBox">
                                 <div class="titleImg">
-                                    <img src="assets/images/test1.png" alt="">
+                                    <img src="{{ asset('assets/images/test1.png') }}" alt="">
                                     <h4>- John doe</h4>
                                 </div>
                                 <p>"Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
@@ -237,7 +239,7 @@
                         <div class="item">
                             <div class="testimonialBox">
                                 <div class="titleImg">
-                                    <img src="assets/images/test1.png" alt="">
+                                    <img src="{{ asset('assets/images/test1.png') }}" alt="">
                                     <h4>- John doe</h4>
                                 </div>
                                 <p>"Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
@@ -254,7 +256,7 @@
                         <div class="item">
                             <div class="testimonialBox">
                                 <div class="titleImg">
-                                    <img src="assets/images/test1.png" alt="">
+                                    <img src="{{ asset('assets/images/test1.png') }}" alt="">
                                     <h4>- John doe</h4>
                                 </div>
                                 <p>"Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
@@ -271,7 +273,7 @@
                         <div class="item">
                             <div class="testimonialBox">
                                 <div class="titleImg">
-                                    <img src="assets/images/test1.png" alt="">
+                                    <img src="{{ asset('assets/images/test1.png') }}" alt="">
                                     <h4>- John doe</h4>
                                 </div>
                                 <p>"Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
@@ -290,7 +292,7 @@
                         <div class="item">
                             <div class="testimonialBox">
                                 <div class="titleImg">
-                                    <img src="assets/images/test1.png" alt="">
+                                    <img src="{{ asset('assets/images/test1.png') }}" alt="">
                                     <h4>- John doe</h4>
                                 </div>
                                 <p>"Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
@@ -307,7 +309,7 @@
                         <div class="item">
                             <div class="testimonialBox">
                                 <div class="titleImg">
-                                    <img src="assets/images/test1.png" alt="">
+                                    <img src="{{ asset('assets/images/test1.png') }}" alt="">
                                     <h4>- John doe</h4>
                                 </div>
                                 <p>"Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
@@ -324,7 +326,7 @@
                         <div class="item">
                             <div class="testimonialBox">
                                 <div class="titleImg">
-                                    <img src="assets/images/test1.png" alt="">
+                                    <img src="{{ asset('assets/images/test1.png') }}" alt="">
                                     <h4>- John doe</h4>
                                 </div>
                                 <p>"Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
@@ -341,7 +343,7 @@
                         <div class="item">
                             <div class="testimonialBox">
                                 <div class="titleImg">
-                                    <img src="assets/images/test1.png" alt="">
+                                    <img src="{{ asset('assets/images/test1.png') }}" alt="">
                                     <h4>- John doe</h4>
                                 </div>
                                 <p>"Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia

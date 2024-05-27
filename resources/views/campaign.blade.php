@@ -2,6 +2,7 @@
 @section('content')
     <script>
         sessionStorage.removeItem('campaign_details');
+        sessionStorage.removeItem('edit_campaign_details');
     </script>
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -12,10 +13,13 @@
         </div>
         @php
             session()->forget('success');
-            session()->forget('campaign_details');
         @endphp
     @endif
-    <section class="main_dashboard blacklist  campaign_sec">
+    @php
+        session()->forget('campaign_details');
+        session()->forget('edit_campaign_details');
+    @endphp
+    <section class="main_dashboard blacklist campaign_sec">
         <div class="container_fluid">
             <div class="row">
                 <div class="col-lg-1">
@@ -27,7 +31,6 @@
                             <div class="d-flex align-items-center justify-content-between w-100">
                                 <h3>Campaigns</h3>
                                 <div class="filt_opt d-flex">
-
                                     <div class="add_btn ">
                                         <a href="/campaign/createcampaign" class=""><i
                                                 class="fa-solid fa-plus"></i></a>Add Campaign
@@ -35,7 +38,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-lg-4">
                             <div class="border_box dashboard_box">
                                 <div class="count_div">
@@ -79,7 +81,6 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="filter_head_row d-flex">
-
                             </div>
                             <div class="filtr_desc">
                                 <div class="d-flex">
@@ -91,8 +92,9 @@
                                             <option value="inactive">InActive Campaigns</option>
                                             <option value="archive">Archive Campaigns</option>
                                         </select>
-                                        <form action="/search" method="get" class="search-form">
-                                            <input type="text" name="q" placeholder="Search Campaig here...">
+                                        <form method="get" class="search-form">
+                                            <input id="search_campaign" type="text" name="q"
+                                                placeholder="Search Campaign here...">
                                             <button type="submit">
                                                 <i class="fa fa-search"></i>
                                             </button>
@@ -150,13 +152,13 @@
                                                         <td class="stats">
                                                             <ul
                                                                 class="status_list d-flex align-items-center list-unstyled p-0 m-0">
-                                                                <li><span><img src="/assets/img/eye.svg"
+                                                                <li><span><img src="{{ asset('assets/img/eye.svg') }}"
                                                                             alt="">10</span></li>
-                                                                <li><span><img src="/assets/img/request.svg"
+                                                                <li><span><img src="{{ asset('assets/img/request.svg') }}"
                                                                             alt="">42</span></li>
-                                                                <li><span><img src="/assets/img/mailmsg.svg"
+                                                                <li><span><img src="{{ asset('assets/img/mailmsg.svg') }}"
                                                                             alt="">10</span></li>
-                                                                <li><span><img src="/assets/img/mailopen.svg"
+                                                                <li><span><img src="{{ asset('assets/img/mailopen.svg') }}"
                                                                             alt="">16</span></li>
                                                             </ul>
                                                         </td>
@@ -170,11 +172,13 @@
                                                             <a href="javascript:;" type="button"
                                                                 class="setting setting_btn" id=""><i
                                                                     class="fa-solid fa-gear"></i></a>
-                                                            <ul class="setting_list">
+                                                            <ul class="setting_list" style="display: none">
                                                                 <li><a
                                                                         href="{{ route('campaignDetails', ['campaign_id' => $campaign->id]) }}">Check
                                                                         campaign details</a></li>
-                                                                {{-- <li><a href="#">Edit campaign</a></li> --}}
+                                                                <li><a
+                                                                        href="{{ route('editCampaign', ['campaign_id' => $campaign->id]) }}">Edit
+                                                                        campaign</a></li>
                                                                 {{-- <li><a href="#">Duplicate campaign steps</a></li> --}}
                                                                 {{-- <li><a href="javascript:;" data-bs-toggle="modal"
                                                                         data-bs-target="#add_new_leads_modal">Add new leads</a>
@@ -212,6 +216,20 @@
             </div>
         </div>
     </section>
+    <script>
+        $(document).ready(function() {
+            $(".setting_list").hide();
+            $(".setting_btn").on("click", function(e) {
+                $(".setting_list").not($(this).siblings(".setting_list")).hide();
+                $(this).siblings(".setting_list").toggle();
+            });
+            $(document).on("click", function(e) {
+                if (!$(event.target).closest(".setting").length) {
+                    $(".setting_list").hide();
+                }
+            });
+        });
+    </script>
     {{-- <div class="modal fade create_add_new_leads_modal" id="add_new_leads_modal" tabindex="-1"
         aria-labelledby="add_new_leads_modal" aria-hidden="true">
         <div class="modal-dialog">
