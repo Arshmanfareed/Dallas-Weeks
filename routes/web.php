@@ -24,6 +24,7 @@ use App\http\Controllers\FeatureController;
 use App\Http\Controllers\PropertiesController;
 use App\Http\Controllers\ScheduleCampaign;
 use App\http\Controllers\SocialController;
+use App\Http\Controllers\UnipileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -121,3 +122,5 @@ Route::get('/leads', [LeadsController::class, 'leads'])->name('dash-leads');
 Route::get('/leads/getLeadsByCampaign/{id}/{search}', [LeadsController::class, 'getLeadsByCampaign'])->name('getLeadsByCampaign');
 Route::post('/leads/sendLeadsToEmail', [LeadsController::class, 'sendLeadsToEmail'])->name('sendLeadsToEmail');
 Route::get('/leads/getLeadsCountByCampaign/{id}', [LeadsController::class, 'getLeadsCountByCampaign'])->name('getLeadsCountByCampaign');
+
+Route::get('/get_relations', [UnipileController::class, 'get_relations'])->name('getAllRelations');

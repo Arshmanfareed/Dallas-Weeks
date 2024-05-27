@@ -150,6 +150,7 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.success) {
+                        $("#export_modal").modal("hide");
                     }
                 },
                 error: function (xhr, status, error) {

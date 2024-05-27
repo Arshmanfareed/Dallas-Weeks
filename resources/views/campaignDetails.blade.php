@@ -21,7 +21,8 @@
                                 </tr>
                                 <tr>
                                     <td class="item_name">Url:</td>
-                                    <td class="campaign_url">{{ $campaign->campaign_url }}</td>
+                                    <td class="campaign_url"><a href="{{ $campaign->campaign_url }}"
+                                            target="blank">{{ $campaign->campaign_url }}</a></td>
                                 </tr>
                                 @if ($campaign->campaign_connection)
                                     <tr>

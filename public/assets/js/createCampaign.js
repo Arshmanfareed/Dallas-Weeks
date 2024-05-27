@@ -28,6 +28,7 @@ $(document).ready(function () {
     if (campaign_details["campaign_type"] == undefined) {
         campaign_details["campaign_type"] = "linkedin";
     }
+
     var campaign_pane = $(".campaign_pane");
     for (var i = 0; i < campaign_pane.length; i++) {
         var campaignType = $(campaign_pane[i]).find("#campaign_type").val();
@@ -37,6 +38,9 @@ $(document).ready(function () {
                 '[data-bs-target="' + $(campaign_pane[i]).attr("id") + '"]'
             ).addClass("active");
         }
+        $(".campaign_tab.active").parent(".border_box").css({
+            "background-color": "#16adcb",
+        });
     }
     if (
         campaign_details["campaign_name"] == undefined ||

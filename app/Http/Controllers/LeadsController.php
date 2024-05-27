@@ -104,8 +104,7 @@ class LeadsController extends Controller
                     $filePaths[] = $uploadFilePath;
                 }
                 Mail::send([], [], function ($message) use ($email, $filePaths) {
-                    $message->to($email)
-                        ->subject('Your Leads CSVs');
+                    $message->to($email)->subject('Your Leads CSVs');
                     $count = 1;
                     foreach ($filePaths as $filePath) {
                         $message->attach(Storage::path($filePath), [
@@ -120,6 +119,7 @@ class LeadsController extends Controller
             return redirect(url('/'));
         }
     }
+
     function getLeadsCountByCampaign($campaign_id)
     {
         if (Auth::check()) {
