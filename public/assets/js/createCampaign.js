@@ -140,10 +140,12 @@ $(document).ready(function () {
                 data: formData,
                 contentType: false,
                 processData: false,
-                headers:{'X-CSRF-TOKEN': csrfToken},
+                headers: { "X-CSRF-TOKEN": csrfToken },
+                beforeSend: function () {
+                    $("#loader").show();
+                },
                 success: function (response) {
                     if (response.success) {
-                        console.log(response);
                         $("#sequance_modal")
                             .find("ul li #total_leads")
                             .text(response.total + " leads");
@@ -199,6 +201,9 @@ $(document).ready(function () {
                     } else {
                         console.error("Upload failed:", error);
                     }
+                },
+                complete: function () {
+                    $("#loader").hide();
                 },
             });
         } else {

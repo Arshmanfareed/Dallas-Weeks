@@ -14,6 +14,9 @@ $(document).ready(function () {
         $.ajax({
             url: activateCampaignRoute.replace(":campaign_id", campaign_id),
             type: "GET",
+            beforeSend: function () {
+                $("#loader").show();
+            },
             success: function (response) {
                 if (response.success && response.active == 1) {
                     toastr.options = {
@@ -52,6 +55,9 @@ $(document).ready(function () {
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
             },
+            complete: function () {
+                $("#loader").hide();
+            },
         });
     });
 
@@ -61,6 +67,9 @@ $(document).ready(function () {
             $.ajax({
                 url: deleteCampaignRoute.replace(":id", campaign_id),
                 type: "GET",
+                beforeSend: function () {
+                    $("#loader").show();
+                },
                 success: function (response) {
                     if (response.success) {
                         toastr.options = {
@@ -97,6 +106,9 @@ $(document).ready(function () {
                 error: function (xhr, status, error) {
                     console.error(error);
                 },
+                complete: function () {
+                    $("#loader").hide();
+                },
             });
         }
     });
@@ -107,6 +119,9 @@ $(document).ready(function () {
             $.ajax({
                 url: archiveCampaignRoute.replace(":id", campaign_id),
                 type: "GET",
+                beforeSend: function () {
+                    $("#loader").show();
+                },
                 success: function (response) {
                     if (response.success && response.archive == 1) {
                         toastr.options = {
@@ -142,6 +157,9 @@ $(document).ready(function () {
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
+                },
+                complete: function () {
+                    $("#loader").hide();
                 },
             });
         }

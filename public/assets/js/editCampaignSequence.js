@@ -729,7 +729,11 @@ $(document).ready(function () {
             }
         }
     } else {
-        $('.crt_cmp_r').find('.align-items-center').append('<span class="text-danger h5">You can not update sequence within a month!</span>');
+        $(".crt_cmp_r")
+            .find(".align-items-center")
+            .append(
+                '<span class="text-danger h5">You can not update sequence within a month!</span>'
+            );
         message = "You can not update sequence after a month!";
     }
 
@@ -1047,6 +1051,9 @@ $(document).ready(function () {
             url: getElementByIdRoute.replace(":element_id", item_id),
             type: "GET",
             dataType: "json",
+            beforeSend: function () {
+                $("#loader").show();
+            },
             success: function (response) {
                 if (response.success) {
                     name_html += '<div class="element_properties">';
@@ -1132,6 +1139,9 @@ $(document).ready(function () {
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
             },
+            complete: function () {
+                $("#loader").hide();
+            },
         });
     }
 
@@ -1154,6 +1164,9 @@ $(document).ready(function () {
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
+            beforeSend: function () {
+                $("#loader").show();
+            },
             success: function (response) {
                 if (response.success) {
                     window.location = campaignRoute;
@@ -1163,6 +1176,9 @@ $(document).ready(function () {
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
+            },
+            complete: function () {
+                $("#loader").hide();
             },
         });
     });

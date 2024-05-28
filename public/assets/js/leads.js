@@ -148,6 +148,9 @@ $(document).ready(function () {
                     email: email,
                     campaign_id: campaign_id,
                 },
+                beforeSend: function () {
+                    $("#loader").show();
+                },
                 success: function (response) {
                     if (response.success) {
                         $("#export_modal").modal("hide");
@@ -155,6 +158,9 @@ $(document).ready(function () {
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
+                },
+                complete: function () {
+                    $("#loader").hide();
                 },
             });
         } else {

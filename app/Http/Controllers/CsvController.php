@@ -61,8 +61,14 @@ class CsvController extends Controller
                                             $duplicate_Urls[] = $url;
                                         }
                                         if (filter_var($url, FILTER_VALIDATE_URL)) {
-                                            $total_Urls[] = $url;
-                                            ++$total;
+                                            if (stripos($url, 'https://www.linkedin.com/in/') !== false || stripos($url, 'https://www.linkedin.com/company/') !== false) {
+                                                $total_Urls[] = $url;
+                                                ++$total;
+                                            } else {
+                                                fclose($fileHandle);
+                                                Storage::delete($uploadFilePath);
+                                                return response()->json(['success' => false, 'message' => "Incorrect Linkedin Url Found at row " . $count, 'url' => $url]);
+                                            }
                                         } else {
                                             fclose($fileHandle);
                                             Storage::delete($uploadFilePath);

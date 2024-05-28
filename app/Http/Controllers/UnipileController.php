@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Campaign;
+use App\Models\Leads;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 
@@ -12,29 +14,15 @@ class UnipileController extends Controller
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
-        $account_id = "-4oRQlvNQSCc9QdsAmaU0g";
-        $url = 'https://api3.unipile.com:13333/api/v1/users/relations' . '?limit=3&account_id=' . $account_id;
+        $account_id = "JrayZNtLTY6h9ymbNNgngQ";
+        $url = 'https://api1.unipile.com:13141/api/v1/linkedin/company/tekunity-pvt-ltd' . '?account_id=' . $account_id;
         $response = $client->request('GET', $url, [
             'headers' => [
-                'X-API-KEY' => 'nIPVh9fD.gf1u544lGI2nzyGx8K+nkdaIEnbv+8MkLnm3cSKpmVg=',
+                'X-API-KEY' => 'pxVGUgRQ.HxvCCspsvCd+mEBc7C0A3MmQd9b1SV72yiifg1PmM/Y=',
                 'accept' => 'application/json',
             ],
         ]);
-        $user_relations = json_decode($response->getBody(), true);
-        echo '<pre>';
-        print_r($user_relations);
-        echo '<hr>';
-        foreach ($user_relations['items'] as $item) {
-            $url = 'https://api3.unipile.com:13333/api/v1/users/' . $item['member_id'] . '?linkedin_api=sales_navigator&linkedin_sections=%2A&account_id=' . $account_id;
-            $response = $client->request('GET', $url, [
-                'headers' => [
-                    'X-API-KEY' => 'nIPVh9fD.gf1u544lGI2nzyGx8K+nkdaIEnbv+8MkLnm3cSKpmVg=',
-                    'accept' => 'application/json',
-                ],
-            ]);
-            $profile = json_decode($response->getBody(), true);
-            echo '<pre>';
-            print_r($profile);
-        }
+        $user_profile = json_decode($response->getBody(), true);
+        dd($user_profile);
     }
 }

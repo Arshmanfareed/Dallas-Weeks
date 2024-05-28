@@ -154,6 +154,9 @@
                                 </div>
                                 <div class="save-btns">
                                     <button id="save-changes">Save Changes</button>
+                                    <div id="loader" style="display:none;">
+                                        <div class="loader-inner"></div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="properties element-content" id="properties"></div>

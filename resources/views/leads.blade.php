@@ -121,10 +121,19 @@
                                                                         {{ $lead['title_company'] }}
                                                                     </td>
                                                                     <td class="">
-                                                                        @if ($lead['send_connections'] == '1')
-                                                                            <div class="per connected">Connected</div>
-                                                                        @else
+                                                                        @if ($lead['send_connections'] == 'discovered')
                                                                             <div class="per discovered">Discovered</div>
+                                                                        @elseif ($lead['send_connections'] == 'connected_not_replied')
+                                                                            <div class="per connected_not_replied">
+                                                                                Connected, not replied</div>
+                                                                        @elseif ($lead['send_connections'] == 'replied_not_connected')
+                                                                            <div class="per replied_not_connected">Replied,
+                                                                                not connected</div>
+                                                                        @elseif ($lead['send_connections'] == 'connection_pending')
+                                                                            <div class="per connection_pending">Connection
+                                                                                pending</div>
+                                                                        @else
+                                                                            <div class="per replied">Replied</div>
                                                                         @endif
                                                                     </td>
                                                                     <td>23</td>

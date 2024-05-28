@@ -15,6 +15,7 @@ use App\Models\UpdatedCampaignElements;
 use App\Models\UpdatedCampaignProperties;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use GuzzleHttp\Client;
 
 class CampaignElementController extends Controller
 {
@@ -162,7 +163,7 @@ class CampaignElementController extends Controller
                             $lead->is_active = 1;
                             $lead->contact = '';
                             $lead->title_company = '';
-                            $lead->send_connections = 1;
+                            $lead->send_connections = 'discovered';
                             $lead->next_step = '';
                             $lead->executed_time = date('H:i:s');
                             $lead->campaign_id = $campaign->id;
@@ -170,7 +171,44 @@ class CampaignElementController extends Controller
                             $lead->created_at = now();
                             $lead->updated_at = now();
                             if (str_contains(strtolower($key), 'url')) {
+                                if (stripos($url, 'https://www.linkedin.com/in/') !== false) {
+                                    $url = str_replace('https://www.linkedin.com/in/', 'https://api1.unipile.com:13141/api/v1/users/', $url);
+                                } else if (stripos($url, 'https://www.linkedin.com/company/') !== false) {
+                                    $url = str_replace('https://www.linkedin.com/company/', 'https://api1.unipile.com:13141/api/v1/linkedin/company/', $url);
+                                }
                                 $lead->profileUrl = $url;
+                                $account_id = "JrayZNtLTY6h9ymbNNgngQ";
+                                $url = $lead->profileUrl . '?account_id=' . $account_id;
+                                $client = new \GuzzleHttp\Client([
+                                    'verify' => false,
+                                ]);
+                                $response = $client->request('GET', $url, [
+                                    'headers' => [
+                                        'X-API-KEY' => 'pxVGUgRQ.HxvCCspsvCd+mEBc7C0A3MmQd9b1SV72yiifg1PmM/Y=',
+                                        'accept' => 'application/json',
+                                    ],
+                                ]);
+                                $user_profile = json_decode($response->getBody(), true);
+                                if (!empty($user_profile['first_name']) && !empty($user_profile['last_name'])) {
+                                    $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
+                                    $lead->title_company = $name;
+                                }
+                                if (!empty($user_profile['name'])) {
+                                    $name = $user_profile['name'];
+                                    $lead->title_company = $name;
+                                }
+                                if (!empty($user_profile['contact_info']['emails'])) {
+                                    $email = $user_profile['contact_info']['emails'][0];
+                                    $lead->email = $email;
+                                }
+                                if (!empty($user_profile['contact_info']['phones'])) {
+                                    $contact = $user_profile['contact_info']['phones'][0];
+                                    $lead->contact = $contact;
+                                }
+                                if (!empty($user_profile['phone'])) {
+                                    $contact = $user_profile['phone'];
+                                    $lead->contact = $contact;
+                                }
                                 $lead->save();
                             } else if (str_contains(strtolower($key), 'email')) {
                                 $lead->email = $url;

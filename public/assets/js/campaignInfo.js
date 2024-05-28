@@ -1,7 +1,7 @@
 $(document).ready(function () {
     sessionStorage.removeItem("elements_array");
     sessionStorage.removeItem("elements_data_array");
-    
+
     var settings = JSON.parse(sessionStorage.getItem("settings"));
 
     if (settings) {
@@ -131,6 +131,9 @@ $(document).ready(function () {
                 "X-CSRF-TOKEN": csrfToken,
             },
             data: form.serialize(),
+            beforeSend: function () {
+                $("#loader").show();
+            },
             success: function (response) {
                 if (response.success) {
                     $("#schedule_modal").modal("hide");
@@ -183,6 +186,9 @@ $(document).ready(function () {
             },
             error: function (xhr, status, error) {
                 console.error(error);
+            },
+            complete: function () {
+                $("#loader").hide();
             },
         });
     });

@@ -49,6 +49,9 @@ $(document).ready(function () {
                             ),
                             async: false,
                             type: "GET",
+                            beforeSend: function () {
+                                $("#loader").show();
+                            },
                             success: function (response) {
                                 if (response.success) {
                                     var property = response.property;
@@ -92,6 +95,9 @@ $(document).ready(function () {
                             error: function (xhr, status, error) {
                                 console.error(xhr.responseText);
                             },
+                            complete: function () {
+                                $("#loader").hide();
+                            },
                         });
                     }
                 }
@@ -114,7 +120,9 @@ $(document).ready(function () {
 
         for (var key in elements_array) {
             current_element = key;
-            $('#'+current_element).find('.attach-elements-out').removeClass("selected");
+            $("#" + current_element)
+                .find(".attach-elements-out")
+                .removeClass("selected");
             if (elements_array[current_element]["0"] != "") {
                 $("#" + current_element)
                     .find(".condition_false")
@@ -166,7 +174,10 @@ $(document).ready(function () {
         elements_array["step-1"] = {};
         elements_array["step-1"][0] = "";
         elements_array["step-1"][1] = "";
-        sessionStorage.setItem("elements_array", JSON.stringify(elements_array));
+        sessionStorage.setItem(
+            "elements_array",
+            JSON.stringify(elements_array)
+        );
         sessionStorage.setItem(
             "elements_data_array",
             JSON.stringify(elements_data_array)
@@ -426,7 +437,10 @@ $(document).ready(function () {
         }
         delete elements_array[id];
         delete elements_data_array[id];
-        sessionStorage.setItem("elements_array", JSON.stringify(elements_array));
+        sessionStorage.setItem(
+            "elements_array",
+            JSON.stringify(elements_array)
+        );
         sessionStorage.setItem(
             "elements_data_array",
             JSON.stringify(elements_data_array)
@@ -460,7 +474,10 @@ $(document).ready(function () {
             );
             prev_element.closest(".selected").removeClass("selected");
         }
-        sessionStorage.setItem("elements_array", JSON.stringify(elements_array));
+        sessionStorage.setItem(
+            "elements_array",
+            JSON.stringify(elements_array)
+        );
         sessionStorage.setItem(
             "elements_data_array",
             JSON.stringify(elements_data_array)
@@ -526,17 +543,18 @@ $(document).ready(function () {
                     if (attachInputElement && attachOutputElement) {
                         var inputPosition = attachInputElement.offset();
                         var outputPosition = attachOutputElement.offset();
-    
+
                         var x1 = inputPosition.left;
                         var y1 = inputPosition.top;
                         var x2 = outputPosition.left;
                         var y2 = outputPosition.top;
-    
+
                         var distance = Math.sqrt(
                             Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
                         );
-                        var angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
-    
+                        var angle =
+                            Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
                         var lineId =
                             outputElement.attr("id") +
                             "-to-" +
@@ -603,6 +621,9 @@ $(document).ready(function () {
                             "content"
                         ),
                     },
+                    beforeSend: function () {
+                        $("#loader").show();
+                    },
                     success: function (response) {
                         if (response.success) {
                             window.location = campaignsPath;
@@ -612,6 +633,9 @@ $(document).ready(function () {
                     },
                     error: function (xhr, status, error) {
                         console.error(xhr.responseText);
+                    },
+                    complete: function () {
+                        $("#loader").hide();
                     },
                 });
             }
@@ -682,6 +706,9 @@ $(document).ready(function () {
                 url: getCampaignElementPath.replace(":slug", item_slug),
                 type: "GET",
                 dataType: "json",
+                beforeSend: function () {
+                    $("#loader").show();
+                },
                 success: function (response) {
                     if (response.success) {
                         name_html += '<div class="element_properties">';
@@ -737,6 +764,9 @@ $(document).ready(function () {
                 },
                 error: function (xhr, status, error) {
                     console.error(xhr.responseText);
+                },
+                complete: function () {
+                    $("#loader").hide();
                 },
             });
         } else {
@@ -1131,10 +1161,10 @@ $(document).ready(function () {
             }
         }
     }
-    
+
     function capitalize(str) {
-        if (typeof str !== 'string') {
-            return '';
+        if (typeof str !== "string") {
+            return "";
         }
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     }
@@ -1147,10 +1177,12 @@ $(document).ready(function () {
                     $("#" + key)
                         .find(".item_name")
                         .addClass("error");
-                    key = key.replace(/[0-9]/g, '');
-                    key = key.replace(/_/g, ' ');
+                    key = key.replace(/[0-9]/g, "");
+                    key = key.replace(/_/g, " ");
                     key = capitalize(key);
-                    toastr.error(key + " is not connected as campaign sequence.");
+                    toastr.error(
+                        key + " is not connected as campaign sequence."
+                    );
                     return false;
                 } else {
                     var element_data = elements_data_array[key];
@@ -1163,6 +1195,9 @@ $(document).ready(function () {
                             ),
                             async: false,
                             type: "GET",
+                            beforeSend: function () {
+                                $("#loader").show();
+                            },
                             success: function (response) {
                                 if (response.success) {
                                     var property = response.property;
@@ -1184,6 +1219,9 @@ $(document).ready(function () {
                             },
                             error: function (xhr, status, error) {
                                 console.error(xhr.responseText);
+                            },
+                            complete: function () {
+                                $("#loader").hide();
                             },
                         });
                         if (errorOccurred) {
