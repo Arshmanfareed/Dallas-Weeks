@@ -19,30 +19,33 @@ class CampaignController extends Controller
 {
     function campaign()
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
+            $user_id = Auth::user()->id;
             $campaigns = Campaign::where('user_id', $user_id)->where('is_active', 1)->where('is_archive', 0)->get();
             $data = [
                 'title' => 'Campaign',
                 'campaigns' => $campaigns,
             ];
             return view('campaign', $data);
+        } else {
+            return redirect(url('/'));
         }
     }
     function campaigncreate()
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $data = [
                 'title' => 'Create Campaign'
             ];
             return view('campaigncreate', $data);
+        } else {
+            return redirect(url('/'));
         }
     }
     function campaigninfo(Request $request)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
+            $user_id = Auth::user()->id;
             $validated = $request->validate([
                 'campaign_name' => 'required|string|max:255',
                 'campaign_url' => 'required'
@@ -61,12 +64,13 @@ class CampaignController extends Controller
                 ];
                 return view('createcampaigninfo', $data);
             }
+        } else {
+            return redirect(url('/'));
         }
     }
     function fromscratch(Request $request)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $all = $request->except('_token');
             $settings = [];
             foreach ($all as $key => $value) {
@@ -79,22 +83,24 @@ class CampaignController extends Controller
                 'settings' => $settings,
             ];
             return view('createcampaignfromscratch', $data);
+        } else {
+            return redirect(url('/'));
         }
     }
     function getCampaignDetails($campaign_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $data = [
                 'campaign' => Campaign::where('id', $campaign_id)->first(),
             ];
             return view('campaignDetails', $data);
+        } else {
+            return redirect(url('/'));
         }
     }
     function changeCampaignStatus($campaign_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $campaign = Campaign::where('id', $campaign_id)->first();
             if ($campaign->is_active == 1) {
                 $campaign->is_active = 0;
@@ -105,12 +111,13 @@ class CampaignController extends Controller
                 $campaign->save();
                 return response()->json(['success' => true, 'active' => $campaign->is_active]);
             }
+        } else {
+            return redirect(url('/'));
         }
     }
     function deleteCampaign($campaign_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $campaign = Campaign::where('id', $campaign_id)->first();
             if ($campaign) {
                 LinkedinSetting::where('campaign_id', $campaign->id)->delete();
@@ -128,12 +135,13 @@ class CampaignController extends Controller
                 return response()->json(['success' => true]);
             }
             return response()->json(['error' => 'Campaign not found'], 404);
+        } else {
+            return redirect(url('/'));
         }
     }
     function archiveCampaign($campaign_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $campaign = Campaign::where('id', $campaign_id)->first();
             if ($campaign->is_archive == 1) {
                 $campaign->is_archive = 0;
@@ -144,12 +152,14 @@ class CampaignController extends Controller
                 $campaign->save();
                 return response()->json(['success' => true, 'archive' => $campaign->is_archive]);
             }
+        } else {
+            return redirect(url('/'));
         }
     }
     function filterCampaign($filter, $search)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
+            $user_id = Auth::user()->id;
             $campaigns = Campaign::where('user_id', $user_id);
             if ($search != 'null') {
                 $campaigns = $campaigns->where('campaign_name', 'LIKE', '%' . $search . '%');
@@ -166,24 +176,28 @@ class CampaignController extends Controller
             } else {
                 return response()->json(['success' => false, 'campaigns' => 'Campaign not Found']);
             }
+        } else {
+            return redirect(url('/'));
         }
     }
     function editCampaign($campaign_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
+            $user_id = Auth::user()->id;
             $campaign = Campaign::where('user_id', $user_id)->where('id', $campaign_id)->first();
             $data = [
                 'title' => 'Edit Campaign',
                 'campaign' => $campaign,
             ];
             return view('editCampaign', $data);
+        } else {
+            return redirect(url('/'));
         }
     }
     function editCampaignInfo(Request $request, $campaign_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
+            $user_id = Auth::user()->id;
             $validated = $request->validate([
                 'campaign_name' => 'required|string|max:255',
                 'campaign_url' => 'required'
@@ -209,12 +223,13 @@ class CampaignController extends Controller
                 ];
                 return view('editCampaignInfo', $data);
             }
+        } else {
+            return redirect(url('/'));
         }
     }
     function editCampaignSequence(Request $request, $campaign_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $all = $request->except('_token');
             $settings = [];
             foreach ($all as $key => $value) {
@@ -227,14 +242,16 @@ class CampaignController extends Controller
                 'settings' => $settings,
                 'campaign_id' => $campaign_id,
                 'campaign_time' => Campaign::select('start_date')->where('id', $campaign_id)->first()->start_date,
+                'img' => Campaign::select('img_path')->where('id', $campaign_id)->first()->img_path
             ];
             return view('editCampaignSequence', $data);
+        } else {
+            return redirect(url('/'));
         }
     }
     function updateCampaign(Request $request, $campaign_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $all = $request->all();
             $settings = $all['settings'];
             $campaign = Campaign::where('id', $campaign_id)->first();
@@ -242,10 +259,14 @@ class CampaignController extends Controller
             unset($settings['campaign_name']);
             $campaign->campaign_type = $settings['campaign_type'];
             unset($settings['campaign_type']);
-            $campaign->campaign_url = $settings['campaign_url'];
-            unset($settings['campaign_url']);
-            $campaign->campaign_connection = $settings['campaign_connection'];
-            unset($settings['campaign_connection']);
+            if (!empty($settings['campaign_url'])) {
+                $campaign->campaign_url = $settings['campaign_url'];
+                unset($settings['campaign_url']);
+            }
+            if (!empty($settings['campaign_connection'])) {
+                $campaign->campaign_connection = $settings['campaign_connection'];
+                unset($settings['campaign_connection']);
+            }
             $campaign->save();
             if ($campaign->id) {
                 foreach ($settings as $key => $value) {
@@ -268,6 +289,8 @@ class CampaignController extends Controller
                 return response()->json(['success' => true]);
             }
             return response()->json(['success' => false, 'properties' => 'User login first!']);
+        } else {
+            return redirect(url('/'));
         }
     }
 }

@@ -13,12 +13,15 @@
                                 <h3>Leads</h3>
                                 <div class="filt_opt d-flex">
                                     <div class="filt_opt">
-                                        <select name="campaign" id="campaign">
-                                            <option value="01">All Campaigns</option>
-                                            <option value="02">All Campaigns</option>
-                                            <option value="03">All Campaigns</option>
-                                            <option value="04">All Campaigns</option>
-                                        </select>
+                                        @if (!empty($campaigns))
+                                            <select name="campaign" id="campaign">
+                                                <option value="all">All Campaigns</option>
+                                                @foreach ($campaigns as $campaign)
+                                                    <option value="{{ $campaign->id }}">{{ $campaign->campaign_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        @endif
                                     </div>
                                     <div class="add_btn ">
                                         <a href="javascript:;" class="" type="button" data-bs-toggle="modal"
@@ -41,7 +44,9 @@
                                         <a href="javascript:;" type="button" data-bs-toggle="modal"
                                             data-bs-target="#filter_modal"><i class="fa-solid fa-filter"></i></a>
                                         <form action="/search" method="get" class="search-form">
-                                            <input type="text" name="q" placeholder="Search Campaig here...">
+                                            @csrf
+                                            <input type="text" name="q" placeholder="Search Lead here..."
+                                                id="search_lead">
                                             <button type="submit">
                                                 <i class="fa fa-search"></i>
                                             </button>
@@ -85,7 +90,7 @@
                                     <!-- Leads Content -->
                                     <div class="tab-pane lead_pane active" id="Leads" role="tabpanel">
                                         <div class="border_box">
-                                            <div class="scroll_div">
+                                            <div class="scroll_div leads_list">
                                                 <table class="data_table w-100">
                                                     <thead>
                                                         <tr>
@@ -106,7 +111,8 @@
                                                                     <td>
                                                                         <div class="switch_box"><input type="checkbox"
                                                                                 class="switch"
-                                                                                id="{{ 'swicth' . $lead['id'] }}"><label
+                                                                                id="{{ 'swicth' . $lead['id'] }}"
+                                                                                {{ $lead['is_active'] == 1 ? 'checked' : '' }}><label
                                                                                 for="{{ 'swicth' . $lead['id'] }}">Toggle</label>
                                                                         </div>
                                                                     </td>
@@ -134,13 +140,21 @@
                                                                         <a href="javascript:;" type="button"
                                                                             class="setting setting_btn" id=""><i
                                                                                 class="fa-solid fa-gear"></i></a>
-                                                                        <ul class="setting_list" style="display: block;">
-                                                                            <li><a href="#">Edit</a></li>
-                                                                            <li><a href="#">Delete</a></li>
-                                                                        </ul>
+                                                                        <!--<ul class="setting_list" style="display: block;">-->
+                                                                        <!--    <li><a href="#">Edit</a></li>-->
+                                                                        <!--    <li><a href="#">Delete</a></li>-->
+                                                                        <!--</ul>-->
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
+                                                        @else
+                                                            <tr>
+                                                                <td colspan="8">
+                                                                    <div class="text-center text-danger"
+                                                                        style="font-size: 25px; font-weight: bold; font-style: italic;">
+                                                                        Not Found!</div>
+                                                                </td>
+                                                            </tr>
                                                         @endif
                                                     </tbody>
                                                 </table>
@@ -168,7 +182,7 @@
                                                         <button>Save changes</button>
                                                     </div>
                                                 </form>
-                                                <div class="date">
+                                                <div class="date" id="created_at">
                                                     <i class="fa-solid fa-calendar-days"></i>Created at: 2023-10-05 16:48
                                                 </div>
                                             </div>
@@ -573,17 +587,19 @@
                             class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="modal-body">
-                    <form action="">
+                    <form id="export_form">
                         <div class="row">
                             <div class="col-12">
                                 <div class="">
                                     <p class="w-75">Once the export is complete, we will send you the exported data is a
                                         CSV file. Please insert the email you would like us to use.</p>
-                                    <input type="email" placeholder="admin@gmail.com">
+                                    <input name="export_email" id="export_email" type="email"
+                                        placeholder="example@gmail.com">
+                                    <span style="color: red; display: none;" id="email_error"></span>
                                 </div>
                             </div>
-
-                            <a href="javascript:;" class="crt_btn ">Submit<i class="fa-solid fa-arrow-right"></i></a>
+                            <a href="javascript:;" id="export_leads" class="crt_btn ">Submit<i
+                                    class="fa-solid fa-arrow-right"></i></a>
                         </div>
                     </form>
                 </div>
@@ -591,7 +607,20 @@
         </div>
     </div>
     <script>
+        var leadsCampaignFilterPath = "{{ route('getLeadsByCampaign', [':id', ':search']) }}";
+        var sendLeadsToEmail = "{{ route('sendLeadsToEmail') }}";
         $(document).ready(function() {
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const hours = String(currentDate.getHours()).padStart(2, '0');
+            const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+            $("#created_at").html(
+                '<i class="fa-solid fa-calendar-days"></i>Created at: ' +
+                formattedDate
+            );
             $(".setting_list").hide();
             $(".setting_btn").on("click", function(e) {
                 $(".setting_list").not($(this).siblings(".setting_list")).hide();

@@ -64,25 +64,30 @@
                             <a class="nav-link {{ request()->url() === URL('roles-and-permission-setting') ? 'active' : '' }}"
                                 href="/roles-and-permission-setting">Settings</a>
                         </li>
-                        @php
-                            $user = auth()->user();
-                        @endphp
-                        @if ($user)
-                            <a href="{{ route('logout-user') }}"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                LOGOUT
-                            </a>
-                        @endif
-                        <form id="logout-form" action="{{ route('logout-user') }}" method="POST"
-                            style="display: none;">
-                            @csrf
-                        </form>
                     </ul>
                 </div>
                 <div class="right_nav">
                     <ul class="d-flex list-unstyled">
                         <li><a href="/setting"><i class="fa-solid fa-gear"></i></a></li>
                         <li><a href="#"><i class="fa-solid fa-arrow-up-from-bracket"></i></a></li>
+                        <li class="acc d-flex align-item-center">
+                            <img src="{{ asset('/assets/img/acc.png') }}" alt="">
+                            @php
+                                $user = auth()->user();
+                            @endphp
+                            <span>{{ $user->name }}</span>
+                            <a type="button" class="user_toggle" id=""><i class="fa-solid fa-chevron-down"></i></a>
+                            <ul class="user_toggle_list" style="display: none">
+                                <li><a href="{{ route('logout-user') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                                        <form id="logout-form" action="{{ route('logout-user') }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                        </form>
+                                </li>
+                                
+                            </ul>
+                        </li>
                         <li class="darkmode"><a href="javascript:;" id="darkModeToggle"><i
                                     class="fa-solid fa-sun"></i></a></li>
                     </ul>
@@ -93,6 +98,11 @@
     @yield('content')
     <footer>
     </footer>
+    <script>
+        $(".user_toggle").on("click", function (e) {
+            $(".user_toggle_list").toggle();
+        });
+    </script>
 </body>
 
 </html>

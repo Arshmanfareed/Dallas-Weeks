@@ -2,7 +2,6 @@
 @section('content')
     <section class="main_dashboard">
         <div class="container_fluid">
-
             <div class="row">
                 <div class="col-lg-1">
                     @include('partials/dashboard_sidebar_menu')
@@ -72,7 +71,12 @@
                                 @foreach ($campaigns as $campaign)
                                     <ul class="campaign_list">
                                         <li>{{ $campaign->campaign_name }}</li>
-                                        <li>44</li>
+                                        <li>
+                                            @php
+                                                $leads = App\Models\Leads::where('campaign_id', $campaign->id)->get();
+                                            @endphp
+                                            {{ count($leads) }}
+                                        </li>
                                         <li><a href="javascript:;" class="campaign_stat">48%</a></li>
                                         <li><a href="javascript:;" class="campaign_stat down">23%</a></li>
                                         <li>
@@ -90,7 +94,6 @@
                                 @endforeach
                             </div>
                         </div>
-
                     </div>
                     <div class="border_box">
                         <div class="campaign_box">
@@ -115,12 +118,14 @@
                                 @endfor
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
-        </div>
-        </div>
     </section>
+    <script>
+        $(document).ready(function() {
+            $('.switch').prop('disabled', true);
+        });
+    </script>
 @endsection

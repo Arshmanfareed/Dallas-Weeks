@@ -163,4 +163,12 @@
             </div>
         </div>
     </section>
+    <script>
+        var settings = {!! $settings !!};
+        var createCampaignPath = "{{ route('createCampaign') }}";
+        var campaignsPath = "{{ route('campaigns') }}";
+        var getCampaignElementPath = "{{ route('getcampaignelementbyslug', ':slug') }}";
+        var getPropertyDatatypePath = "{{ route('getPropertyDatatype', [':id', ':element_slug']) }}";
+        var getPropertyRequiredPath = "{{ route('getPropertyRequired', [':id']) }}";
+    </script>
 @endsection

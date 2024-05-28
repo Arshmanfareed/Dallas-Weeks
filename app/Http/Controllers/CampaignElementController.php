@@ -8,6 +8,8 @@ use App\Models\CampaignPath;
 use App\Models\ElementProperties;
 use App\Models\EmailSetting;
 use App\Models\GlobalSetting;
+use App\Models\ImportedLeads;
+use App\Models\Leads;
 use App\Models\LinkedinSetting;
 use App\Models\UpdatedCampaignElements;
 use App\Models\UpdatedCampaignProperties;
@@ -18,8 +20,7 @@ class CampaignElementController extends Controller
 {
     function campaignElement($slug)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $elements = CampaignElement::where('element_slug', $slug)->first();
             if ($elements) {
                 $properties = ElementProperties::where('element_id', $elements->id)->get();
@@ -29,12 +30,14 @@ class CampaignElementController extends Controller
                     return response()->json(['success' => false, 'message' => 'No Properties Found']);
                 }
             }
+        } else {
+            return redirect(url('/'));
         }
     }
     function createCampaign(Request $request)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
+            $user_id = Auth::user()->id;
             $all_request = $request->all();
             $final_array = $all_request['final_array'];
             $final_data = $all_request['final_data'];
@@ -47,8 +50,12 @@ class CampaignElementController extends Controller
             unset($settings['campaign_type']);
             $campaign->campaign_url = $settings['campaign_url'];
             unset($settings['campaign_url']);
-            $campaign->campaign_connection = $settings['connections'];
-            unset($settings['connections']);
+            if ($campaign->campaign_type != 'import' && $campaign->campaign_type != 'recruiter') {
+                $campaign->campaign_connection = $settings['connections'];
+                unset($settings['connections']);
+            } else {
+                $campaign->campaign_connection = '0';
+            }
             $campaign->user_id = $user_id;
             $campaign->seat_id = 1;
             $campaign->description = '';
@@ -133,11 +140,50 @@ class CampaignElementController extends Controller
                         $path->save();
                     }
                 }
+                $imported_leads = ImportedLeads::where('user_id', $user_id)->first();
+                $fileHandle = fopen(storage_path('app/uploads/' . $imported_leads->file_path), 'r');
+                if ($fileHandle !== false) {
+                    $csvData = [];
+                    $delimiter = ',';
+                    $enclosure = '"';
+                    $escape = '\\';
+                    $columnNames = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape);
+                    foreach ($columnNames as $colName) {
+                        $csvData[$colName] = [];
+                    }
+                    while (($rowData = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape)) !== false) {
+                        foreach ($columnNames as $index => $colName) {
+                            $csvData[$colName][] = $rowData[$index] ?? null;
+                        }
+                    }
+                    foreach ($csvData as $key => $value) {
+                        foreach ($value as $url) {
+                            $lead = new Leads();
+                            $lead->is_active = 1;
+                            $lead->contact = '';
+                            $lead->title_company = '';
+                            $lead->send_connections = 1;
+                            $lead->next_step = '';
+                            $lead->executed_time = date('H:i:s');
+                            $lead->campaign_id = $campaign->id;
+                            $lead->user_id = $user_id;
+                            $lead->created_at = now();
+                            $lead->updated_at = now();
+                            if (str_contains(strtolower($key), 'url')) {
+                                $lead->profileUrl = $url;
+                                $lead->save();
+                            } else if (str_contains(strtolower($key), 'email')) {
+                                $lead->email = $url;
+                                $lead->save();
+                            }
+                        }
+                    }
+                }
             }
             $request->session()->flash('success', 'Campaign succesfully saved!');
             return response()->json(['success' => true]);
         } else {
-            return response()->json(['success' => false, 'properties' => 'User login first!']);
+            return redirect(url('/'));
         }
     }
     private function remove_prefix($value)
@@ -150,8 +196,7 @@ class CampaignElementController extends Controller
     }
     function getElements($campaign_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $elements = UpdatedCampaignElements::where('campaign_id', $campaign_id)->orderBy('id')->get();
             foreach ($elements as $element) {
                 $element['original_element'] = CampaignElement::where('id', $element->element_id)->first();
@@ -162,17 +207,26 @@ class CampaignElementController extends Controller
             }
             $path = CampaignPath::where('campaign_id', $campaign_id)->orderBy('id')->get();
             return response()->json(['success' => true, 'elements_array' => $elements, 'path' => $path]);
+        } else {
+            return redirect(url('/'));
         }
     }
     function getcampaignelementbyid($element_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $properties = UpdatedCampaignProperties::where('element_id', $element_id)->get();
-            foreach ($properties as $property) {
-                $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
+            if ($properties->isNotEmpty()) {
+                foreach ($properties as $property) {
+                    $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
+                }
+                return response()->json(['success' => true, 'properties' => $properties]);
+            } else {
+                $element = CampaignElement::where('element_slug', $this->remove_prefix($element_id))->first();
+                $properties = ElementProperties::where('element_id', $element->id)->get();
+                return response()->json(['success' => false, 'properties' => $properties]);
             }
-            return response()->json(['success' => true, 'properties' => $properties]);
+        } else {
+            return redirect(url('/'));
         }
     }
 }
