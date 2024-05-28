@@ -141,7 +141,9 @@
                                                                         {{ $lead['next_step'] }}
                                                                     </td>
                                                                     <td>
-                                                                        <div class="">2 days ago</div>
+                                                                        <div class="">
+                                                                            {{ $lead['created_at']->diffInDays(now()) }}
+                                                                            days ago</div>
                                                                     </td>
                                                                     <!-- <td><div class="per">23%</div> -->
                                                                     </td>

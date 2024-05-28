@@ -36,6 +36,9 @@ $(document).ready(function () {
                 .replace(":id", campaign_id)
                 .replace(":search", search),
             type: "GET",
+            beforeSend: function () {
+                $("#loader").show();
+            },
             success: function (response) {
                 if (response.success) {
                     var leads = response.leads;
@@ -64,7 +67,16 @@ $(document).ready(function () {
                         }
                         html += `</td><td>23</td>`;
                         html += `<td>` + leads[key]["next_step"] + `</td>`;
-                        html += `<td><div class="">2 days ago</div></td>`;
+                        var createdAtDate = new Date(leads[key]["created_at"]);
+                        var now = new Date();
+                        var diffMs = now - createdAtDate;
+                        var diffDays = Math.floor(
+                            diffMs / (1000 * 60 * 60 * 24)
+                        );
+                        html +=
+                            `<td><div class="">` +
+                            diffDays +
+                            ` days ago</div></td>`;
                         html += `<td><a href="javascript:;" type="button" class="setting setting_btn"`;
                         html += `id=""><i class="fa-solid fa-gear"></i></a>`;
                         html += `<ul class="setting_list" style="display: block;">`;
@@ -122,6 +134,9 @@ $(document).ready(function () {
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
+            },
+            complete: function () {
+                $("#loader").hide();
             },
         });
     }
