@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
+
 
 class LinkedInController extends Controller
 {
@@ -48,5 +50,57 @@ class LinkedInController extends Controller
         // ...
 
         return redirect()->route('home')->with('success', 'LinkedIn login successful');
+    }
+
+    public function createLinkedinAccount(Request $request)
+    {
+        // echo $request->email;
+        // echo $request->password;
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+
+        $username = $request->input('email');
+        $password = $request->input('password');
+
+        // Validate input
+        if (empty($username) || empty($password)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email and Password are required.'
+            ], 400);
+        }
+
+        try {
+            $response = $client->request('POST', 'https://api3.unipile.com:13333/api/v1/accounts?limit=100', [
+                'json' => [
+                    'provider' => 'LINKEDIN',
+                    'username' => $username,
+                    'password' => $password,
+                ],
+                'headers' => [
+                    'X-API-KEY' => 'nIPVh9fD.gf1u544lGI2nzyGx8K+nkdaIEnbv+8MkLnm3cSKpmVg=',
+                    'accept' => 'application/json',
+                    'content-type' => 'application/json',
+                ],
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'data' => json_decode($response->getBody()->getContents(), true)
+            ]);
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $response = $e->getResponse();
+            $responseBodyAsString = $response->getBody()->getContents();
+            return response()->json([
+                'status' => 'error',
+                'message' => $responseBodyAsString
+            ], $response->getStatusCode());
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

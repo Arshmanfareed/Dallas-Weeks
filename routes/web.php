@@ -124,3 +124,5 @@ Route::post('/leads/sendLeadsToEmail', [LeadsController::class, 'sendLeadsToEmai
 Route::get('/leads/getLeadsCountByCampaign/{id}', [LeadsController::class, 'getLeadsCountByCampaign'])->name('getLeadsCountByCampaign');
 
 Route::get('/get_relations', [UnipileController::class, 'get_relations'])->name('getAllRelations');
+
+

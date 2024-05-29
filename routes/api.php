@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\LinkedInController;
+use App\Http\Controllers\UnipileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +22,8 @@ use App\Http\Controllers\ChatController;
 // });
 
 Route::post('messages', [ChatController::class, 'message']);
+
+
+Route::post('/create-linkedin-account', [LinkedInController::class, 'createLinkedinAccount']);
+
+Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
