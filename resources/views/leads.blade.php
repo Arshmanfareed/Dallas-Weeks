@@ -132,8 +132,10 @@
                                                                         @elseif ($lead['send_connections'] == 'connection_pending')
                                                                             <div class="per connection_pending">Connection
                                                                                 pending</div>
-                                                                        @else
+                                                                        @elseif ($lead['send_connections'] == 'replied')
                                                                             <div class="per replied">Replied</div>
+                                                                        @else
+                                                                            <div class="per replied">Disconnected</div>
                                                                         @endif
                                                                     </td>
                                                                     <td>23</td>

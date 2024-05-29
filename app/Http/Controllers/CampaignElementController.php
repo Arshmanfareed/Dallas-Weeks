@@ -16,6 +16,8 @@ use App\Models\UpdatedCampaignProperties;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\JsonResponse;
 
 class CampaignElementController extends Controller
 {
@@ -171,45 +173,43 @@ class CampaignElementController extends Controller
                             $lead->created_at = now();
                             $lead->updated_at = now();
                             if (str_contains(strtolower($key), 'url')) {
-                                if (stripos($url, 'https://www.linkedin.com/in/') !== false) {
-                                    $url = str_replace('https://www.linkedin.com/in/', 'https://api1.unipile.com:13141/api/v1/users/', $url);
-                                } else if (stripos($url, 'https://www.linkedin.com/company/') !== false) {
-                                    $url = str_replace('https://www.linkedin.com/company/', 'https://api1.unipile.com:13141/api/v1/linkedin/company/', $url);
-                                }
                                 $lead->profileUrl = $url;
-                                $account_id = "JrayZNtLTY6h9ymbNNgngQ";
-                                $url = $lead->profileUrl . '?account_id=' . $account_id;
-                                $client = new \GuzzleHttp\Client([
-                                    'verify' => false,
-                                ]);
-                                $response = $client->request('GET', $url, [
-                                    'headers' => [
-                                        'X-API-KEY' => 'pxVGUgRQ.HxvCCspsvCd+mEBc7C0A3MmQd9b1SV72yiifg1PmM/Y=',
-                                        'accept' => 'application/json',
-                                    ],
-                                ]);
-                                $user_profile = json_decode($response->getBody(), true);
-                                if (!empty($user_profile['first_name']) && !empty($user_profile['last_name'])) {
-                                    $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
-                                    $lead->title_company = $name;
+                                $uc = new UnipileController();
+                                $profile = [
+                                    'account_id' => "Lxrikq1RSDmt8VG2e1b-RQ",
+                                    'profile_url' => $url,
+                                    'x-api-key' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c='
+                                ];
+                                $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
+                                if (!isset($user_profile['error'])) {
+                                    if (!empty($user_profile['first_name']) && !empty($user_profile['last_name'])) {
+                                        $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
+                                        $lead->title_company = $name;
+                                    }
+                                    if (!empty($user_profile['name'])) {
+                                        $name = $user_profile['name'];
+                                        $lead->title_company = $name;
+                                    }
+                                    if (!empty($user_profile['contact_info']['emails'])) {
+                                        $email = $user_profile['contact_info']['emails'][0];
+                                        $lead->email = $email;
+                                        Mail::raw('', function ($message) use ($email) {
+                                            $message->to($email)
+                                                ->subject('Your Lead is inserted Succesfully');
+                                        });
+                                    }
+                                    if (!empty($user_profile['contact_info']['phones'])) {
+                                        $contact = $user_profile['contact_info']['phones'][0];
+                                        $lead->contact = $contact;
+                                    }
+                                    if (!empty($user_profile['phone'])) {
+                                        $contact = $user_profile['phone'];
+                                        $lead->contact = $contact;
+                                    }
+                                    $lead->save();
+                                } else {
+                                    return response()->json(['success' => false, 'message' => $user_profile]);
                                 }
-                                if (!empty($user_profile['name'])) {
-                                    $name = $user_profile['name'];
-                                    $lead->title_company = $name;
-                                }
-                                if (!empty($user_profile['contact_info']['emails'])) {
-                                    $email = $user_profile['contact_info']['emails'][0];
-                                    $lead->email = $email;
-                                }
-                                if (!empty($user_profile['contact_info']['phones'])) {
-                                    $contact = $user_profile['contact_info']['phones'][0];
-                                    $lead->contact = $contact;
-                                }
-                                if (!empty($user_profile['phone'])) {
-                                    $contact = $user_profile['phone'];
-                                    $lead->contact = $contact;
-                                }
-                                $lead->save();
                             } else if (str_contains(strtolower($key), 'email')) {
                                 $lead->email = $url;
                                 $lead->save();

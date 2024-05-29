@@ -43,7 +43,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if (!empty($blacklist))
+                                    @if (!empty($blacklist->first()))
                                         @foreach ($blacklist as $item)
                                             <tr>
                                                 @php
@@ -64,6 +64,15 @@
                                                 </td>
                                             </tr>
                                         @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="3">
+                                                <div class="text-center text-danger"
+                                                    style="font-size: 25px; font-weight: bold; font-style: italic;">
+                                                    Not Found!
+                                                </div>
+                                            </td>
+                                        </tr>
                                     @endif
                                 </tbody>
                             </table>
