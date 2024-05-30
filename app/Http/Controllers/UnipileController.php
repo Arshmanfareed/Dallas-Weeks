@@ -51,7 +51,7 @@ class UnipileController extends Controller
             ]);
             $user_profile = json_decode($response->getBody(), true);
             if ($user_profile['object'] == 'UserProfile' || $user_profile['object'] == 'CompanyProfile') {
-                return $user_profile;
+                return response()->json(['user_profile' => $user_profile]);
             } else {
                 return response()->json(['error' => 'No profile found'], 400);
             }
@@ -87,7 +87,7 @@ class UnipileController extends Controller
         ]);
         $invitaion = json_decode($response->getBody(), true);
         if ($invitaion['object'] == 'UserInvitationSent') {
-            return $invitaion;
+            return response()->json(['invitaion' => $invitaion]);
         } else {
             return response()->json(['error' => 'No profile found'], 400);
         }
@@ -127,7 +127,7 @@ class UnipileController extends Controller
             ],
         ]);
         $message = json_decode($response->getBody(), true);
-        return $message;
+        return response()->json(['message' => $message]);
     }
 
     public function inmail_message(Request $request)
@@ -177,7 +177,7 @@ class UnipileController extends Controller
                 ],
             ]);
             $inmail_message = json_decode($response->getBody(), true);
-            return $inmail_message;
+            return response()->json(['inmail_message' => $inmail_message]);
         } else {
             return response()->json(['error' => 'For this feature must have premium account'], 400);
         }

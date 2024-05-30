@@ -4,25 +4,31 @@ $(document).ready(function () {
     sessionStorage.removeItem("elements_data_array");
 
     $(document).on("change", "#campaign_url", function (e) {
-        var file = e.target.files[0];
-        if (file) {
-            $(".import_field").find("label").remove();
-            $(".import_field").append(
-                '<label style="margin-bottom: 0px">' + file.name + "</label>"
-            );
-        } else {
-            $(".import_field").find("label").remove();
-            html = "";
-            html +=
-                '<label class="file-input__label" for="file-input"><svg aria-hidden="true"';
-            html += 'focusable="false" data-prefix="fas" data-icon="upload"';
-            html += 'class="svg-inline--fa fa-upload fa-w-16"';
-            html += 'role="img" xmlns="http://www.w3.org/2000/svg"';
-            html += 'viewBox="0 0 512 512"> <path fill="currentColor"';
-            html +=
-                'd="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z">';
-            html += "</path></svg><span>Upload file</span></label>";
-            $(".import_field").append(html);
+        var active_form = $(".campaign_pane.active").find("form");
+        if (active_form.attr("id") == "campaign_form_4") {
+            var file = e.target.files[0];
+            if (file) {
+                $(".import_field").find("label").remove();
+                $(".import_field").append(
+                    '<label style="margin-bottom: 0px">' +
+                        file.name +
+                        "</label>"
+                );
+            } else {
+                $(".import_field").find("label").remove();
+                html = "";
+                html +=
+                    '<label class="file-input__label" for="file-input"><svg aria-hidden="true"';
+                html +=
+                    'focusable="false" data-prefix="fas" data-icon="upload"';
+                html += 'class="svg-inline--fa fa-upload fa-w-16"';
+                html += 'role="img" xmlns="http://www.w3.org/2000/svg"';
+                html += 'viewBox="0 0 512 512"> <path fill="currentColor"';
+                html +=
+                    'd="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z">';
+                html += "</path></svg><span>Upload file</span></label>";
+                $(".import_field").append(html);
+            }
         }
     });
     if (campaign_details["campaign_type"] == undefined) {
@@ -79,12 +85,89 @@ $(document).ready(function () {
         );
     });
     $(".campaign_url").on("change", function (e) {
-        campaign_details["campaign_url"] = $(this).val();
-        sessionStorage.setItem(
-            "campaign_details",
-            JSON.stringify(campaign_details)
-        );
+        var active_form = $(".campaign_pane.active").find("form");
+        if (active_form.attr("id") == "campaign_form_2") {
+            var queryString = $(".campaign_pane.active")
+                .find("#campaign_url")
+                .val();
+            // var decodedString = decodeURIComponent(queryString);
+            // console.log(decodedString);
+            // var queryStartIndex = decodedString.indexOf("?query=");
+            // var queryParamsString = decodedString.slice(queryStartIndex + 7);
+            // var queryParams = parseQueryParams(queryParamsString);
+            // displayParams(queryParams, 0);
+            // console.log(queryParams);
+            var decodedUrl = decodeURIComponent(
+                decodeURIComponent(queryString)
+            );
+            var queryParams = getQueryParams(decodedUrl);
+            var query = queryParams.query;
+            query = query
+                .replace(/\(/g, "{")
+                .replace(/\)/g, "}")
+                .replace(/\List/g, "");
+            query = parseQueryParams(query);
+            var queryJson = JSON.parse(query);
+            console.log(queryJson);
+        } else {
+            campaign_details["campaign_url"] = $(this).val();
+            sessionStorage.setItem(
+                "campaign_details",
+                JSON.stringify(campaign_details)
+            );
+        }
     });
+
+    function getQueryParams(url) {
+        var params = {};
+        var parser = document.createElement("a");
+        parser.href = url;
+        var query = parser.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            var key = decodeURIComponent(pair[0]);
+            var value = decodeURIComponent(pair[1]);
+            params[key] = value;
+        }
+        return params;
+    }
+
+    function parseQueryParams(queryString) {
+        var length = queryString.length;
+        var result = "";
+        for (var i = 0; i < length; i++) {
+            if (queryString[i] == ":") {
+                var alphaIndex = 0;
+                for (var j = i - 1; j > 0; j--) {
+                    let regex = /^[a-zA-Z]+$/;
+                    if (!regex.test(queryString[j]) && queryString[j] != '"') {
+                        alphaIndex = j;
+                        break;
+                    }
+                }
+                result =
+                    result +
+                    queryString.replace(
+                        queryString.slice(alphaIndex + 1, i),
+                        '"' + queryString.slice(alphaIndex + 1, i) + '"'
+                    );
+                for (var j = i + 1; j < length; j++) {
+                    let regex = /^[a-zA-Z]+$/;
+                    if (!regex.test(queryString[j]) && queryString[j] != '"') {
+                        alphaIndex = j;
+                        break;
+                    }
+                }
+                result = queryString.replace(
+                    queryString.slice(i+1, j),
+                    '"' + queryString.slice(i+1, j) + '"'
+                );
+                console.log(result);
+            }
+        }
+        // return result;
+    }
     $(".connections").on("change", function (e) {
         campaign_details["connections"] = $(this).val();
         sessionStorage.setItem(
