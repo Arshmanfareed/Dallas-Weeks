@@ -180,7 +180,7 @@ class CampaignElementController extends Controller
                                     $profile = [
                                         'account_id' => $account_id,
                                         'profile_url' => $url,
-                                        'x-api-key' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c='
+                                        'x-api-key' => 'nIPVh9fD.gf1u544lGI2nzyGx8K+nkdaIEnbv+8MkLnm3cSKpmVg='
                                     ];
                                     $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
                                     if ($user_profile instanceof JsonResponse) {
@@ -222,7 +222,7 @@ class CampaignElementController extends Controller
                                                 $invite = [
                                                     'account_id' => $account_id,
                                                     'identifier' => $user_profile['provider_id'],
-                                                    'x-api-key' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=',
+                                                    'x-api-key' => 'nIPVh9fD.gf1u544lGI2nzyGx8K+nkdaIEnbv+8MkLnm3cSKpmVg=',
                                                 ];
                                                 $element = CampaignElement::where('element_slug', 'invite_to_connect')->first();
                                                 if (isset($element)) {
@@ -242,7 +242,7 @@ class CampaignElementController extends Controller
                                                 //         // $message = [
                                                 //         //     'account_id' => $account_id,
                                                 //         //     'identifier' => $user_profile['provider_id'],
-                                                //         //     'x-api-key' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=',
+                                                //         //     'x-api-key' => 'nIPVh9fD.gf1u544lGI2nzyGx8K+nkdaIEnbv+8MkLnm3cSKpmVg=',
                                                 //         // ];
                                                 //         return response()->json(['success' => false, 'message' => $csvData['Info']]);
                                                 //     } else {

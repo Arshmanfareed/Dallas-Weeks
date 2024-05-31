@@ -74,7 +74,7 @@
                     </div>
                     <div class="col-lg-7 col-sm-12">
                         <div class="login_img">
-                            <a href="{{ URL('/') }}"><img src="{{ asset('assets/img/blank_img.png') }}"
+                            <a href="{{ URL('/') }}"><img src="{{ asset('assets/img/register-picture.png') }}"
                                     alt=""></a>
                         </div>
                     </div>
