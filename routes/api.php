@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\UnipileController;
+use App\Http\Controllers\LinkedInController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,7 @@ use App\Http\Controllers\UnipileController;
 // });
 
 Route::post('messages', [ChatController::class, 'message']);
+Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccount']);
 Route::post('/view_profile', [UnipileController::class, 'view_profile'])->name('viewProfile');
 Route::post('/invite_to_connect', [UnipileController::class, 'invite_to_connect'])->name('inviteToConnect');
 Route::post('/message', [UnipileController::class, 'message'])->name('message');

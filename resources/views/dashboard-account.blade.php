@@ -33,6 +33,7 @@
                                     <a href="javascript:;" type="button" data-bs-toggle="modal"
                                         data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>Add account
                                 </div>
+
                             </div>
                         </div>
                         <hr>
@@ -41,6 +42,10 @@
                                 <img src="{{ asset('assets/img/empty.png') }}" alt="">
                                 <p class="text-center">You don't hanve any account yet. Start by adding your first account.
                                 </p>
+                                @if (auth()->check() && auth()->user()->id == $user->id && $paymentStatus == 'success')
+                                    <input type="hidden" id="user_email" value="{{ $user->email }}">
+                                    <button id="submit-btn" type="button" class="theme_btn">Connect Linked in</button>
+                                @endif
                                 <div class="add_btn">
                                     <a href="javascript:;" type="button" data-bs-toggle="modal"
                                         data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>
@@ -220,14 +225,14 @@
                                     </div>
                                 </div>
                                 <!-- <div class='form-row'>
-                                            <div class='col-md-12 error form-group hide'>
-                                                <div class='alert-danger alert'>Please correct the errors and try again.</div>
-                                            </div>
-                                        </div>  -->
+                                                                <div class='col-md-12 error form-group hide'>
+                                                                    <div class='alert-danger alert'>Please correct the errors and try again.</div>
+                                                                </div>
+                                                            </div>  -->
                             </div>
                             <!--  <div class="add-experience">
-                                                                                                                                                                                                                                            <a class="add-exp-btn"> + Add Experience</a>
-                                                                                                                                                                                                                                        </div> -->
+                                                                                                                                                                                                                                                                <a class="add-exp-btn"> + Add Experience</a>
+                                                                                                                                                                                                                                                            </div> -->
                             <div class="btn-group">
                                 <a class="btn btn-prev">Previous</a>
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Pay Now</button>
@@ -238,9 +243,9 @@
                     </form>
                 </div>
                 <!-- <div class="modal-footer">
-                                                                                                                                                                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                <button type="button" class="btn btn-primary">Save changes</button>
-                                                                                                                                                                                                                            </div> -->
+                                                                                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                                                                                                                                                                                                                                </div> -->
             </div>
         </div>
     </div>
@@ -313,6 +318,37 @@
                     error: function(error) {
                         console.log(error);
                     },
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#submit-btn').on('click', function() {
+
+                $.ajax({
+                    url: '/api/create-link-account',
+                    type: 'POST',
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                    data: {
+                        'email': $('#user_email').val()
+                    },
+                    success: function(response) {
+                        console.log(response);
+
+                        if (response.status === 'success' && response.data && response.data
+                            .url) {
+                            console.log(response.data);
+                            console.log(response.data.url);
+                            window.open(response.data.url, '_blank');
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
                 });
             });
         });

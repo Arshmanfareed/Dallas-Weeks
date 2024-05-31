@@ -90,25 +90,15 @@ $(document).ready(function () {
             var queryString = $(".campaign_pane.active")
                 .find("#campaign_url")
                 .val();
-            // var decodedString = decodeURIComponent(queryString);
-            // console.log(decodedString);
-            // var queryStartIndex = decodedString.indexOf("?query=");
-            // var queryParamsString = decodedString.slice(queryStartIndex + 7);
-            // var queryParams = parseQueryParams(queryParamsString);
-            // displayParams(queryParams, 0);
-            // console.log(queryParams);
             var decodedUrl = decodeURIComponent(
                 decodeURIComponent(queryString)
             );
             var queryParams = getQueryParams(decodedUrl);
             var query = queryParams.query;
-            query = query
-                .replace(/\(/g, "{")
-                .replace(/\)/g, "}")
-                .replace(/\List/g, "");
-            query = parseQueryParams(query);
-            var queryJson = JSON.parse(query);
-            console.log(queryJson);
+            query = query.replaceAll('(', '{').replaceAll(')', '}').replaceAll('List{', '[0]:{');
+            console.log(query);
+            // query = JSON.parse(query);
+            parseQueryParams(query);
         } else {
             campaign_details["campaign_url"] = $(this).val();
             sessionStorage.setItem(
@@ -134,40 +124,19 @@ $(document).ready(function () {
     }
 
     function parseQueryParams(queryString) {
-        var length = queryString.length;
-        var result = "";
-        for (var i = 0; i < length; i++) {
-            if (queryString[i] == ":") {
-                var alphaIndex = 0;
-                for (var j = i - 1; j > 0; j--) {
-                    let regex = /^[a-zA-Z]+$/;
-                    if (!regex.test(queryString[j]) && queryString[j] != '"') {
-                        alphaIndex = j;
+        for (var i = 0; i<queryString.length; i++) {
+            if (queryString[i] == ':') {
+                let regex = /^[a-zA-Z]+$/;
+                for (var j = i-1; j > 0; j--) {
+                    if (!regex.test(queryString[j])) {
+                        console.log(j);
                         break;
                     }
                 }
-                result =
-                    result +
-                    queryString.replace(
-                        queryString.slice(alphaIndex + 1, i),
-                        '"' + queryString.slice(alphaIndex + 1, i) + '"'
-                    );
-                for (var j = i + 1; j < length; j++) {
-                    let regex = /^[a-zA-Z]+$/;
-                    if (!regex.test(queryString[j]) && queryString[j] != '"') {
-                        alphaIndex = j;
-                        break;
-                    }
-                }
-                result = queryString.replace(
-                    queryString.slice(i+1, j),
-                    '"' + queryString.slice(i+1, j) + '"'
-                );
-                console.log(result);
             }
         }
-        // return result;
     }
+
     $(".connections").on("change", function (e) {
         campaign_details["connections"] = $(this).val();
         sessionStorage.setItem(

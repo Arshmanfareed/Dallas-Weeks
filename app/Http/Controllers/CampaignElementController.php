@@ -159,111 +159,116 @@ class CampaignElementController extends Controller
                             $csvData[$colName][] = $rowData[$index] ?? null;
                         }
                     }
-                    foreach ($csvData as $key => $value) {
-                        foreach ($value as $url) {
-                            $lead = new Leads();
-                            $lead->is_active = 1;
-                            $lead->contact = '';
-                            $lead->title_company = '';
-                            $lead->send_connections = 'discovered';
-                            $lead->next_step = '';
-                            $lead->executed_time = date('H:i:s');
-                            $lead->campaign_id = $campaign->id;
-                            $lead->user_id = $user_id;
-                            $lead->created_at = now();
-                            $lead->updated_at = now();
-                            if (str_contains(strtolower($key), 'url')) {
-                                $lead->profileUrl = $url;
-                                $uc = new UnipileController();
-                                $profile = [
-                                    'account_id' => "Lxrikq1RSDmt8VG2e1b-RQ",
-                                    'profile_url' => $url,
-                                    'x-api-key' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c='
-                                ];
-                                $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
-                                if ($user_profile instanceof JsonResponse) {
-                                    $user_profile = $user_profile->getData(true);
-                                    $user_profile = $user_profile['user_profile'];
-                                    if (!isset($user_profile['error'])) {
-                                        if (isset($user_profile['first_name']) && isset($user_profile['last_name'])) {
-                                            $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
-                                            $lead->title_company = $name;
-                                        }
-                                        if (isset($user_profile['name'])) {
-                                            $name = $user_profile['name'];
-                                            $lead->title_company = $name;
-                                        }
-                                        if (isset($user_profile['contact_info']['emails'])) {
-                                            $email = $user_profile['contact_info']['emails'][0];
-                                            $lead->email = $email;
-                                            $element = CampaignElement::where('element_slug', 'email_message')->first();
-                                            if (isset($element)) {
-                                                $campaign_element = UpdatedCampaignElements::where('campaign_id', $campaign->id)->where('element_id', $element->id)->first();
-                                                if (isset($campaign_element)) {
-                                                    Mail::raw('', function ($message) use ($email) {
-                                                        $message->to($email)
-                                                            ->subject('Your Lead is inserted Succesfully');
-                                                    });
-                                                }
+                    $account_id = auth()->user()->account_id;
+                    if ($account_id != NULL) {
+                        foreach ($csvData as $key => $value) {
+                            foreach ($value as $url) {
+                                $lead = new Leads();
+                                $lead->is_active = 1;
+                                $lead->contact = '';
+                                $lead->title_company = '';
+                                $lead->send_connections = 'discovered';
+                                $lead->next_step = '';
+                                $lead->executed_time = date('H:i:s');
+                                $lead->campaign_id = $campaign->id;
+                                $lead->user_id = $user_id;
+                                $lead->created_at = now();
+                                $lead->updated_at = now();
+                                if (str_contains(strtolower($key), 'url')) {
+                                    $lead->profileUrl = $url;
+                                    $uc = new UnipileController();
+                                    $profile = [
+                                        'account_id' => $account_id,
+                                        'profile_url' => $url,
+                                        'x-api-key' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c='
+                                    ];
+                                    $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
+                                    if ($user_profile instanceof JsonResponse) {
+                                        $user_profile = $user_profile->getData(true);
+                                        $user_profile = $user_profile['user_profile'];
+                                        if (!isset($user_profile['error'])) {
+                                            if (isset($user_profile['first_name']) && isset($user_profile['last_name'])) {
+                                                $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
+                                                $lead->title_company = $name;
                                             }
-                                        }
-                                        if (isset($user_profile['contact_info']['phones'])) {
-                                            $contact = $user_profile['contact_info']['phones'][0];
-                                            $lead->contact = $contact;
-                                        }
-                                        if (isset($user_profile['phone'])) {
-                                            $contact = $user_profile['phone'];
-                                            $lead->contact = $contact;
-                                        }
-                                        $lead->save();
-                                        if (isset($user_profile['provider_id']) && $user_profile['is_relationship'] === true) {
-                                            $invite = [
-                                                'account_id' => "Lxrikq1RSDmt8VG2e1b-RQ",
-                                                'identifier' => $user_profile['provider_id'],
-                                                'x-api-key' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=',
-                                            ];
-                                            $element = CampaignElement::where('element_slug', 'invite_to_connect')->first();
-                                            if (isset($element)) {
-                                                $campaign_element = UpdatedCampaignElements::where('campaign_id', $campaign->id)->where('element_id', $element->id)->first();
-                                                if (isset($campaign_element)) {
-                                                    $campaign_property = UpdatedCampaignProperties::where('element_id', $campaign_element->id)->first();
-                                                    if (isset($campaign_property)) {
-                                                        $invite['message'] = $campaign_property->value;
+                                            if (isset($user_profile['name'])) {
+                                                $name = $user_profile['name'];
+                                                $lead->title_company = $name;
+                                            }
+                                            if (isset($user_profile['contact_info']['emails'])) {
+                                                $email = $user_profile['contact_info']['emails'][0];
+                                                $lead->email = $email;
+                                                $element = CampaignElement::where('element_slug', 'email_message')->first();
+                                                if (isset($element)) {
+                                                    $campaign_element = UpdatedCampaignElements::where('campaign_id', $campaign->id)->where('element_id', $element->id)->first();
+                                                    if (isset($campaign_element)) {
+                                                        Mail::raw('', function ($message) use ($email) {
+                                                            $message->to($email)
+                                                                ->subject('Your Lead is inserted Succesfully');
+                                                        });
                                                     }
                                                 }
                                             }
-                                            // $invite_to_connect = $uc->invite_to_connect(new \Illuminate\Http\Request($invite));
-                                            // if ($invite_to_connect instanceof JsonResponse) {
-                                            //     $invite_to_connect = $invite_to_connect->getData(true);
-                                            //     $invite_to_connect = $invite_to_connect['invitaion'];
-                                            //     if (!isset($invite_to_connect['error'])) {
-                                            //         // $message = [
-                                            //         //     'account_id' => "Lxrikq1RSDmt8VG2e1b-RQ",
-                                            //         //     'identifier' => $user_profile['provider_id'],
-                                            //         //     'x-api-key' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=',
-                                            //         // ];
-                                            //         return response()->json(['success' => false, 'message' => $csvData['Info']]);
-                                            //     } else {
-                                            //         return response()->json(['success' => false, 'message' => $invite_to_connect['error'], 'user' => $user_profile]);
-                                            //     }
-                                            // } else {
-                                            //     return response()->json(['success' => false, 'message' => 'Invite to Connect not Json Response']);
-                                            // }
+                                            if (isset($user_profile['contact_info']['phones'])) {
+                                                $contact = $user_profile['contact_info']['phones'][0];
+                                                $lead->contact = $contact;
+                                            }
+                                            if (isset($user_profile['phone'])) {
+                                                $contact = $user_profile['phone'];
+                                                $lead->contact = $contact;
+                                            }
+                                            $lead->save();
+                                            if (isset($user_profile['provider_id']) && $user_profile['is_relationship'] === true) {
+                                                $invite = [
+                                                    'account_id' => $account_id,
+                                                    'identifier' => $user_profile['provider_id'],
+                                                    'x-api-key' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=',
+                                                ];
+                                                $element = CampaignElement::where('element_slug', 'invite_to_connect')->first();
+                                                if (isset($element)) {
+                                                    $campaign_element = UpdatedCampaignElements::where('campaign_id', $campaign->id)->where('element_id', $element->id)->first();
+                                                    if (isset($campaign_element)) {
+                                                        $campaign_property = UpdatedCampaignProperties::where('element_id', $campaign_element->id)->first();
+                                                        if (isset($campaign_property)) {
+                                                            $invite['message'] = $campaign_property->value;
+                                                        }
+                                                    }
+                                                }
+                                                // $invite_to_connect = $uc->invite_to_connect(new \Illuminate\Http\Request($invite));
+                                                // if ($invite_to_connect instanceof JsonResponse) {
+                                                //     $invite_to_connect = $invite_to_connect->getData(true);
+                                                //     $invite_to_connect = $invite_to_connect['invitaion'];
+                                                //     if (!isset($invite_to_connect['error'])) {
+                                                //         // $message = [
+                                                //         //     'account_id' => $account_id,
+                                                //         //     'identifier' => $user_profile['provider_id'],
+                                                //         //     'x-api-key' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=',
+                                                //         // ];
+                                                //         return response()->json(['success' => false, 'message' => $csvData['Info']]);
+                                                //     } else {
+                                                //         return response()->json(['success' => false, 'message' => $invite_to_connect['error'], 'user' => $user_profile]);
+                                                //     }
+                                                // } else {
+                                                //     return response()->json(['success' => false, 'message' => 'Invite to Connect not Json Response']);
+                                                // }
+                                            }
+                                        } else {
+                                            return response()->json(['success' => false, 'message' => $user_profile['error']]);
                                         }
                                     } else {
-                                        return response()->json(['success' => false, 'message' => $user_profile['error']]);
+                                        return response()->json(['success' => false, 'message' => 'User Profile not Json Response']);
                                     }
-                                } else {
-                                    return response()->json(['success' => false, 'message' => 'User Profile not Json Response']);
+                                } else if (str_contains(strtolower($key), 'email')) {
+                                    $lead->email = $url;
+                                    $lead->save();
                                 }
-                            } else if (str_contains(strtolower($key), 'email')) {
-                                $lead->email = $url;
-                                $lead->save();
                             }
                         }
+                        $request->session()->flash('success', 'Campaign succesfully saved!');
+                        return response()->json(['success' => true]);
+                    } else {
+                        return response()->json(['success' => false, 'message' => 'Account Id Not Found', 'id' => $account_id]);
                     }
-                    $request->session()->flash('success', 'Campaign succesfully saved!');
-                    return response()->json(['success' => true]);
                 } else {
                     return response()->json(['success' => false, 'message' => 'File Not Found']);
                 }
