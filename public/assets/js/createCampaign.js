@@ -92,14 +92,19 @@ $(document).ready(function () {
             var decodedUrl = decodeURI(decodeURI(queryString));
             var queryParams = getQueryParams(decodedUrl);
             var query = queryParams.query;
-            query = query
-                .replaceAll("(", "{")
-                .replaceAll(")", "}");
+            query = query.replaceAll("(", "{").replaceAll(")", "}");
             query = lister(query);
+            query = wrapKeysInQuotes(query);
             query = wrapValuesInQuotes(query);
-            console.log(query);
-            // query = JSON.parse(query);
-            // console.log(query);
+            query = removeExtraColons(query);
+            try {
+                queryJson = JSON.parse(query);
+                queryParams.query = queryJson;
+                console.log(queryParams);
+            } catch (e) {
+                console.log(query);
+                console.log(e);
+            }
         } else {
             campaign_details["campaign_url"] = $(this).val();
             sessionStorage.setItem(
@@ -118,19 +123,37 @@ $(document).ready(function () {
             var pair = vars[i].split("=");
             var key = decodeURIComponent(pair[0]);
             var value = decodeURIComponent(pair[1]);
+            if (key != "query") {
+                if (value.includes("true")) {
+                    value = true;
+                } else if (value.includes("false")) {
+                    value = false;
+                }
+            }
             params[key] = value;
         }
         return params;
     }
     function wrapValuesInQuotes(jsonString) {
         jsonString = jsonString.replace(/(\w+):/g, '"$1":');
-        jsonString = jsonString.replace(/:(\w+)/g, ':"$1"');
-        jsonString = jsonString.replace(/:(\{[^{}]*\})/g, ":$1");
+        jsonString = jsonString.replace(
+            /:\s*([^"\[{].*?)([,}\]])/g,
+            function (match, p1, p2) {
+                if (/^(true|false|\d+)$/.test(p1.trim())) {
+                    return ": " + p1 + p2;
+                } else {
+                    return ': "' + p1 + '"' + p2;
+                }
+            }
+        );
+        jsonString = jsonString.replace(/:"(\{[^{}]*\})"/g, ":$1");
+        jsonString = jsonString.replace(/:"(\[[^\[\]]*\])"/g, ":$1");
+        return jsonString;
+    }
+    function wrapKeysInQuotes(jsonString) {
+        jsonString = jsonString.replace(/(\w+):/g, '"$1":');
         jsonString = jsonString.replace(/(\{[^{}]*\}):/g, "$1:");
-        jsonString = jsonString.replace(/:(\[[^\[\]]*\])/g, ":$1");
         jsonString = jsonString.replace(/(\[[^\[\]]*\]):/g, "$1:");
-        jsonString = jsonString.replace(/:"(true|false)"/g, ":$1");
-        jsonString = jsonString.replace(/:"(\d+)"/g, ":$1");
         return jsonString;
     }
     function lister(queryString) {
@@ -157,6 +180,24 @@ $(document).ready(function () {
             }
             newQueryString = newQueryString.replace("List{", "[");
             queryString = lister(newQueryString);
+        }
+        return queryString;
+    }
+    function removeExtraColons(queryString) {
+        for (var i = 0; i < queryString.length; i++) {
+            if (queryString[i] == ":") {
+                for (var j = i+1; j < queryString.length; j++) {
+                    if (queryString[j] == "," || queryString[j] == "{") {
+                        break;
+                    } else if (queryString[j] == ":") {
+                        break;
+                    }
+                }
+                if (queryString[j] == ":") {
+                    queryString = queryString.slice(0, i-1) + '_' + queryString.slice(i+2);
+                    console.log(queryString.slice(i, j));
+                }
+            }
         }
         return queryString;
     }
