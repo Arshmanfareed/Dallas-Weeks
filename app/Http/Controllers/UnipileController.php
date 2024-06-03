@@ -18,11 +18,12 @@ class UnipileController extends Controller
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
+        $x_api_key = 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=';
         $account_id = "-4oRQlvNQSCc9QdsAmaU0g";
         $url = 'https://api3.unipile.com:13333/api/v1/users/relations' . '?limit=3&account_id=' . $account_id;
         $response = $client->request('GET', $url, [
             'headers' => [
-                'X-API-KEY' => 'nIPVh9fD.gf1u544lGI2nzyGx8K+nkdaIEnbv+8MkLnm3cSKpmVg=',
+                'X-API-KEY' => $x_api_key,
                 'accept' => 'application/json',
             ],
         ]);
@@ -34,7 +35,7 @@ class UnipileController extends Controller
             $url = 'https://api3.unipile.com:13333/api/v1/users/' . $item['member_id'] . '?linkedin_api=sales_navigator&linkedin_sections=%2A&account_id=' . $account_id;
             $response = $client->request('GET', $url, [
                 'headers' => [
-                    'X-API-KEY' => 'nIPVh9fD.gf1u544lGI2nzyGx8K+nkdaIEnbv+8MkLnm3cSKpmVg=',
+                    'X-API-KEY' => $x_api_key,
                     'accept' => 'application/json',
                 ],
             ]);
@@ -43,60 +44,60 @@ class UnipileController extends Controller
             print_r($profile);
         }
     }
-    
-//   public function handleCallback(Request $request)
-//     {
-//         // Log the entire incoming request
-//         Log::info('Unipile callback received', $request->all());
-        
-        
-    
-//         $accountId = $request->input('account_id');
-//         $status = $request->input('status');
-//         $email = $request->input('name');
-        
-//          Log::info('Account ID:', ['account_id' => $accountId]);
-//          Log::info('Status:', ['status' => $status]);
-         
-        
-        
-        
-//     }
 
-        public function handleCallback(Request $request)
-        {
-            // Log the entire incoming request
-            Log::info('Unipile callback received', $request->all());
-        
-            // Extract data from the request
-            $accountId = $request->input('account_id');
-            $status = $request->input('status');
-            $email = $request->input('name');
-        
-            Log::info('Account ID:', ['account_id' => $accountId]);
-            Log::info('Status:', ['status' => $status]);
-            Log::info('Email:', ['email' => $email]);
-        
-            // Update the user's account_id based on the email
-            $update = DB::table('users')
-                        ->where('email', $email)
-                        ->update(['account_id' => $accountId]);
-        
-            if ($update) {
-                Log::info('Account ID updated successfully for user', ['email' => $email, 'account_id' => $accountId]);
-                return response()->json(['status' => 'success']);
-            } else {
-                Log::error('Failed to update Account ID for user', ['email' => $email]);
-                return response()->json(['status' => 'error', 'message' => 'User not found or update failed'], 404);
-            }
+    //   public function handleCallback(Request $request)
+    //     {
+    //         // Log the entire incoming request
+    //         Log::info('Unipile callback received', $request->all());
+
+
+
+    //         $accountId = $request->input('account_id');
+    //         $status = $request->input('status');
+    //         $email = $request->input('name');
+
+    //          Log::info('Account ID:', ['account_id' => $accountId]);
+    //          Log::info('Status:', ['status' => $status]);
+
+
+
+
+    //     }
+
+    public function handleCallback(Request $request)
+    {
+        // Log the entire incoming request
+        Log::info('Unipile callback received', $request->all());
+
+        // Extract data from the request
+        $accountId = $request->input('account_id');
+        $status = $request->input('status');
+        $email = $request->input('name');
+
+        Log::info('Account ID:', ['account_id' => $accountId]);
+        Log::info('Status:', ['status' => $status]);
+        Log::info('Email:', ['email' => $email]);
+
+        // Update the user's account_id based on the email
+        $update = DB::table('users')
+            ->where('email', $email)
+            ->update(['account_id' => $accountId]);
+
+        if ($update) {
+            Log::info('Account ID updated successfully for user', ['email' => $email, 'account_id' => $accountId]);
+            return response()->json(['status' => 'success']);
+        } else {
+            Log::error('Failed to update Account ID for user', ['email' => $email]);
+            return response()->json(['status' => 'error', 'message' => 'User not found or update failed'], 404);
         }
-    
+    }
+
     public function view_profile(Request $request)
     {
         $all = $request->all();
         $account_id = $all['account_id'];
         $profile_url = $all['profile_url'];
-        $x_api_key = $all['x-api-key'];
+        $x_api_key = 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -132,7 +133,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = $all['x-api-key'];
+        $x_api_key = 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=';
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -165,7 +166,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = $all['x-api-key'];
+        $x_api_key = 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=';
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -202,7 +203,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = $all['x-api-key'];
+        $x_api_key = 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=';
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -239,7 +240,7 @@ class UnipileController extends Controller
                     ]
                 ],
                 'headers' => [
-                    'X-API-KEY' => $x_api_key,
+                    'X-API-KEY' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=',
                     'accept' => 'application/json',
                 ],
             ]);

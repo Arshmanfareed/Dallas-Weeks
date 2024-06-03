@@ -69,7 +69,7 @@ class LinkedInController extends Controller
                     'name' => $email,
                 ],
                 'headers' => [
-                    'X-API-KEY' => 'nIPVh9fD.gf1u544lGI2nzyGx8K+nkdaIEnbv+8MkLnm3cSKpmVg=',
+                    'X-API-KEY' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=',
                     'accept' => 'application/json',
                     'content-type' => 'application/json',
                 ],

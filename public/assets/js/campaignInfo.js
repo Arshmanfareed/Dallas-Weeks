@@ -48,6 +48,15 @@ $(document).ready(function () {
             .val(campaign_details["campaign_url"])
     );
 
+    if (campaign_details["campaign_type"] == "sales_navigator") {
+        form.append(
+            $("<input>")
+                .attr("type", "hidden")
+                .attr("name", "lead_details")
+                .val(campaign_details["lead_details"])
+        );
+    }
+
     if (campaign_details["connections"] != undefined) {
         form.append(
             $("<input>")

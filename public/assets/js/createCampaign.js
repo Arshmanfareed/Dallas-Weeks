@@ -30,9 +30,11 @@ $(document).ready(function () {
             }
         }
     });
+
     if (campaign_details["campaign_type"] == undefined) {
         campaign_details["campaign_type"] = "linkedin";
     }
+
     var campaign_pane = $(".campaign_pane");
     for (var i = 0; i < campaign_pane.length; i++) {
         var campaignType = $(campaign_pane[i]).find("#campaign_type").val();
@@ -46,6 +48,7 @@ $(document).ready(function () {
             "background-color": "#16adcb",
         });
     }
+
     if (
         campaign_details["campaign_name"] == undefined ||
         campaign_details["campaign_url"] == undefined ||
@@ -76,6 +79,7 @@ $(document).ready(function () {
                 .val(campaign_details["connections"]);
         }
     }
+
     $(".campaign_name").on("change", function (e) {
         campaign_details["campaign_name"] = $(this).val();
         sessionStorage.setItem(
@@ -83,6 +87,7 @@ $(document).ready(function () {
             JSON.stringify(campaign_details)
         );
     });
+
     $(".campaign_url").on("change", function (e) {
         var active_form = $(".campaign_pane.active").find("form");
         if (active_form.attr("id") == "campaign_form_2") {
@@ -100,10 +105,40 @@ $(document).ready(function () {
             try {
                 queryJson = JSON.parse(query);
                 queryParams.query = queryJson;
-                console.log(queryParams);
+                var filters = queryParams.query.filters;
+                var active_form = $(".campaign_pane.active").find("form");
+                filters.forEach(function (filter) {
+                    var type = filter["type"];
+                    if (type == "RELATIONSHIP") {
+                        var values = filter["values"];
+                        values.forEach(function (value) {
+                            if (value["text"].includes("1st")) {
+                                active_form.find("#connections").val("1");
+                            } else if (value["text"].includes("2nd")) {
+                                active_form.find("#connections").val("2");
+                            } else if (value["text"].includes("3rd")) {
+                                active_form.find("#connections").val("3");
+                            } else {
+                                active_form.find("#connections").val("o");
+                            }
+                        });
+                        active_form.find("#connections").prop("disabled", true);
+                    }
+                });
+                var jsonString = JSON.stringify(queryParams);
+                var jsonInput = $("<input>")
+                    .attr("type", "hidden")
+                    .attr("name", "lead_details")
+                    .val(jsonString);
+                active_form.append(jsonInput);
             } catch (e) {
-                console.log(query);
-                console.log(e);
+                $(".campaign_pane.active")
+                    .find("form")
+                    .find("#campaign_url")
+                    .css({
+                        border: "1px solid red",
+                        "margin-bottom": "7px !important",
+                    });
             }
         } else {
             campaign_details["campaign_url"] = $(this).val();
@@ -113,6 +148,7 @@ $(document).ready(function () {
             );
         }
     });
+
     function getQueryParams(url) {
         var params = {};
         var parser = document.createElement("a");
@@ -134,6 +170,7 @@ $(document).ready(function () {
         }
         return params;
     }
+
     function wrapValuesInQuotes(jsonString) {
         jsonString = jsonString.replace(/(\w+):/g, '"$1":');
         jsonString = jsonString.replace(
@@ -150,12 +187,14 @@ $(document).ready(function () {
         jsonString = jsonString.replace(/:"(\[[^\[\]]*\])"/g, ":$1");
         return jsonString;
     }
+
     function wrapKeysInQuotes(jsonString) {
         jsonString = jsonString.replace(/(\w+):/g, '"$1":');
         jsonString = jsonString.replace(/(\{[^{}]*\}):/g, "$1:");
         jsonString = jsonString.replace(/(\[[^\[\]]*\]):/g, "$1:");
         return jsonString;
     }
+
     function lister(queryString) {
         if (queryString.includes("List{")) {
             var count = 1;
@@ -183,6 +222,7 @@ $(document).ready(function () {
         }
         return queryString;
     }
+
     function removeExtraColons(queryString) {
         for (var i = 0; i < queryString.length; i++) {
             if (queryString[i] == ":") {
@@ -204,6 +244,7 @@ $(document).ready(function () {
         }
         return queryString;
     }
+
     $(".connections").on("change", function (e) {
         campaign_details["connections"] = $(this).val();
         sessionStorage.setItem(
@@ -211,6 +252,7 @@ $(document).ready(function () {
             JSON.stringify(campaign_details)
         );
     });
+
     $(".campaign_tab").on("click", function (e) {
         e.preventDefault();
         $(".campaign_tab").parent(".border_box").css({
@@ -245,6 +287,7 @@ $(document).ready(function () {
             new_form.find("#connections").val(campaign_details["connections"]);
         }
     });
+
     $(".nxt_btn").on("click", function (e) {
         e.preventDefault();
         var form = $(".campaign_pane.active").find("form");
@@ -329,6 +372,7 @@ $(document).ready(function () {
             form.submit();
         }
     });
+
     $(".import_btn").on("click", function (e) {
         e.preventDefault();
         var form = $(".campaign_pane.active").find("form");
