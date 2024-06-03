@@ -94,9 +94,9 @@ $(document).ready(function () {
             var query = queryParams.query;
             query = query.replaceAll("(", "{").replaceAll(")", "}");
             query = lister(query);
+            query = removeExtraColons(query);
             query = wrapKeysInQuotes(query);
             query = wrapValuesInQuotes(query);
-            query = removeExtraColons(query);
             try {
                 queryJson = JSON.parse(query);
                 queryParams.query = queryJson;
@@ -186,7 +186,7 @@ $(document).ready(function () {
     function removeExtraColons(queryString) {
         for (var i = 0; i < queryString.length; i++) {
             if (queryString[i] == ":") {
-                for (var j = i+1; j < queryString.length; j++) {
+                for (var j = i + 1; j < queryString.length; j++) {
                     if (queryString[j] == "," || queryString[j] == "{") {
                         break;
                     } else if (queryString[j] == ":") {
@@ -194,8 +194,11 @@ $(document).ready(function () {
                     }
                 }
                 if (queryString[j] == ":") {
-                    queryString = queryString.slice(0, i-1) + '_' + queryString.slice(i+2);
-                    console.log(queryString.slice(i, j));
+                    queryString =
+                        queryString.slice(0, j) +
+                        " " +
+                        queryString.slice(j + 1);
+                    i--;
                 }
             }
         }
