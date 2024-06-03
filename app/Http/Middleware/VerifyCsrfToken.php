@@ -12,7 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        'unipile-callback',
-        'create-linkedin-account',      
+         'unipile-callback',
     ];
 }

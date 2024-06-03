@@ -2,7 +2,6 @@ $(document).ready(function () {
     sessionStorage.removeItem("settings");
     sessionStorage.removeItem("elements_array");
     sessionStorage.removeItem("elements_data_array");
-
     $(document).on("change", "#campaign_url", function (e) {
         var active_form = $(".campaign_pane.active").find("form");
         if (active_form.attr("id") == "campaign_form_4") {
@@ -90,15 +89,22 @@ $(document).ready(function () {
             var queryString = $(".campaign_pane.active")
                 .find("#campaign_url")
                 .val();
-            var decodedUrl = decodeURIComponent(
-                decodeURIComponent(queryString)
-            );
+            var decodedUrl = decodeURI(decodeURI(queryString));
             var queryParams = getQueryParams(decodedUrl);
             var query = queryParams.query;
-            query = query.replaceAll('(', '{').replaceAll(')', '}').replaceAll('List{', '[0]:{');
-            console.log(query);
-            // query = JSON.parse(query);
-            parseQueryParams(query);
+            query = query.replaceAll("(", "{").replaceAll(")", "}");
+            query = lister(query);
+            query = removeExtraColons(query);
+            query = wrapKeysInQuotes(query);
+            query = wrapValuesInQuotes(query);
+            try {
+                queryJson = JSON.parse(query);
+                queryParams.query = queryJson;
+                console.log(queryParams);
+            } catch (e) {
+                console.log(query);
+                console.log(e);
+            }
         } else {
             campaign_details["campaign_url"] = $(this).val();
             sessionStorage.setItem(
@@ -107,7 +113,6 @@ $(document).ready(function () {
             );
         }
     });
-
     function getQueryParams(url) {
         var params = {};
         var parser = document.createElement("a");
@@ -118,25 +123,87 @@ $(document).ready(function () {
             var pair = vars[i].split("=");
             var key = decodeURIComponent(pair[0]);
             var value = decodeURIComponent(pair[1]);
+            if (key != "query") {
+                if (value.includes("true")) {
+                    value = true;
+                } else if (value.includes("false")) {
+                    value = false;
+                }
+            }
             params[key] = value;
         }
         return params;
     }
-
-    function parseQueryParams(queryString) {
-        for (var i = 0; i<queryString.length; i++) {
-            if (queryString[i] == ':') {
-                let regex = /^[a-zA-Z]+$/;
-                for (var j = i-1; j > 0; j--) {
-                    if (!regex.test(queryString[j])) {
-                        console.log(j);
+    function wrapValuesInQuotes(jsonString) {
+        jsonString = jsonString.replace(/(\w+):/g, '"$1":');
+        jsonString = jsonString.replace(
+            /:\s*([^"\[{].*?)([,}\]])/g,
+            function (match, p1, p2) {
+                if (/^(true|false|\d+)$/.test(p1.trim())) {
+                    return ": " + p1 + p2;
+                } else {
+                    return ': "' + p1 + '"' + p2;
+                }
+            }
+        );
+        jsonString = jsonString.replace(/:"(\{[^{}]*\})"/g, ":$1");
+        jsonString = jsonString.replace(/:"(\[[^\[\]]*\])"/g, ":$1");
+        return jsonString;
+    }
+    function wrapKeysInQuotes(jsonString) {
+        jsonString = jsonString.replace(/(\w+):/g, '"$1":');
+        jsonString = jsonString.replace(/(\{[^{}]*\}):/g, "$1:");
+        jsonString = jsonString.replace(/(\[[^\[\]]*\]):/g, "$1:");
+        return jsonString;
+    }
+    function lister(queryString) {
+        if (queryString.includes("List{")) {
+            var count = 1;
+            var newQueryString = "";
+            for (
+                var i = queryString.indexOf("List{") + 5;
+                i < queryString.length;
+                i++
+            ) {
+                if (queryString[i] == "{") {
+                    count++;
+                } else if (queryString[i] == "}") {
+                    count--;
+                }
+                if (count == 0) {
+                    newQueryString =
+                        queryString.substring(0, i) +
+                        "]" +
+                        queryString.substring(i + 1);
+                    break;
+                }
+            }
+            newQueryString = newQueryString.replace("List{", "[");
+            queryString = lister(newQueryString);
+        }
+        return queryString;
+    }
+    function removeExtraColons(queryString) {
+        for (var i = 0; i < queryString.length; i++) {
+            if (queryString[i] == ":") {
+                for (var j = i + 1; j < queryString.length; j++) {
+                    if (queryString[j] == "," || queryString[j] == "{") {
+                        break;
+                    } else if (queryString[j] == ":") {
                         break;
                     }
                 }
+                if (queryString[j] == ":") {
+                    queryString =
+                        queryString.slice(0, j) +
+                        " " +
+                        queryString.slice(j + 1);
+                    i--;
+                }
             }
         }
+        return queryString;
     }
-
     $(".connections").on("change", function (e) {
         campaign_details["connections"] = $(this).val();
         sessionStorage.setItem(

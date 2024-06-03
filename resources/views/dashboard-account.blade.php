@@ -33,7 +33,7 @@
                                     <a href="javascript:;" type="button" data-bs-toggle="modal"
                                         data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>Add account
                                 </div>
-
+                                
                             </div>
                         </div>
                         <hr>
@@ -42,9 +42,12 @@
                                 <img src="{{ asset('assets/img/empty.png') }}" alt="">
                                 <p class="text-center">You don't hanve any account yet. Start by adding your first account.
                                 </p>
-                                @if (auth()->check() && auth()->user()->id == $user->id && $paymentStatus == 'success')
+                                @if (auth()->check() && auth()->user()->id == $user->id && $paymentStatus == 'success' && empty($user->account_id))
                                     <input type="hidden" id="user_email" value="{{ $user->email }}">
-                                    <button id="submit-btn" type="button" class="theme_btn">Connect Linked in</button>
+                                    <button id="submit-btn" type="button" class="theme_btn mb-3">Connect Linked in</button>
+                                @elseif (!empty($user->account_id))
+                                    <input type="hidden" id="user_email" value="{{ $user->email }}">
+                                    <button style="background-color: #16adcb;" id="submit-btn" type="button" class="theme_btn mb-3">Change Linked in Account</button>
                                 @endif
                                 <div class="add_btn">
                                     <a href="javascript:;" type="button" data-bs-toggle="modal"
@@ -86,7 +89,7 @@
                 <div class="modal-body text-center">
                     <!-- Add Account Popup -->
                     <form role="form" action="{{ route('stripe.post') }}" method="post" data-cc-on-file="false"
-                        data-stripe-publishable-key="pk_test_51OCjd6BuZnZjGIGMiMdLJDTNrak3WOsSrXP1BBWJLncTx8h2VzAhFPXdF3fvvCWa4EFwLiaraA12BdGoeSOtORuU00ncl9rtwQ" method="post"
+                        data-stripe-publishable-key="pk_test_51KQb3pC6mJiJ0AUpeAjoS786h11qy1jW92S6gWsGD4NpK4JGOuKplhC2I0vHFgEWwRy7T9NwHDZPiILuzQPynCdK007sgX6ox6" method="post"
                         class="form step_form require-validation" id="payment-form">
                         @csrf
                         <!-- Progress Bar -->
@@ -233,14 +236,14 @@
                                     </div>
                                 </div>
                                 <!-- <div class='form-row'>
-                                                                <div class='col-md-12 error form-group hide'>
-                                                                    <div class='alert-danger alert'>Please correct the errors and try again.</div>
-                                                                </div>
-                                                            </div>  -->
+                                            <div class='col-md-12 error form-group hide'>
+                                                <div class='alert-danger alert'>Please correct the errors and try again.</div>
+                                            </div>
+                                        </div>  -->
                             </div>
                             <!--  <div class="add-experience">
-                                                                                                                                                                                                                                                                <a class="add-exp-btn"> + Add Experience</a>
-                                                                                                                                                                                                                                                            </div> -->
+                                                                                                                                                                                                                                            <a class="add-exp-btn"> + Add Experience</a>
+                                                                                                                                                                                                                                        </div> -->
                             <div class="btn-group">
                                 <a class="btn btn-prev">Previous</a>
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Pay Now</button>
@@ -251,9 +254,9 @@
                     </form>
                 </div>
                 <!-- <div class="modal-footer">
-                                                                                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                                                                                                                                                                                                                                </div> -->
+                                                                                                                                                                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                                                                                                                                                                                                            </div> -->
             </div>
         </div>
     </div>
@@ -330,6 +333,7 @@
             });
         });
     </script>
+<<<<<<< HEAD
     <script>
         $(document).ready(function(){
             $('#submit-btn').on('click', function() {
@@ -356,6 +360,9 @@
         });
     </script>
 
+=======
+    
+>>>>>>> 7630c63a5e528f2ed38b09b00e9edd4aebcf80d3
     <script>
         $(document).ready(function() {
             $('#submit-btn').on('click', function() {

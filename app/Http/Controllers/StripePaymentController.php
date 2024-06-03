@@ -35,23 +35,24 @@ class StripePaymentController extends Controller
 
     public function stripePost(Request $request)
     {
-        $valid_data = [
-            'name' => $request->input('username'),
-            'email' => $request->input('email'),
-        ];
+        // $valid_data = [
+        //     'name' => $request->input('username'),
+        //     'email' => $request->input('email'),
+        // ];
 
-        $validator = Validator::make($valid_data, [
-            'name' => 'required|unique:users',
-            'email' => 'required|email|unique:users',
-            // 'password' => 'required|min:6|confirmed',
-        ]);
+        // $validator = Validator::make($valid_data, [
+        //     'name' => 'required|unique:users',
+        //     'email' => 'required|email|unique:users',
+        //     // 'password' => 'required|min:6|confirmed',
+        // ]);
 
-        if ($validator->fails()) {
-            // If validation fails, return to the signup page with errors
-            return back()->withErrors($validator)->withInput();
-        }
+        // if ($validator->fails()) {
+        //     // If validation fails, return to the signup page with errors
+        //     return back()->withErrors($validator)->withInput();
+        // }
 
-        Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+     
+       Stripe\Stripe::setApiKey(config('services.stripe.secret'));
 
         try {
             $customer = Stripe\Customer::create([
