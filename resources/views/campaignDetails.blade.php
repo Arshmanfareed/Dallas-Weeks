@@ -24,7 +24,7 @@
                                     <td class="campaign_url"><a href="{{ $campaign->campaign_url }}"
                                             target="blank">{{ $campaign->campaign_url }}</a></td>
                                 </tr>
-                                @if ($campaign->campaign_connection)
+                                @if (!empty($campaign->campaign_connection))
                                     <tr>
                                         <td class="item_name">Connections:</td>
                                         @if ($campaign->campaign_connection == '1')
@@ -33,7 +33,7 @@
                                             <td class="item_value">2nd degree</td>
                                         @elseif ($campaign->campaign_connection == '3')
                                             <td class="item_value">3rd degree</td>
-                                        @else
+                                        @elseif ($campaign->campaign_connection == 'o')
                                             <td class="item_value">Others</td>
                                         @endif
                                     </tr>
@@ -75,9 +75,22 @@
                                                         for="{{ $item->setting_slug }}">Toggle</label>
                                                 </div>
                                             </div>
-                                        @else
+                                        @endif
+                                    @endforeach
+                                    @foreach ($email_settings as $item)
+                                        @if ($item->setting_slug == 'email_settings_schedule_id')
                                             <div class="schedule_div">
-                                                <table class="schedule_table">
+                                                <table class="schedule_table border_box">
+                                                    @php
+                                                        $schedule = App\Models\CampaignSchedule::where(
+                                                            'id',
+                                                            $item->value,
+                                                        )->first();
+                                                    @endphp
+                                                    <thead>
+                                                        <th class="text-center text-danger" colspan="4">Schedule: <span
+                                                                class="ml-3">{{ $schedule->schedule_name }}</span></th>
+                                                    </thead>
                                                     <thead>
                                                         <th>Day</th>
                                                         <th>Start Time</th>
@@ -92,7 +105,7 @@
                                                             ->orderBy('id')
                                                             ->get();
                                                     @endphp
-                                                    @if ($schedules)
+                                                    @if (!empty($schedules))
                                                         <tbody>
                                                             @foreach ($schedules as $day)
                                                                 <tr>
@@ -103,6 +116,17 @@
                                                                     <td>{{ $day->is_active == 1 ? 'Open' : 'Closed' }}</td>
                                                                 </tr>
                                                             @endforeach
+                                                        </tbody>
+                                                    @else
+                                                        <tbody>
+                                                            <tr>
+                                                                <td colspan="4">
+                                                                    <div class="text-center text-danger"
+                                                                        style="font-size: 20px; font-weight: bold; font-style: italic; background-color: #1c1e22; border-radius: 25px;">
+                                                                        No Scedule Found
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
                                                         </tbody>
                                                     @endif
                                                 </table>
@@ -149,9 +173,22 @@
                                                         for="{{ $item->setting_slug }}">Toggle</label>
                                                 </div>
                                             </div>
-                                        @else
+                                        @endif
+                                    @endforeach
+                                    @foreach ($global_settings as $item)
+                                        @if ($item->setting_slug == 'global_settings_schedule_id')
                                             <div class="schedule_div">
-                                                <table class="schedule_table">
+                                                <table class="schedule_table border_box">
+                                                    @php
+                                                        $schedule = App\Models\CampaignSchedule::where(
+                                                            'id',
+                                                            $item->value,
+                                                        )->first();
+                                                    @endphp
+                                                    <thead>
+                                                        <th class="text-center text-danger" colspan="4">Schedule: <span
+                                                                class="ml-3">{{ $schedule->schedule_name }}</span></th>
+                                                    </thead>
                                                     <thead>
                                                         <th>Day</th>
                                                         <th>Start Time</th>
@@ -166,7 +203,7 @@
                                                             ->orderBy('id')
                                                             ->get();
                                                     @endphp
-                                                    @if ($schedules)
+                                                    @if (!empty($schedules))
                                                         <tbody>
                                                             @foreach ($schedules as $day)
                                                                 <tr>
@@ -177,6 +214,17 @@
                                                                     <td>{{ $day->is_active == 1 ? 'Open' : 'Closed' }}</td>
                                                                 </tr>
                                                             @endforeach
+                                                        </tbody>
+                                                    @else
+                                                        <tbody>
+                                                            <tr>
+                                                                <td colspan="4">
+                                                                    <div class="text-center text-danger"
+                                                                        style="font-size: 20px; font-weight: bold; font-style: italic; background-color: #1c1e22; border-radius: 25px;">
+                                                                        No Scedule Found
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
                                                         </tbody>
                                                     @endif
                                                 </table>

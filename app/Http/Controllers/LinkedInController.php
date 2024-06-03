@@ -51,32 +51,24 @@ class LinkedInController extends Controller
 
         return redirect()->route('home')->with('success', 'LinkedIn login successful');
     }
-
-    public function createLinkedinAccount(Request $request)
+    public function createLinkAccount(Request $request)
     {
-        // echo $request->email;
-        // echo $request->password;
+        $all = $request->all();
+        $email = $all['email'];
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
-
-        $username = $request->input('email');
-        $password = $request->input('password');
-
-        // Validate input
-        if (empty($username) || empty($password)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Email and Password are required.'
-            ], 400);
-        }
-
         try {
-            $response = $client->request('POST', 'https://api3.unipile.com:13333/api/v1/accounts?limit=100', [
+            $response = $client->request('POST', 'https://api3.unipile.com:13333/api/v1/hosted/accounts/link', [
                 'json' => [
-                    'provider' => 'LINKEDIN',
-                    'username' => $username,
-                    'password' => $password,
+                    'type' => 'create',
+                    'providers' => '*',
+                    'api_url' => 'https://api3.unipile.com:13333',
+                    'expiresOn' => '2024-12-22T12:00:00.701Z',
+                    'success_redirect_url' => 'https://networked.staging.designinternal.com/dashboard',
+                    'failure_redirect_url' => 'https://networked.staging.designinternal.com/dashboard',
+                    'notify_url' => 'https://networked.staging.designinternal.com/unipile-callback',
+                    'name' => $email,
                 ],
                 'headers' => [
                     'X-API-KEY' => 'nIPVh9fD.gf1u544lGI2nzyGx8K+nkdaIEnbv+8MkLnm3cSKpmVg=',

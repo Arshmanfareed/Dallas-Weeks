@@ -628,7 +628,8 @@ $(document).ready(function () {
                         if (response.success) {
                             window.location = campaignsPath;
                         } else {
-                            toastr.error(response.properties);
+                            toastr.error(response.message);
+                            console.log(response);
                         }
                     },
                     error: function (xhr, status, error) {
