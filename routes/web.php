@@ -126,4 +126,3 @@ Route::get('/leads/getLeadsCountByCampaign/{id}', [LeadsController::class, 'getL
 Route::get('/get_relations', [UnipileController::class, 'get_relations'])->name('getAllRelations');
 
 Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
-

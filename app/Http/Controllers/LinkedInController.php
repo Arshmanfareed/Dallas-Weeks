@@ -49,6 +49,7 @@ class LinkedInController extends Controller
 
         return redirect()->route('home')->with('success', 'LinkedIn login successful');
     }
+    
     public function createLinkAccount(Request $request)
     {
         $all = $request->all();
