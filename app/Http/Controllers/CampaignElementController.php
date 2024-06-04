@@ -54,7 +54,7 @@ class CampaignElementController extends Controller
             $campaign->campaign_url = $settings['campaign_url'];
             unset($settings['campaign_url']);
             $lead_details = array();
-            if ($campaign->campaign_type == 'import' && $campaign->campaign_type == 'recruiter') {
+            if ($campaign->campaign_type == 'import' || $campaign->campaign_type == 'recruiter') {
                 $campaign->campaign_connection = '0';
             } elseif ($campaign->campaign_type == 'sales_navigator') {
                 $lead_details = $settings['lead_details'];
@@ -90,6 +90,7 @@ class CampaignElementController extends Controller
             $campaign->end_date = date('Y-m-d');
             $campaign->img_path = $img_path;
             $campaign->save();
+            $account_id = auth()->user()->account_id;
             if ($campaign->id) {
                 foreach ($settings as $key => $value) {
                     if (str_contains($key, 'email_settings_')) {
@@ -166,25 +167,24 @@ class CampaignElementController extends Controller
                         $path->save();
                     }
                 }
-                if ($campaign->campaign_type == 'import') {
-                    $imported_leads = ImportedLeads::where('user_id', $user_id)->first();
-                    $fileHandle = fopen(storage_path('app/uploads/' . $imported_leads->file_path), 'r');
-                    if ($fileHandle !== false) {
-                        $csvData = [];
-                        $delimiter = ',';
-                        $enclosure = '"';
-                        $escape = '\\';
-                        $columnNames = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape);
-                        foreach ($columnNames as $colName) {
-                            $csvData[$colName] = [];
-                        }
-                        while (($rowData = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape)) !== false) {
-                            foreach ($columnNames as $index => $colName) {
-                                $csvData[$colName][] = $rowData[$index] ?? null;
+                if ($account_id != NULL) {
+                    if ($campaign->campaign_type == 'import') {
+                        $imported_leads = ImportedLeads::where('user_id', $user_id)->first();
+                        $fileHandle = fopen(storage_path('app/uploads/' . $imported_leads->file_path), 'r');
+                        if ($fileHandle !== false) {
+                            $csvData = [];
+                            $delimiter = ',';
+                            $enclosure = '"';
+                            $escape = '\\';
+                            $columnNames = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape);
+                            foreach ($columnNames as $colName) {
+                                $csvData[$colName] = [];
                             }
-                        }
-                        $account_id = auth()->user()->account_id;
-                        if ($account_id != NULL) {
+                            while (($rowData = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape)) !== false) {
+                                foreach ($columnNames as $index => $colName) {
+                                    $csvData[$colName][] = $rowData[$index] ?? null;
+                                }
+                            }
                             foreach ($csvData as $key => $value) {
                                 foreach ($value as $url) {
                                     $lead = new Leads();
@@ -208,8 +208,8 @@ class CampaignElementController extends Controller
                                         $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
                                         if ($user_profile instanceof JsonResponse) {
                                             $user_profile = $user_profile->getData(true);
-                                            $user_profile = $user_profile['user_profile'];
                                             if (!isset($user_profile['error'])) {
+                                                $user_profile = $user_profile['user_profile'];
                                                 if (isset($user_profile['first_name']) && isset($user_profile['last_name'])) {
                                                     $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
                                                     $lead->title_company = $name;
@@ -288,14 +288,50 @@ class CampaignElementController extends Controller
                             $request->session()->flash('success', 'Campaign succesfully saved!');
                             return response()->json(['success' => true]);
                         } else {
-                            return response()->json(['success' => false, 'message' => 'Account Id Not Found', 'id' => $account_id]);
+                            return response()->json(['success' => false, 'message' => 'File Not Found']);
+                        }
+                    } elseif ($campaign->campaign_type == 'sales_navigator') {
+                        $uc = new UnipileController();
+                        if (strpos($campaign->campaign_url, 'sales/search/people')) {
+                            $request = [
+                                'account_id' => $account_id
+                            ];
+                            $relations = $uc->get_relations(new \Illuminate\Http\Request($request));
+                            if ($relations instanceof JsonResponse) {
+                                $relations = $relations->getData(true);
+                                if (!isset($relations['error'])) {
+                                    $relations = $relations['relations'];
+                                    $filters = $lead_details->query->filters;
+                                    foreach ($filters as $key => $filter) {
+                                        $type = $filter->type;
+                                        $values = $filter->values;
+                                        if ($type == "CURRENT_TITLE") {
+                                            // $relations = $this->check_current_title($relations, $values);
+                                            unset($filters[$key]);
+                                        }
+                                        if ($type == "PAST_TITLE") {
+                                            // $relations = $this->check_past_title($relations, $values);
+                                            unset($filters[$key]);
+                                        }
+                                        if ($type == "YEARS_AT_CURRENT_COMPANY") {
+                                            $relations = $this->check_years_at_current_company($relations, $values);
+                                            unset($filters[$key]);
+                                        }
+                                    }
+                                    return response()->json(['success' => false, 'relations' => $relations, 'filters' => $filters]);
+                                } else {
+                                    return response()->json(['success' => false, 'message' => $relations['error']]);
+                                }
+                            } else {
+                                return response()->json(['success' => false, 'message' => 'Relations not Json Response']);
+                            }
                         }
                     } else {
-                        return response()->json(['success' => false, 'message' => 'File Not Found']);
+                        $request->session()->flash('success', 'Campaign succesfully saved!');
+                        return response()->json(['success' => true]);
                     }
                 } else {
-                    $request->session()->flash('success', 'Campaign succesfully saved!');
-                    return response()->json(['success' => true]);
+                    return response()->json(['success' => false, 'message' => 'Account Id Not Found']);
                 }
             } else {
                 return response()->json(['success' => false, 'message' => 'No Campaign Inserted']);
@@ -304,6 +340,55 @@ class CampaignElementController extends Controller
             return redirect(url('/'));
         }
     }
+
+    private function check_current_title($relations, $values)
+    {
+        $final_relations = array();
+        foreach ($relations as $relation) {
+            if (!empty($relation['work_experience'])) {
+                foreach ($values as $value) {
+                    if ($relation['work_experience'][0]['position'] == $value->text) {
+                        $final_relations[] = $relation;
+                    }
+                }
+            }
+        }
+        return $final_relations;
+    }
+
+    private function check_past_title($relations, $values)
+    {
+        $final_relations = array();
+        foreach ($relations as $relation) {
+            if (!empty($relation['work_experience'])) {
+                foreach ($values as $value) {
+                    foreach ($relation['work_experience'] as $key => $experience) {
+                        if ($key == 0) {
+                            continue;
+                        } else {
+                            if ($experience['position'] == $value->text) {
+                                $final_relations[] = $relation;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $final_relations;
+    }
+
+    // private function check_years_at_current_company($relations, $values)
+    // {
+    //     $final_relations = array();
+    //     foreach ($relations as $relation) {
+    //         if (!empty($relation['work_experience'])) {
+    //             foreach ($values as $value) {
+    //                 $tenure = new Date($relation['work_experience'][0]['start']);
+    //             }
+    //         }
+    //     }
+    //     return $final_relations;
+    // }
 
     private function remove_prefix($value)
     {

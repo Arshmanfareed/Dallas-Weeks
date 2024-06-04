@@ -13,35 +13,47 @@ use Illuminate\Support\Facades\DB;
 
 class UnipileController extends Controller
 {
-    public function get_relations()
+    public function get_relations(Request $request)
     {
+        $all = $request->all();
+        $account_id = $all['account_id'];
+        $x_api_key = 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
-        $x_api_key = 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=';
-        $account_id = "-4oRQlvNQSCc9QdsAmaU0g";
-        $url = 'https://api3.unipile.com:13333/api/v1/users/relations' . '?limit=3&account_id=' . $account_id;
-        $response = $client->request('GET', $url, [
-            'headers' => [
-                'X-API-KEY' => $x_api_key,
-                'accept' => 'application/json',
-            ],
-        ]);
-        $user_relations = json_decode($response->getBody(), true);
-        echo '<pre>';
-        print_r($user_relations);
-        echo '<hr>';
-        foreach ($user_relations['items'] as $item) {
-            $url = 'https://api3.unipile.com:13333/api/v1/users/' . $item['member_id'] . '?linkedin_api=sales_navigator&linkedin_sections=%2A&account_id=' . $account_id;
+        if (!$account_id || !$x_api_key) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $url = 'https://api1.unipile.com:13141/api/v1/users/relations' . '?limit=3&account_id=' . $account_id;
+        try {
             $response = $client->request('GET', $url, [
                 'headers' => [
                     'X-API-KEY' => $x_api_key,
                     'accept' => 'application/json',
                 ],
             ]);
-            $profile = json_decode($response->getBody(), true);
-            echo '<pre>';
-            print_r($profile);
+            $responses = json_decode($response->getBody(), true);
+            $relations = array();
+            if (!empty($responses)) {
+                foreach ($responses['items'] as $response) {
+                    $url = '';
+                    if ($response['object'] == 'UserRelation') {
+                        $url = 'https://api1.unipile.com:13141/api/v1/users/' . $response['member_id'];
+                    } elseif ($response['object'] == 'CompanyProfile') {
+                        $url = '' . $response[''];
+                    }
+                    $profile = [
+                        'account_id' => $account_id,
+                        'profile_url' => $url
+                    ];
+                    $relations[] = $this->view_profile(new \Illuminate\Http\Request($profile))->getData(true)['user_profile'];
+                }
+                return response()->json(['relations' => $relations]);
+            } else {
+                return response()->json(['error' => 'No relations found'], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -104,12 +116,12 @@ class UnipileController extends Controller
         if (!$account_id || !$profile_url || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
-        if (strpos($profile_url, 'https://www.linkedin.com/company/') === false && strpos($profile_url, 'https://www.linkedin.com/in/') === false && strpos($profile_url, 'https://api3.unipile.com:13333/api/v1/linkedin/company/') === false && strpos($profile_url, 'https://api3.unipile.com:13333/api/v1/users/') === false) {
+        if (strpos($profile_url, 'https://www.linkedin.com/company/') === false && strpos($profile_url, 'https://www.linkedin.com/in/') === false && strpos($profile_url, 'https://api1.unipile.com:13141/api/v1/linkedin/company/') === false && strpos($profile_url, 'https://api1.unipile.com:13141/api/v1/users/') === false) {
             return response()->json(['error' => 'Incorrect LinkedIn URL'], 400);
         }
-        $profile_url = str_replace('https://www.linkedin.com/company/', 'https://api3.unipile.com:13333/api/v1/linkedin/company/', $profile_url);
-        $profile_url = str_replace('https://www.linkedin.com/in/', 'https://api3.unipile.com:13333/api/v1/users/', $profile_url);
-        $url = $profile_url . '?account_id=' . $account_id;
+        $profile_url = str_replace('https://www.linkedin.com/company/', 'https://api1.unipile.com:13141/api/v1/linkedin/company/', $profile_url);
+        $profile_url = str_replace('https://www.linkedin.com/in/', 'https://api1.unipile.com:13141/api/v1/users/', $profile_url);
+        $url = $profile_url . '?linkedin_sections=%2A&account_id=' . $account_id;
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
@@ -141,7 +153,7 @@ class UnipileController extends Controller
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
-        $response = $client->request('POST', 'https://api3.unipile.com:13333/api/v1/users/invite', [
+        $response = $client->request('POST', 'https://api1.unipile.com:13141/api/v1/users/invite', [
             'json' => [
                 'provider_id' => $identifier,
                 'account_id' => $account_id,
@@ -174,7 +186,7 @@ class UnipileController extends Controller
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
-        $response = $client->request('POST', 'https://api3.unipile.com:13333/api/v1/chats', [
+        $response = $client->request('POST', 'https://api1.unipile.com:13141/api/v1/chats', [
             'multipart' => [
                 [
                     'name' => 'attendees_ids',
@@ -211,7 +223,7 @@ class UnipileController extends Controller
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
-        $url = 'https://api3.unipile.com:13333/api/v1/users/me?account_id=' . $account_id;
+        $url = 'https://api1.unipile.com:13141/api/v1/users/me?account_id=' . $account_id;
         $response = $client->request('GET', $url, [
             'headers' => [
                 'X-API-KEY' => $x_api_key,
@@ -220,7 +232,7 @@ class UnipileController extends Controller
         ]);
         $profile = json_decode($response->getBody(), true);
         if ($profile['object'] == 'AccountOwnerProfile' && $profile['premium']) {
-            $response = $client->request('POST', 'https://api3.unipile.com:13333/api/v1/chats', [
+            $response = $client->request('POST', 'https://api1.unipile.com:13141/api/v1/chats', [
                 'multipart' => [
                     [
                         'name' => 'attendees_ids',
