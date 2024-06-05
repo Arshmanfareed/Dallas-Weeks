@@ -109,8 +109,6 @@ class StripePaymentController extends Controller
                 $currency = $response['currency'];
                 $date = now();
 
-
-
                 $seat_user_id = $user->id;
                 $seat_username = $request->username;
                 $city = $request->city;

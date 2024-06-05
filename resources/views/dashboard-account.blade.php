@@ -88,7 +88,6 @@
                                     <p class="text-center">You don't hanve any account yet. Start by adding your first
                                         account.
                                     </p>
-
                                     <div class="add_btn">
                                         <a href="javascript:;" type="button" data-bs-toggle="modal"
                                             data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>

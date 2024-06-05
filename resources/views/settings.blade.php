@@ -298,7 +298,10 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
     {{ session()->forget('add_account') }}
+=======
+>>>>>>> fd68d0c82c5f16f268edcabf331e6991cbcf6a63
     <script>
         $(document).ready(function() {
             $('#submit-btn').on('click', function() {
