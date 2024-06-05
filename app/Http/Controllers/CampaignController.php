@@ -20,8 +20,9 @@ class CampaignController extends Controller
     function campaign()
     {
         if (Auth::check()) {
-            $user_id = Auth::user()->id;
-            $campaigns = Campaign::where('user_id', $user_id)->where('is_active', 1)->where('is_archive', 0)->get();
+            $seat_id = session('seat_id');
+            // $user_id = Auth::user()->id;
+            $campaigns = Campaign::where('seat_id', $seat_id)->where('is_active', 1)->where('is_archive', 0)->get();
             $data = [
                 'title' => 'Campaign',
                 'campaigns' => $campaigns,
