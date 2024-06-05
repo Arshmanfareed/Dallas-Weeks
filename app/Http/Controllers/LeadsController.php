@@ -12,21 +12,39 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Models\SeatInfo;
 
 class LeadsController extends Controller
 {
     function leads()
     {
         if (Auth::check()) {
-            $user_id = Auth::user()->id;
-            $leads = Leads::where('user_id', $user_id)->get();
-            $campaigns = Campaign::where('user_id', $user_id)->get();
-            $data = [
-                'title' => 'Leads',
-                'leads' => $leads,
-                'campaigns' => $campaigns,
-            ];
-            return view('leads', $data);
+            if (session()->has('seat_id')) {
+                $seat_id = session('seat_id');
+                // $user_id = Auth::user()->id;
+                $seat = SeatInfo::where('id', $seat_id)->first();
+                if ($seat->account_id != NULL) {
+                    $campaigns = Campaign::where('seat_id', $seat_id)->get();
+                    $final_leads = [];
+                    foreach ($campaigns as $campaign) {
+                        $leads = Leads::where('campaign_id', $campaign->id)->get();
+                        foreach ($leads as $lead) {
+                            $final_leads[] = $lead;
+                        }
+                    }
+                    $data = [
+                        'title' => 'Leads',
+                        'leads' => $final_leads,
+                        'campaigns' => $campaigns,
+                    ];
+                    return view('leads', $data);
+                } else {
+                    session(['add_account' => true]);
+                    return redirect(route('dash-settings'));
+                }
+            } else {
+                return redirect(route('dashobardz'));
+            }
         } else {
             return redirect(url('/'));
         }

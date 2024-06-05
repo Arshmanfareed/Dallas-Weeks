@@ -7,7 +7,7 @@
     </style>
     <script src="{{ asset('assets/js/dashboard-account.js') }}"></script>
     @if (!empty($user->token))
-        {!! '<p>Connacted.</p>' !!}
+        {!! '<p>Connected.</p>' !!}
     @endif
     <section class="dashboard">
         <div class="container-fluid">
@@ -55,9 +55,11 @@
                                             <tbody id="campaign_table_body">
                                                 @foreach ($seats as $seat)
                                                     <tr id="{{ 'table_row_' . $seat->id }}" class="seat_table_row">
-                                                        <td class="seat_table_data"><img src="{{ asset('assets/img/acc.png') }}" alt="">
+                                                        <td class="seat_table_data"><img
+                                                                src="{{ asset('assets/img/acc.png') }}" alt="">
                                                         </td>
-                                                        <td class="text-left seat_table_data">{{ Str::ucfirst($seat->username) }}</td>
+                                                        <td class="text-left seat_table_data">
+                                                            {{ Str::ucfirst($seat->username) }}</td>
                                                         <td class="seat_table_data">
                                                             <div class="per discovered">Connected</div>
                                                         </td>
@@ -86,15 +88,7 @@
                                     <p class="text-center">You don't hanve any account yet. Start by adding your first
                                         account.
                                     </p>
-                                    {{-- @if (auth()->check() && auth()->user()->id == $user->id && $paymentStatus == 'success' && empty($user->account_id))
-                                        <input type="hidden" id="user_email" value="{{ $user->email }}">
-                                        <button id="submit-btn" type="button" class="theme_btn mb-3">Connect Linked
-                                            in</button>
-                                    @elseif (!empty($user->account_id))
-                                        <input type="hidden" id="user_email" value="{{ $user->email }}">
-                                        <button style="background-color: #16adcb;" id="submit-btn" type="button"
-                                            class="theme_btn mb-3">Change Linked in Account</button>
-                                    @endif --}}
+
                                     <div class="add_btn">
                                         <a href="javascript:;" type="button" data-bs-toggle="modal"
                                             data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>
@@ -142,31 +136,12 @@
                         <!-- Progress Bar -->
                         <div class="progress-bar">
                             <div class="progress" id="progress"></div>
-                            <div class="progress-step active" data-title="Seat"></div>
-                            <div class="progress-step" data-title="Add account"></div>
+                            <div class="progress-step active" data-title="Add account"></div>
                             <div class="progress-step" data-title="Company "></div>
-                            <div class="progress-step" data-title="Account info"></div>
                             <div class="progress-step" data-title="Payment"></div>
-                            <!-- <div class="progress-step" data-title="Integration"></div> -->
                         </div>
                         <!-- Steps -->
                         <div class="form-step active">
-                            <h3>Select Seat</h3>
-                            <div class="form_row row">
-                                <div class="input-group col-12">
-                                    <label for="address">Seat</label>
-                                    <select name="seat" id="">
-                                        <option value="seat">Seat</option>
-                                        <option value="seat">Seat</option>
-                                        <option value="seat">Seat</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="btn-group">
-                                <a class="btn btn-next">Next</a>
-                            </div>
-                        </div>
-                        <div class="form-step ">
                             <h3>Personal Informations</h3>
                             <div class="form_row row">
                                 <div class="input-group col-12">
@@ -212,44 +187,6 @@
                             </div>
                         </div>
                         <div class="form-step ">
-                            <!-- <h3>Connect Linkedin</h3> -->
-                            <!-- <div class="col-md-6">
-                                                                                            <label for="linkedin">User Email</label>
-                                                                                            <input id="linkedin" class="linkedin-email" name="email" type="email" placeholder="Enter Your Email" />
-                                                                                            <label for="Password">Password</label>
-                                                                                            <input id="password" name="password" type="password" placeholder="Enter Password" />
-                                                                                            <button id="submit-btn" type="button" class="">Submit</button>
-                                                                                        </div>   -->
-
-                            <!-- <a href="{{ URL('auth/linkedin/redirect') }}">Login Via LinkedIn</a> -->
-                            <h3>Social Links</h3>
-                            <div class="input-group">
-                                <label for="linkedin">LinkedIn</label>
-                                <div class="input-box">
-                                    <span class="prefix">linkedin.com/in/</span>
-                                    <input id="linkedin" name="linkedin" type="text" placeholder="USER123" />
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="twitter">Twitter</label>
-                                <div class="input-box">
-                                    <span class="prefix">twitter.com/</span>
-                                    <input id="twitter" name="twitter" type="text" placeholder="USER123" />
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="github">Github</label>
-                                <div class="input-box">
-                                    <span class="prefix">github.com/</span>
-                                    <input id="github" name="github" type="text" placeholder="USER123" />
-                                </div>
-                            </div>
-                            <div class="btn-group">
-                                <a class="btn btn-prev">Previous</a>
-                                <a class="btn btn-next">Next</a>
-                            </div>
-                        </div>
-                        <div class="form-step ">
                             <h3>Payment</h3>
                             <div class="experiences-group">
                                 <div class='form-row row'>
@@ -283,14 +220,14 @@
                                     </div>
                                 </div>
                                 <!-- <div class='form-row'>
-                                                                                                        <div class='col-md-12 error form-group hide'>
-                                                                                                            <div class='alert-danger alert'>Please correct the errors and try again.</div>
-                                                                                                        </div>
-                                                                                                    </div>  -->
+                                                                                                                    <div class='col-md-12 error form-group hide'>
+                                                                                                                        <div class='alert-danger alert'>Please correct the errors and try again.</div>
+                                                                                                                    </div>
+                                                                                                                </div>  -->
                             </div>
                             <!--  <div class="add-experience">
-                                                                                                                                                                                                                                                                                                        <a class="add-exp-btn"> + Add Experience</a>
-                                                                                                                                                                                                                                                                                                    </div> -->
+                                                                                                                                                                                                                                                                                                                    <a class="add-exp-btn"> + Add Experience</a>
+                                                                                                                                                                                                                                                                                                                </div> -->
                             <div class="btn-group">
                                 <a class="btn btn-prev">Previous</a>
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Pay Now</button>
@@ -443,37 +380,6 @@
                     error: function(error) {
                         console.log(error);
                     },
-                });
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            $('#submit-btn').on('click', function() {
-
-                $.ajax({
-                    url: '/api/create-link-account',
-                    type: 'POST',
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-                    },
-                    data: {
-                        'email': $('#user_email').val()
-                    },
-                    success: function(response) {
-                        console.log(response);
-
-                        if (response.status === 'success' && response.data && response.data
-                            .url) {
-                            console.log(response.data);
-                            console.log(response.data.url);
-                            window.open(response.data.url, '_blank');
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
                 });
             });
         });

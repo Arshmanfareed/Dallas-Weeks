@@ -78,10 +78,8 @@ class UnipileController extends Controller
 
     public function handleCallback(Request $request)
     {
-        // Log the entire incoming request
         Log::info('Unipile callback received', $request->all());
 
-        // Extract data from the request
         $accountId = $request->input('account_id');
         $status = $request->input('status');
         $email = $request->input('name');
@@ -90,9 +88,8 @@ class UnipileController extends Controller
         Log::info('Status:', ['status' => $status]);
         Log::info('Email:', ['email' => $email]);
 
-        // Update the user's account_id based on the email
-        $update = DB::table('users')
-            ->where('email', $email)
+        $update = DB::table('seat_info')
+            ->where('id', $email)
             ->update(['account_id' => $accountId]);
 
         if ($update) {

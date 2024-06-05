@@ -14,20 +14,31 @@ use App\Models\UpdatedCampaignProperties;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\SeatInfo;
 
 class CampaignController extends Controller
 {
     function campaign()
     {
         if (Auth::check()) {
-            $seat_id = session('seat_id');
-            // $user_id = Auth::user()->id;
-            $campaigns = Campaign::where('seat_id', $seat_id)->where('is_active', 1)->where('is_archive', 0)->get();
-            $data = [
-                'title' => 'Campaign',
-                'campaigns' => $campaigns,
-            ];
-            return view('campaign', $data);
+            if (session()->has('seat_id')) {
+                $seat_id = session('seat_id');
+                // $user_id = Auth::user()->id;
+                $seat = SeatInfo::where('id', $seat_id)->first();
+                if ($seat->account_id != NULL) {
+                    $campaigns = Campaign::where('seat_id', $seat_id)->where('is_active', 1)->where('is_archive', 0)->get();
+                    $data = [
+                        'title' => 'Campaign',
+                        'campaigns' => $campaigns,
+                    ];
+                    return view('campaign', $data);
+                } else {
+                    session(['add_account' => true]);
+                    return redirect(route('dash-settings'));
+                }
+            } else {
+                return redirect(route('dashobardz'));
+            }
         } else {
             return redirect(url('/'));
         }

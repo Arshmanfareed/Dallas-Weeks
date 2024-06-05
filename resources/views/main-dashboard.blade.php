@@ -1,6 +1,6 @@
 @extends('partials/dashboard_header')
 @section('content')
-{{session('seat_id')}}
+    <!--{{ session('seat_id') }}-->
     <section class="main_dashboard">
         <div class="container_fluid">
             <div class="row">
@@ -24,7 +24,6 @@
                                 <div class="cont">Manage Connections<i class="fa-solid fa-arrow-right"></i></div>
                             </div>
                         </div>
-
                     </div>
                     <div class="border_box">
                         <div class="chart_box">
