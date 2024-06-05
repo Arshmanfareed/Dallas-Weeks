@@ -142,24 +142,29 @@
                                                 <div class="grey_box d-flex align-items-center">
                                                     <div class="linked">
                                                         <h4>Connect your LinkedIn account</h4>
-                                                        <div class="cont">
+                                                        @php
+                                                            $user = auth()->user();
+                                                        @endphp
+                                                        <input type="hidden" id="user_email" value="{{ $user->email }}">
+                                                        <button id="submit-btn" type="button" class="theme_btn mb-3">Connect Linked in</button>
+                                                        <!-- <div class="cont">
                                                             <i class="fa-brands fa-linkedin"></i>
                                                             <div class="head_cont">
                                                                 <span class="head">LinkedIn</span>
                                                                 <span>Connected account: John doe</span>
                                                             </div>
-                                                        </div>
+                                                        </div> -->
                                                     </div>
-                                                    <div class="con">Status: Connected</div>
+                                                    <!-- <div class="con">Status: Connected</div>
                                                     <div class="add_btn">
                                                         <a href="javascript:;" class="" type="button"
                                                             data-bs-toggle="modal" data-bs-target="#"><img
                                                                 class="img-fluid"
                                                                 src="{{ asset('assets/img/disconnect.png') }}"
                                                                 alt=""></a>Disconnect
-                                                    </div>
+                                                    </div> -->
                                                 </div>
-                                                <div class="grey_box d-flex align-items-center">
+                                                <!-- <div class="grey_box d-flex align-items-center">
                                                     <h6>Change your LinkedIn subscription</h6>
                                                     <div class="radio-buttons">
                                                         <label for="premium">
@@ -181,7 +186,7 @@
                                                             <span></span>
                                                         </label>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
 
@@ -290,4 +295,34 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#submit-btn').on('click', function() {
+
+                $.ajax({
+                    url: '/api/create-link-account',
+                    type: 'POST',
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                    data: {
+                        'email': $('#user_email').val()
+                    },
+                    success: function(response) {
+                        console.log(response);
+
+                        if (response.status === 'success' && response.data && response.data
+                            .url) {
+                            console.log(response.data);
+                            console.log(response.data.url);
+                            window.open(response.data.url, '_blank');
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
