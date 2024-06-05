@@ -13,6 +13,7 @@ use App\Models\Leads;
 use App\Models\LinkedinSetting;
 use App\Models\UpdatedCampaignElements;
 use App\Models\UpdatedCampaignProperties;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use GuzzleHttp\Client;
@@ -37,6 +38,7 @@ class CampaignElementController extends Controller
             return redirect(url('/'));
         }
     }
+
     function createCampaign(Request $request)
     {
         if (Auth::check()) {
@@ -92,82 +94,82 @@ class CampaignElementController extends Controller
             $campaign->save();
             $account_id = auth()->user()->account_id;
             if ($campaign->id) {
-                foreach ($settings as $key => $value) {
-                    if (str_contains($key, 'email_settings_')) {
-                        $setting = new EmailSetting();
+                if ($account_id != NULL) {
+                    foreach ($settings as $key => $value) {
+                        if (str_contains($key, 'email_settings_')) {
+                            $setting = new EmailSetting();
+                        }
+                        if (str_contains($key, 'linkedin_settings_')) {
+                            $setting = new LinkedinSetting();
+                        }
+                        if (str_contains($key, 'global_settings_')) {
+                            $setting = new GlobalSetting();
+                        }
+                        $setting->campaign_id = $campaign->id;
+                        $setting->setting_slug = $key;
+                        $setting->user_id = $user_id;
+                        $setting->seat_id = 1;
+                        $setting->value = $value;
+                        $setting->setting_name = ucwords(str_replace('_', ' ', $key));
+                        $setting->save();
                     }
-                    if (str_contains($key, 'linkedin_settings_')) {
-                        $setting = new LinkedinSetting();
-                    }
-                    if (str_contains($key, 'global_settings_')) {
-                        $setting = new GlobalSetting();
-                    }
-                    $setting->campaign_id = $campaign->id;
-                    $setting->setting_slug = $key;
-                    $setting->user_id = $user_id;
-                    $setting->seat_id = 1;
-                    $setting->value = $value;
-                    $setting->setting_name = ucwords(str_replace('_', ' ', $key));
-                    $setting->save();
-                }
-                $path_array = [];
-                foreach ($final_array as $key => $value) {
-                    if ($key != 'step' || $key != 'step-1') {
-                        $element = CampaignElement::where('element_slug', $this->remove_prefix($key))->first();
-                        if ($element) {
-                            $element_item = new UpdatedCampaignElements();
-                            $element_item->element_id = $element->id;
-                            $element_item->campaign_id = $campaign->id;
-                            $element_item->user_id = $user_id;
-                            $element_item->seat_id = 1;
-                            $element_item->position_x = $value['position_x'];
-                            $element_item->position_y = $value['position_y'];
-                            $element_item->element_slug = $key;
-                            $element_item->save();
-                            $path_array[$key] = $element_item->id;
-                            if (isset($final_data[$key])) {
-                                $property_item = $final_data[$key];
-                                foreach ($property_item as $key => $value) {
-                                    $element_property = new UpdatedCampaignProperties();
-                                    $property = ElementProperties::where('id', $key)->first();
-                                    if ($property) {
-                                        $element_property->element_id = $element_item->id;
-                                        $element_property->property_id = $property->id;
-                                        if ($value != null) {
-                                            $element_property->value = $value;
+                    $path_array = [];
+                    foreach ($final_array as $key => $value) {
+                        if (strpos($key, 'step') === false) {
+                            $element = CampaignElement::where('element_slug', $this->remove_prefix($key))->first();
+                            if ($element) {
+                                $element_item = new UpdatedCampaignElements();
+                                $element_item->element_id = $element->id;
+                                $element_item->campaign_id = $campaign->id;
+                                $element_item->user_id = $user_id;
+                                $element_item->seat_id = 1;
+                                $element_item->position_x = $value['position_x'];
+                                $element_item->position_y = $value['position_y'];
+                                $element_item->element_slug = $key;
+                                $element_item->save();
+                                $path_array[$key] = $element_item->id;
+                                if (isset($final_data[$key])) {
+                                    $property_item = $final_data[$key];
+                                    foreach ($property_item as $key => $value) {
+                                        $element_property = new UpdatedCampaignProperties();
+                                        $property = ElementProperties::where('id', $key)->first();
+                                        if ($property) {
+                                            $element_property->element_id = $element_item->id;
+                                            $element_property->property_id = $property->id;
+                                            if ($value != null) {
+                                                $element_property->value = $value;
+                                            } else {
+                                                $element_property->value = '';
+                                            }
+                                            $element_property->save();
                                         } else {
-                                            $element_property->value = '';
+                                            return response()->json(['success' => false, 'properties' => 'Properties not found!']);
                                         }
-                                        $element_property->save();
-                                    } else {
-                                        return response()->json(['success' => false, 'properties' => 'Properties not found!']);
                                     }
                                 }
                             }
                         }
                     }
-                }
-                foreach ($final_array as $key => $value) {
-                    if (isset($path_array[$key])) {
-                        $path = new CampaignPath();
-                        $path->campaign_id = $campaign->id;
-                        $path->current_element_id = $path_array[$key];
-                        if ($final_array[$key]['0'] == '' && $final_array[$key]['1'] == '') {
-                            continue;
-                        } else if ($final_array[$key]['0'] == '') {
-                            $path->next_true_element_id = $path_array[$value['1']];
-                            $path->next_false_element_id = '';
-                        } else if ($final_array[$key]['1'] == '') {
-                            $path->next_true_element_id = '';
-                            $path->next_false_element_id = $path_array[$value['0']];
-                        } else {
-                            $path->next_true_element_id = $path_array[$value['1']];
-                            $path->next_false_element_id = $path_array[$value['0']];
+                    foreach ($final_array as $key => $value) {
+                        if (isset($path_array[$key])) {
+                            $path = new CampaignPath();
+                            $path->campaign_id = $campaign->id;
+                            $path->current_element_id = $path_array[$key];
+                            if ($final_array[$key]['0'] == '' && $final_array[$key]['1'] == '') {
+                                continue;
+                            } else if ($final_array[$key]['0'] == '') {
+                                $path->next_true_element_id = $path_array[$value['1']];
+                                $path->next_false_element_id = '';
+                            } else if ($final_array[$key]['1'] == '') {
+                                $path->next_true_element_id = '';
+                                $path->next_false_element_id = $path_array[$value['0']];
+                            } else {
+                                $path->next_true_element_id = $path_array[$value['1']];
+                                $path->next_false_element_id = $path_array[$value['0']];
+                            }
+                            $path->save();
                         }
-                        $path->save();
                     }
-                }
-                if ($account_id != NULL) {
                     if ($campaign->campaign_type == 'import') {
                         $imported_leads = ImportedLeads::where('user_id', $user_id)->first();
                         $fileHandle = fopen(storage_path('app/uploads/' . $imported_leads->file_path), 'r');
@@ -317,6 +319,10 @@ class CampaignElementController extends Controller
                                             $relations = $this->check_years_at_current_company($relations, $values);
                                             unset($filters[$key]);
                                         }
+                                        if ($type == "YEARS_IN_CURRENT_POSITION") {
+                                            // $relations = $this->check_years_in_current_position($relations, $values);
+                                            unset($filters[$key]);
+                                        }
                                     }
                                     return response()->json(['success' => false, 'relations' => $relations, 'filters' => $filters]);
                                 } else {
@@ -331,6 +337,7 @@ class CampaignElementController extends Controller
                         return response()->json(['success' => true]);
                     }
                 } else {
+                    Campaign::where('id', $campaign->id)->delete();
                     return response()->json(['success' => false, 'message' => 'Account Id Not Found']);
                 }
             } else {
@@ -377,18 +384,43 @@ class CampaignElementController extends Controller
         return $final_relations;
     }
 
-    // private function check_years_at_current_company($relations, $values)
-    // {
-    //     $final_relations = array();
-    //     foreach ($relations as $relation) {
-    //         if (!empty($relation['work_experience'])) {
-    //             foreach ($values as $value) {
-    //                 $tenure = new Date($relation['work_experience'][0]['start']);
-    //             }
-    //         }
-    //     }
-    //     return $final_relations;
-    // }
+    private function check_years_at_current_company($relations, $values)
+    {
+        $final_relations = array();
+        foreach ($relations as $relation) {
+            if (!empty($relation['work_experience'])) {
+                foreach ($values as $value) {
+                    $current_company = $relation['work_experience'][0]['company'];
+                    $current_time = new DateTime();
+                    $start_time = new DateTime($relation['work_experience'][0]['start']);
+                    foreach ($relation['work_experience'] as $experience) {
+                        if ($experience['company'] == $current_company) {
+                            $start_time = new DateTime($experience['start']);
+                        }
+                    }
+                    $tenure = date_diff($current_time, $start_time);
+                    $final_relations[] = $tenure;
+                }
+            }
+        }
+        return $final_relations;
+    }
+
+    private function check_years_in_current_position($relations, $values)
+    {
+        $final_relations = array();
+        foreach ($relations as $relation) {
+            if (!empty($relation['work_experience'])) {
+                foreach ($values as $value) {
+                    $current = new DateTime();
+                    $start = new DateTime($relation['work_experience'][0]['start']);
+                    $tenure = date_diff($current, $start);
+                    $final_relations[] = $tenure;
+                }
+            }
+        }
+        return $final_relations;
+    }
 
     private function remove_prefix($value)
     {

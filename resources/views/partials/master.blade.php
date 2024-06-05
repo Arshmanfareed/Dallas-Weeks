@@ -34,6 +34,9 @@
     @if (request()->is('accdashboard', 'report', 'leads'))
         <script src="{{ asset('assets/js/chart_query.js') }}"></script>
     @endif
+    @if (request()->is('dashboard'))
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    @endif
 </head>
 
 <body>

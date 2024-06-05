@@ -86,9 +86,8 @@ Route::get('/team', [TeamController::class, 'team']);
 Route::get('/invoice', [InvoiceController::class, 'invoice']);
 // Route::get('/rolesandpermission',[RolespermissionController::class,'rolespermission']);
 Route::get('/setting', [SettingController::class, 'setting'])->name('dash-settings');
-Route::get('/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash');
+Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash');
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
-
 Route::controller(StripePaymentController::class)->group(function () {
     Route::get('stripe', 'stripe');
     Route::post('stripe', 'stripePost')->name('stripe.post');
@@ -126,4 +125,3 @@ Route::get('/leads/getLeadsCountByCampaign/{id}', [LeadsController::class, 'getL
 Route::get('/get_relations', [UnipileController::class, 'get_relations'])->name('getAllRelations');
 
 Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
-
