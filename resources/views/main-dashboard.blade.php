@@ -1,5 +1,6 @@
 @extends('partials/dashboard_header')
 @section('content')
+{{session('seat_id')}}
     <section class="main_dashboard">
         <div class="container_fluid">
             <div class="row">
