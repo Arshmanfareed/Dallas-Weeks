@@ -86,15 +86,7 @@
                                     <p class="text-center">You don't hanve any account yet. Start by adding your first
                                         account.
                                     </p>
-                                    {{-- @if (auth()->check() && auth()->user()->id == $user->id && $paymentStatus == 'success' && empty($user->account_id))
-                                        <input type="hidden" id="user_email" value="{{ $user->email }}">
-                                        <button id="submit-btn" type="button" class="theme_btn mb-3">Connect Linked
-                                            in</button>
-                                    @elseif (!empty($user->account_id))
-                                        <input type="hidden" id="user_email" value="{{ $user->email }}">
-                                        <button style="background-color: #16adcb;" id="submit-btn" type="button"
-                                            class="theme_btn mb-3">Change Linked in Account</button>
-                                    @endif --}}
+                                    
                                     <div class="add_btn">
                                         <a href="javascript:;" type="button" data-bs-toggle="modal"
                                             data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>
@@ -211,17 +203,7 @@
                                 <a class="btn btn-next">Next</a>
                             </div>
                         </div>
-                        <div class="form-step ">
-                            <!-- <h3>Connect Linkedin</h3> -->
-                            <!-- <div class="col-md-6">
-                                                                                            <label for="linkedin">User Email</label>
-                                                                                            <input id="linkedin" class="linkedin-email" name="email" type="email" placeholder="Enter Your Email" />
-                                                                                            <label for="Password">Password</label>
-                                                                                            <input id="password" name="password" type="password" placeholder="Enter Password" />
-                                                                                            <button id="submit-btn" type="button" class="">Submit</button>
-                                                                                        </div>   -->
-
-                            <!-- <a href="{{ URL('auth/linkedin/redirect') }}">Login Via LinkedIn</a> -->
+                        <div class="form-step ">                           
                             <h3>Social Links</h3>
                             <div class="input-group">
                                 <label for="linkedin">LinkedIn</label>
@@ -446,37 +428,6 @@
                 });
             });
         });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            $('#submit-btn').on('click', function() {
-
-                $.ajax({
-                    url: '/api/create-link-account',
-                    type: 'POST',
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-                    },
-                    data: {
-                        'email': $('#user_email').val()
-                    },
-                    success: function(response) {
-                        console.log(response);
-
-                        if (response.status === 'success' && response.data && response.data
-                            .url) {
-                            console.log(response.data);
-                            console.log(response.data.url);
-                            window.open(response.data.url, '_blank');
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
-            });
-        });
-    </script>
+    </script> 
 
 @endsection

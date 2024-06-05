@@ -143,17 +143,27 @@
                                                     <div class="linked">
                                                         <h4>Connect your LinkedIn account</h4>
                                                         @php
-                                                            $user = auth()->user();
+                                                            $user = auth()->user();                                                            
                                                         @endphp
-                                                        <input type="hidden" id="user_email" value="{{ $user->email }}">
-                                                        <button id="submit-btn" type="button" class="theme_btn mb-3">Connect Linked in</button>
-                                                        <!-- <div class="cont">
-                                                            <i class="fa-brands fa-linkedin"></i>
-                                                            <div class="head_cont">
-                                                                <span class="head">LinkedIn</span>
-                                                                <span>Connected account: John doe</span>
+
+                                                        <?php
+                                                        // echo "<pre>";
+                                                        // print_r($seatData);
+                                                        ?>
+                                                        
+                                                        @if ($data['paymentStatus'] == 'success' && empty($seatData['account_id']))
+                                                            <input type="hidden" id="user_email" value="{{ $data['seat_id'] }}">
+                                                            <button id="submit-btn" type="button" class="theme_btn mb-3">Connect Linked in</button>
+                                                        @else
+                                                            <div class="cont">
+                                                                <i class="fa-brands fa-linkedin"></i>
+                                                                <div class="head_cont">
+                                                                    <span class="head">LinkedIn</span>
+                                                                    <span>Connected account: John doe</span>
+                                                                </div>
                                                             </div>
-                                                        </div> -->
+                                                        @endif                                                       
+                                                        
                                                     </div>
                                                     <!-- <div class="con">Status: Connected</div>
                                                     <div class="add_btn">
