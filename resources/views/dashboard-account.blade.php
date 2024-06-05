@@ -165,16 +165,16 @@
                             </div>
                         </div>
                         <div class="form-step ">
-                            <h3>Connect Linkedin</h3>
-                            <div class="col-md-6">
+                            <!-- <h3>Connect Linkedin</h3> -->
+                            <!-- <div class="col-md-6">
                                 <label for="linkedin">User Email</label>
                                 <input id="linkedin" class="linkedin-email" name="email" type="email" placeholder="Enter Your Email" />
                                 <label for="Password">Password</label>
                                 <input id="password" name="password" type="password" placeholder="Enter Password" />
                                 <button id="submit-btn" type="button" class="">Submit</button>
-                            </div>  
+                            </div>   -->
 
-                            <a href="{{ URL('auth/linkedin/redirect') }}">Login Via LinkedIn</a>
+                            <!-- <a href="{{ URL('auth/linkedin/redirect') }}">Login Via LinkedIn</a> -->
                             <h3>Social Links</h3>
                             <div class="input-group">
                                 <label for="linkedin">LinkedIn</label>
@@ -333,36 +333,7 @@
             });
         });
     </script>
-<<<<<<< HEAD
-    <script>
-        $(document).ready(function(){
-            $('#submit-btn').on('click', function() {
-                var email = $('#linkedin').val();
-                var password = $('#password').val();
-
-                alert(password)
-
-                $.ajax({
-                    url: '/api/create-linkedin-account', // Laravel endpoint
-                    type: 'POST',
-                    data: {
-                        email: email,
-                        password: password
-                    },
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
-            });
-        });
-    </script>
-
-=======
     
->>>>>>> 7630c63a5e528f2ed38b09b00e9edd4aebcf80d3
     <script>
         $(document).ready(function() {
             $('#submit-btn').on('click', function() {

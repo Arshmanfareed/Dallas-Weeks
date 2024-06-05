@@ -89,14 +89,14 @@ class StripePaymentController extends Controller
             if ($response['status'] === 'succeeded') {
 
                 // Hash the password before storing it in the database
-                $data = [
-                    'name' => $request->input('username'),
-                    'email' => $request->input('email'),
-                    'password' => bcrypt('admin1234'),
-                ];
+                // $data = [
+                //     'name' => $request->input('username'),
+                //     'email' => $request->input('email'),
+                //     'password' => bcrypt('admin1234'),
+                // ];
 
-                // Create a new user record
-                $seat_user = User::create($data);
+                // // Create a new user record
+                // $seat_user = User::create($data);
 
                 // Retrieve user details
                 $user = auth()->user();
@@ -132,7 +132,7 @@ class StripePaymentController extends Controller
                     'swap_request_id' => '0'
                 ]);
 
-                $seat_user_id = $seat_user->id;
+                $seat_user_id = $user->id;
                 $seat_username = $request->username;
                 $city = $request->city;
                 $state = $request->state;
