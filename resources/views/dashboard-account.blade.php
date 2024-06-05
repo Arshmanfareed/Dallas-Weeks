@@ -165,8 +165,16 @@
                             </div>
                         </div>
                         <div class="form-step ">
-                            <h3>Connect Linkedin</h3>
-                            <a href="{{ URL('auth/linkedin/redirect') }}">Login Via LinkedIn</a>
+                            <!-- <h3>Connect Linkedin</h3> -->
+                            <!-- <div class="col-md-6">
+                                <label for="linkedin">User Email</label>
+                                <input id="linkedin" class="linkedin-email" name="email" type="email" placeholder="Enter Your Email" />
+                                <label for="Password">Password</label>
+                                <input id="password" name="password" type="password" placeholder="Enter Password" />
+                                <button id="submit-btn" type="button" class="">Submit</button>
+                            </div>   -->
+
+                            <!-- <a href="{{ URL('auth/linkedin/redirect') }}">Login Via LinkedIn</a> -->
                             <h3>Social Links</h3>
                             <div class="input-group">
                                 <label for="linkedin">LinkedIn</label>
