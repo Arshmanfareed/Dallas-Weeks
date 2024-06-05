@@ -205,7 +205,7 @@
                                                     <td colspan="8">
                                                         <div class="text-center text-danger"
                                                             style="font-size: 25px; font-weight: bold; font-style: italic;">
-                                                            Not Found!
+                                                            Campaign Not Found!
                                                         </div>
                                                     </td>
                                                 </tr>

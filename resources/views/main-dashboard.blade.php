@@ -1,5 +1,6 @@
 @extends('partials/dashboard_header')
 @section('content')
+{{session('seat_id')}}
     <section class="main_dashboard">
         <div class="container_fluid">
             <div class="row">
@@ -68,30 +69,43 @@
                                         src="{{ asset('assets/img/settings.svg') }}" alt=""></a>
                             </div>
                             <div class="campaign_data">
-                                @foreach ($campaigns as $campaign)
-                                    <ul class="campaign_list">
-                                        <li>{{ $campaign->campaign_name }}</li>
-                                        <li>
-                                            @php
-                                                $leads = App\Models\Leads::where('campaign_id', $campaign->id)->get();
-                                            @endphp
-                                            {{ count($leads) }}
-                                        </li>
-                                        <li><a href="javascript:;" class="campaign_stat">48%</a></li>
-                                        <li><a href="javascript:;" class="campaign_stat down">23%</a></li>
-                                        <li>
-                                            <div class="switch_box">
-                                                @if ($campaign->is_active == 1)
-                                                    <input type="checkbox" class="switch" id="switch{{ $campaign->id }}"
-                                                        checked />
-                                                @else
-                                                    <input type="checkbox" class="switch" id="switch{{ $campaign->id }}" />
-                                                @endif
-                                                <label for="switch{{ $campaign->id }}">Toggle</label>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                @endforeach
+                                @if (!empty($campaigns->first()))
+                                    @foreach ($campaigns as $campaign)
+                                        <ul class="campaign_list">
+                                            <li>{{ $campaign->campaign_name }}</li>
+                                            <li>
+                                                @php
+                                                    $leads = App\Models\Leads::where(
+                                                        'campaign_id',
+                                                        $campaign->id,
+                                                    )->get();
+                                                @endphp
+                                                {{ count($leads) }}
+                                            </li>
+                                            <li><a href="javascript:;" class="campaign_stat">48%</a></li>
+                                            <li><a href="javascript:;" class="campaign_stat down">23%</a></li>
+                                            <li>
+                                                <div class="switch_box">
+                                                    @if ($campaign->is_active == 1)
+                                                        <input type="checkbox" class="switch" id="switch{{ $campaign->id }}"
+                                                            checked />
+                                                    @else
+                                                        <input type="checkbox" class="switch"
+                                                            id="switch{{ $campaign->id }}" />
+                                                    @endif
+                                                    <label for="switch{{ $campaign->id }}">Toggle</label>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    @endforeach
+                                @else
+                                    <div class="campaign_list" style="display: block">
+                                        <div class="text-center text-danger"
+                                            style="font-size: 22px; font-weight: bold; font-style: italic;">
+                                            Campaign Not Found!
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

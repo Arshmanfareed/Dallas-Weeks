@@ -8,11 +8,17 @@ use App\Models\Campaign;
 
 class MaindashboardController extends Controller
 {
-    function maindasboard()
+    function maindasboard(Request $request)
     {
         if (Auth::check()) {
-            $user_id = Auth::user()->id;
-            $campaigns = Campaign::where('user_id', $user_id)->get();
+            if (isset($request->all()['seat_id'])) {
+                $seat_id = $request->all()['seat_id'];
+                session(['seat_id' => $request->all()['seat_id']]);
+            } else {
+                $seat_id = session('seat_id');
+            }
+            // $user_id = Auth::user()->id;
+            $campaigns = Campaign::where('seat_id', $seat_id)->get();
             $data = [
                 'title' => 'Account Dashboard',
                 'campaigns' => $campaigns,

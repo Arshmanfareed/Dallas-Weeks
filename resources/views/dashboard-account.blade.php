@@ -5,6 +5,7 @@
             color: white !important;
         }
     </style>
+    <script src="{{ asset('assets/js/dashboard-account.js') }}"></script>
     @if (!empty($user->token))
         {!! '<p>Connacted.</p>' !!}
     @endif
@@ -33,27 +34,73 @@
                                     <a href="javascript:;" type="button" data-bs-toggle="modal"
                                         data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>Add account
                                 </div>
-                                
+
                             </div>
                         </div>
                         <hr>
                         <div class="row_table">
-                            <div class="add_account_div">
-                                <img src="{{ asset('assets/img/empty.png') }}" alt="">
-                                <p class="text-center">You don't hanve any account yet. Start by adding your first account.
-                                </p>
-                                @if (auth()->check() && auth()->user()->id == $user->id && $paymentStatus == 'success' && empty($user->account_id))
-                                    <input type="hidden" id="user_email" value="{{ $user->email }}">
-                                    <button id="submit-btn" type="button" class="theme_btn mb-3">Connect Linked in</button>
-                                @elseif (!empty($user->account_id))
-                                    <input type="hidden" id="user_email" value="{{ $user->email }}">
-                                    <button style="background-color: #16adcb;" id="submit-btn" type="button" class="theme_btn mb-3">Change Linked in Account</button>
-                                @endif
-                                <div class="add_btn">
-                                    <a href="javascript:;" type="button" data-bs-toggle="modal"
-                                        data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>
+                            @if (!empty($seats->first()))
+                                <div class="add_account_div" style="width: 100%">
+                                    <div class="campaign_list">
+                                        <table class="data_table w-100">
+                                            <thead>
+                                                <tr>
+                                                    <th width="10%">Profile Pic</th>
+                                                    <th width="50%" class="text-left">Seat Name</th>
+                                                    <th width="20%" class="stat text-center">States</th>
+                                                    <th width="20%">Status</th>
+                                                    <th width="5%">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="campaign_table_body">
+                                                @foreach ($seats as $seat)
+                                                    <tr id="{{ 'table_row_' . $seat->id }}" class="seat_table_row">
+                                                        <td class="seat_table_data"><img src="{{ asset('assets/img/acc.png') }}" alt="">
+                                                        </td>
+                                                        <td class="text-left seat_table_data">{{ Str::ucfirst($seat->username) }}</td>
+                                                        <td class="seat_table_data">
+                                                            <div class="per discovered">Connected</div>
+                                                        </td>
+                                                        <td class="seat_table_data">Active</td>
+                                                        <td>
+                                                            <a type="button" class="setting setting_btn"><i
+                                                                    class="fa-solid fa-gear"></i></a>
+                                                            <ul class="setting_list text-left" style="display: none">
+                                                                <li><a
+                                                                        href="{{ route('campaignDetails', ['campaign_id' => $seat->id]) }}">Check
+                                                                        campaign details</a></li>
+                                                                <li><a
+                                                                        href="{{ route('editCampaign', ['campaign_id' => $seat->id]) }}">Edit
+                                                                        campaign</a></li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
+                            @else
+                                <div class="add_account_div">
+                                    <img src="{{ asset('assets/img/empty.png') }}" alt="">
+                                    <p class="text-center">You don't hanve any account yet. Start by adding your first
+                                        account.
+                                    </p>
+                                    {{-- @if (auth()->check() && auth()->user()->id == $user->id && $paymentStatus == 'success' && empty($user->account_id))
+                                        <input type="hidden" id="user_email" value="{{ $user->email }}">
+                                        <button id="submit-btn" type="button" class="theme_btn mb-3">Connect Linked
+                                            in</button>
+                                    @elseif (!empty($user->account_id))
+                                        <input type="hidden" id="user_email" value="{{ $user->email }}">
+                                        <button style="background-color: #16adcb;" id="submit-btn" type="button"
+                                            class="theme_btn mb-3">Change Linked in Account</button>
+                                    @endif --}}
+                                    <div class="add_btn">
+                                        <a href="javascript:;" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -89,8 +136,8 @@
                 <div class="modal-body text-center">
                     <!-- Add Account Popup -->
                     <form role="form" action="{{ route('stripe.post') }}" method="post" data-cc-on-file="false"
-                        data-stripe-publishable-key="pk_test_51KQb3pC6mJiJ0AUpeAjoS786h11qy1jW92S6gWsGD4NpK4JGOuKplhC2I0vHFgEWwRy7T9NwHDZPiILuzQPynCdK007sgX6ox6" method="post"
-                        class="form step_form require-validation" id="payment-form">
+                        data-stripe-publishable-key="pk_test_51KQb3pC6mJiJ0AUpeAjoS786h11qy1jW92S6gWsGD4NpK4JGOuKplhC2I0vHFgEWwRy7T9NwHDZPiILuzQPynCdK007sgX6ox6"
+                        method="post" class="form step_form require-validation" id="payment-form">
                         @csrf
                         <!-- Progress Bar -->
                         <div class="progress-bar">
@@ -167,12 +214,12 @@
                         <div class="form-step ">
                             <!-- <h3>Connect Linkedin</h3> -->
                             <!-- <div class="col-md-6">
-                                <label for="linkedin">User Email</label>
-                                <input id="linkedin" class="linkedin-email" name="email" type="email" placeholder="Enter Your Email" />
-                                <label for="Password">Password</label>
-                                <input id="password" name="password" type="password" placeholder="Enter Password" />
-                                <button id="submit-btn" type="button" class="">Submit</button>
-                            </div>   -->
+                                                                                            <label for="linkedin">User Email</label>
+                                                                                            <input id="linkedin" class="linkedin-email" name="email" type="email" placeholder="Enter Your Email" />
+                                                                                            <label for="Password">Password</label>
+                                                                                            <input id="password" name="password" type="password" placeholder="Enter Password" />
+                                                                                            <button id="submit-btn" type="button" class="">Submit</button>
+                                                                                        </div>   -->
 
                             <!-- <a href="{{ URL('auth/linkedin/redirect') }}">Login Via LinkedIn</a> -->
                             <h3>Social Links</h3>
@@ -236,14 +283,14 @@
                                     </div>
                                 </div>
                                 <!-- <div class='form-row'>
-                                            <div class='col-md-12 error form-group hide'>
-                                                <div class='alert-danger alert'>Please correct the errors and try again.</div>
-                                            </div>
-                                        </div>  -->
+                                                                                                        <div class='col-md-12 error form-group hide'>
+                                                                                                            <div class='alert-danger alert'>Please correct the errors and try again.</div>
+                                                                                                        </div>
+                                                                                                    </div>  -->
                             </div>
                             <!--  <div class="add-experience">
-                                                                                                                                                                                                                                            <a class="add-exp-btn"> + Add Experience</a>
-                                                                                                                                                                                                                                        </div> -->
+                                                                                                                                                                                                                                                                                                        <a class="add-exp-btn"> + Add Experience</a>
+                                                                                                                                                                                                                                                                                                    </div> -->
                             <div class="btn-group">
                                 <a class="btn btn-prev">Previous</a>
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Pay Now</button>
@@ -253,10 +300,76 @@
                         </div>
                     </form>
                 </div>
-                <!-- <div class="modal-footer">
-                                                                                                                                                                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                <button type="button" class="btn btn-primary">Save changes</button>
-                                                                                                                                                                                                                            </div> -->
+                <!-- <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary">Save changes</button>                                                                                                                                                                                                                                           </div> -->
+            </div>
+        </div>
+    </div>
+    <div class="modal fade step_form_popup" id="update_seat" tabindex="-1" role="dialog"
+        aria-labelledby="update_seat" aria-hidden="true">
+        <div class="modal-dialog" style="border-radius: 45px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="text-center">Your subscription is <span id="active_subs">Active</span></h4>
+                    <button type="button" class="close mt-1" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i> Change
+                                    seat name
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                                data-bs-parent="#accordionExample">
+                                <div class="form-group">
+                                    <label for="seat_name">Seat Name: </label>
+                                    <input type="text" id="seat_name" name="seat_name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i> Change
+                                    seat time zone
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                                data-bs-parent="#accordionExample">
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i> Cancel
+                                    subscription
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                                data-bs-parent="#accordionExample">
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="headingFour">
+                                    <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i> Delete
+                                    seat
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                                data-bs-parent="#accordionExample">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -264,6 +377,7 @@
     <!-- <a href="javascript:;" id="linkedin-auth-btn">Authenticate with LinkedIn</a> -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
+        var dashboardRoute = "{{ route('acc_dash') }}";
         jQuery(document).ready(function() {
             // Attach a click event to the LinkedIn authentication button
             jQuery('#linkedin-auth-btn').click(function(e) {
@@ -333,7 +447,7 @@
             });
         });
     </script>
-    
+
     <script>
         $(document).ready(function() {
             $('#submit-btn').on('click', function() {

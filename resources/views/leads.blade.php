@@ -105,7 +105,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @if (!empty($leads))
+                                                        @if (!empty($leads->first()))
                                                             @foreach ($leads as $lead)
                                                                 <tr>
                                                                     <td>
@@ -113,7 +113,8 @@
                                                                                 class="switch"
                                                                                 id="{{ 'swicth' . $lead['id'] }}"
                                                                                 {{ $lead['is_active'] == 1 ? 'checked' : '' }}><label
-                                                                                for="{{ 'swicth' . $lead['id'] }}">Toggle</label>
+                                                                                for="{{ 's
+                                                                                wicth' . $lead['id'] }}">Toggle</label>
                                                                         </div>
                                                                     </td>
                                                                     <td class="title_cont">{{ $lead['contact'] }}</td>
