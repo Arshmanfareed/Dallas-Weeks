@@ -37,8 +37,9 @@
                                     <div class="tab-pane setting_pane active" id="LinkedIn" role="tabpanel">
                                         <ul class="nav nav-tabs" role="tablist">
                                             <li class="nav-item">
-                                                <a class="nav-link linkedin_setting active" data-bs-target="Global"
-                                                    data-toggle="tab" href="javascript;" role="tab">Global limits for
+                                                <a class="nav-link linkedin_setting {{ session()->has('add_account') ? '' : 'active' }}"
+                                                    data-bs-target="Global" data-toggle="tab" href="javascript;"
+                                                    role="tab">Global limits for
                                                     campaigns</a>
                                             </li>
                                             <li class="nav-item">
@@ -46,14 +47,15 @@
                                                     data-toggle="tab" href="javascript;" role="tab">Account health</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link linkedin_setting" data-bs-target="integrations"
-                                                    data-toggle="tab" href="javascript;" role="tab">LinkedIn
+                                                <a class="nav-link linkedin_setting {{ session()->has('add_account') ? 'active' : '' }}"
+                                                    data-bs-target="integrations" data-toggle="tab" href="javascript;"
+                                                    role="tab">LinkedIn
                                                     integrations</a>
                                             </li>
                                         </ul>
                                         <div class="tab-content">
-                                            <div class="tab-pane linkedin_pane global_tab active" id="Global"
-                                                role="tabpanel">
+                                            <div class="tab-pane linkedin_pane global_tab {{ session()->has('add_account') ? '' : 'active' }}"
+                                                id="Global" role="tabpanel">
                                                 <h6>Time zone</h6>
                                                 <form action="" method="" class="time_zone_form">
                                                     <div class="input_fields">
@@ -137,54 +139,60 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="tab-pane linkedin_pane integrations_tab" id="integrations"
-                                                role="tabpanel">
-                                                <div class="grey_box d-flex align-items-center">
-                                                    <div class="linked">
-                                                        <h4>Connect your LinkedIn account</h4>
-                                                        <div class="cont">
-                                                            <i class="fa-brands fa-linkedin"></i>
-                                                            <div class="head_cont">
-                                                                <span class="head">LinkedIn</span>
-                                                                <span>Connected account: John doe</span>
+                                            <div class="tab-pane linkedin_pane integrations_tab {{ session()->has('add_account') ? 'active' : '' }}"
+                                                id="integrations" role="tabpanel">
+                                                <h4>Connect your LinkedIn account</h4>
+                                                @if ($data['paymentStatus'] == 'success' && $seatData['account_id'] == null)
+                                                    <input type="hidden" id="user_email" value="{{ $data['seat_id'] }}">
+                                                    <button id="submit-btn" type="button" class="theme_btn mb-3">Connect
+                                                        Linked in</button>
+                                                @else
+                                                    <div class="grey_box d-flex align-items-center">
+                                                        <div class="linked">
+                                                            <h4>Connect your LinkedIn account</h4>
+                                                            <div class="cont">
+                                                                <i class="fa-brands fa-linkedin"></i>
+                                                                <div class="head_cont">
+                                                                    <span class="head">LinkedIn</span>
+                                                                    <span>Connected account: John doe</span>
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                        <div class="con">Status: Connected</div>
+                                                        <div class="add_btn">
+                                                            <a href="javascript:;" class="" type="button"
+                                                                data-bs-toggle="modal" data-bs-target="#"><img
+                                                                    class="img-fluid"
+                                                                    src="{{ asset('assets/img/disconnect.png') }}"
+                                                                    alt=""></a>Disconnect
+                                                        </div>
                                                     </div>
-                                                    <div class="con">Status: Connected</div>
-                                                    <div class="add_btn">
-                                                        <a href="javascript:;" class="" type="button"
-                                                            data-bs-toggle="modal" data-bs-target="#"><img
-                                                                class="img-fluid"
-                                                                src="{{ asset('assets/img/disconnect.png') }}"
-                                                                alt=""></a>Disconnect
+                                                    <div class="grey_box d-flex align-items-center">
+                                                        <h6>Change your LinkedIn subscription</h6>
+                                                        <div class="radio-buttons">
+                                                            <label for="premium">
+                                                                <input type="radio" name="linkedinSubscription"
+                                                                    id="premium" value="premium">
+                                                                <span></span>
+                                                                LinkedIn Premium
+                                                            </label>
+                                                            <label for="salesNavigator">
+                                                                <input type="radio" name="linkedinSubscription"
+                                                                    id="salesNavigator" value="salesNavigator">
+                                                                Sales Navigator
+                                                                <span></span>
+                                                            </label>
+                                                            <label for="recruiter">
+                                                                <input type="radio" name="linkedinSubscription"
+                                                                    id="recruiter" value="recruiter">
+                                                                LinkedIn Recruiter
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="grey_box d-flex align-items-center">
-                                                    <h6>Change your LinkedIn subscription</h6>
-                                                    <div class="radio-buttons">
-                                                        <label for="premium">
-                                                            <input type="radio" name="linkedinSubscription"
-                                                                id="premium" value="premium">
-                                                            <span></span>
-                                                            LinkedIn Premium
-                                                        </label>
-                                                        <label for="salesNavigator">
-                                                            <input type="radio" name="linkedinSubscription"
-                                                                id="salesNavigator" value="salesNavigator">
-                                                            Sales Navigator
-                                                            <span></span>
-                                                        </label>
-                                                        <label for="recruiter">
-                                                            <input type="radio" name="linkedinSubscription"
-                                                                id="recruiter" value="recruiter">
-                                                            LinkedIn Recruiter
-                                                            <span></span>
-                                                        </label>
-                                                    </div>
-                                                </div>
+                                                @endif
                                             </div>
                                         </div>
-
                                     </div>
                                     <!-- Step Content -->
                                     <div class="tab-pane setting_pane email_setting" id="email_setting" role="tabpanel">
@@ -290,4 +298,35 @@
             </div>
         </div>
     </div>
+    {{ session()->forget('add_account') }}
+    <script>
+        $(document).ready(function() {
+            $('#submit-btn').on('click', function() {
+
+                $.ajax({
+                    url: '/api/create-link-account',
+                    type: 'POST',
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                    data: {
+                        'email': $('#user_email').val()
+                    },
+                    success: function(response) {
+                        console.log(response);
+
+                        if (response.status === 'success' && response.data && response.data
+                            .url) {
+                            console.log(response.data);
+                            console.log(response.data.url);
+                            window.open(response.data.url, '_blank');
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

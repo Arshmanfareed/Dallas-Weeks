@@ -12,6 +12,7 @@ class DasboardController extends Controller
     function dashboard()
     {
         if (Auth::check()) {
+            session()->forget('seat_id');
             $user = Auth::user();
             $paymentStatus = PhysicalPayment::where('user_id', $user->id)->value('physical_payment_status');
             $seats = SeatInfo::where('user_id', $user->id)->get();
