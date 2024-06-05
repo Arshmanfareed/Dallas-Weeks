@@ -109,28 +109,7 @@ class StripePaymentController extends Controller
                 $currency = $response['currency'];
                 $date = now();
 
-                // Insert transaction data into the database using Eloquent
-                $payment = PhysicalPayment::create([
-                    'physical_payment_name' => $user_name,
-                    'physical_payment_email' => $user_email,
-                    'physical_payment_num' => $contact_no,
-                    'product_id' => '0',
-                    'swap_products_id' => '0',
-                    'swap_request_user_id' => '0',
-                    'physical_payment_item_name' => 'test',
-                    'physical_payment_item_number' => '101010',
-                    'physical_payment_item_price' => '100',
-                    'physical_payment_item_price_currency' => $currency,
-                    'physical_payment_paid_amount' => $amount,
-                    'uploaded_month' => now()->format('m'),
-                    'physical_payment_paid_amount_currency' => $currency,
-                    'physical_payment_txn_id' => $balance_transaction,
-                    'physical_payment_status' => 'success', // Assuming this is the status you want for a successful payment
-                    'physical_payment_created' => $date,
-                    'physical_payment_modified' => $date,
-                    'user_id' => $user_id,
-                    'swap_request_id' => '0'
-                ]);
+                
 
                 $seat_user_id = $user->id;
                 $seat_username = $request->username;
@@ -158,6 +137,29 @@ class StripePaymentController extends Controller
                     'twitter' => $twitter,
                     'github' => $github,
                     'status' => '0',
+                ]);
+
+                // Insert transaction data into the database using Eloquent
+                $payment = PhysicalPayment::create([
+                    'physical_payment_name' => $user_name,
+                    'physical_payment_email' => $user_email,
+                    'physical_payment_num' => $contact_no,
+                    'product_id' => $seat_user_data->id,
+                    'swap_products_id' => '0',
+                    'swap_request_user_id' => '0',
+                    'physical_payment_item_name' => 'test',
+                    'physical_payment_item_number' => '101010',
+                    'physical_payment_item_price' => '100',
+                    'physical_payment_item_price_currency' => $currency,
+                    'physical_payment_paid_amount' => $amount,
+                    'uploaded_month' => now()->format('m'),
+                    'physical_payment_paid_amount_currency' => $currency,
+                    'physical_payment_txn_id' => $balance_transaction,
+                    'physical_payment_status' => 'success', // Assuming this is the status you want for a successful payment
+                    'physical_payment_created' => $date,
+                    'physical_payment_modified' => $date,
+                    'user_id' => $user_id,
+                    'swap_request_id' => '0'
                 ]);
 
                 // Flash success message
