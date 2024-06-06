@@ -60,11 +60,11 @@ class LinkedInController extends Controller
             'verify' => false,
         ]);
         try {
-            $response = $client->request('POST', 'https://api1.unipile.com:13141/api/v1/hosted/accounts/link', [
+            $response = $client->request('POST', 'https://api2.unipile.com:13214/api/v1/hosted/accounts/link', [
                 'json' => [
                     'type' => 'create',
                     'providers' => '*',
-                    'api_url' => 'https://api1.unipile.com:13141',
+                    'api_url' => 'https://api2.unipile.com:13214',
                     'expiresOn' => '2024-12-22T12:00:00.701Z',
                     'success_redirect_url' => 'https://networked.staging.designinternal.com/setting',
                     'failure_redirect_url' => 'https://networked.staging.designinternal.com/setting',

@@ -24,9 +24,12 @@ use App\Http\Controllers\UnipileController;
 Route::post('messages', [ChatController::class, 'message']);
 Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccount']);
 
+Route::get('/accounts', [UnipileController::class, 'get_accounts'])->name('get_all_accounts');
+Route::post('/retrieve_account', [UnipileController::class, 'retrieve_an_account'])->name('retrieve_an_account');
 Route::post('/relations', [UnipileController::class, 'get_relations'])->name('get_relations');
 Route::post('/view_profile', [UnipileController::class, 'view_profile'])->name('viewProfile');
 Route::post('/invite_to_connect', [UnipileController::class, 'invite_to_connect'])->name('inviteToConnect');
 Route::post('/message', [UnipileController::class, 'message'])->name('message');
 Route::post('/inmail_message', [UnipileController::class, 'inmail_message'])->name('inmailMessage');
 Route::post('/email', [UnipileController::class, 'email'])->name('email');
+Route::post('/delete_account', [UnipileController::class, 'delete_account'])->name('delete_account');
