@@ -61,7 +61,11 @@
                                                         <td class="text-left seat_table_data">
                                                             {{ Str::ucfirst($seat->username) }}</td>
                                                         <td class="seat_table_data">
-                                                            <div class="per discovered">Connected</div>
+                                                            @if ($seat->connected)
+                                                                <div class="per discovered">Connected</div>
+                                                            @else
+                                                                <div class="per connected_not_replied">Disconnected</div>
+                                                            @endif
                                                         </td>
                                                         <td class="seat_table_data">Active</td>
                                                         <td>
@@ -219,14 +223,14 @@
                                     </div>
                                 </div>
                                 <!-- <div class='form-row'>
-                                                                                                                    <div class='col-md-12 error form-group hide'>
-                                                                                                                        <div class='alert-danger alert'>Please correct the errors and try again.</div>
-                                                                                                                    </div>
-                                                                                                                </div>  -->
+                                                                                                                        <div class='col-md-12 error form-group hide'>
+                                                                                                                            <div class='alert-danger alert'>Please correct the errors and try again.</div>
+                                                                                                                        </div>
+                                                                                                                    </div>  -->
                             </div>
                             <!--  <div class="add-experience">
-                                                                                                                                                                                                                                                                                                                    <a class="add-exp-btn"> + Add Experience</a>
-                                                                                                                                                                                                                                                                                                                </div> -->
+                                                                                                                                                                                                                                                                                                                        <a class="add-exp-btn"> + Add Experience</a>
+                                                                                                                                                                                                                                                                                                                    </div> -->
                             <div class="btn-group">
                                 <a class="btn btn-prev">Previous</a>
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Pay Now</button>
