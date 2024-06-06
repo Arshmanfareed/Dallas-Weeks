@@ -142,7 +142,7 @@
                                             <div class="tab-pane linkedin_pane integrations_tab {{ session()->has('add_account') ? 'active' : '' }}"
                                                 id="integrations" role="tabpanel">
                                                 <h4>Connect your LinkedIn account</h4>
-                                                @if ($data['paymentStatus'] == 'success' && $seatData['account_id'] == null)
+                                                @if ($data['paymentStatus'] == 'success' && !$seatData['connected'])
                                                     <input type="hidden" id="user_email" value="{{ $data['seat_id'] }}">
                                                     <button id="submit-btn" type="button" class="theme_btn mb-3">Connect
                                                         Linked in</button>
@@ -298,38 +298,35 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
     {{ session()->forget('add_account') }}
-=======
->>>>>>> fd68d0c82c5f16f268edcabf331e6991cbcf6a63
-    <script>
-        $(document).ready(function() {
-            $('#submit-btn').on('click', function() {
+        <script>
+            $(document).ready(function() {
+                $('#submit-btn').on('click', function() {
 
-                $.ajax({
-                    url: '/api/create-link-account',
-                    type: 'POST',
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-                    },
-                    data: {
-                        'email': $('#user_email').val()
-                    },
-                    success: function(response) {
-                        console.log(response);
+                    $.ajax({
+                        url: '/api/create-link-account',
+                        type: 'POST',
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                        },
+                        data: {
+                            'email': $('#user_email').val()
+                        },
+                        success: function(response) {
+                            console.log(response);
 
-                        if (response.status === 'success' && response.data && response.data
-                            .url) {
-                            console.log(response.data);
-                            console.log(response.data.url);
-                            window.open(response.data.url, '_blank');
+                            if (response.status === 'success' && response.data && response.data
+                                .url) {
+                                console.log(response.data);
+                                console.log(response.data.url);
+                                window.open(response.data.url, '_blank');
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
                         }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
+                    });
                 });
             });
-        });
-    </script>
-@endsection
+        </script>
+    @endsection
