@@ -150,7 +150,15 @@
                                             <div class="tab-pane linkedin_pane integrations_tab {{ session()->has('add_account') ? 'active' : '' }}"
                                                 id="integrations" role="tabpanel">
                                                 <h4>Connect your LinkedIn account</h4>
+<<<<<<< HEAD
                                                 @if ($data['paymentStatus'] == 'success' && !empty($data['account']['account']) && $seatData['connected'])
+=======
+                                                @if ($data['paymentStatus'] == 'success' && !$seatData['connected'])
+                                                    <input type="hidden" id="user_email" value="{{ $data['seat_id'] }}">
+                                                    <button id="submit-btn" type="button" class="theme_btn mb-3">Connect
+                                                        Linked in</button>
+                                                @else
+>>>>>>> 308ccdb762c0a3c60b844c12a33fbe38b6d9eb31
                                                     <div class="grey_box d-flex align-items-center">
                                                         <div class="linked">
                                                             <h4>Connect your LinkedIn account</h4>
@@ -315,30 +323,30 @@
         $(document).ready(function() {
             $('#submit-btn').on('click', function() {
 
-                $.ajax({
-                    url: '/api/create-link-account',
-                    type: 'POST',
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-                    },
-                    data: {
-                        'email': $('#user_email').val()
-                    },
-                    success: function(response) {
-                        console.log(response);
+                    $.ajax({
+                        url: '/api/create-link-account',
+                        type: 'POST',
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                        },
+                        data: {
+                            'email': $('#user_email').val()
+                        },
+                        success: function(response) {
+                            console.log(response);
 
-                        if (response.status === 'success' && response.data && response.data
-                            .url) {
-                            console.log(response.data);
-                            console.log(response.data.url);
-                            window.open(response.data.url, '_blank');
+                            if (response.status === 'success' && response.data && response.data
+                                .url) {
+                                console.log(response.data);
+                                console.log(response.data.url);
+                                window.open(response.data.url, '_blank');
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
                         }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
+                    });
                 });
             });
-        });
-    </script>
-@endsection
+        </script>
+    @endsection

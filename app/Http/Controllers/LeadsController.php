@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\SeatInfo;
+use Illuminate\Http\JsonResponse;
 
 class LeadsController extends Controller
 {
@@ -24,20 +25,39 @@ class LeadsController extends Controller
                 // $user_id = Auth::user()->id;
                 $seat = SeatInfo::where('id', $seat_id)->first();
                 if ($seat->account_id != NULL) {
-                    $campaigns = Campaign::where('seat_id', $seat_id)->get();
-                    $final_leads = [];
-                    foreach ($campaigns as $campaign) {
-                        $leads = Leads::where('campaign_id', $campaign->id)->get();
-                        foreach ($leads as $lead) {
-                            $final_leads[] = $lead;
+                    $request = [
+                        'account_id' => $seat['account_id'],
+                    ];
+                    $uc = new UnipileController();
+                    $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
+                    if ($account instanceof JsonResponse) {
+                        $account = $account->getData(true);
+                        if (!isset($account['error'])) {
+                            $seat['connected'] = true;
+                        } else {
+                            $account = array();
+                            $seat['connected'] = false;
                         }
                     }
-                    $data = [
-                        'title' => 'Leads',
-                        'leads' => $final_leads,
-                        'campaigns' => $campaigns,
-                    ];
-                    return view('leads', $data);
+                    if ($seat['connected']) {
+                        $campaigns = Campaign::where('seat_id', $seat_id)->get();
+                        $final_leads = [];
+                        foreach ($campaigns as $campaign) {
+                            $leads = Leads::where('campaign_id', $campaign->id)->get();
+                            foreach ($leads as $lead) {
+                                $final_leads[] = $lead;
+                            }
+                        }
+                        $data = [
+                            'title' => 'Leads',
+                            'leads' => $final_leads,
+                            'campaigns' => $campaigns,
+                        ];
+                        return view('leads', $data);
+                    } else {
+                        session(['add_account' => true]);
+                        return redirect(route('dash-settings'));
+                    }
                 } else {
                     session(['add_account' => true]);
                     return redirect(route('dash-settings'));
