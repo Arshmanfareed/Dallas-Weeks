@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\SeatInfo;
+use Illuminate\Http\JsonResponse;
 
 class CampaignController extends Controller
 {
@@ -26,12 +27,31 @@ class CampaignController extends Controller
                 // $user_id = Auth::user()->id;
                 $seat = SeatInfo::where('id', $seat_id)->first();
                 if ($seat->account_id != NULL) {
-                    $campaigns = Campaign::where('seat_id', $seat_id)->where('is_active', 1)->where('is_archive', 0)->get();
-                    $data = [
-                        'title' => 'Campaign',
-                        'campaigns' => $campaigns,
+                    $request = [
+                        'account_id' => $seat['account_id'],
                     ];
-                    return view('campaign', $data);
+                    $uc = new UnipileController();
+                    $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
+                    if ($account instanceof JsonResponse) {
+                        $account = $account->getData(true);
+                        if (!isset($account['error'])) {
+                            $seat['connected'] = true;
+                        } else {
+                            $account = array();
+                            $seat['connected'] = false;
+                        }
+                    }
+                    if ($seat['connected']) {
+                        $campaigns = Campaign::where('seat_id', $seat_id)->where('is_active', 1)->where('is_archive', 0)->get();
+                        $data = [
+                            'title' => 'Campaign',
+                            'campaigns' => $campaigns,
+                        ];
+                        return view('campaign', $data);
+                    } else {
+                        session(['add_account' => true]);
+                        return redirect(route('dash-settings'));
+                    }
                 } else {
                     session(['add_account' => true]);
                     return redirect(route('dash-settings'));
