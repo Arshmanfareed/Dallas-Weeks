@@ -7,6 +7,22 @@
                     @include('partials/dashboard_sidebar_menu')
                 </div>
                 <div class="col-lg-11 col-sm-12">
+                    @if (session()->has('add_account'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Add Account! </strong> You should add linkedin account first.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+                    @if (session()->has('delete_account'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Disconnected! </strong> Linkedin disconnected successfully.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
                     <div class="row">
                         <div class="col-12">
                             <div class="d-flex align-items-center justify-content-between w-100 setting_head">
@@ -37,8 +53,8 @@
                                     <div class="tab-pane setting_pane active" id="LinkedIn" role="tabpanel">
                                         <ul class="nav nav-tabs" role="tablist">
                                             <li class="nav-item">
-                                                <a class="nav-link linkedin_setting active" data-bs-target="Global"
-                                                    data-toggle="tab" href="javascript;" role="tab">Global limits for
+                                                <a class="nav-link linkedin_setting {{ session()->has('add_account') ? '' : 'active' }}" data-bs-target="Global" data-toggle="tab" href="javascript;"
+                                                    role="tab">Global limits for
                                                     campaigns</a>
                                             </li>
                                             <li class="nav-item">
@@ -46,14 +62,14 @@
                                                     data-toggle="tab" href="javascript;" role="tab">Account health</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link linkedin_setting" data-bs-target="integrations"
-                                                    data-toggle="tab" href="javascript;" role="tab">LinkedIn
+                                                <a class="nav-link linkedin_setting {{ session()->has('add_account') ? 'active' : '' }}" data-bs-target="integrations" data-toggle="tab" href="javascript;"
+                                                    role="tab">LinkedIn
                                                     integrations</a>
                                             </li>
                                         </ul>
                                         <div class="tab-content">
-                                            <div class="tab-pane linkedin_pane global_tab active" id="Global"
-                                                role="tabpanel">
+                                            <div class="tab-pane linkedin_pane global_tab {{ session()->has('add_account') ? '' : 'active' }}"
+                                                id="Global" role="tabpanel">
                                                 <h6>Time zone</h6>
                                                 <form action="" method="" class="time_zone_form">
                                                     <div class="input_fields">
@@ -137,51 +153,58 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="tab-pane linkedin_pane integrations_tab" id="integrations"
-                                                role="tabpanel">
-                                                <div class="grey_box d-flex align-items-center">
-                                                    <div class="linked">
-                                                        <h4>Connect your LinkedIn account</h4>
-                                                        <div class="cont">
-                                                            <i class="fa-brands fa-linkedin"></i>
-                                                            <div class="head_cont">
-                                                                <span class="head">LinkedIn</span>
-                                                                <span>Connected account: John doe</span>
+                                            <div class="tab-pane linkedin_pane integrations_tab {{ session()->has('add_account') ? 'active' : '' }}" id="integrations" role="tabpanel">
+                                                <h4>Connect your LinkedIn account</h4>
+                                                @if ($data['paymentStatus'] == 'success' && !empty($data['account']) && !empty($data['account']['account']) && $seatData['connected'])
+                                                    <div class="grey_box d-flex align-items-center">
+                                                        <div class="linked">
+                                                            <div class="cont">
+                                                                <i class="fa-brands fa-linkedin"></i>
+                                                                <div class="head_cont">
+                                                                    <span class="head">LinkedIn</span>
+                                                                    <span>Connected account: {{ $data['account']['account']['name'] }}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                        @if ($seatData['connected'])
+                                                            <div class="con">Status: Connected</div>
+                                                            <div class="add_btn">
+                                                                <a href="javascript:;" class="disconnect_account" type="button"><img
+                                                                        class="img-fluid"
+                                                                        src="{{ asset('assets/img/disconnect.png') }}"
+                                                                        alt=""></a>Disconnect
+                                                            </div>
+                                                        @else
+                                                            <div class="con">Status: Not Connected</div>
+                                                        @endif
                                                     </div>
-                                                    <div class="con">Status: Connected</div>
-                                                    <div class="add_btn">
-                                                        <a href="javascript:;" class="" type="button"
-                                                            data-bs-toggle="modal" data-bs-target="#"><img
-                                                                class="img-fluid"
-                                                                src="{{ asset('assets/img/disconnect.png') }}"
-                                                                alt=""></a>Disconnect
-                                                    </div>
-                                                </div>
-                                                <div class="grey_box d-flex align-items-center">
-                                                    <h6>Change your LinkedIn subscription</h6>
-                                                    <div class="radio-buttons">
-                                                        <label for="premium">
-                                                            <input type="radio" name="linkedinSubscription"
-                                                                id="premium" value="premium">
-                                                            <span></span>
-                                                            LinkedIn Premium
-                                                        </label>
-                                                        <label for="salesNavigator">
-                                                            <input type="radio" name="linkedinSubscription"
-                                                                id="salesNavigator" value="salesNavigator">
-                                                            Sales Navigator
-                                                            <span></span>
-                                                        </label>
-                                                        <label for="recruiter">
-                                                            <input type="radio" name="linkedinSubscription"
-                                                                id="recruiter" value="recruiter">
-                                                            LinkedIn Recruiter
-                                                            <span></span>
-                                                        </label>
-                                                    </div>
-                                                </div>
+                                                    <!--<div class="grey_box d-flex align-items-center">-->
+                                                    <!--    <h6>Change your LinkedIn subscription</h6>-->
+                                                    <!--    <div class="radio-buttons">-->
+                                                    <!--        <label for="premium">-->
+                                                    <!--            <input type="radio" name="linkedinSubscription"-->
+                                                    <!--                id="premium" value="premium">-->
+                                                    <!--            <span></span>-->
+                                                    <!--            LinkedIn Premium-->
+                                                    <!--        </label>-->
+                                                    <!--        <label for="salesNavigator">-->
+                                                    <!--            <input type="radio" name="linkedinSubscription"-->
+                                                    <!--                id="salesNavigator" value="salesNavigator">-->
+                                                    <!--            Sales Navigator-->
+                                                    <!--            <span></span>-->
+                                                    <!--        </label>-->
+                                                    <!--        <label for="recruiter">-->
+                                                    <!--            <input type="radio" name="linkedinSubscription"-->
+                                                    <!--                id="recruiter" value="recruiter">-->
+                                                    <!--            LinkedIn Recruiter-->
+                                                    <!--            <span></span>-->
+                                                    <!--        </label>-->
+                                                    <!--    </div>-->
+                                                    <!--</div>-->
+                                                @else
+                                                    <input type="hidden" id="user_email" value="{{ $data['seat_id'] }}">
+                                                    <button id="submit-btn" type="button" class="theme_btn mb-3">Connect Linked in</button>
+                                                @endif
                                             </div>
                                         </div>
 
@@ -290,4 +313,51 @@
             </div>
         </div>
     </div>
+    {{ session()->forget('add_account') }}
+    {{ session()->forget('delete_account') }}
+    <script>
+        $(document).ready(function() {
+            $('#submit-btn').on('click', function() {
+                $.ajax({
+                    url: '/api/create-link-account',
+                    type: 'POST',
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                    data: {
+                        'email': $('#user_email').val()
+                    },
+                    success: function(response) {
+                        console.log(response);
+
+                        if (response.status === 'success' && response.data && response.data
+                            .url) {
+                            console.log(response.data);
+                            console.log(response.data.url);
+                            window.open(response.data.url, '_blank');
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+            $('.disconnect_account').on('click', function() {
+               $.ajax({
+                    url: '/delete_an_account',
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.reload();
+                        } else {
+                            console.log(response);
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+               });
+            });
+        });
+    </script>
 @endsection

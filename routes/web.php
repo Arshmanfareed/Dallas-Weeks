@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActionsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
@@ -17,12 +18,16 @@ use App\Http\Controllers\LeadsController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CsvController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\PropertiesController;
 use App\Http\Controllers\ScheduleCampaign;
-use App\http\Controllers\SocialController;
+use App\Http\Controllers\SocialController;
+use App\Http\Controllers\UnipileController;
+use App\Http\Controllers\LinkedInController;
+use App\Http\Controllers\SeatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,7 +69,6 @@ Route::get('/auth/linkedin/callback', function () {
 
 Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']);
 Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']);
-Route::get('/leads', [LeadsController::class, 'leads'])->name('dash-leads');
 Route::get('/report', [ReportController::class, 'report'])->name('dash-reports');
 Route::get('/message', [MessageController::class, 'message'])->name('dash-messages');
 Route::get('/contacts', [ContactController::class, 'contact']);
@@ -85,7 +89,7 @@ Route::get('/team', [TeamController::class, 'team']);
 Route::get('/invoice', [InvoiceController::class, 'invoice']);
 // Route::get('/rolesandpermission',[RolespermissionController::class,'rolespermission']);
 Route::get('/setting', [SettingController::class, 'setting'])->name('dash-settings');
-Route::get('/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash');
+Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash');
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
 
 Route::controller(StripePaymentController::class)->group(function () {
@@ -106,7 +110,7 @@ Route::get('/campaign/{campaign_id}', [CampaignController::class, 'deleteCampaig
 Route::get('/campaign/archive/{campaign_id}', [CampaignController::class, 'archiveCampaign'])->name('archiveCampaign');
 Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
 Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');
-Route::get('/campaign/scheduleDays/{schedule_id}', [ScheduleCampaign::class, 'scheduleDays'])->name('scheduleDays');
+// Route::get('/campaign/scheduleDays/{schedule_id}', [ScheduleCampaign::class, 'scheduleDays'])->name('scheduleDays');
 Route::get('/filterSchedule/{search}', [ScheduleCampaign::class, 'filterSchedule'])->name('filterSchedule');
 Route::get('/getElements/{campaign_id}', [CampaignElementController::class, 'getElements'])->name('getElements');
 Route::get('/campaign/editcampaign/{campaign_id}', [CampaignController::class, 'editCampaign'])->name('editCampaign');
@@ -114,3 +118,22 @@ Route::post('/campaign/editCampaignInfo/{campaign_id}', [CampaignController::cla
 Route::post('/campaign/editCampaignSequence/{campaign_id}', [CampaignController::class, 'editCampaignSequence'])->name('editCampaignSequence');
 Route::get('/campaign/getcampaignelementbyid/{element_id}', [CampaignElementController::class, 'getcampaignelementbyid'])->name('getcampaignelementbyid');
 Route::post('/campaign/updateCampaign/{campaign_id}', [CampaignController::class, 'updateCampaign'])->name('updateCampaign');
+Route::post('/import_csv', [CsvController::class, 'import_csv'])->name('import_csv');
+Route::get('/campaign/getPropertyRequired/{id}', [PropertiesController::class, 'getPropertyRequired'])->name('getPropertyRequired');
+
+Route::get('/leads', [LeadsController::class, 'leads'])->name('dash-leads');
+Route::get('/leads/getLeadsByCampaign/{id}/{search}', [LeadsController::class, 'getLeadsByCampaign'])->name('getLeadsByCampaign');
+Route::post('/leads/sendLeadsToEmail', [LeadsController::class, 'sendLeadsToEmail'])->name('sendLeadsToEmail');
+Route::get('/leads/getLeadsCountByCampaign/{id}', [LeadsController::class, 'getLeadsCountByCampaign'])->name('getLeadsCountByCampaign');
+
+Route::get('/seat/getSeatById/{id}', [SeatController::class, 'get_seat_by_id'])->name('getSeatById');
+Route::get('/seat/deleteSeat/{id}', [SeatController::class, 'delete_seat'])->name('deleteSeat');
+Route::get('/seat/updateName/{id}/{seat_name}', [SeatController::class, 'update_name'])->name('updateName');
+
+Route::get('/get_relations', [UnipileController::class, 'get_relations'])->name('getAllRelations');
+
+Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
+Route::get('/delete_an_account', [LinkedInController::class, 'delete_an_account'])->name('delete_an_account');
+
+Route::get('/update_action', [ActionsController::class, 'update_action'])->name('update_action');
+Route::get('/update_leads_action', [ActionsController::class, 'update_leads_action'])->name('update_leads_action');

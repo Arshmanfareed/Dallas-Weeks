@@ -107,7 +107,7 @@
                                                                         class="search_schedule">
                                                                     <i class="fa-solid fa-magnifying-glass"></i>
                                                                 </div>
-                                                                @if (!empty($campaign_schedule))
+                                                                @if (!empty($campaign_schedule->first()))
                                                                     <ul class="schedule_list" id="schedule_list_1">
                                                                         @foreach ($campaign_schedule as $schedule)
                                                                             <li>
@@ -349,7 +349,7 @@
                                                                         class="search_schedule">
                                                                     <i class="fa-solid fa-magnifying-glass"></i>
                                                                 </div>
-                                                                @if (!empty($campaign_schedule))
+                                                                @if (!empty($campaign_schedule->first()))
                                                                     <ul class="schedule_list" id="schedule_list_2">
                                                                         @foreach ($campaign_schedule as $schedule)
                                                                             <li>
@@ -601,4 +601,10 @@
             </div>
         </div>
     </div> --}}
+    <script>
+        var campaign_details = {!! $campaign_details_json !!};
+        var csrfToken = "{{ csrf_token() }}";
+        var createSchedulePath = "{{ route('createSchedule') }}";
+        var filterSchedulePath = "{{ route('filterSchedule', ':search') }}";
+    </script>
 @endsection

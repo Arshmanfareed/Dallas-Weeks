@@ -16,7 +16,7 @@
             }
         </style>
     @enderror
-    <section class="main_dashboard blacklist  campaign_sec">
+    <section class="main_dashboard blacklist campaign_sec">
         <div class="container_fluid">
             <div class="row">
                 <div class="col-lg-1">
@@ -243,7 +243,7 @@
                                                             <input type="file" id="campaign_url"
                                                                 class="file-input__input" class="campaign_url"
                                                                 name="campaign_url" placeholder="LinkedIn search URL"
-                                                                required>
+                                                                accept=".csv" required>
                                                             <label class="file-input__label" for="file-input">
                                                                 <svg aria-hidden="true" focusable="false"
                                                                     data-prefix="fas" data-icon="upload"
@@ -257,6 +257,7 @@
                                                                 <span>Upload file</span>
                                                             </label>
                                                         </div>
+                                                        <span class="campaign_url text-danger"></span>
                                                     </div>
                                                 </div>
                                             </form>
@@ -375,4 +376,50 @@
             </div>
         </div>
     </section>
+    <div class="modal fade create_sequence_modal" id="sequance_modal" tabindex="-1" aria-labelledby="sequance_modal"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sequance_modal">Duplicate & Blacklisted items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
+                            class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12" style="text-align: left">
+                            <p>This file contains:</p>
+                            <ul>
+                                <li>Total: <span class="bold_lead" id="total_leads">0 leads</span></li>
+                                <li>Blacklisted items (found on your and global blacklist): <span class="bold_lead"
+                                        id="blacklist_leads">0 leads</span></li>
+                                <li>Duplicates found across your and your team's campaigns: <span class="bold_lead"
+                                        id="duplicate_among_teams">0 leads</span></li>
+                                <li>Duplicates found across CSV file: <span class="bold_lead" id="duplicate_csv_file">0
+                                        leads</span></li>
+                                <li>Total without duplicates and blacklisted leades: <span class="bold_lead"
+                                        id="total_without_leads">0 leads</span></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-12 modal_info">
+                            <div class="info_icon"
+                                title="Duplicates are found based on either profileUrl or email columns. We won't be able to identify duplicates with Sales Navigator URLs. This action will automatically remove the items that match all blacklists and existing duplicates within this line.">
+                                !</div>
+                            <p>Duplicates are found based on either profileUrl or email columns. We won't be able to
+                                identify duplicates with Sales Navigator URLs.<br>This action will automatically remove the
+                                items that match all blacklists and existing duplicates within this line.</p>
+                        </div>
+                        <a href="javascript:;" class="blacklist_btn cancel_btn" data-bs-dismiss="modal"
+                            aria-label="Close">Cancel</a>
+                        <a href="javascript:;" class="blacklist_btn import_btn">Import <i
+                                class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var importCSVPath = "{{ route('import_csv') }}";
+        var campaign_details = JSON.parse(sessionStorage.getItem("campaign_details")) || {};
+    </script>
 @endsection

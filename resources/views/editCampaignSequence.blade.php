@@ -14,19 +14,19 @@
                         <div class="col-12">
                             <div class="d-flex align-items-center justify-content-between w-100">
                                 <h3>Smart sequence</h3>
-                                <div class="filt_opt d-flex">
-                                    <div class="add_btn">
-                                        <span><a href=""><i
-                                                    class="fa-solid fa-up-right-and-down-left-from-center"></i></a>Sequence
-                                            template</span>
-                                    </div>
-                                </div>
+                                <!--<div class="filt_opt d-flex">-->
+                                <!--    <div class="add_btn">-->
+                                <!--        <span><a href=""><i-->
+                                <!--                    class="fa-solid fa-up-right-and-down-left-from-center"></i></a>Sequence-->
+                                <!--            template</span>-->
+                                <!--    </div>-->
+                                <!--</div>-->
                             </div>
                         </div>
                     </div>
                     <div class="row crt_cmp_r sequence-steps">
                         <div class="col-lg-9 drop-pad" id="capture">
-                            <h5>Sequence Steps</h5>
+                            {{-- <h5>Sequence Steps</h5>
                             <div class="custom-center">
                                 <div class="cmp_opt_link d-flex">
                                     <ul class="d-flex list-unstyled justify-content-end align-items-center">
@@ -38,7 +38,8 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="task-list"></div>
+                            <div class="task-list"></div> --}}
+                            <img src="{{ $img }}" alt="">
                         </div>
                         <div class="col-lg-3 add-elements">
                             <div class="element-tab">
@@ -151,4 +152,13 @@
             </div>
         </div>
     </section>
+    <script>
+        var campaign_id = {!! $campaign_id !!};
+        var settings = {!! $settings !!};
+        var campaign_time = "{{ $campaign_time }}";
+        var updateCampaignRoute = "{{ route('updateCampaign', ':campaign_id') }}";
+        var getElementsRoute = "{{ route('getElements', ':campaign_id') }}";
+        var getElementByIdRoute = "{{ route('getcampaignelementbyid', ':element_id') }}";
+        var campaignRoute = "{{ route('campaigns') }}";
+    </script>
 @endsection

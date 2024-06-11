@@ -9,14 +9,15 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SocialController extends Controller
 {
-    public function provider(){
+    public function provider()
+    {
         return Socialite::driver('linkedin')->stateless()->user();
     }
 
-    public function providerCallback(Request $request){
+    public function providerCallback(Request $request)
+    {
         $linkedin = Socialite::driver('linkedin')->user();
         echo 'sadsadas';
         dd($linkedin);
-        
     }
 }

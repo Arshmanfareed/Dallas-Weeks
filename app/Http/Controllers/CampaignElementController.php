@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campaign;
+use App\Models\CampaignActions;
 use App\Models\CampaignElement;
 use App\Models\CampaignPath;
 use App\Models\ElementProperties;
@@ -18,8 +19,7 @@ class CampaignElementController extends Controller
 {
     function campaignElement($slug)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $elements = CampaignElement::where('element_slug', $slug)->first();
             if ($elements) {
                 $properties = ElementProperties::where('element_id', $elements->id)->get();
@@ -29,12 +29,16 @@ class CampaignElementController extends Controller
                     return response()->json(['success' => false, 'message' => 'No Properties Found']);
                 }
             }
+        } else {
+            return redirect(url('/'));
         }
     }
+
     function createCampaign(Request $request)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
+            $user_id = Auth::user()->id;
+            $seat_id = session('seat_id');
             $all_request = $request->all();
             $final_array = $all_request['final_array'];
             $final_data = $all_request['final_data'];
@@ -47,10 +51,14 @@ class CampaignElementController extends Controller
             unset($settings['campaign_type']);
             $campaign->campaign_url = $settings['campaign_url'];
             unset($settings['campaign_url']);
-            $campaign->campaign_connection = $settings['connections'];
-            unset($settings['connections']);
+            if ($campaign->campaign_type != 'import' && $campaign->campaign_type != 'recruiter') {
+                $campaign->campaign_connection = $settings['connections'];
+                unset($settings['connections']);
+            } else {
+                $campaign->campaign_connection = '0';
+            }
             $campaign->user_id = $user_id;
-            $campaign->seat_id = 1;
+            $campaign->seat_id = $seat_id;
             $campaign->description = '';
             $campaign->modified_date = date('Y-m-d');
             $campaign->start_date = date('Y-m-d');
@@ -133,13 +141,27 @@ class CampaignElementController extends Controller
                         $path->save();
                     }
                 }
+                $action = new CampaignActions();
+                $campaign_path = CampaignPath::where('campaign_id', $campaign->id)->first();
+                $action->current_element_id = 'step_1';
+                $action->next_true_element_id = $campaign_path->current_element_id;
+                $action->next_false_element_id = '';
+                $action->created_at = now();
+                $action->updated_at = now();
+                $action->campaign_id = $campaign->id;
+                $action->status = 'inprogress';
+                $action->ending_time = now();
+                $action->save();
+                $request->session()->flash('success', 'Campaign succesfully saved!');
+                return response()->json(['success' => true]);
+            } else {
+                return response()->json(['success' => false, 'message' => 'No Campaign Inserted']);
             }
-            $request->session()->flash('success', 'Campaign succesfully saved!');
-            return response()->json(['success' => true]);
         } else {
-            return response()->json(['success' => false, 'properties' => 'User login first!']);
+            return redirect(url('/'));
         }
     }
+
     private function remove_prefix($value)
     {
         $reverse = strrev($value);
@@ -148,10 +170,10 @@ class CampaignElementController extends Controller
         $string = substr($value, 0, $second_index);
         return $string;
     }
+
     function getElements($campaign_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $elements = UpdatedCampaignElements::where('campaign_id', $campaign_id)->orderBy('id')->get();
             foreach ($elements as $element) {
                 $element['original_element'] = CampaignElement::where('id', $element->element_id)->first();
@@ -162,17 +184,27 @@ class CampaignElementController extends Controller
             }
             $path = CampaignPath::where('campaign_id', $campaign_id)->orderBy('id')->get();
             return response()->json(['success' => true, 'elements_array' => $elements, 'path' => $path]);
+        } else {
+            return redirect(url('/'));
         }
     }
+
     function getcampaignelementbyid($element_id)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
+        if (Auth::check()) {
             $properties = UpdatedCampaignProperties::where('element_id', $element_id)->get();
-            foreach ($properties as $property) {
-                $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
+            if ($properties->isNotEmpty()) {
+                foreach ($properties as $property) {
+                    $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
+                }
+                return response()->json(['success' => true, 'properties' => $properties]);
+            } else {
+                $element = CampaignElement::where('element_slug', $this->remove_prefix($element_id))->first();
+                $properties = ElementProperties::where('element_id', $element->id)->get();
+                return response()->json(['success' => false, 'properties' => $properties]);
             }
-            return response()->json(['success' => true, 'properties' => $properties]);
+        } else {
+            return redirect(url('/'));
         }
     }
 }

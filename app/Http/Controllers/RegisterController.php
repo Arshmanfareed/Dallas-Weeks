@@ -9,15 +9,16 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    function register(){
-        $date=[
-            'title'=>'Register Page'
+    function register()
+    {
+        $date = [
+            'title' => 'Register Page'
         ];
-        return view('signup',$date);
-
+        return view('signup', $date);
     }
 
-    function registerUser(Request $request){
+    function registerUser(Request $request)
+    {
         // dd($request);
         // echo $request->input('name');
         // echo $request->input('email');
@@ -34,7 +35,7 @@ class RegisterController extends Controller
             // If validation fails, return to the signup page with errors
             return back()->withErrors($validator)->withInput();
         }
-        
+
 
         // Hash the password before storing it in the database
         $data = [
@@ -47,7 +48,5 @@ class RegisterController extends Controller
         $user = User::create($data);
 
         return back()->with(['success' => 'User registered successfully', 'data' => $user]);
-
-
     }
 }
