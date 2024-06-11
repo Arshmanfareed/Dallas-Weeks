@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class CampaignSchedule extends Model
 {
     use HasFactory;
-    protected $table = 'campaign_schedule';
+    protected $table = 'schedules';
     protected $guarded = '';
 }

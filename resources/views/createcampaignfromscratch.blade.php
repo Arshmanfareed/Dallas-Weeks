@@ -60,7 +60,7 @@
                             </div>
                             <div class="element-list element-content active" id="element-list">
                                 <div class="element_div">
-                                    @if (!empty($campaigns))
+                                    @if (!empty($campaigns->first()))
                                         <div class="action_elements">
                                             <p>Actions</p>
                                             <ul class='drop-list'>
@@ -103,7 +103,7 @@
                                             </ul>
                                         </div>
                                     @endif
-                                    @if (!empty($conditional_campaigns))
+                                    @if (!empty($conditional_campaigns->first()))
                                         <div class="conditional_elements">
                                             <p>Conditions</p>
                                             <ul class='drop-list'>
@@ -154,6 +154,9 @@
                                 </div>
                                 <div class="save-btns">
                                     <button id="save-changes">Save Changes</button>
+                                    <div id="loader" style="display:none;">
+                                        <div class="loader-inner"></div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="properties element-content" id="properties"></div>
@@ -163,4 +166,12 @@
             </div>
         </div>
     </section>
+    <script>
+        var settings = {!! $settings !!};
+        var createCampaignPath = "{{ route('createCampaign') }}";
+        var campaignsPath = "{{ route('campaigns') }}";
+        var getCampaignElementPath = "{{ route('getcampaignelementbyslug', ':slug') }}";
+        var getPropertyDatatypePath = "{{ route('getPropertyDatatype', [':id', ':element_slug']) }}";
+        var getPropertyRequiredPath = "{{ route('getPropertyRequired', [':id']) }}";
+    </script>
 @endsection

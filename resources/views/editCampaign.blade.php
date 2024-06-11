@@ -16,9 +16,9 @@
             }
         </style>
     @enderror
-    @php
-        session()->put('campaign_details', $campaign);
-    @endphp
+    <script>
+        var campaign = {!! json_encode($campaign) !!};
+    </script>
     <section class="main_dashboard blacklist  campaign_sec">
         <div class="container_fluid">
             <div class="row">
@@ -105,8 +105,8 @@
                                                         <label for="campaign_name">Campaign Name:</label>
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
-                                                            placeholder="Campaign name ex. Los angeles lead" value=""
-                                                            required>
+                                                            placeholder="Campaign name ex. Los angeles lead"
+                                                            value="{{ $campaign->campaign_name }}" required>
                                                         @error('campaign_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -115,7 +115,7 @@
                                                         <label for="campaign_url">LinkedIn URL:</label>
                                                         <input type="url" id="campaign_url" class="campaign_url"
                                                             name="campaign_url" placeholder="LinkedIn search URL"
-                                                            value="" required>
+                                                            value="{{ $campaign->campaign_url }}" required>
                                                         @error('campaign_url')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -124,16 +124,16 @@
                                                         <label for="campaign_connection">Connections:</label>
                                                         <select id="connections" name="campaign_connection"
                                                             class="connections">
-                                                            <option value="1">
+                                                            <option value="1" {{ $campaign->campaign_connection == '1' ? 'selected' : '' }}>
                                                                 1st-degree
                                                             </option>
-                                                            <option value="2">
+                                                            <option value="2" {{ $campaign->campaign_connection == '2' ? 'selected' : '' }}>
                                                                 2nd-degree
                                                             </option>
-                                                            <option value="3">
+                                                            <option value="3" {{ $campaign->campaign_connection == '3' ? 'selected' : '' }}>
                                                                 3rd-degree
                                                             </option>
-                                                            <option value="o">Other
+                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>Other
                                                             </option>
                                                         </select>
                                                     </div>
@@ -152,7 +152,7 @@
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
                                                             placeholder="Campaign name ex. Los angeles lead"
-                                                            value="" required>
+                                                            value="{{ $campaign->campaign_name }}" required>
                                                         @error('campaign_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -161,7 +161,7 @@
                                                         <label for="campaign_url">Navigator URL:</label>
                                                         <input type="url" id="campaign_url" class="campaign_url"
                                                             name="campaign_url" placeholder="LinkedIn search URL"
-                                                            value="" required>
+                                                            value="{{ $campaign->campaign_url }}" required>
                                                         @error('campaign_url')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -170,16 +170,16 @@
                                                         <label for="campaign_connection">Connections:</label>
                                                         <select id="connections" name="campaign_connection"
                                                             class="connections">
-                                                            <option value="1">
+                                                            <option value="1" {{ $campaign->campaign_connection == '1' ? 'selected' : '' }}>
                                                                 1st-degree
                                                             </option>
-                                                            <option value="2">
+                                                            <option value="2" {{ $campaign->campaign_connection == '2' ? 'selected' : '' }}>
                                                                 2nd-degree
                                                             </option>
-                                                            <option value="3">
+                                                            <option value="3" {{ $campaign->campaign_connection == '3' ? 'selected' : '' }}>
                                                                 3rd-degree
                                                             </option>
-                                                            <option value="o">Other
+                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>Other
                                                             </option>
                                                         </select>
                                                     </div>
@@ -198,7 +198,7 @@
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
                                                             placeholder="Campaign name ex. Los angeles lead"
-                                                            value="" required>
+                                                            value="{{ $campaign->campaign_name }}" required>
                                                         @error('campaign_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -207,7 +207,7 @@
                                                         <label for="campaign_url">Recruiter URL:</label>
                                                         <input type="url" id="campaign_url" class="campaign_url"
                                                             name="campaign_url" placeholder="LinkedIn search URL"
-                                                            value="" required>
+                                                            value="{{ $campaign->campaign_url }}" required>
                                                         @error('campaign_url')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -227,7 +227,7 @@
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
                                                             placeholder="Campaign name ex. Los angeles lead"
-                                                            value="" required>
+                                                            value="{{ $campaign->campaign_name }}" required>
                                                         @error('campaign_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -268,7 +268,7 @@
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
                                                             placeholder="Campaign name ex. Los angeles lead"
-                                                            value="" required>
+                                                            value="{{ $campaign->campaign_name }}" required>
                                                         @error('campaign_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -277,7 +277,7 @@
                                                         <label for="campaign_url">Post engagement:</label>
                                                         <input type="url" id="campaign_url" class="campaign_url"
                                                             name="campaign_url" placeholder="LinkedIn search URL"
-                                                            value="" required>
+                                                            value="{{ $campaign->campaign_url }}" required>
                                                         @error('campaign_url')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -286,16 +286,16 @@
                                                         <label for="campaign_connection">Connections:</label>
                                                         <select id="connections" name="campaign_connection"
                                                             class="connections">
-                                                            <option value="1">
+                                                            <option value="1" {{ $campaign->campaign_connection == '1' ? 'selected' : '' }}>
                                                                 1st-degree
                                                             </option>
-                                                            <option value="2">
+                                                            <option value="2" {{ $campaign->campaign_connection == '2' ? 'selected' : '' }}>
                                                                 2nd-degree
                                                             </option>
-                                                            <option value="3">
+                                                            <option value="3" {{ $campaign->campaign_connection == '3' ? 'selected' : '' }}>
                                                                 3rd-degree
                                                             </option>
-                                                            <option value="o">Other
+                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>Other
                                                             </option>
                                                         </select>
                                                     </div>
@@ -314,7 +314,7 @@
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
                                                             placeholder="Campaign name ex. Los angeles lead"
-                                                            value="" required>
+                                                            value="{{ $campaign->campaign_name }}" required>
                                                         @error('campaign_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -323,7 +323,7 @@
                                                         <label for="campaign_url">Leads list :</label>
                                                         <input type="url" id="campaign_url" class="campaign_url"
                                                             name="campaign_url" placeholder="LinkedIn search URL"
-                                                            value="" required>
+                                                            value="{{ $campaign->campaign_url }}" required>
                                                         @error('campaign_url')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -332,16 +332,16 @@
                                                         <label for="campaign_connection">Connections:</label>
                                                         <select id="connections" name="campaign_connection"
                                                             class="connections">
-                                                            <option value="1">
+                                                            <option value="1" {{ $campaign->campaign_connection == '1' ? 'selected' : '' }}>
                                                                 1st-degree
                                                             </option>
-                                                            <option value="2">
+                                                            <option value="2" {{ $campaign->campaign_connection == '2' ? 'selected' : '' }}>
                                                                 2nd-degree
                                                             </option>
-                                                            <option value="3">
+                                                            <option value="3" {{ $campaign->campaign_connection == '3' ? 'selected' : '' }}>
                                                                 3rd-degree
                                                             </option>
-                                                            <option value="o">Other
+                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>Other
                                                             </option>
                                                         </select>
                                                     </div>

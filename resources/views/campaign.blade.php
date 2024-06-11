@@ -1,9 +1,5 @@
 @extends('partials/dashboard_header')
 @section('content')
-    <script>
-        sessionStorage.removeItem('campaign_details');
-        sessionStorage.removeItem('edit_campaign_details');
-    </script>
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <strong>{{ session('success') }}</strong>
@@ -147,7 +143,15 @@
                                                             </div>
                                                         </td>
                                                         <td>{{ $campaign->campaign_name }}</td>
-                                                        <td>44</td>
+                                                        <td>
+                                                            @php
+                                                                $leads = App\Models\Leads::where(
+                                                                    'campaign_id',
+                                                                    $campaign->id,
+                                                                )->get();
+                                                            @endphp
+                                                            {{ count($leads) }}
+                                                        </td>
                                                         <td>105</td>
                                                         <td class="stats">
                                                             <ul
@@ -169,9 +173,8 @@
                                                             <div class="per down">23%</div>
                                                         </td>
                                                         <td>
-                                                            <a href="javascript:;" type="button"
-                                                                class="setting setting_btn" id=""><i
-                                                                    class="fa-solid fa-gear"></i></a>
+                                                            <a type="button" class="setting setting_btn"
+                                                                id=""><i class="fa-solid fa-gear"></i></a>
                                                             <ul class="setting_list" style="display: none">
                                                                 <li><a
                                                                         href="{{ route('campaignDetails', ['campaign_id' => $campaign->id]) }}">Check
@@ -181,8 +184,9 @@
                                                                         campaign</a></li>
                                                                 {{-- <li><a href="#">Duplicate campaign steps</a></li> --}}
                                                                 {{-- <li><a href="javascript:;" data-bs-toggle="modal"
-                                                                        data-bs-target="#add_new_leads_modal">Add new leads</a>
-                                                                </li> --}}
+                                                                        data-bs-target="#add_new_leads_modal">Add new
+                                                                        leads</a> --}}
+                                                                </li>
                                                                 {{-- <li><a href="#">Export data</a></li> --}}
                                                                 <li><a class="archive_campaign"
                                                                         id="{{ 'archive' . $campaign->id }}">Archive
@@ -217,20 +221,55 @@
         </div>
     </section>
     <script>
-        $(document).ready(function() {
-            $(".setting_list").hide();
-            $(".setting_btn").on("click", function(e) {
-                $(".setting_list").not($(this).siblings(".setting_list")).hide();
-                $(this).siblings(".setting_list").toggle();
-            });
-            $(document).on("click", function(e) {
-                if (!$(event.target).closest(".setting").length) {
-                    $(".setting_list").hide();
-                }
-            });
-        });
+        var filterCampaignRoute = "{{ route('filterCampaign', [':filter', ':search']) }}";
+        var deleteCampaignRoute = "{{ route('deleteCampaign', ':id') }}";
+        var activateCampaignRoute = "{{ route('changeCampaignStatus', ':campaign_id') }}";
+        var archiveCampaignRoute = "{{ route('archiveCampaign', ':id') }}";
+        var leadsCountRoute = "{{ route('getLeadsCountByCampaign', ':id') }}";
     </script>
-    {{-- <div class="modal fade create_add_new_leads_modal" id="add_new_leads_modal" tabindex="-1"
+    {{-- <div class="modal fade create_sequence_modal" id="sequance_modal" tabindex="-1" aria-labelledby="sequance_modal"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sequance_modal">Duplicate & Blacklisted items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
+                            class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12" style="text-align: left">
+                            <p>This file contains:</p>
+                            <ul>
+                                <li>Total: <span class="bold_lead" id="total_leads">0 leads</span></li>
+                                <li>Blacklisted items (found on your and global blacklist): <span class="bold_lead"
+                                        id="blacklist_leads">0 leads</span></li>
+                                <li>Duplicates found across your and your team's campaigns: <span class="bold_lead"
+                                        id="duplicate_among_teams">0 leads</span></li>
+                                <li>Duplicates found across CSV file: <span class="bold_lead" id="duplicate_csv_file">0
+                                        leads</span></li>
+                                <li>Total without duplicates and blacklisted leades: <span class="bold_lead"
+                                        id="total_without_leads">0 leads</span></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-12 modal_info">
+                            <div class="info_icon"
+                                title="Duplicates are found based on either profileUrl or email columns. We won't be able to identify duplicates with Sales Navigator URLs. This action will automatically remove the items that match all blacklists and existing duplicates within this line.">
+                                !</div>
+                            <p>Duplicates are found based on either profileUrl or email columns. We won't be able to
+                                identify duplicates with Sales Navigator URLs.<br>This action will automatically remove the
+                                items that match all blacklists and existing duplicates within this line.</p>
+                        </div>
+                        <a href="javascript:;" class="blacklist_btn cancel_btn" data-bs-dismiss="modal"
+                            aria-label="Close">Cancel</a>
+                        <a href="javascript:;" class="blacklist_btn import_btn">Import <i
+                                class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> --}}
+    <div class="modal fade create_add_new_leads_modal" id="add_new_leads_modal" tabindex="-1"
         aria-labelledby="add_new_leads_modal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -242,18 +281,20 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="schedule-tab">
-                            <button class="schedule-btn active" id="my_schedule_btn" data-tab="from_csv_file">From CSV File</button>
+                            <button class="schedule-btn active" id="my_schedule_btn" data-tab="from_csv_file">From CSV
+                                File</button>
                             <button class="schedule-btn " id="team_schedule_btn" data-tab="from_url">From URL</button>
                         </div>
                         <div class="active schedule-content" id="from_csv_file">
-                            
+                            <label for="">Upload CSV File</label>
+                            <input type="file" name="csv_file" id="csv_file">
                         </div>
                         <div class=" schedule-content" id="from_url">
-                            
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
 @endsection
