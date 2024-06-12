@@ -240,6 +240,7 @@
                                                     <div class="col-lg-6 col-sm-12">
                                                         <label for="campaign_url">Import URL:</label>
                                                         <div class="import_field">
+                                                            <input type="hidden" id="campaign_url_hidden" name="campaign_url_hidden">
                                                             <input type="file" id="campaign_url"
                                                                 class="file-input__input" class="campaign_url"
                                                                 name="campaign_url" placeholder="LinkedIn search URL"

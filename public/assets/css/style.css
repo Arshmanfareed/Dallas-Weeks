@@ -6532,3 +6532,7 @@ body.light-mode .lead_sec .filt_opt > .filt_opt select {
 .seat_table_data {
     cursor: pointer;
 }
+
+.conditional_elements ul.drop-list li:first-child {
+    display: none !important;
+}

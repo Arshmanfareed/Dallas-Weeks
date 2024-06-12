@@ -47,6 +47,12 @@ $(document).ready(function () {
             .attr("name", "campaign_url")
             .val(campaign_details["campaign_url"])
     );
+    form.append(
+        $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "campaign_url_hidden")
+            .val(campaign_details["campaign_url_hidden"])
+    );
 
     if (campaign_details["connections"] != undefined) {
         form.append(

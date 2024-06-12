@@ -31,7 +31,7 @@ class ActionsController extends Controller
                     $seat = SeatInfo::where('id', $campaign->seat_id)->first();
                     $account_id = $seat['account_id'];
                     if ($campaign->campaign_type == 'import') {
-                        $imported_leads = ImportedLeads::where('user_id', $campaign->user_id)->first();
+                        $imported_leads = ImportedLeads::where('user_id', $campaign->user_id)->where('campaign_id', $campaign->id)->first();
                         $fileHandle = fopen(storage_path('app/uploads/' . $imported_leads->file_path), 'r');
                         if ($fileHandle !== false) {
                             $csvData = [];
@@ -91,7 +91,7 @@ class ActionsController extends Controller
                                                 $lead->save();
                                                 if (isset($lead->id)) {
                                                     $lead_action = new LeadActions();
-                                                    $campaign_path = CampaignPath::where('campaign_id', $campaign->id)->first();
+                                                    $campaign_path = CampaignPath::where('campaign_id', $campaign->id)->orderBy('id')->first();
                                                     $lead_action->current_element_id = 'step_1';
                                                     $lead_action->next_true_element_id = $campaign_path->current_element_id;
                                                     $lead_action->campaign_id = $campaign->id;
@@ -134,17 +134,19 @@ class ActionsController extends Controller
                     $new_action->status = 'inprogress';
                     $properties = UpdatedCampaignProperties::where('element_id', $new_action->current_element_id)->get();
                     $time = now();
-                    foreach ($properties as $property) {
-                        $campaign_property = ElementProperties::where('id', $property->property_id)->first();
-                        if (!empty($campaign_property) && isset($property->value)) {
-                            $timeToAdd = intval($property->value);
-                            if ($campaign_property->property_name == 'Hours') {
-                                $time->modify('+' . $timeToAdd . ' hours');
-                            } else if ($campaign_property->property_name == 'Days') {
-                                $time->modify('+' . $timeToAdd . ' days');
-                            }
-                        }
-                    }
+                    //just for testing purpose
+                    $time->modify('+2 minutes');
+                    // foreach ($properties as $property) {
+                    //     $campaign_property = ElementProperties::where('id', $property->property_id)->first();
+                    //     if (!empty($campaign_property) && isset($property->value)) {
+                    //         $timeToAdd = intval($property->value);
+                    //         if ($campaign_property->property_name == 'Hours') {
+                    //             $time->modify('+' . $timeToAdd . ' hours');
+                    //         } else if ($campaign_property->property_name == 'Days') {
+                    //             $time->modify('+' . $timeToAdd . ' days');
+                    //         }
+                    //     }
+                    // }
                     $new_action->ending_time = $time->format('Y-m-d H:i:s');
                     $new_action->save();
                 }
@@ -169,9 +171,11 @@ class ActionsController extends Controller
                     if ($element->element_slug == 'view_profile') {
                         $success = $cc->view_profile($action, $account_id);
                     } else if ($element->element_slug == 'invite_to_connect') {
-                        $success = $cc->invite_to_connect($action, $account_id);
+                        $success = $cc->invite_to_connect($action, $account_id, $element, $campaign_element);
                     } else if ($element->element_slug == 'message') {
-                        $success = $cc->message($action, $account_id);
+                        $success = $cc->message($action, $account_id, $element, $campaign_element);
+                    } else if ($element->element_slug == 'inmail_message') {
+                        $success = $cc->inmail_message($action, $account_id, $element, $campaign_element);
                     }
                 }
             }

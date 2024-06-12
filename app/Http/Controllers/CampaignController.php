@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\SeatInfo;
 use Illuminate\Http\JsonResponse;
+use App\Models\ImportedLeads;
+use App\Models\LeadActions;
+use App\Models\Leads;
+use App\Models\CampaignActions;
 
 class CampaignController extends Controller
 {
@@ -153,22 +157,18 @@ class CampaignController extends Controller
     {
         if (Auth::check()) {
             $campaign = Campaign::where('id', $campaign_id)->first();
-            if ($campaign) {
-                LinkedinSetting::where('campaign_id', $campaign->id)->delete();
-                GlobalSetting::where('campaign_id', $campaign->id)->delete();
-                EmailSetting::where('campaign_id', $campaign->id)->delete();
-                $elements = UpdatedCampaignElements::where('campaign_id', $campaign->id)->get();
-                if ($elements) {
-                    foreach ($elements as $element) {
-                        UpdatedCampaignProperties::where('element_id', $element->id)->delete();
-                        CampaignPath::where('current_element_id', $element->id)->delete();
-                        $element->delete();
-                    }
-                }
-                $campaign->delete();
-                return response()->json(['success' => true]);
-            }
-            return response()->json(['error' => 'Campaign not found'], 404);
+            LinkedinSetting::where('campaign_id', $campaign->id)->delete();
+            LeadActions::where('campaign_id', $campaign->id)->delete();
+            Leads::where('campaign_id', $campaign->id)->delete();
+            ImportedLeads::where('campaign_id', $campaign->id)->delete();
+            GlobalSetting::where('campaign_id', $campaign->id)->delete();
+            EmailSetting::where('campaign_id', $campaign->id)->delete();
+            UpdatedCampaignProperties::where('campaign_id', $campaign->id)->delete();
+            CampaignPath::where('campaign_id', $campaign->id)->delete();
+            UpdatedCampaignElements::where('campaign_id', $campaign->id)->delete();
+            CampaignActions::where('campaign_id', $campaign->id)->delete();
+            $campaign->delete();
+            return response()->json(['success' => true]);
         } else {
             return redirect(url('/'));
         }
