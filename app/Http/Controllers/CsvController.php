@@ -83,29 +83,15 @@ class CsvController extends Controller
                                 return response()->json(['success' => false, 'message' => 'No Profile Url or Email Column Found']);
                             }
                             fclose($fileHandle);
-                            $imported_leads = ImportedLeads::where('user_id', $user_id)->get();
-                            if ($imported_leads->isEmpty()) {
-                                $lead = new ImportedLeads();
-                                $lead->user_id = $user_id;
-                                $lead->file_path = $fileName;
-                                $lead->created_at = now();
-                                $lead->updated_at = now();
-                                $lead->save();
-                            } else {
-                                foreach ($imported_leads as $imported_lead) {
-                                    $prevFilePath = 'uploads/' . $imported_lead->file_path;
-                                    Storage::delete($prevFilePath);
-                                }
-                                ImportedLeads::where('user_id', $user_id)->delete();
-                                $lead = new ImportedLeads();
-                                $lead->user_id = $user_id;
-                                $lead->file_path = $fileName;
-                                $lead->created_at = now();
-                                $lead->updated_at = now();
-                                $lead->save();
-                            }
+                            $lead = new ImportedLeads();
+                            $lead->user_id = $user_id;
+                            $lead->file_path = $fileName;
+                            $lead->created_at = now();
+                            $lead->updated_at = now();
+                            $lead->save();
                             return response()->json([
                                 'success' => true,
+                                'path' => $lead->file_path,
                                 'total' => $total,
                                 'total_Urls' => $total_Urls,
                                 'duplicates' => $duplicates,

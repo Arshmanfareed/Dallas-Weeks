@@ -164,6 +164,12 @@ $(document).ready(function () {
                                 response.total_without_duplicate_blacklist +
                                     " leads"
                             );
+                        $("#campaign_url_hidden").val(response.path);
+                        campaign_details["campaign_url"] = response.path;
+                        sessionStorage.setItem(
+                            "campaign_details",
+                            JSON.stringify(campaign_details)
+                        );
                         $("#sequance_modal").modal("show");
                     } else {
                         toastr.options = {
