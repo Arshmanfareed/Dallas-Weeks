@@ -4,6 +4,77 @@
     #payment-form input.form-control {
         color: white !important;
     }
+    .alert.alert-success.text-center {
+    background: #e3c935;
+    color: #000;
+    border: none;
+    border-radius: 30px;
+    padding: 20px;
+    width: 50%;
+    margin: 20px auto;
+    margin-bottom: 50px;
+}
+.alert.alert-success.text-center p {
+    margin: 0;
+    color: #000;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.alert.alert-success.text-center a.close {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top: 7px;
+    right: 1%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+    background: #0b3b6a;
+    opacity: 1;
+    color: #fff;
+    font-weight: 400;
+}
+#update_seat .accordion .accordion-item .accordion-header button{
+    background: #1C1E22 !important;
+    width: 100%;
+    border-radius: 30px !important;
+    color: #fff;
+    /* border: 1px solid #fff; */
+    padding: 20px 15px;
+    font-size: 18px;
+}
+
+
+#update_seat  div#accordionExample {
+    padding: 20px;
+    padding-bottom: 50px;
+}
+
+#update_seat  .accordion .accordion-item .accordion-header .accordion-button::after {
+    color: #e3c935 !important;
+    filter: invert(1);
+}
+
+#update_seat  .accordion .accordion-item .accordion-header .accordion-button i {
+    color: #e3c935 !important;
+    font-size: 20px;
+}
+
+#update_seat  .accordion .accordion-item .accordion-header {
+    border-radius: 30px !important;
+    overflow: hidden;
+    border: 1px solid #fff;
+}
+
+#update_seat  .collapse.show {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+#update_seat button#delete_seat_11 {
+    margin-top: 30px;
+}
 </style>
 <script src="{{ asset('assets/js/dashboard-account.js') }}"></script>
 @if (!empty($user->token))
@@ -11,6 +82,21 @@
 @endif
 <section class="dashboard">
     <div class="container-fluid">
+        @if ($errors->any())
+<div class="alert alert-danger">
+    <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+@if (Session::has('success'))
+<div class="alert alert-success text-center">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+    <p>{{ Session::get('success') }}</p>
+</div>
+@endif
         <div class="row">
             @include('partials/dashboard_sidebar')
             <div class="col-lg-8">
@@ -97,21 +183,7 @@
         </div>
     </div>
 </section>
-@if ($errors->any())
-<div class="alert alert-danger">
-    <ul>
-        @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-</div>
-@endif
-@if (Session::has('success'))
-<div class="alert alert-success text-center">
-    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-    <p>{{ Session::get('success') }}</p>
-</div>
-@endif
+
 <!-- basic modal -->
 <div class="modal fade step_form_popup" id="addaccount" tabindex="-1" role="dialog" aria-labelledby="addaccount" aria-hidden="true">
     <div class="modal-dialog" style="border-radius: 45px">
@@ -254,7 +326,7 @@
                             <button id="update_seat_name" type="button" class="update_seat_name theme_btn mb-3" style="background-color: #16adcb" ;>Save Changes</button>
                         </div>
                     </div>
-                    <div class="accordion-item">
+                    <div class="accordion-item d-none">
                         <h2 class="accordion-header" id="headingTwo">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                 <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i> Change
@@ -264,7 +336,7 @@
                         <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                         </div>
                     </div>
-                    <div class="accordion-item">
+                    <div class="accordion-item d-none">
                         <h2 class="accordion-header" id="headingThree">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                 <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i> Cancel

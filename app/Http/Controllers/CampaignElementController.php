@@ -65,7 +65,6 @@ class CampaignElementController extends Controller
                 }
                 $campaign->user_id = $user_id;
                 $campaign->seat_id = $seat_id;
-                $campaign->description = '';
                 $campaign->modified_date = date('Y-m-d');
                 $campaign->start_date = date('Y-m-d');
                 $campaign->end_date = date('Y-m-d');
@@ -95,6 +94,7 @@ class CampaignElementController extends Controller
                         $setting->save();
                     }
                     $path_array = [];
+                    $time = now();
                     foreach ($final_array as $key => $value) {
                         if ($key != 'step' || $key != 'step-1') {
                             $element = CampaignElement::where('element_slug', $this->remove_prefix($key))->first();
@@ -114,7 +114,7 @@ class CampaignElementController extends Controller
                                     foreach ($property_item as $key => $value) {
                                         $element_property = new UpdatedCampaignProperties();
                                         $property = ElementProperties::where('id', $key)->first();
-                                        if ($property) {
+                                        if (!empty($property)) {
                                             $element_property->element_id = $element_item->id;
                                             $element_property->property_id = $property->id;
                                             $element_property->campaign_id = $campaign->id;
@@ -124,25 +124,22 @@ class CampaignElementController extends Controller
                                                 $element_property->value = '';
                                             }
                                             $element_property->save();
-                                        } else {
-                                            LinkedinSetting::where('campaign_id', $campaign->id)->delete();
-                                            LeadActions::where('campaign_id', $campaign->id)->delete();
-                                            Leads::where('campaign_id', $campaign->id)->delete();
-                                            ImportedLeads::where('campaign_id', $campaign->id)->delete();
-                                            GlobalSetting::where('campaign_id', $campaign->id)->delete();
-                                            EmailSetting::where('campaign_id', $campaign->id)->delete();
-                                            UpdatedCampaignProperties::where('campaign_id', $campaign->id)->delete();
-                                            CampaignPath::where('campaign_id', $campaign->id)->delete();
-                                            UpdatedCampaignElements::where('campaign_id', $campaign->id)->delete();
-                                            CampaignActions::where('campaign_id', $campaign->id)->delete();
-                                            $campaign->delete();
-                                            return response()->json(['success' => false, 'properties' => 'Properties not found!']);
+                                            if (!empty($element_property->value) && isset($property)) {
+                                                $timeToAdd = intval($element_property->value);
+                                                if ($property->property_name == 'Hours') {
+                                                    $time->modify('+' . $timeToAdd . ' hours');
+                                                } else if ($property->property_name == 'Days') {
+                                                    $time->modify('+' . $timeToAdd . ' days');
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                    $campaign->end_date = $time;
+                    $campaign->save();
                     foreach ($final_array as $key => $value) {
                         if (isset($path_array[$key])) {
                             $path = new CampaignPath();
@@ -192,7 +189,7 @@ class CampaignElementController extends Controller
                 UpdatedCampaignElements::where('campaign_id', $campaign->id)->delete();
                 CampaignActions::where('campaign_id', $campaign->id)->delete();
                 $campaign->delete();
-                return response()->json(['success' => false, 'properties' => $e]);
+                return response()->json(['success' => false, 'message' => $e]);
             }
         } else {
             return redirect(url('/'));

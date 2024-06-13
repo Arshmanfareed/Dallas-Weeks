@@ -94,7 +94,7 @@ $(document).ready(function () {
                         toastr.error("Campaign cannot be Deleted");
                     }
                     $("#table_row_" + campaign_id).remove();
-                    if ($(".campaign_table_row").length == 0) {
+                    if ($(".campaign_table_row").length <= 0) {
                         html = "";
                         html += '<tr><td colspan="8">';
                         html +=
