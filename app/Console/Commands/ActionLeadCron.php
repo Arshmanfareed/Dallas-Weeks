@@ -2,24 +2,24 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\TestTable;
+use App\Http\Controllers\ActionsController;
 use Illuminate\Console\Command;
 
-class TestCron extends Command
+class ActionLeadCron extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'test:cron';
+    protected $signature = 'action:lead';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Command for lead actions';
 
     /**
      * Create a new command instance.
@@ -39,8 +39,8 @@ class TestCron extends Command
     public function handle()
     {
         try {
-            $table = new TestTable();
-            $table->insert_into_test_table('Test Cron', 'test_cron');
+            $actionController = new ActionsController();
+            $actionController->update_leads_action();
             $this->info('Data inserted successfully.'.now());
         } catch (\Exception $e) {
             $this->error('Failed to insert data: ' . $e->getMessage());
