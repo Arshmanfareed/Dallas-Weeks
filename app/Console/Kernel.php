@@ -8,7 +8,9 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     protected $commands = [
-        \App\Console\Commands\TestCron::class,
+        // \App\Console\Commands\TestCron::class,
+        \App\Console\Commands\ActionCampaignCron::class,
+        \App\Console\Commands\ActionLeadCron::class
     ];
 
     /**
@@ -19,8 +21,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-        $schedule->command('test:cron')->cron("* * * * *")->appendOutputTo(storage_path('logs/cron.log'));
+        // $schedule->command('test:cron')->cron("* * * * *")->appendOutputTo(storage_path('logs/cron.log'));
+        $schedule->command('action:campaign')->cron('* * * * *')->appendOutputTo(storage_path('logs/campaign_action.log'));
+        $schedule->command('action:lead')->cron('* * * * *')->appendOutputTo(storage_path('logs/lead_action.log'));
     }
 
     /**

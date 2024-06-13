@@ -134,19 +134,17 @@ class ActionsController extends Controller
                     $new_action->status = 'inprogress';
                     $properties = UpdatedCampaignProperties::where('element_id', $new_action->current_element_id)->get();
                     $time = now();
-                    //just for testing purpose
-                    $time->modify('+2 minutes');
-                    // foreach ($properties as $property) {
-                    //     $campaign_property = ElementProperties::where('id', $property->property_id)->first();
-                    //     if (!empty($campaign_property) && isset($property->value)) {
-                    //         $timeToAdd = intval($property->value);
-                    //         if ($campaign_property->property_name == 'Hours') {
-                    //             $time->modify('+' . $timeToAdd . ' hours');
-                    //         } else if ($campaign_property->property_name == 'Days') {
-                    //             $time->modify('+' . $timeToAdd . ' days');
-                    //         }
-                    //     }
-                    // }
+                    foreach ($properties as $property) {
+                        $campaign_property = ElementProperties::where('id', $property->property_id)->first();
+                        if (!empty($campaign_property) && isset($property->value)) {
+                            $timeToAdd = intval($property->value);
+                            if ($campaign_property->property_name == 'Hours') {
+                                $time->modify('+' . $timeToAdd . ' hours');
+                            } else if ($campaign_property->property_name == 'Days') {
+                                $time->modify('+' . $timeToAdd . ' days');
+                            }
+                        }
+                    }
                     $new_action->ending_time = $time->format('Y-m-d H:i:s');
                     $new_action->save();
                 }
