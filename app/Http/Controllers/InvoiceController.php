@@ -9,13 +9,9 @@ class InvoiceController extends Controller
 {
     function invoice()
     {
-        if (Auth::check()) {
-            $data = [
-                'title' => 'Invoices'
-            ];
-            return view('invoice', $data);
-        } else {
-            return redirect(url('/'));
-        }
+        $data = [
+            'title' => 'Invoices'
+        ];
+        return view('invoice', $data);
     }
 }

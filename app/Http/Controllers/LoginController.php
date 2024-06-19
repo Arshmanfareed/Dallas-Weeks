@@ -16,6 +16,7 @@ class LoginController extends Controller
 
     return view('Login', $data);
   }
+
   public function checkCredentials(Request $request)
   {
     $this->validate($request, [
@@ -32,6 +33,7 @@ class LoginController extends Controller
       return response()->json(['success' => false, 'error' => 'Invalid Password.'], 401);
     }
   }
+
   public function logoutUser()
   {
     Auth::logout();
