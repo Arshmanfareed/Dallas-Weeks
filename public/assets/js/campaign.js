@@ -214,8 +214,8 @@ $(document).ready(function () {
                             html += `<td id="lead_count_${campaign["id"]}">0</td>`;
                             html += `<td>105</td>`;
                             html += `<td class="stats"><ul class="status_list d-flex align-items-center list-unstyled p-0 m-0">`;
-                            html += `<li><span><img src="/assets/img/eye.svg" alt="">10</span></li>`;
-                            html += `<li><span><img src="/assets/img/request.svg" alt="">42</span></li>`;
+                            html += `<li><span><img src="/assets/img/eye.svg" alt=""><span id="view_profile_count_${campaign["id"]}">0</span></span></li>`;
+                            html += `<li><span><img src="/assets/img/request.svg" alt=""><span id="invite_to_connect_count_${campaign["id"]}">0</span></span></li>`;
                             html += `<li><span><img src="/assets/img/mailmsg.svg" alt="">10</span></li>`;
                             html += `<li><span><img src="/assets/img/mailopen.svg" alt="">16</span></li></ul></td>`;
                             html += `<td><div class="per up">34%</div></td>`;
@@ -244,6 +244,12 @@ $(document).ready(function () {
                             html += `</ul></td></tr>`;
                             leads_count(campaign["id"], function (count) {
                                 $("#lead_count_" + campaign["id"]).text(count);
+                            });
+                            view_profile_count(campaign["id"], function (count) {
+                                $("#view_profile_count_" + campaign["id"]).text(count);
+                            });
+                            invite_to_connect_count(campaign["id"], function (count) {
+                                $('invite_to_connect_count_' + campaign["id"]).text(count);
                             });
                         }
                     }
@@ -290,6 +296,34 @@ $(document).ready(function () {
     function leads_count(campaign_id, callback) {
         $.ajax({
             url: leadsCountRoute.replace(":id", campaign_id),
+            type: "GET",
+            success: function (response) {
+                callback(response.count);
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+                callback(0);
+            },
+        });
+    }
+
+    function view_profile_count(campaign_id, callback) {
+        $.ajax({
+            url: viewProfileCountRoute.replace(":id", campaign_id),
+            type: "GET",
+            success: function (response) {
+                callback(response.count);
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+                callback(0);
+            },
+        });
+    }
+
+    function invite_to_connect_count(campaign_id, callback) {
+        $.ajax({
+            url: inviteToConnectCountRoute.replace(":id", campaign_id),
             type: "GET",
             success: function (response) {
                 callback(response.count);

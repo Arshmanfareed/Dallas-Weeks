@@ -9,13 +9,9 @@ class TeamController extends Controller
 {
     function team()
     {
-        if (Auth::check()) {
-            $data = [
-                'title' => 'Team Dashboard'
-            ];
-            return view('team', $data);
-        } else {
-            return redirect(url('/'));
-        }
+        $data = [
+            'title' => 'Team Dashboard'
+        ];
+        return view('team', $data);
     }
 }
