@@ -1055,6 +1055,7 @@ ul.setting_list li {
     padding-bottom: 10px;
     line-height: 1.5;
     font-size: 16px;
+    cursor: pointer;
 }
 ul.setting_list li:last-child {
     border: none;
