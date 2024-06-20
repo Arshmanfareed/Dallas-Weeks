@@ -13,7 +13,7 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
-    
+
     'linkedin-openid' => [
         'client_id' => '77d4hvfiuinruk',
         'client_secret' => 'GGMMqoef9PI2gAZS',
@@ -35,10 +35,13 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-    
-      'stripe' => [
+
+    'stripe' => [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'unipile' => [
+        'api_key' => env('UNIPILE_API_KEY'),
+    ],
 ];

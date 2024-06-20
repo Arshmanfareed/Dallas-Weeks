@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    /* Initialize and set up event listeners */
     clearSessionStorage();
     setUpEventListeners();
 

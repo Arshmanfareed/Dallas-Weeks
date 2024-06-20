@@ -32,3 +32,4 @@ Route::post('/invite_to_connect', [UnipileController::class, 'invite_to_connect'
 Route::post('/message', [UnipileController::class, 'message'])->name('message');
 Route::post('/inmail_message', [UnipileController::class, 'inmail_message'])->name('inmailMessage');
 Route::post('/email', [UnipileController::class, 'email'])->name('email');
+Route::post('/sendEmail', [UnipileController::class, 'email_message'])->name('email_message');
