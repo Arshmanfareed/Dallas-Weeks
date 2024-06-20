@@ -52,7 +52,7 @@ class LinkedInController extends Controller
 
         return redirect()->route('home')->with('success', 'LinkedIn login successful');
     }
-    
+
     public function createLinkAccount(Request $request)
     {
         $all = $request->all();
@@ -61,11 +61,11 @@ class LinkedInController extends Controller
             'verify' => false,
         ]);
         try {
-            $response = $client->request('POST', 'https://api2.unipile.com:13225/api/v1/hosted/accounts/link', [
+            $response = $client->request('POST', 'https://api2.unipile.com:13212/api/v1/hosted/accounts/link', [
                 'json' => [
                     'type' => 'create',
                     'providers' => '*',
-                    'api_url' => 'https://api2.unipile.com:13225',
+                    'api_url' => 'https://api2.unipile.com:13212',
                     'expiresOn' => '2024-12-22T12:00:00.701Z',
                     'success_redirect_url' => 'https://networked.staging.designinternal.com/setting',
                     'failure_redirect_url' => 'https://networked.staging.designinternal.com/setting',
@@ -73,7 +73,7 @@ class LinkedInController extends Controller
                     'name' => $email,
                 ],
                 'headers' => [
-                    'X-API-KEY' => 'BN0rHqQh.rpWV9jWRAH6ZdCklpjQyfoec3DQ3PWFfYXVHMuUNN5E=',
+                    'X-API-KEY' => 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=',
                     'accept' => 'application/json',
                     'content-type' => 'application/json',
                 ],
@@ -97,41 +97,33 @@ class LinkedInController extends Controller
             ], 500);
         }
     }
-    
+
     public function delete_an_account()
     {
-        if (Auth::check()) {
-            if (session()->has('seat_id')) {
-                $seat_id = session('seat_id');
-                $seat = SeatInfo::where('id', $seat_id)->first();
-                if ($seat['account_id'] !== NULL) {
-                    $request = [
-                        'account_id' => $seat['account_id'],
-                    ];
-                    $uc = new UnipileController();
-                    $account = $uc->delete_account(new \Illuminate\Http\Request($request));
-                    if ($account instanceof JsonResponse) {
-                        $account = $account->getData(true);
-                        if (!isset($account['error'])) {
-                            $seat['account_id'] = null;
-                            $seat->save();
-                            session(['delete_account' => true]);
-                            return response()->json(['success' => true]);
-                        } else {
-                            return response()->json(['success' => false, 'error' => $account['error']]);
-                        }
-                    } else {
-                        return response()->json(['success' => false]);
-                    }
+        $seat_id = session('seat_id');
+        $seat = SeatInfo::where('id', $seat_id)->first();
+        if ($seat['account_id'] !== NULL) {
+            $request = [
+                'account_id' => $seat['account_id'],
+            ];
+            $uc = new UnipileController();
+            $account = $uc->delete_account(new \Illuminate\Http\Request($request));
+            if ($account instanceof JsonResponse) {
+                $account = $account->getData(true);
+                if (!isset($account['error'])) {
+                    $seat['account_id'] = null;
+                    $seat->save();
+                    session(['delete_account' => true]);
+                    return response()->json(['success' => true]);
                 } else {
-                    session(['add_account' => true]);
-                    return redirect(route('dash-settings'));
+                    return response()->json(['success' => false, 'error' => $account['error']]);
                 }
             } else {
-                return redirect(route('dashobardz'));
+                return response()->json(['success' => false]);
             }
         } else {
-            return redirect(url('/'));
+            session(['add_account' => true]);
+            return redirect(route('dash-settings'));
         }
     }
 }

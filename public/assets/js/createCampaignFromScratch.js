@@ -3,18 +3,9 @@ $(document).ready(function () {
     var inputElement = null;
     var outputElement = null;
     var elements_array = sessionStorage.getItem("elements_array");
-    var elements_data_array = sessionStorage.getItem("elements_data_array");
+    var elements_data_array = JSON.parse(sessionStorage.getItem("elements_data_array") || "{}");
+    sessionStorage.setItem("elements_data_array", JSON.stringify(elements_data_array));
     var condition = "";
-
-    if (elements_data_array) {
-        elements_data_array = JSON.parse(elements_data_array);
-    } else {
-        elements_data_array = {};
-        sessionStorage.setItem(
-            "elements_data_array",
-            JSON.stringify(elements_data_array)
-        );
-    }
 
     if (elements_array) {
         elements_array = JSON.parse(elements_array);
@@ -58,7 +49,7 @@ $(document).ready(function () {
                                     if (property["property_name"] == "Days") {
                                         if (
                                             elements_data_array[key][
-                                                prop_key
+                                            prop_key
                                             ] == ""
                                         ) {
                                             clone.find(".item_days").html("0");
@@ -67,7 +58,7 @@ $(document).ready(function () {
                                                 .find(".item_days")
                                                 .html(
                                                     elements_data_array[key][
-                                                        prop_key
+                                                    prop_key
                                                     ]
                                                 );
                                         }
@@ -76,7 +67,7 @@ $(document).ready(function () {
                                     ) {
                                         if (
                                             elements_data_array[key][
-                                                prop_key
+                                            prop_key
                                             ] == ""
                                         ) {
                                             clone.find(".item_hours").html("0");
@@ -85,7 +76,7 @@ $(document).ready(function () {
                                                 .find(".item_hours")
                                                 .html(
                                                     elements_data_array[key][
-                                                        prop_key
+                                                    prop_key
                                                     ]
                                                 );
                                         }
@@ -531,10 +522,10 @@ $(document).ready(function () {
                     }
                     $(".drop-pad").append(
                         '<div class="line" id="' +
-                            outputElement.attr("id") +
-                            "-to-" +
-                            inputElement.attr("id") +
-                            '"><div class="path-cancel-icon"><i class="fa-solid fa-xmark"></i></div></div>'
+                        outputElement.attr("id") +
+                        "-to-" +
+                        inputElement.attr("id") +
+                        '"><div class="path-cancel-icon"><i class="fa-solid fa-xmark"></i></div></div>'
                     );
                     $(".path-cancel-icon").on("click", removePath);
                     var attachInputElement = $(inputElement).find(
@@ -659,7 +650,7 @@ $(document).ready(function () {
                     .closest(".element_properties")
                     .find(".element_name")
                     .data("bs-target");
-                if (input.prop("required") && input.val() == "") {
+                if (input.prop("required") && input.val() == undefined) {
                     input.addClass("error");
                     $("#" + target_element).addClass("error");
                     $("#" + target_element)
@@ -1106,9 +1097,9 @@ $(document).ready(function () {
                 if (
                     $(".drop-pad").find(
                         "#" +
-                            current_element_id +
-                            "-to-" +
-                            next_false_element_id
+                        current_element_id +
+                        "-to-" +
+                        next_false_element_id
                     ).length > 0
                 ) {
                     var attachInputElement = $(
@@ -1212,7 +1203,7 @@ $(document).ready(function () {
                                             .addClass("error");
                                         toastr.error(
                                             property["property_name"] +
-                                                " is not filled as required."
+                                            " is not filled as required."
                                         );
                                         errorOccurred = true;
                                     }

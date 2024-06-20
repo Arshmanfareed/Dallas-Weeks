@@ -17,6 +17,7 @@ use App\Models\UpdatedCampaignElements;
 use App\Models\UpdatedCampaignProperties;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CampaignElementController extends Controller
 {
@@ -33,159 +34,185 @@ class CampaignElementController extends Controller
         }
     }
 
-    function createCampaign(Request $request)
+    public function createCampaign(Request $request)
     {
+        DB::beginTransaction();
         try {
             $user_id = Auth::user()->id;
             $seat_id = session('seat_id');
-            $all_request = $request->all();
-            $final_array = $all_request['final_array'];
-            $final_data = $all_request['final_data'];
-            $settings = $all_request['settings'];
-            $img_path = $all_request['img_url'];
-            $campaign = new Campaign();
-            $campaign->campaign_name = $settings['campaign_name'];
-            unset($settings['campaign_name']);
-            $campaign->campaign_type = $settings['campaign_type'];
-            unset($settings['campaign_type']);
-            $campaign->campaign_url = $settings['campaign_url'];
-            unset($settings['campaign_url']);
-            $imported_lead = ImportedLeads::where('user_id', $user_id)->where('file_path', $settings['campaign_url_hidden'])->first();
-            unset($settings['campaign_url_hidden']);
-            if ($campaign->campaign_type != 'import' && $campaign->campaign_type != 'recruiter') {
-                $campaign->campaign_connection = $settings['connections'];
-                unset($settings['connections']);
-            } else {
-                $campaign->campaign_connection = '0';
-            }
-            $campaign->user_id = $user_id;
-            $campaign->seat_id = $seat_id;
-            $campaign->modified_date = date('Y-m-d');
-            $campaign->start_date = date('Y-m-d');
-            $campaign->end_date = date('Y-m-d');
-            $campaign->img_path = $img_path;
+            $data = $request->all();
+            $final_array = $data['final_array'];
+            $final_data = $data['final_data'];
+            $settings = $data['settings'];
+            $img_path = $data['img_url'];
+
+            $campaign = new Campaign([
+                'campaign_name' => $settings['campaign_name'],
+                'campaign_type' => $settings['campaign_type'],
+                'campaign_url' => $settings['campaign_url'],
+                'campaign_connection' => ($settings['campaign_type'] != 'import' && $settings['campaign_type'] != 'recruiter') ? $settings['connections'] : '0',
+                'user_id' => $user_id,
+                'seat_id' => $seat_id,
+                'modified_date' => now()->format('Y-m-d'),
+                'start_date' => now()->format('Y-m-d'),
+                'end_date' => now()->format('Y-m-d'),
+                'img_path' => $img_path
+            ]);
             $campaign->save();
-            if ($campaign->id) {
-                if (!empty($imported_lead)) {
-                    $imported_lead->campaign_id = $campaign->id;
-                    $imported_lead->save();
+
+            if (!empty($settings['campaign_url_hidden'])) {
+                $imported_lead = ImportedLeads::where('user_id', $user_id)
+                    ->where('file_path', $settings['campaign_url_hidden'])
+                    ->first();
+
+                if ($imported_lead) {
+                    $imported_lead->update(['campaign_id' => $campaign->id]);
                 }
-                foreach ($settings as $key => $value) {
-                    if (str_contains($key, 'email_settings_')) {
-                        $setting = new EmailSetting();
-                    }
-                    if (str_contains($key, 'linkedin_settings_')) {
-                        $setting = new LinkedinSetting();
-                    }
-                    if (str_contains($key, 'global_settings_')) {
-                        $setting = new GlobalSetting();
-                    }
-                    $setting->campaign_id = $campaign->id;
-                    $setting->setting_slug = $key;
-                    $setting->user_id = $user_id;
-                    $setting->seat_id = 1;
-                    $setting->value = $value;
-                    $setting->setting_name = ucwords(str_replace('_', ' ', $key));
-                    $setting->save();
-                }
-                $path_array = [];
-                $time = now();
-                foreach ($final_array as $key => $value) {
-                    if ($key != 'step' || $key != 'step-1') {
-                        $element = CampaignElement::where('element_slug', $this->remove_prefix($key))->first();
-                        if ($element) {
-                            $element_item = new UpdatedCampaignElements();
-                            $element_item->element_id = $element->id;
-                            $element_item->campaign_id = $campaign->id;
-                            $element_item->user_id = $user_id;
-                            $element_item->seat_id = 1;
-                            $element_item->position_x = $value['position_x'];
-                            $element_item->position_y = $value['position_y'];
-                            $element_item->element_slug = $key;
-                            $element_item->save();
-                            $path_array[$key] = $element_item->id;
-                            if (isset($final_data[$key])) {
-                                $property_item = $final_data[$key];
-                                foreach ($property_item as $key => $value) {
-                                    $element_property = new UpdatedCampaignProperties();
-                                    $property = ElementProperties::where('id', $key)->first();
-                                    if (!empty($property)) {
-                                        $element_property->element_id = $element_item->id;
-                                        $element_property->property_id = $property->id;
-                                        $element_property->campaign_id = $campaign->id;
-                                        if ($value != null) {
-                                            $element_property->value = $value;
-                                        } else {
-                                            $element_property->value = '';
-                                        }
-                                        $element_property->save();
-                                        if (!empty($element_property->value) && isset($property)) {
-                                            $timeToAdd = intval($element_property->value);
-                                            if ($property->property_name == 'Hours') {
-                                                $time->modify('+' . $timeToAdd . ' hours');
-                                            } else if ($property->property_name == 'Days') {
-                                                $time->modify('+' . $timeToAdd . ' days');
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                $campaign->end_date = $time;
-                $campaign->save();
-                foreach ($final_array as $key => $value) {
-                    if (isset($path_array[$key])) {
-                        $path = new CampaignPath();
-                        $path->campaign_id = $campaign->id;
-                        $path->current_element_id = $path_array[$key];
-                        if ($final_array[$key]['0'] == '' && $final_array[$key]['1'] == '') {
-                            $path->next_false_element_id = '';
-                            $path->next_true_element_id = '';
-                        } else if ($final_array[$key]['0'] == '') {
-                            $path->next_true_element_id = $path_array[$value['1']];
-                            $path->next_false_element_id = '';
-                        } else if ($final_array[$key]['1'] == '') {
-                            $path->next_true_element_id = '';
-                            $path->next_false_element_id = $path_array[$value['0']];
-                        } else {
-                            $path->next_true_element_id = $path_array[$value['1']];
-                            $path->next_false_element_id = $path_array[$value['0']];
-                        }
-                        $path->save();
-                    }
-                }
-                $action = new CampaignActions();
-                $campaign_path = CampaignPath::where('campaign_id', $campaign->id)->first();
-                $action->current_element_id = 'step_1';
-                $action->next_true_element_id = $campaign_path->current_element_id;
-                $action->next_false_element_id = '';
-                $action->created_at = now();
-                $action->updated_at = now();
-                $action->campaign_id = $campaign->id;
-                $action->status = 'inprogress';
-                $action->ending_time = now();
-                $action->save();
-                $request->session()->flash('success', 'Campaign succesfully saved!');
-                return response()->json(['success' => true]);
-            } else {
-                return response()->json(['success' => false, 'message' => 'No Campaign Inserted']);
             }
+
+            $this->saveSettings($settings, $campaign->id, $user_id);
+            $this->saveCampaignElements($final_array, $final_data, $campaign->id, $user_id);
+            $this->createInitialCampaignAction($campaign->id);
+
+            DB::commit();
+
+            $request->session()->flash('success', 'Campaign successfully saved!');
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            LinkedinSetting::where('campaign_id', $campaign->id)->delete();
-            LeadActions::where('campaign_id', $campaign->id)->delete();
-            Leads::where('campaign_id', $campaign->id)->delete();
-            ImportedLeads::where('campaign_id', $campaign->id)->delete();
-            GlobalSetting::where('campaign_id', $campaign->id)->delete();
-            EmailSetting::where('campaign_id', $campaign->id)->delete();
-            UpdatedCampaignProperties::where('campaign_id', $campaign->id)->delete();
-            CampaignPath::where('campaign_id', $campaign->id)->delete();
-            UpdatedCampaignElements::where('campaign_id', $campaign->id)->delete();
-            CampaignActions::where('campaign_id', $campaign->id)->delete();
-            $campaign->delete();
-            return response()->json(['success' => false, 'message' => $e]);
+            DB::rollBack();
+            $this->deleteCampaignData($campaign->id);
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
+    }
+
+    private function saveSettings($settings, $campaign_id, $user_id)
+    {
+        foreach ($settings as $key => $value) {
+            $setting = $this->getSettingModel($key);
+            if ($setting) {
+                $setting->create([
+                    'campaign_id' => $campaign_id,
+                    'setting_slug' => $key,
+                    'user_id' => $user_id,
+                    'seat_id' => 1,
+                    'value' => $value,
+                    'setting_name' => ucwords(str_replace('_', ' ', $key)),
+                ]);
+            }
+        }
+    }
+
+    private function getSettingModel($key)
+    {
+        if (str_contains($key, 'email_settings_')) {
+            return new EmailSetting();
+        }
+        if (str_contains($key, 'linkedin_settings_')) {
+            return new LinkedinSetting();
+        }
+        if (str_contains($key, 'global_settings_')) {
+            return new GlobalSetting();
+        }
+        return null;
+    }
+
+    private function saveCampaignElements($final_array, $final_data, $campaign_id, $user_id)
+    {
+        $time = now();
+        $path_array = [];
+
+        foreach ($final_array as $key => $value) {
+            if ($key != 'step' && $key != 'step-1') {
+                $element = CampaignElement::where('element_slug', $this->remove_prefix($key))->first();
+
+                if ($element) {
+                    $element_item = UpdatedCampaignElements::create([
+                        'element_id' => $element->id,
+                        'campaign_id' => $campaign_id,
+                        'user_id' => $user_id,
+                        'seat_id' => 1,
+                        'position_x' => $value['position_x'],
+                        'position_y' => $value['position_y'],
+                        'element_slug' => $key,
+                    ]);
+
+                    $path_array[$key] = $element_item->id;
+
+                    if (isset($final_data[$key])) {
+                        $this->saveElementProperties($element_item->id, $final_data[$key], $campaign_id, $time);
+                    }
+                }
+            }
+        }
+
+        Campaign::where('id', $campaign_id)->update(['end_date' => $time]);
+
+        foreach ($final_array as $key => $value) {
+            if (isset($path_array[$key])) {
+                CampaignPath::create([
+                    'campaign_id' => $campaign_id,
+                    'current_element_id' => $path_array[$key],
+                    'next_false_element_id' => $final_array[$key]['0'] ? $path_array[$value['0']] : '',
+                    'next_true_element_id' => $final_array[$key]['1'] ? $path_array[$value['1']] : '',
+                ]);
+            }
+        }
+    }
+
+    private function saveElementProperties($element_item_id, $property_item, $campaign_id, &$time)
+    {
+        foreach ($property_item as $property_id => $value) {
+            $property = ElementProperties::find($property_id);
+
+            if ($property) {
+                $element_property = UpdatedCampaignProperties::create([
+                    'element_id' => $element_item_id,
+                    'property_id' => $property_id,
+                    'campaign_id' => $campaign_id,
+                    'value' => $value ?? '',
+                ]);
+
+                if ($element_property->value) {
+                    $timeToAdd = intval($element_property->value);
+                    if ($property->property_name == 'Hours') {
+                        $time->addHours($timeToAdd);
+                    } elseif ($property->property_name == 'Days') {
+                        $time->addDays($timeToAdd);
+                    }
+                }
+            }
+        }
+    }
+
+    private function createInitialCampaignAction($campaign_id)
+    {
+        $campaign_path = CampaignPath::where('campaign_id', $campaign_id)->first();
+
+        CampaignActions::create([
+            'current_element_id' => 'step_1',
+            'next_true_element_id' => $campaign_path->current_element_id,
+            'next_false_element_id' => '',
+            'created_at' => now(),
+            'updated_at' => now(),
+            'campaign_id' => $campaign_id,
+            'status' => 'inprogress',
+            'ending_time' => now(),
+        ]);
+    }
+
+    private function deleteCampaignData($campaign_id)
+    {
+        LinkedinSetting::where('campaign_id', $campaign_id)->delete();
+        LeadActions::where('campaign_id', $campaign_id)->delete();
+        Leads::where('campaign_id', $campaign_id)->delete();
+        ImportedLeads::where('campaign_id', $campaign_id)->delete();
+        GlobalSetting::where('campaign_id', $campaign_id)->delete();
+        EmailSetting::where('campaign_id', $campaign_id)->delete();
+        UpdatedCampaignProperties::where('campaign_id', $campaign_id)->delete();
+        CampaignPath::where('campaign_id', $campaign_id)->delete();
+        UpdatedCampaignElements::where('campaign_id', $campaign_id)->delete();
+        CampaignActions::where('campaign_id', $campaign_id)->delete();
+        Campaign::where('id', $campaign_id)->delete();
     }
 
     private function remove_prefix($value)

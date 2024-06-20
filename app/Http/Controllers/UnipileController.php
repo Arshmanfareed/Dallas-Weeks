@@ -15,7 +15,7 @@ class UnipileController extends Controller
 {
     public function get_accounts()
     {
-        $x_api_key = 'BN0rHqQh.rpWV9jWRAH6ZdCklpjQyfoec3DQ3PWFfYXVHMuUNN5E=';
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -23,7 +23,7 @@ class UnipileController extends Controller
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
         try {
-            $response = $client->request('GET', 'https://api2.unipile.com:13225/api/v1/accounts', [
+            $response = $client->request('GET', 'https://api2.unipile.com:13212/api/v1/accounts', [
                 'headers' => [
                     'X-API-KEY' => $x_api_key,
                     'accept' => 'application/json',
@@ -41,14 +41,14 @@ class UnipileController extends Controller
     {
         $all = $request->all();
         $account_id = $all['account_id'];
-        $x_api_key = 'BN0rHqQh.rpWV9jWRAH6ZdCklpjQyfoec3DQ3PWFfYXVHMuUNN5E=';
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
         if (!$account_id || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
-        $url = 'https://api2.unipile.com:13225/api/v1/accounts/' . $account_id;
+        $url = 'https://api2.unipile.com:13212/api/v1/accounts/' . $account_id;
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
@@ -67,14 +67,14 @@ class UnipileController extends Controller
     {
         $all = $request->all();
         $account_id = $all['account_id'];
-        $x_api_key = 'BN0rHqQh.rpWV9jWRAH6ZdCklpjQyfoec3DQ3PWFfYXVHMuUNN5E=';
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
         if (!$account_id || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
-        $url = 'https://api2.unipile.com:13225/api/v1/users/relations' . '?limit=3&account_id=' . $account_id;
+        $url = 'https://api2.unipile.com:13212/api/v1/users/relations' . '?limit=3&account_id=' . $account_id;
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
@@ -88,7 +88,7 @@ class UnipileController extends Controller
                 foreach ($responses['items'] as $response) {
                     $url = '';
                     if ($response['object'] == 'UserRelation') {
-                        $url = 'https://api2.unipile.com:13225/api/v1/users/' . $response['member_id'];
+                        $url = 'https://api2.unipile.com:13212/api/v1/users/' . $response['member_id'];
                     } elseif ($response['object'] == 'CompanyProfile') {
                         $url = '' . $response[''];
                     }
@@ -111,14 +111,14 @@ class UnipileController extends Controller
     {
         $all = $request->all();
         $account_id = $all['account_id'];
-        $x_api_key = 'BN0rHqQh.rpWV9jWRAH6ZdCklpjQyfoec3DQ3PWFfYXVHMuUNN5E=';
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
         if (!$account_id || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
-        $url = 'https://api2.unipile.com:13225/api/v1/accounts/' . $account_id;
+        $url = 'https://api2.unipile.com:13212/api/v1/accounts/' . $account_id;
         try {
             $response = $client->request('DELETE', $url, [
                 'headers' => [
@@ -132,25 +132,6 @@ class UnipileController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
-
-    //   public function handleCallback(Request $request)
-    //     {
-    //         // Log the entire incoming request
-    //         Log::info('Unipile callback received', $request->all());
-
-
-
-    //         $accountId = $request->input('account_id');
-    //         $status = $request->input('status');
-    //         $email = $request->input('name');
-
-    //          Log::info('Account ID:', ['account_id' => $accountId]);
-    //          Log::info('Status:', ['status' => $status]);
-
-
-
-
-    //     }
 
     public function handleCallback(Request $request)
     {
@@ -182,18 +163,18 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $profile_url = $all['profile_url'];
-        $x_api_key = 'BN0rHqQh.rpWV9jWRAH6ZdCklpjQyfoec3DQ3PWFfYXVHMuUNN5E=';
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
         if (!$account_id || !$profile_url || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
-        if (strpos($profile_url, 'https://www.linkedin.com/company/') === false && strpos($profile_url, 'https://www.linkedin.com/in/') === false && strpos($profile_url, 'https://api2.unipile.com:13225/api/v1/linkedin/company/') === false && strpos($profile_url, 'https://api2.unipile.com:13225/api/v1/users/') === false) {
+        if (strpos($profile_url, 'https://www.linkedin.com/company/') === false && strpos($profile_url, 'https://www.linkedin.com/in/') === false && strpos($profile_url, 'https://api2.unipile.com:13212/api/v1/linkedin/company/') === false && strpos($profile_url, 'https://api2.unipile.com:13212/api/v1/users/') === false) {
             return response()->json(['error' => 'Incorrect LinkedIn URL'], 400);
         }
-        $profile_url = str_replace('https://www.linkedin.com/company/', 'https://api2.unipile.com:13225/api/v1/linkedin/company/', $profile_url);
-        $profile_url = str_replace('https://www.linkedin.com/in/', 'https://api2.unipile.com:13225/api/v1/users/', $profile_url);
+        $profile_url = str_replace('https://www.linkedin.com/company/', 'https://api2.unipile.com:13212/api/v1/linkedin/company/', $profile_url);
+        $profile_url = str_replace('https://www.linkedin.com/in/', 'https://api2.unipile.com:13212/api/v1/users/', $profile_url);
         $url = $profile_url . '?linkedin_sections=%2A&account_id=' . $account_id;
         try {
             $response = $client->request('GET', $url, [
@@ -218,7 +199,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = 'BN0rHqQh.rpWV9jWRAH6ZdCklpjQyfoec3DQ3PWFfYXVHMuUNN5E=';
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -227,7 +208,7 @@ class UnipileController extends Controller
             'verify' => false,
         ]);
         try {
-            $response = $client->request('POST', 'https://api2.unipile.com:13225/api/v1/users/invite', [
+            $response = $client->request('POST', 'https://api2.unipile.com:13212/api/v1/users/invite', [
                 'json' => [
                     'provider_id' => $identifier,
                     'account_id' => $account_id,
@@ -255,7 +236,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = 'BN0rHqQh.rpWV9jWRAH6ZdCklpjQyfoec3DQ3PWFfYXVHMuUNN5E=';
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -264,7 +245,7 @@ class UnipileController extends Controller
             'verify' => false,
         ]);
         try {
-            $response = $client->request('POST', 'https://api2.unipile.com:13225/api/v1/chats', [
+            $response = $client->request('POST', 'https://api2.unipile.com:13212/api/v1/chats', [
                 'multipart' => [
                     [
                         'name' => 'attendees_ids',
@@ -296,7 +277,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = 'BN0rHqQh.rpWV9jWRAH6ZdCklpjQyfoec3DQ3PWFfYXVHMuUNN5E=';
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -304,7 +285,7 @@ class UnipileController extends Controller
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
-        $url = 'https://api2.unipile.com:13225/api/v1/users/me?account_id=' . $account_id;
+        $url = 'https://api2.unipile.com:13212/api/v1/users/me?account_id=' . $account_id;
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
@@ -314,7 +295,7 @@ class UnipileController extends Controller
             ]);
             $profile = json_decode($response->getBody(), true);
             if ($profile['object'] == 'AccountOwnerProfile' && $profile['premium']) {
-                $response = $client->request('POST', 'https://api2.unipile.com:13225/api/v1/chats', [
+                $response = $client->request('POST', 'https://api2.unipile.com:13212/api/v1/chats', [
                     'multipart' => [
                         [
                             'name' => 'attendees_ids',

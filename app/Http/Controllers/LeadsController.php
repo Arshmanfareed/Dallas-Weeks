@@ -42,43 +42,37 @@ class LeadsController extends Controller
 
     function getLeadsByCampaign($id, $search)
     {
-        if (Auth::check()) {
-            if (session()->has('seat_id')) {
-                $seat_id = session('seat_id');
-                $seat = SeatInfo::where('id', $seat_id)->first();
-                $user_id = Auth::user()->id;
-                $leads = Leads::where('user_id', $user_id);
-                $campaign = null;
-                if ($search != 'null') {
-                    $leads = $leads->where(function ($query) use ($search) {
-                        $query->where('contact', 'LIKE', '%' . $search . '%')
-                            ->orWhere('title_company', 'LIKE', '%' . $search . '%');
-                    });
-                }
-                if ($id != 'all') {
-                    $leads = $leads->where('campaign_id', $id);
-                    $campaign = Campaign::where('user_id', $user_id)->where('id', $id)->get();
-                } else {
-                    $campaigns = Campaign::where('seat_id', $seat_id)->get();
-                    $final_leads = [];
-                    foreach ($campaigns as $campaign) {
-                        $leads = Leads::where('campaign_id', $campaign->id)->get();
-                        foreach ($leads as $lead) {
-                            $final_leads[] = $lead;
-                        }
-                    }
-                    $leads = $final_leads;
-                    return response()->json(['success' => true, 'leads' => $leads, 'campaign' => $campaigns]);
-                }
-                $leads = $leads->get();
-                if (!$leads->isEmpty()) {
-                    return response()->json(['success' => true, 'leads' => $leads, 'campaign' => $campaign]);
-                } else {
-                    return response()->json(['success' => false, 'message' => 'Leads not found!', 'campaign' => $campaign]);
+        $user_id = Auth::user()->id;
+        $seat_id = session('seat_id');
+        $seat = SeatInfo::where('id', $seat_id)->first();
+        $leads = Leads::where('user_id', $user_id);
+        $campaign = null;
+        if ($search != 'null') {
+            $leads = $leads->where(function ($query) use ($search) {
+                $query->where('contact', 'LIKE', '%' . $search . '%')
+                    ->orWhere('title_company', 'LIKE', '%' . $search . '%');
+            });
+        }
+        if ($id != 'all') {
+            $leads = $leads->where('campaign_id', $id);
+            $campaign = Campaign::where('user_id', $user_id)->where('id', $id)->get();
+        } else {
+            $campaigns = Campaign::where('seat_id', $seat_id)->get();
+            $final_leads = [];
+            foreach ($campaigns as $campaign) {
+                $leads = Leads::where('campaign_id', $campaign->id)->get();
+                foreach ($leads as $lead) {
+                    $final_leads[] = $lead;
                 }
             }
+            $leads = $final_leads;
+            return response()->json(['success' => true, 'leads' => $leads, 'campaign' => $campaigns]);
+        }
+        $leads = $leads->get();
+        if (!$leads->isEmpty()) {
+            return response()->json(['success' => true, 'leads' => $leads, 'campaign' => $campaign]);
         } else {
-            return redirect(url('/'));
+            return response()->json(['success' => false, 'message' => 'Leads not found!', 'campaign' => $campaign]);
         }
     }
 
@@ -150,15 +144,25 @@ class LeadsController extends Controller
 
     function getViewProfileByCampaign($campaign_id)
     {
+        $count = 0;
         $user_id = Auth::user()->id;
         $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', '%view_profile%')->get();
-        return response()->json(['success' => true, 'count' => count($campaign_elements)]);
+        foreach ($campaign_elements as $element) {
+            $leads = LeadActions::where('current_element_id', $element->id)->get();
+            $count += count($leads);
+        }
+        return response()->json(['success' => true, 'count' => $count]);
     }
-    
+
     function getInviteToConnectByCampaign($campaign_id)
     {
+        $count = 0;
         $user_id = Auth::user()->id;
         $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', '%invite_to_connect%')->get();
-        return response()->json(['success' => true, 'count' => count($campaign_elements)]);
+        foreach ($campaign_elements as $element) {
+            $leads = LeadActions::where('current_element_id', $element->id)->get();
+            $count += count($leads);
+        }
+        return response()->json(['success' => true, 'count' => $count]);
     }
 }

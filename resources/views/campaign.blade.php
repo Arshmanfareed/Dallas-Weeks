@@ -218,20 +218,17 @@ session()->forget('edit_campaign_details');
                                             </td>
                                             <td>{{ $campaign->campaign_name }}</td>
                                             @php
-                                            $leads = App\Models\Leads::where(
-                                            'campaign_id',
-                                            $campaign->id,
-                                            )->get();
-                                            $lc = new App\Http\Controllers\LeadsController();
-                                            $lead = $lc->getLeadsCountByCampaign($campaign->id);
-                                            $lead = json_decode($lead->getContent(), true);
-                                            $viewProfile = $lc->getViewProfileByCampaign($campaign->id);
-                                            $viewProfile = json_decode($viewProfile->getContent(), true);
-                                            $inviteToConnect = $lc->getInviteToConnectByCampaign($campaign->id);
-                                            $inviteToConnect = json_decode($inviteToConnect->getContent(), true);
-                                            $lead_count = $lead['count'];
-                                            $viewProfile_count = $viewProfile['count'];
-                                            $inviteToConnect_count = $inviteToConnect['count'];
+                                                $leads = App\Models\Leads::where('campaign_id', $campaign->id)->get();
+                                                $lc = new App\Http\Controllers\LeadsController();
+                                                $lead = $lc->getLeadsCountByCampaign($campaign->id);
+                                                $lead = json_decode($lead->getContent(), true);
+                                                $viewProfile = $lc->getViewProfileByCampaign($campaign->id);
+                                                $viewProfile = json_decode($viewProfile->getContent(), true);
+                                                $inviteToConnect = $lc->getInviteToConnectByCampaign($campaign->id);
+                                                $inviteToConnect = json_decode($inviteToConnect->getContent(), true);
+                                                $lead_count = $lead['count'];
+                                                $viewProfile_count = $viewProfile['count'];
+                                                $inviteToConnect_count = $inviteToConnect['count'];
                                             @endphp
                                             <td id="{{ 'lead_count_' .  $campaign['id'] }}">
                                                 {{ $lead_count }}

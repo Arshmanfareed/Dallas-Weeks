@@ -66,35 +66,54 @@ Route::get('/auth/linkedin/callback', function () {
 // Route::get('linkedin/login', [SocialController::class, 'provider'])->name('linked.login');
 // Route::get('linkedin/callback', [SocialController::class, 'providerCallback'])->name('linked.user');
 
+/* These are home pages views which does not require any authentication */
 Route::get('/', [HomeController::class, 'home']);
 Route::get('/about', [HomeController::class, 'about']);
 Route::get('/pricing', [HomeController::class, 'pricing']);
 Route::get('/faq', [HomeController::class, 'faq']);
+
+/* These are login and signup views which does not require any authentication */
 Route::get('/login', [LoginController::class, 'login']);
 Route::get('/register', [RegisterController::class, 'register']);
 Route::post('/register-user', [RegisterController::class, 'registerUser'])->name('register-user');
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
+
+/* These are for actions like campaign and leads */
 Route::get('/update_action', [ActionsController::class, 'update_action'])->name('update_action');
 Route::get('/update_leads_action', [ActionsController::class, 'update_leads_action'])->name('update_leads_action');
 
+/* These are for dashboard which requires authentication */
 Route::middleware(['userAuth'])->group(function () {
+    /* These are for dashboard which does not require seat_id in session */
     Route::get('/dashboard', [DasboardController::class, 'dashboard'])->name('dashobardz');
     Route::get('/blacklist', [BlacklistController::class, 'blacklist']);
     Route::get('/team', [TeamController::class, 'team']);
     Route::get('/invoice', [InvoiceController::class, 'invoice']);
     Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']);
-    // Route::get('/rolesandpermission',[RolespermissionController::class,'rolespermission']);  
-    Route::get('/setting', [SettingController::class, 'setting'])->name('dash-settings');
-    Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash');
     Route::prefix('seat')->group(function () {
         Route::get('/getSeatById/{id}', [SeatController::class, 'get_seat_by_id'])->name('getSeatById');
         Route::get('/deleteSeat/{id}', [SeatController::class, 'delete_seat'])->name('deleteSeat');
         Route::get('/updateName/{id}/{seat_name}', [SeatController::class, 'update_name'])->name('updateName');
     });
+    Route::controller(StripePaymentController::class)->group(function () {
+        Route::get('stripe', 'stripe');
+        Route::post('stripe', 'stripePost')->name('stripe.post');
+    });
+    Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']);
+    Route::post('/logout', [LoginController::class, 'logoutUser'])->name('logout-user');
+    // Route::get('/rolesandpermission',[RolespermissionController::class,'rolespermission']);
+
+    /* This setting might not requires account connectivity */
+    Route::get('/setting', [SettingController::class, 'setting'])->name('dash-settings');
+
+    /* This dashboard uses to update seat_id in session */
+    Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash');
+
+    /* These are for connectivity of an account into UNIPILE */
     Route::get('/get_relations', [UnipileController::class, 'get_relations'])->name('getAllRelations');
     Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
-    Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']);
 
+    /* These are for dashboard which requires account connectivity */
     Route::middleware(['linkedinAccount'])->group(function () {
         Route::prefix('campaign')->group(function () {
             Route::get('/', [CampaignController::class, 'campaign'])->name('campaigns');
@@ -124,18 +143,12 @@ Route::middleware(['userAuth'])->group(function () {
             Route::get('/getViewProfileByCampaign/{id}', [LeadsController::class, 'getViewProfileByCampaign'])->name('getViewProfileByCampaign');
             Route::get('/getInviteToConnectByCampaign/{id}', [LeadsController::class, 'getInviteToConnectByCampaign'])->name('getInviteToConnectByCampaign');
         });
-
         Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
         Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');
         Route::get('/filterSchedule/{search}', [ScheduleCampaign::class, 'filterSchedule'])->name('filterSchedule');
         Route::get('/getElements/{campaign_id}', [CampaignElementController::class, 'getElements'])->name('getElements');
         Route::post('/import_csv', [CsvController::class, 'import_csv'])->name('import_csv');
         Route::get('/delete_an_account', [LinkedInController::class, 'delete_an_account'])->name('delete_an_account');
-        Route::post('/logout', [LoginController::class, 'logoutUser'])->name('logout-user');
-        Route::controller(StripePaymentController::class)->group(function () {
-            Route::get('stripe', 'stripe');
-            Route::post('stripe', 'stripePost')->name('stripe.post');
-        });
         Route::get('/report', [ReportController::class, 'report'])->name('dash-reports');
         Route::get('/message', [MessageController::class, 'message'])->name('dash-messages');
         Route::get('/contacts', [ContactController::class, 'contact']);
