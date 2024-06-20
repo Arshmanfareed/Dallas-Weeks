@@ -89,6 +89,10 @@ class ActionsController extends Controller
                                                         $contact = $user_profile['phone'];
                                                         $lead->contact = $contact;
                                                     }
+                                                    if (isset($user_profile['contact_info']['emails'])) {
+                                                        $email = $user_profile['contact_info']['emails'][0];
+                                                        $lead->email = $email;
+                                                    }
                                                     $lead->save();
                                                     if (isset($lead->id)) {
                                                         $lead_action = new LeadActions();
@@ -177,6 +181,8 @@ class ActionsController extends Controller
                             $success = $cc->message($action, $account_id, $element, $campaign_element);
                         } else if ($element->element_slug == 'inmail_message') {
                             $success = $cc->inmail_message($action, $account_id, $element, $campaign_element);
+                        } else if ($element->element_slug == 'email_message') {
+                            $success = $cc->email_message($action, $account_id, $element, $campaign_element);
                         }
                     }
                 }

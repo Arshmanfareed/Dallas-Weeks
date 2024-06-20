@@ -1,18 +1,18 @@
 $(document).ready(function () {
-    $(".setting_tab").on("click", function (e) {
-        e.preventDefault();
-        $(".setting_tab").removeClass("active");
+    function handleTabClick(event, tabClass, paneClass) {
+        event.preventDefault();
+        $(tabClass).removeClass("active");
         $(this).addClass("active");
         var id = $(this).data("bs-target");
-        $(".setting_pane").removeClass("active");
+        $(paneClass).removeClass("active");
         $("#" + id).addClass("active");
+    }
+
+    $(document).on("click", ".setting_tab", function (e) {
+        handleTabClick.call(this, e, ".setting_tab", ".setting_pane");
     });
-    $(".linkedin_setting").on("click", function (e) {
-        e.preventDefault();
-        $(".linkedin_setting").removeClass("active");
-        $(this).addClass("active");
-        var id = $(this).data("bs-target");
-        $(".linkedin_pane").removeClass("active");
-        $("#" + id).addClass("active");
+
+    $(document).on("click", ".linkedin_setting", function (e) {
+        handleTabClick.call(this, e, ".linkedin_setting", ".linkedin_pane");
     });
 });

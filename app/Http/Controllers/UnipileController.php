@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 
 
@@ -15,7 +16,7 @@ class UnipileController extends Controller
 {
     public function get_accounts()
     {
-        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
+        $x_api_key = config('services.unipile.api_key');
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -41,7 +42,7 @@ class UnipileController extends Controller
     {
         $all = $request->all();
         $account_id = $all['account_id'];
-        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
+        $x_api_key = config('services.unipile.api_key');
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -67,7 +68,7 @@ class UnipileController extends Controller
     {
         $all = $request->all();
         $account_id = $all['account_id'];
-        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
+        $x_api_key = config('services.unipile.api_key');
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -111,7 +112,7 @@ class UnipileController extends Controller
     {
         $all = $request->all();
         $account_id = $all['account_id'];
-        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
+        $x_api_key = config('services.unipile.api_key');
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -163,7 +164,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $profile_url = $all['profile_url'];
-        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
+        $x_api_key = config('services.unipile.api_key');
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -199,7 +200,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
+        $x_api_key = config('services.unipile.api_key');
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -236,7 +237,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
+        $x_api_key = config('services.unipile.api_key');
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -277,7 +278,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
+        $x_api_key = config('services.unipile.api_key');
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -326,6 +327,26 @@ class UnipileController extends Controller
             }
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function email_message(Request $request)
+    {
+        $all = $request->all();
+        $account_id = $all['account_id'] ?? null;
+        $email = $all['email'] ?? null;
+        $subject = $all['subject'] ?? null;
+        $messageContent = $all['message'] ?? null;
+        $x_api_key = config('services.unipile.api_key');
+        try {
+            Mail::send([], [], function ($mail) use ($email, $subject, $messageContent) {
+                $mail->to($email)
+                    ->subject($subject)
+                    ->setBody($messageContent, 'text/html');
+            });
+            return response()->json(['success' => true, 'message' => 'Email sent successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to send email', 'details' => $e->getMessage()], 500);
         }
     }
 }
