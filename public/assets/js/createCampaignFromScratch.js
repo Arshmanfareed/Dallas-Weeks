@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    var settings = JSON.parse(sessionStorage.getItem("settings"));
     var choosedElement = null;
     var inputElement = null;
     var outputElement = null;
