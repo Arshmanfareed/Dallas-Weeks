@@ -605,7 +605,7 @@ $(document).ready(function () {
                     data: JSON.stringify({
                         final_data: elements_data_array,
                         final_array: elements_array,
-                        settings: settings,
+                        settings: campaign_details,
                         img_url: img,
                     }),
                     headers: {

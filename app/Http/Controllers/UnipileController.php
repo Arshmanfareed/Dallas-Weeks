@@ -16,7 +16,7 @@ class UnipileController extends Controller
 {
     public function get_accounts()
     {
-        $x_api_key = config('services.unipile.api_key');
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -42,7 +42,7 @@ class UnipileController extends Controller
     {
         $all = $request->all();
         $account_id = $all['account_id'];
-        $x_api_key = config('services.unipile.api_key');
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -68,7 +68,7 @@ class UnipileController extends Controller
     {
         $all = $request->all();
         $account_id = $all['account_id'];
-        $x_api_key = config('services.unipile.api_key');
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -112,7 +112,7 @@ class UnipileController extends Controller
     {
         $all = $request->all();
         $account_id = $all['account_id'];
-        $x_api_key = config('services.unipile.api_key');
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -164,7 +164,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $profile_url = $all['profile_url'];
-        $x_api_key = config('services.unipile.api_key');
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -200,7 +200,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = config('services.unipile.api_key');
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -237,7 +237,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = config('services.unipile.api_key');
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -278,7 +278,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
-        $x_api_key = config('services.unipile.api_key');
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         $message = $all['message'];
         if (!$account_id || !$identifier || !$x_api_key) {
             return response()->json(['error' => 'Missing required parameters'], 400);
@@ -337,7 +337,7 @@ class UnipileController extends Controller
         $email = $all['email'] ?? null;
         $subject = $all['subject'] ?? null;
         $messageContent = $all['message'] ?? null;
-        $x_api_key = config('services.unipile.api_key');
+        $x_api_key = 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=';
         try {
             Mail::send([], [], function ($mail) use ($email, $subject, $messageContent) {
                 $mail->to($email)

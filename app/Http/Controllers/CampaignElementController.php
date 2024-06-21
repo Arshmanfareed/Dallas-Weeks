@@ -37,6 +37,7 @@ class CampaignElementController extends Controller
     public function createCampaign(Request $request)
     {
         DB::beginTransaction();
+        $campaign = null; 
         try {
             $user_id = Auth::user()->id;
             $seat_id = session('seat_id');
@@ -45,7 +46,7 @@ class CampaignElementController extends Controller
             $final_data = $data['final_data'];
             $settings = $data['settings'];
             $img_path = $data['img_url'];
-
+    
             $campaign = new Campaign([
                 'campaign_name' => $settings['campaign_name'],
                 'campaign_type' => $settings['campaign_type'],
@@ -59,28 +60,30 @@ class CampaignElementController extends Controller
                 'img_path' => $img_path
             ]);
             $campaign->save();
-
+    
             if (!empty($settings['campaign_url_hidden'])) {
                 $imported_lead = ImportedLeads::where('user_id', $user_id)
                     ->where('file_path', $settings['campaign_url_hidden'])
                     ->first();
-
+    
                 if ($imported_lead) {
                     $imported_lead->update(['campaign_id' => $campaign->id]);
                 }
             }
-
+    
             $this->saveSettings($settings, $campaign->id, $user_id);
             $this->saveCampaignElements($final_array, $final_data, $campaign->id, $user_id);
             $this->createInitialCampaignAction($campaign->id);
-
+    
             DB::commit();
-
+    
             $request->session()->flash('success', 'Campaign successfully saved!');
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->deleteCampaignData($campaign->id);
+            if ($campaign !== null) {
+                $this->deleteCampaignData($campaign->id);
+            }
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }

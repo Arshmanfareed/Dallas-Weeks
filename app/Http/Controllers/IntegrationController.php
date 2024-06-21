@@ -13,7 +13,7 @@ class IntegrationController extends Controller
     {
         $user_id = Auth::user()->id;
         $seat_id = session('seat_id');
-        $seat = SeatInfo::where('id', $seat_id)->first();
+        $seat = SeatInfo::find($seat_id);
         $data = [
             'title' => 'Integration'
         ];

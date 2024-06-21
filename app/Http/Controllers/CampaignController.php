@@ -75,7 +75,7 @@ class CampaignController extends Controller
         $user_id = Auth::user()->id;
         $seat_id = session('seat_id');
         $seat = SeatInfo::find($seat_id);
-        $settings = $request->except(['_token', 'seat']);
+        $settings = $request->except(['_token']);
         $data = [
             'campaigns' => CampaignElement::where('is_conditional', '0')->get(),
             'conditional_campaigns' => CampaignElement::where('is_conditional', '1')->get(),

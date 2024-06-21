@@ -10,6 +10,7 @@ use App\Models\UpdatedCampaignProperties;
 use App\Models\CampaignElement;
 use App\Models\ElementProperties;
 use Illuminate\Support\Facades\Mail;
+use Exception;
 
 class CronController extends Controller
 {
@@ -51,13 +52,13 @@ class CronController extends Controller
                 if (isset($lead->id)) {
                     return true;
                 } else {
-                    return false;
+                    throw new Exception('Lead is not saved');
                 }
             } else {
-                return false;
+                throw new Exception($user_profile['error']);
             }
         } else {
-            return false;
+            throw new Exception('User Profile is not instance of');
         }
     }
 
@@ -95,22 +96,30 @@ class CronController extends Controller
                                 $invite_to_connect = $invite_to_connect['invitaion'];
                                 return true;
                             } else {
-                                return false;
+                                throw new Exception($invite_to_connect['error']);
                             }
                         } else {
-                            return false;
+                            throw new Exception('Invite to connect is not instance of');
                         }
                     } else {
-                        return false;
+                        if (!isset($element)) {
+                            throw new Exception('Element is not saved');
+                        } else {
+                            throw new Exception('Campaign Element is not saved');
+                        }
                     }
                 } else {
-                    return false;
+                    if (!isset($user_profile['provider_id'])) {  
+                        throw new Exception('User do not have provider_id');
+                    } else {
+                        throw new Exception('User is not in relation');
+                    }
                 }
             } else {
-                return false;
+                throw new Exception($user_profile['error']);
             }
         } else {
-            return false;
+            throw new Exception('User Profile is not instance of');
         }
     }
 
@@ -148,22 +157,30 @@ class CronController extends Controller
                                 $message = $message['message'];
                                 return true;
                             } else {
-                                return false;
+                                throw new Exception($message['error']);
                             }
                         } else {
-                            return false;
+                            throw new Exception('Message is not instance of');
                         }
                     } else {
-                        return false;
+                        if (!isset($element)) {
+                            throw new Exception('Element is not saved');
+                        } else {
+                            throw new Exception('Campaign Element is not saved');
+                        }
                     }
                 } else {
-                    return false;
+                    if (!isset($user_profile['provider_id'])) {  
+                        throw new Exception('User do not have provider_id');
+                    } else {
+                        throw new Exception('User is not in relation');
+                    }
                 }
             } else {
-                return false;
+                throw new Exception($user_profile['error']);
             }
         } else {
-            return false;
+            throw new Exception('User Profile is not instance of');
         }
     }
 
@@ -201,22 +218,30 @@ class CronController extends Controller
                                 $inmail_message = $inmail_message['inmail_message'];
                                 return true;
                             } else {
-                                return false;
+                                throw new Exception($inmail_message['error']);
                             }
                         } else {
-                            return false;
+                            throw new Exception('In Mail Message is not instance of');
                         }
                     } else {
-                        return false;
+                        if (!isset($element)) {
+                            throw new Exception('Element is not saved');
+                        } else {
+                            throw new Exception('Campaign Element is not saved');
+                        }
                     }
                 } else {
-                    return false;
+                    if (!isset($user_profile['provider_id'])) {  
+                        throw new Exception('User do not have provider_id');
+                    } else {
+                        throw new Exception('User is not in relation');
+                    }
                 }
             } else {
-                return false;
+                throw new Exception($user_profile['error']);
             }
         } else {
-            return false;
+            throw new Exception('User Profile is not instance of');
         }
     }
 
@@ -254,25 +279,28 @@ class CronController extends Controller
                         if ($email_message instanceof JsonResponse) {
                             $email_message = $email_message->getData(true);
                             if (!isset($email_message['error'])) {
-                                $email_message = $email_message['email_message'];
                                 return true;
                             } else {
-                                return false;
+                                throw new Exception($email_message['error']);
                             }
                         } else {
-                            return false;
+                            throw new Exception('Email Message is not instance of');
                         }
                     } else {
-                        return false;
+                        if (!isset($element)) {
+                            throw new Exception('Element is not saved');
+                        } else {
+                            throw new Exception('Campaign Element is not saved');
+                        }
                     }
                 } else {
-                    return false;
+                    throw new Exception('Email not found of User');
                 }
             } else {
-                return false;
+                throw new Exception($user_profile['error']);
             }
         } else {
-            return false;
+            throw new Exception('User Profile is not instance of');
         }
     }
 }

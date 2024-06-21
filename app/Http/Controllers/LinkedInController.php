@@ -73,12 +73,11 @@ class LinkedInController extends Controller
                     'name' => $email,
                 ],
                 'headers' => [
-                    'X-API-KEY' => env('UNIPILE_API_KEY'),
+                    'X-API-KEY' => 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=',
                     'accept' => 'application/json',
                     'content-type' => 'application/json',
                 ],
             ]);
-
             return response()->json([
                 'status' => 'success',
                 'data' => json_decode($response->getBody()->getContents(), true)
@@ -101,7 +100,7 @@ class LinkedInController extends Controller
     public function delete_an_account()
     {
         $seat_id = session('seat_id');
-        $seat = SeatInfo::where('id', $seat_id)->first();
+        $seat = SeatInfo::find($seat_id);
         if ($seat['account_id'] !== NULL) {
             $request = [
                 'account_id' => $seat['account_id'],

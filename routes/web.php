@@ -81,7 +81,10 @@ Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])-
 /* These are for actions like campaign and leads */
 Route::get('/update_action', [ActionsController::class, 'update_action'])->name('update_action');
 Route::get('/update_leads_action', [ActionsController::class, 'update_leads_action'])->name('update_leads_action');
-
+Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
+Route::get('/get_relations', [UnipileController::class, 'get_relations'])->name('getAllRelations');
+Route::get('/delete_an_account', [LinkedInController::class, 'delete_an_account'])->name('delete_an_account');
+        
 /* These are for dashboard which requires authentication */
 Route::middleware(['userAuth'])->group(function () {
     /* These are for dashboard which does not require seat_id in session */
@@ -108,10 +111,6 @@ Route::middleware(['userAuth'])->group(function () {
 
     /* This dashboard uses to update seat_id in session */
     Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash');
-
-    /* These are for connectivity of an account into UNIPILE */
-    Route::get('/get_relations', [UnipileController::class, 'get_relations'])->name('getAllRelations');
-    Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
 
     /* These are for dashboard which requires account connectivity */
     Route::middleware(['linkedinAccount'])->group(function () {
@@ -148,7 +147,6 @@ Route::middleware(['userAuth'])->group(function () {
         Route::get('/filterSchedule/{search}', [ScheduleCampaign::class, 'filterSchedule'])->name('filterSchedule');
         Route::get('/getElements/{campaign_id}', [CampaignElementController::class, 'getElements'])->name('getElements');
         Route::post('/import_csv', [CsvController::class, 'import_csv'])->name('import_csv');
-        Route::get('/delete_an_account', [LinkedInController::class, 'delete_an_account'])->name('delete_an_account');
         Route::get('/report', [ReportController::class, 'report'])->name('dash-reports');
         Route::get('/message', [MessageController::class, 'message'])->name('dash-messages');
         Route::get('/contacts', [ContactController::class, 'contact']);

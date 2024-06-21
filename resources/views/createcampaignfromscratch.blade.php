@@ -167,7 +167,7 @@
         </div>
     </section>
     <script>
-        var settings = {!! $settings !!};
+        var campaign_details = {!! $settings !!};
         var createCampaignPath = "{{ route('createCampaign') }}";
         var campaignsPath = "{{ route('campaigns') }}";
         var getCampaignElementPath = "{{ route('getcampaignelementbyslug', ':slug') }}";

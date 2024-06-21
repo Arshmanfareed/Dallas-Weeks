@@ -23,7 +23,7 @@ class SettingController extends Controller
         $seat_id = session('seat_id');
         $user = Auth::user();
         $paymentStatus = PhysicalPayment::where('user_id', $user->id)->where('product_id', $seat_id)->value('physical_payment_status');
-        $seat = SeatInfo::where('id', $seat_id)->first();
+        $seat = SeatInfo::find($seat_id);
         $data = [
             'title' => 'Setting',
             'paymentStatus' => $paymentStatus,
