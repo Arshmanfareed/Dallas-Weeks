@@ -1,19 +1,15 @@
 $(document).ready(function () {
     sessionStorage.removeItem("elements_array");
     sessionStorage.removeItem("elements_data_array");
-
     var settings = JSON.parse(sessionStorage.getItem("settings"));
-
     if (settings) {
-        $(".linkedin_setting_switch").each(function (e) {
-            var name = $(this).attr("name");
-            if (settings[name] === "no") {
-                $(this).attr("value", "no");
-                $(this).prop("checked", false);
-                console.log($(this)[0]);
+        Object.keys(settings).forEach(key => {
+            var value = settings[key];
+            var checkbox = $(`.linkedin_setting_switch[name="${key}"]`);
+            if (value == 'yes') {
+                checkbox.prop("checked", true);
             } else {
-                $(this).attr("value", "yes");
-                $(this).attr("checked", true);
+                checkbox.prop("checked", false);
             }
         });
     } else {
@@ -27,6 +23,11 @@ $(document).ready(function () {
         });
         sessionStorage.setItem("settings", JSON.stringify(settings));
     }
+
+    $('.linkedin_setting_switch').on('change', function () {
+        var name = $(this).prop('name');
+        settings[name] = $(this).is(":checked") ? "yes" : "no";
+    });
 
     var form = $("#settings");
     form.append(

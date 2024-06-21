@@ -25,9 +25,11 @@ $(document).ready(function () {
             $(".import_field").append(html);
         }
     });
+
     if (campaign_details["campaign_type"] == undefined) {
         campaign_details["campaign_type"] = "linkedin";
     }
+
     var campaign_pane = $(".campaign_pane");
     for (var i = 0; i < campaign_pane.length; i++) {
         var campaignType = $(campaign_pane[i]).find("#campaign_type").val();
@@ -41,6 +43,7 @@ $(document).ready(function () {
             "background-color": "#16adcb",
         });
     }
+
     if (
         campaign_details["campaign_name"] == undefined ||
         campaign_details["campaign_url"] == undefined ||
@@ -71,6 +74,7 @@ $(document).ready(function () {
                 .val(campaign_details["connections"]);
         }
     }
+
     $(".campaign_name").on("change", function (e) {
         campaign_details["campaign_name"] = $(this).val();
         sessionStorage.setItem(
@@ -78,6 +82,7 @@ $(document).ready(function () {
             JSON.stringify(campaign_details)
         );
     });
+
     $(".campaign_url").on("change", function (e) {
         campaign_details["campaign_url"] = $(this).val();
         sessionStorage.setItem(
@@ -85,6 +90,7 @@ $(document).ready(function () {
             JSON.stringify(campaign_details)
         );
     });
+
     $(".connections").on("change", function (e) {
         campaign_details["connections"] = $(this).val();
         sessionStorage.setItem(
@@ -92,6 +98,7 @@ $(document).ready(function () {
             JSON.stringify(campaign_details)
         );
     });
+
     $(".campaign_tab").on("click", function (e) {
         e.preventDefault();
         $(".campaign_tab").parent(".border_box").css({
@@ -126,6 +133,7 @@ $(document).ready(function () {
             new_form.find("#connections").val(campaign_details["connections"]);
         }
     });
+
     $(".nxt_btn").on("click", function (e) {
         e.preventDefault();
         var form = $(".campaign_pane.active").find("form");
@@ -162,7 +170,7 @@ $(document).ready(function () {
                             .find("ul li #total_without_leads")
                             .text(
                                 response.total_without_duplicate_blacklist +
-                                    " leads"
+                                " leads"
                             );
                         $("#campaign_url_hidden").val(response.path);
                         campaign_details["campaign_url"] = response.path;
@@ -193,20 +201,14 @@ $(document).ready(function () {
                     }
                 },
                 error: function (xhr, status, error) {
-                    if (xhr.status === 422) {
-                        var response = JSON.parse(xhr.responseText);
-                        var errorMessage = response.errors.campaign_url[0];
-                        form.find("span.campaign_url").text(errorMessage);
-                        form.find(".import_field").css({
-                            border: "1px solid red",
-                            "margin-bottom": "7px !important",
-                        });
-                        form.find(".file-input__label").css({
-                            "background-color": "red",
-                        });
-                    } else {
-                        console.error("Upload failed:", error);
-                    }
+                    form.find("span.campaign_url").text(error);
+                    form.find(".import_field").css({
+                        border: "1px solid red",
+                        "margin-bottom": "7px !important",
+                    });
+                    form.find(".file-input__label").css({
+                        "background-color": "red",
+                    });
                 },
                 complete: function () {
                     $("#loader").hide();
@@ -216,6 +218,7 @@ $(document).ready(function () {
             form.submit();
         }
     });
+
     $(".import_btn").on("click", function (e) {
         e.preventDefault();
         var form = $(".campaign_pane.active").find("form");
