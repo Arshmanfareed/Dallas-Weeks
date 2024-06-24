@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ActionsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
@@ -79,8 +78,6 @@ Route::post('/register-user', [RegisterController::class, 'registerUser'])->name
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
 
 /* These are for actions like campaign and leads */
-Route::get('/update_action', [ActionsController::class, 'update_action'])->name('update_action');
-Route::get('/update_leads_action', [ActionsController::class, 'update_leads_action'])->name('update_leads_action');
 Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
 Route::get('/get_relations', [UnipileController::class, 'get_relations'])->name('getAllRelations');
 Route::get('/delete_an_account', [LinkedInController::class, 'delete_an_account'])->name('delete_an_account');
