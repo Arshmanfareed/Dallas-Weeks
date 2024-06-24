@@ -84,7 +84,7 @@ Route::get('/update_leads_action', [ActionsController::class, 'update_leads_acti
 Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
 Route::get('/get_relations', [UnipileController::class, 'get_relations'])->name('getAllRelations');
 Route::get('/delete_an_account', [LinkedInController::class, 'delete_an_account'])->name('delete_an_account');
-        
+
 /* These are for dashboard which requires authentication */
 Route::middleware(['userAuth'])->group(function () {
     /* These are for dashboard which does not require seat_id in session */
@@ -97,6 +97,7 @@ Route::middleware(['userAuth'])->group(function () {
         Route::get('/getSeatById/{id}', [SeatController::class, 'get_seat_by_id'])->name('getSeatById');
         Route::get('/deleteSeat/{id}', [SeatController::class, 'delete_seat'])->name('deleteSeat');
         Route::get('/updateName/{id}/{seat_name}', [SeatController::class, 'update_name'])->name('updateName');
+        Route::get('/filterSeat/{search}', [SeatController::class, 'filterSeat'])->name('filterSeat');
     });
     Route::controller(StripePaymentController::class)->group(function () {
         Route::get('stripe', 'stripe');
@@ -141,6 +142,8 @@ Route::middleware(['userAuth'])->group(function () {
             Route::get('/getLeadsCountByCampaign/{id}', [LeadsController::class, 'getLeadsCountByCampaign'])->name('getLeadsCountByCampaign');
             Route::get('/getViewProfileByCampaign/{id}', [LeadsController::class, 'getViewProfileByCampaign'])->name('getViewProfileByCampaign');
             Route::get('/getInviteToConnectByCampaign/{id}', [LeadsController::class, 'getInviteToConnectByCampaign'])->name('getInviteToConnectByCampaign');
+            Route::get('/getSentMessageByCampaign/{id}', [LeadsController::class, 'getSentMessageByCampaign'])->name('getSentMessageByCampaign');
+            Route::get('/getSentEmailByCampaign/{id}', [LeadsController::class, 'getSentEmailByCampaign'])->name('getSentEmailByCampaign');
         });
         Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
         Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');

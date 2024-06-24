@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\LinkedinSettingController;
 use Illuminate\Console\Command;
 use App\Models\Campaign;
 use App\Models\CampaignActions;
@@ -57,6 +58,7 @@ class ActionCampaignCron extends Command
         $current_time = now();
         foreach ($actions as $action) {
             try {
+                $lsc = new LinkedinSettingController();
                 if ($current_time >= $action->ending_time) {
                     $campaign = Campaign::where('id', $action->campaign_id)->where('is_active', 1)->where('is_archive', 0)->first();
                     if (!empty($campaign)) {
@@ -82,19 +84,7 @@ class ActionCampaignCron extends Command
                                     }
                                     foreach ($csvData as $key => $value) {
                                         foreach ($value as $url) {
-                                            $lead = new Leads();
-                                            $lead->is_active = 1;
-                                            $lead->contact = '';
-                                            $lead->title_company = '';
-                                            $lead->send_connections = 'discovered';
-                                            $lead->next_step = '';
-                                            $lead->executed_time = date('H:i:s');
-                                            $lead->campaign_id = $campaign->id;
-                                            $lead->user_id = $campaign->user_id;
-                                            $lead->created_at = now();
-                                            $lead->updated_at = now();
                                             if (str_contains(strtolower($key), 'url')) {
-                                                $lead->profileUrl = $url;
                                                 $uc = new UnipileController();
                                                 $profile = [
                                                     'account_id' => $account_id,
@@ -105,46 +95,65 @@ class ActionCampaignCron extends Command
                                                     $user_profile = $user_profile->getData(true);
                                                     $user_profile = $user_profile['user_profile'];
                                                     if (!isset($user_profile['error'])) {
-                                                        if (isset($user_profile['first_name']) && isset($user_profile['last_name'])) {
-                                                            $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
-                                                            $lead->title_company = $name;
-                                                        }
-                                                        if (isset($user_profile['name'])) {
-                                                            $name = $user_profile['name'];
-                                                            $lead->title_company = $name;
-                                                        }
-                                                        if (isset($user_profile['contact_info']['phones'])) {
-                                                            $contact = $user_profile['contact_info']['phones'][0];
-                                                            $lead->contact = $contact;
-                                                        }
-                                                        if (isset($user_profile['phone'])) {
-                                                            $contact = $user_profile['phone'];
-                                                            $lead->contact = $contact;
-                                                        }
-                                                        if (isset($user_profile['contact_info']['emails'])) {
-                                                            $email = $user_profile['contact_info']['emails'][0];
-                                                            $lead->email = $email;
-                                                        }
-                                                        $lead->save();
-                                                        if (isset($lead->id)) {
-                                                            $lead_action = new LeadActions();
-                                                            $campaign_path = CampaignPath::where('campaign_id', $campaign->id)->orderBy('id')->first();
-                                                            $lead_action->current_element_id = 'step_1';
-                                                            $lead_action->next_true_element_id = $campaign_path->current_element_id;
-                                                            $lead_action->campaign_id = $campaign->id;
-                                                            $lead_action->next_false_element_id = '';
-                                                            $lead_action->created_at = now();
-                                                            $lead_action->updated_at = now();
-                                                            $lead_action->status = 'inprogress';
-                                                            $lead_action->lead_id = $lead->id;
-                                                            $lead_action->ending_time = now();
-                                                            $lead_action->save();
+                                                        if (($lsc->get_value_of_setting($campaign->id, 'linkedin_settings_discover_premium_linked_accounts_only') && $user_profile['is_premium'])
+                                                            || (!$lsc->get_value_of_setting($campaign->id, 'linkedin_settings_discover_premium_linked_accounts_only') && !$user_profile['is_premium'])
+                                                        ) {
+                                                            $lead = new Leads();
+                                                            $lead->is_active = 1;
+                                                            $lead->contact = '';
+                                                            $lead->title_company = '';
+                                                            $lead->send_connections = 'discovered';
+                                                            $lead->next_step = '';
+                                                            $lead->executed_time = date('H:i:s');
+                                                            $lead->campaign_id = $campaign->id;
+                                                            $lead->user_id = $campaign->user_id;
+                                                            $lead->created_at = now();
+                                                            $lead->updated_at = now();
+                                                            $lead->profileUrl = $url;
+                                                            if (isset($user_profile['first_name']) && isset($user_profile['last_name'])) {
+                                                                $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
+                                                                $name = ucwords($name);
+                                                                $lead->title_company = $name;
+                                                            }
+                                                            if (isset($user_profile['name'])) {
+                                                                $name = $user_profile['name'];
+                                                                $lead->title_company = $name;
+                                                            }
+                                                            if ($lsc->get_value_of_setting($campaign->id, 'linkedin_settings_collect_contact_information')) {
+                                                                if (isset($user_profile['contact_info']['phones'])) {
+                                                                    $contact = $user_profile['contact_info']['phones'][0];
+                                                                    $lead->contact = $contact;
+                                                                }
+                                                                if (isset($user_profile['phone'])) {
+                                                                    $contact = $user_profile['phone'];
+                                                                    $lead->contact = $contact;
+                                                                }
+                                                                if (isset($user_profile['contact_info']['emails'])) {
+                                                                    $email = $user_profile['contact_info']['emails'][0];
+                                                                    $lead->email = $email;
+                                                                }
+                                                            }
+                                                            $lead->save();
+                                                            if (isset($lead->id)) {
+                                                                $lead_action = new LeadActions();
+                                                                $campaign_path = CampaignPath::where('campaign_id', $campaign->id)->orderBy('id')->first();
+                                                                $lead_action->current_element_id = 'step_1';
+                                                                $lead_action->next_true_element_id = $campaign_path->current_element_id;
+                                                                $lead_action->campaign_id = $campaign->id;
+                                                                $lead_action->next_false_element_id = '';
+                                                                $lead_action->created_at = now();
+                                                                $lead_action->updated_at = now();
+                                                                $lead_action->status = 'inprogress';
+                                                                $lead_action->lead_id = $lead->id;
+                                                                $lead_action->ending_time = now();
+                                                                $lead_action->save();
+                                                            }
                                                         }
                                                     } else {
-                                                        return response()->json(['success' => false, 'message' => $user_profile['error']]);
+                                                        $this->error($user_profile['error']);
                                                     }
                                                 } else {
-                                                    return response()->json(['success' => false, 'message' => 'User Profile not Json Response']);
+                                                    $this->error('User Profile not Json Response');
                                                 }
                                             }
                                         }

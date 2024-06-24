@@ -78,6 +78,17 @@ class ActionLeadCron extends Command
                             } else if ($element->element_slug == 'email_message') {
                                 $success = $cc->email_message($action, $account_id, $element, $campaign_element);
                             }
+                            if ($element->element_slug == 'view_profile' && $success) {
+                                $this->info('Profile viewed successfully at: ' . now());
+                            } else if ($element->element_slug == 'invite_to_connect' && $success) {
+                                $this->info('Invitation to connect sent successfully at: ' . now());
+                            } else if ($element->element_slug == 'message' && $success) {
+                                $this->info('Message sent successfully at: ' . now());
+                            } else if ($element->element_slug == 'inmail_message' && $success) {
+                                $this->info('Inmail message sent successfully at: ' . now());
+                            } else if ($element->element_slug == 'email_message' && $success) {
+                                $this->info('Email sent successfully at: ' . now());
+                            }
                         }
                     }
                     if ($success || $action->current_element_id == 'step_1' || $current_time > $action->ending_time) {
@@ -115,7 +126,6 @@ class ActionLeadCron extends Command
                             $new_action->ending_time = $time->format('Y-m-d H:i:s');
                             $new_action->save();
                         }
-                        $this->info('Data updated successfully.' . now());
                     } else {
                         $this->error('Action: ' . $action->id . ' did not updated ' . ' at: ' . now());
                     }

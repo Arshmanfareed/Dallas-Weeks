@@ -30,23 +30,27 @@ class CronController extends Controller
                 $user_profile = $user_profile['user_profile'];
                 if (isset($user_profile['first_name']) && isset($user_profile['last_name'])) {
                     $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
+                    $name = ucwords($name);
                     $lead->title_company = $name;
                 }
                 if (isset($user_profile['name'])) {
                     $name = $user_profile['name'];
                     $lead->title_company = $name;
                 }
-                if (isset($user_profile['contact_info']['phones'])) {
-                    $contact = $user_profile['contact_info']['phones'][0];
-                    $lead->contact = $contact;
-                }
-                if (isset($user_profile['phone'])) {
-                    $contact = $user_profile['phone'];
-                    $lead->contact = $contact;
-                }
-                if (isset($user_profile['contact_info']['emails'])) {
-                    $email = $user_profile['contact_info']['emails'][0];
-                    $lead->email = $email;
+                $lsc = new LinkedinSettingController();
+                if ($lsc->get_value_of_setting($action->campaign_id, 'linkedin_settings_collect_contact_information')) {
+                    if (isset($user_profile['contact_info']['phones'])) {
+                        $contact = $user_profile['contact_info']['phones'][0];
+                        $lead->contact = $contact;
+                    }
+                    if (isset($user_profile['phone'])) {
+                        $contact = $user_profile['phone'];
+                        $lead->contact = $contact;
+                    }
+                    if (isset($user_profile['contact_info']['emails'])) {
+                        $email = $user_profile['contact_info']['emails'][0];
+                        $lead->email = $email;
+                    }
                 }
                 $lead->save();
                 if (isset($lead->id)) {
@@ -109,7 +113,7 @@ class CronController extends Controller
                         }
                     }
                 } else {
-                    if (!isset($user_profile['provider_id'])) {  
+                    if (!isset($user_profile['provider_id'])) {
                         throw new Exception('User do not have provider_id');
                     } else {
                         throw new Exception('User is not in relation');
@@ -170,7 +174,7 @@ class CronController extends Controller
                         }
                     }
                 } else {
-                    if (!isset($user_profile['provider_id'])) {  
+                    if (!isset($user_profile['provider_id'])) {
                         throw new Exception('User do not have provider_id');
                     } else {
                         throw new Exception('User is not in relation');
@@ -231,7 +235,7 @@ class CronController extends Controller
                         }
                     }
                 } else {
-                    if (!isset($user_profile['provider_id'])) {  
+                    if (!isset($user_profile['provider_id'])) {
                         throw new Exception('User do not have provider_id');
                     } else {
                         throw new Exception('User is not in relation');

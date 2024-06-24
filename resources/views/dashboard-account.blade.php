@@ -4,77 +4,81 @@
     #payment-form input.form-control {
         color: white !important;
     }
+
     .alert.alert-success.text-center {
-    background: #e3c935;
-    color: #000;
-    border: none;
-    border-radius: 30px;
-    padding: 20px;
-    width: 50%;
-    margin: 20px auto;
-    margin-bottom: 50px;
-}
-.alert.alert-success.text-center p {
-    margin: 0;
-    color: #000;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-.alert.alert-success.text-center a.close {
-    width: 50px;
-    height: 50px;
-    position: absolute;
-    top: 7px;
-    right: 1%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 100%;
-    background: #0b3b6a;
-    opacity: 1;
-    color: #fff;
-    font-weight: 400;
-}
-#update_seat .accordion .accordion-item .accordion-header button{
-    background: #1C1E22 !important;
-    width: 100%;
-    border-radius: 30px !important;
-    color: #fff;
-    /* border: 1px solid #fff; */
-    padding: 20px 15px;
-    font-size: 18px;
-}
+        background: #e3c935;
+        color: #000;
+        border: none;
+        border-radius: 30px;
+        padding: 20px;
+        width: 50%;
+        margin: 20px auto;
+        margin-bottom: 50px;
+    }
+
+    .alert.alert-success.text-center p {
+        margin: 0;
+        color: #000;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .alert.alert-success.text-center a.close {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        top: 7px;
+        right: 1%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 100%;
+        background: #0b3b6a;
+        opacity: 1;
+        color: #fff;
+        font-weight: 400;
+    }
+
+    #update_seat .accordion .accordion-item .accordion-header button {
+        background: #1C1E22 !important;
+        width: 100%;
+        border-radius: 30px !important;
+        color: #fff;
+        /* border: 1px solid #fff; */
+        padding: 20px 15px;
+        font-size: 18px;
+    }
 
 
-#update_seat  div#accordionExample {
-    padding: 20px;
-    padding-bottom: 50px;
-}
+    #update_seat div#accordionExample {
+        padding: 20px;
+        padding-bottom: 50px;
+    }
 
-#update_seat  .accordion .accordion-item .accordion-header .accordion-button::after {
-    color: #e3c935 !important;
-    filter: invert(1);
-}
+    #update_seat .accordion .accordion-item .accordion-header .accordion-button::after {
+        color: #e3c935 !important;
+        filter: invert(1);
+    }
 
-#update_seat  .accordion .accordion-item .accordion-header .accordion-button i {
-    color: #e3c935 !important;
-    font-size: 20px;
-}
+    #update_seat .accordion .accordion-item .accordion-header .accordion-button i {
+        color: #e3c935 !important;
+        font-size: 20px;
+    }
 
-#update_seat  .accordion .accordion-item .accordion-header {
-    border-radius: 30px !important;
-    overflow: hidden;
-    border: 1px solid #fff;
-}
+    #update_seat .accordion .accordion-item .accordion-header {
+        border-radius: 30px !important;
+        overflow: hidden;
+        border: 1px solid #fff;
+    }
 
-#update_seat  .collapse.show {
-    padding-top: 40px;
-    padding-bottom: 40px;
-}
+    #update_seat .collapse.show {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
 
-#update_seat button#delete_seat_11 {
-    margin-top: 30px;
-}
+    #update_seat button#delete_seat_11 {
+        margin-top: 30px;
+    }
 </style>
 <script src="{{ asset('assets/js/dashboard-account.js') }}"></script>
 @if (!empty($user->token))
@@ -83,20 +87,20 @@
 <section class="dashboard">
     <div class="container-fluid">
         @if ($errors->any())
-<div class="alert alert-danger">
-    <ul>
-        @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-</div>
-@endif
-@if (Session::has('success'))
-<div class="alert alert-success text-center">
-    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-    <p>{{ Session::get('success') }}</p>
-</div>
-@endif
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+        @if (Session::has('success'))
+        <div class="alert alert-success text-center">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+            <p>{{ Session::get('success') }}</p>
+        </div>
+        @endif
         <div class="row">
             @include('partials/dashboard_sidebar')
             <div class="col-lg-8">
@@ -110,7 +114,7 @@
                         </div>
                         <div class="form_add d-flex">
                             <form action="/search" method="get" class="search-form">
-                                <input type="text" name="q" placeholder="Search...">
+                                <input type="text" name="q" placeholder="Search..." id="search_seat">
                                 <button type="submit">
                                     <i class="fa fa-search"></i>
                                 </button>
@@ -152,12 +156,12 @@
                                             </td>
                                             <td>
                                                 <a href="javascript:;" type="button" class="setting setting_btn"><i class="fa-solid fa-gear"></i></a>
-                                                <ul class="setting_list text-left" style="display: none">
+                                                <!-- <ul class="setting_list text-left" style="display: none">
                                                     <li><a href="{{ route('campaignDetails', ['campaign_id' => $seat->id]) }}">Check
                                                             campaign details</a></li>
                                                     <li><a href="{{ route('editCampaign', ['campaign_id' => $seat->id]) }}">Edit
                                                             campaign</a></li>
-                                                </ul>
+                                                </ul> -->
                                             </td>
                                         </tr>
                                         @endforeach
@@ -168,10 +172,7 @@
                         @else
                         <div class="add_account_div">
                             <img src="{{ asset('assets/img/empty.png') }}" alt="">
-                            <p class="text-center">You don't hanve any account yet. Start by adding your first
-                                account.
-                            </p>
-
+                            <p class="text-center">You don't hanve any account yet. Start by adding your first account.</p>
                             <div class="add_btn">
                                 <a href="javascript:;" type="button" data-bs-toggle="modal" data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>
                             </div>
@@ -279,19 +280,18 @@
                                 </div>
                             </div>
                             <!-- <div class='form-row'>
-                                                                                                                    <div class='col-md-12 error form-group hide'>
-                                                                                                                        <div class='alert-danger alert'>Please correct the errors and try again.</div>
-                                                                                                                    </div>
-                                                                                                                </div>  -->
+                                <div class='col-md-12 error form-group hide'>
+                                    <div class='alert-danger alert'>Please correct the errors and try again.</div>
+                                </div>
+                            </div>  -->
                         </div>
-                        <!--  <div class="add-experience">
-                                                                                                                                                                                                                                                                                                                    <a class="add-exp-btn"> + Add Experience</a>
-                                                                                                                                                                                                                                                                                                                </div> -->
+                        <!-- <div class="add-experience">
+                                <a class="add-exp-btn"> + Add Experience</a>
+                            </div> -->
                         <div class="btn-group">
                             <a class="btn btn-prev">Previous</a>
                             <button class="btn btn-primary btn-lg btn-block" type="submit">Pay Now</button>
                             <!-- <input type="submit" value="Complete" name="complete" class="btn btn-complete"> -->
-
                         </div>
                     </div>
                 </form>
@@ -371,6 +371,7 @@
     var getSeatRoute = "{{ route('getSeatById', [':seat_id']) }}";
     var deleteSeatRoute = "{{ route('deleteSeat', [':seat_id']) }}";
     var updateNameRoute = "{{ route('updateName', [':seat_id', ':seat_name']) }}";
+    var filterSeatRoute = "{{ route('filterSeat', [':search'])}}";
     jQuery(document).ready(function() {
         // Attach a click event to the LinkedIn authentication button
         jQuery('#linkedin-auth-btn').click(function(e) {

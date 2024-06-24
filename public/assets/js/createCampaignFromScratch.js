@@ -640,35 +640,6 @@ $(document).ready(function () {
         $("#properties").addClass("active");
         $("#element-list-btn").removeClass("active");
         $("#properties-btn").addClass("active");
-        var property_input = $(".property_input");
-        if (
-            property_input.length > 0 &&
-            $(this).prop("id") != $(".element_name").data("bs-target")
-        ) {
-            for (var i = 0; i < property_input.length; i++) {
-                var input = property_input.eq(i);
-                var target_element = $(property_input[0])
-                    .closest(".element_properties")
-                    .find(".element_name")
-                    .data("bs-target");
-                if (input.prop("required") && input.val() == undefined) {
-                    input.addClass("error");
-                    $("#" + target_element).addClass("error");
-                    $("#" + target_element)
-                        .find(".item_name")
-                        .addClass("error");
-                } else {
-                    input.removeClass("error");
-                    $("#" + target_element).removeClass("error");
-                    $("#" + target_element)
-                        .find(".item_name")
-                        .removeClass("error");
-                    $(".drop-pad-element#" + target_element).addClass(
-                        "success"
-                    );
-                }
-            }
-        }
         $(this).removeClass("error");
         $(this).find(".item_name").removeClass("error");
         $(".drop-pad-element .cancel-icon").css({

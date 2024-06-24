@@ -146,9 +146,9 @@ class LeadsController extends Controller
     {
         $count = 0;
         $user_id = Auth::user()->id;
-        $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', '%view_profile%')->get();
+        $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', 'view_profile%')->get();
         foreach ($campaign_elements as $element) {
-            $leads = LeadActions::where('current_element_id', $element->id)->get();
+            $leads = LeadActions::where('current_element_id', $element->id)->where('status', 'completed')->get();
             $count += count($leads);
         }
         return response()->json(['success' => true, 'count' => $count]);
@@ -158,9 +158,33 @@ class LeadsController extends Controller
     {
         $count = 0;
         $user_id = Auth::user()->id;
-        $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', '%invite_to_connect%')->get();
+        $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', 'invite_to_connect%')->get();
         foreach ($campaign_elements as $element) {
-            $leads = LeadActions::where('current_element_id', $element->id)->get();
+            $leads = LeadActions::where('current_element_id', $element->id)->where('status', 'completed')->get();
+            $count += count($leads);
+        }
+        return response()->json(['success' => true, 'count' => $count]);
+    }
+    
+    function getSentMessageByCampaign($campaign_id)
+    {
+        $count = 0;
+        $user_id = Auth::user()->id;
+        $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', 'message%')->get();
+        foreach ($campaign_elements as $element) {
+            $leads = LeadActions::where('current_element_id', $element->id)->where('status', 'completed')->get();
+            $count += count($leads);
+        }
+        return response()->json(['success' => true, 'count' => $count]);
+    }
+    
+    function getSentEmailByCampaign($campaign_id)
+    {
+        $count = 0;
+        $user_id = Auth::user()->id;
+        $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', 'email_message%')->get();
+        foreach ($campaign_elements as $element) {
+            $leads = LeadActions::where('current_element_id', $element->id)->where('status', 'completed')->get();
             $count += count($leads);
         }
         return response()->json(['success' => true, 'count' => $count]);

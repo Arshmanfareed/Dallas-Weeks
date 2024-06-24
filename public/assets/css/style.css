@@ -6537,3 +6537,8 @@ body.light-mode .lead_sec .filt_opt > .filt_opt select {
 .conditional_elements ul.drop-list li:first-child {
     display: none !important;
 }
+
+.action_elements ul.drop-list li:nth-child(7),
+.action_elements ul.drop-list li:nth-child(8) {
+    display: none;
+}

@@ -73,4 +73,42 @@ class SeatController extends Controller
         $seat->save();
         return response()->json(['success' => true]);
     }
+
+    public function filterSeat($search)
+    {
+        $user_id = Auth::user()->id;
+        if ($user_id) {
+            $seats = SeatInfo::where('user_id', $user_id);
+            if ($search != 'null') {
+                $seats = $seats->where('username', 'LIKE', '%' . $search . '%');
+            }
+            $seats = $seats->get();
+            foreach ($seats as $seat) {
+                if ($seat['account_id'] !== NULL) {
+                    $request = [
+                        'account_id' => $seat['account_id'],
+                    ];
+                    $uc = new UnipileController();
+                    $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
+                    if ($account instanceof JsonResponse) {
+                        $account = $account->getData(true);
+                        if (!isset($account['error'])) {
+                            $seat->connected = true;
+                        } else {
+                            $seat->connected = false;
+                        }
+                    } else {
+                        $seat->connected = false;
+                    }
+                } else {
+                    $seat->connected = false;
+                }
+            }
+            if (count($seats) != 0) {
+                return response()->json(['success' => true, 'seats' => $seats]);
+            } else {
+                return response()->json(['success' => false, 'seats' => 'Seat not Found']);
+            }
+        }
+    }
 }
