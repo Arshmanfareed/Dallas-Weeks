@@ -204,7 +204,7 @@
                                                     <div class="accordion-body">
                                                         <div class="linked_set d-flex justify-content-between">
                                                             <p> Include leads that replied to your messages
-                                                                <span>!</span>
+                                                                <span title="Include all leads you previously had a conversation with via Linkedin messages, inMails, or email">!</span>
                                                             </p>
                                                             <div class="switch_box"><input type="checkbox" name="global_settings_include_leads_that_replied_to_your_messages" class="linkedin_setting_switch" id="include_leads_that_replied_to_your_messages"><label for="include_leads_that_replied_to_your_messages">Toggle</label>
                                                             </div>
@@ -423,42 +423,42 @@
         </div>
     </div>
 </div>
-{{-- <div class="modal fade create_time_modal" id="time_modal" tabindex="-1" aria-labelledby="time_modal"
+<!-- <div class="modal fade create_time_modal" id="time_modal" tabindex="-1" aria-labelledby="time_modal"
         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="time_modal">Schedule Timing</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
-                            class="fa-solid fa-xmark"></i></button>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="time_modal">Schedule Timing</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="col-lg-6 schedule_days">
+                            @php
+                                $schedule_days = App\Models\ScheduleDays::where(
+                                    'schedule_id',
+                                    $schedule['id'],
+                                )->get();
+                            @endphp
+                            <ul class="schedule_day_list">
+                                @foreach ($schedule_days as $day)
+                                    <li class="schedule_day {{ $day['is_active'] == '1' ? 'selected_day' : '' }}">
+                                        {{ ucfirst($day['schedule_day']) }}
+                                    </li>
+                                @endforeach
+                                <li class="schedule_time">
+                                    <a href=""><i class="fa-solid fa-globe" style="color: #16adcb;"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="col-lg-6 schedule_days">
-                                @php
-                                    $schedule_days = App\Models\ScheduleDays::where(
-                                        'schedule_id',
-                                        $schedule['id'],
-                                    )->get();
-                                @endphp
-                                <ul class="schedule_day_list">
-                                    @foreach ($schedule_days as $day)
-                                        <li class="schedule_day {{ $day['is_active'] == '1' ? 'selected_day' : '' }}">
-{{ ucfirst($day['schedule_day']) }}
-</li>
-@endforeach
-<li class="schedule_time">
-    <a href=""><i class="fa-solid fa-globe" style="color: #16adcb;"></i></a>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div> --}}
+            </div>
+        </div>
+    </div>
+</div> -->
 <script>
     var campaign_details = {!!$campaign_details_json!!};
     var csrfToken = "{{ csrf_token() }}";

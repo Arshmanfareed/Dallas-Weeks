@@ -26,7 +26,7 @@ class DropAccountIdFromUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('account_id');
+            $table->string('account_id')->nullable();
         });
     }
 }

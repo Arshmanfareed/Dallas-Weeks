@@ -56,7 +56,7 @@ class CsvController extends Controller
                             $total_without_duplicate_blacklist = 0;
                             foreach ($csvData as $key => $value) {
                                 $key = str_replace(['_', ' ', '-', ',', ';'], '', $key);
-                                if (str_contains(strtolower($key), 'profileurl') || str_contains(strtolower($key), 'email')) {
+                                if (str_contains(strtolower($key), 'profileurl')) {
                                     $has_url_or_email = true;
                                     foreach ($value as $url) {
                                         ++$count;
@@ -66,6 +66,10 @@ class CsvController extends Controller
                                         }
                                         if (filter_var($url, FILTER_VALIDATE_URL)) {
                                             if (stripos($url, 'https://www.linkedin.com/in/') !== false || stripos($url, 'https://www.linkedin.com/company/') !== false) {
+                                                $lc = new LeadsController();
+                                                if ($lc->duplicateUrl($url)) {
+                                                    $duplicates_across_team++;
+                                                }
                                                 $total_Urls[] = $url;
                                                 ++$total;
                                             } else {
