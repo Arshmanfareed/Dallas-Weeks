@@ -27,6 +27,7 @@ use App\Http\Controllers\SocialController;
 use App\Http\Controllers\UnipileController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\SeatController;
+use App\Http\Controllers\TestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +67,7 @@ Route::get('/auth/linkedin/callback', function () {
 // Route::get('linkedin/callback', [SocialController::class, 'providerCallback'])->name('linked.user');
 
 /* These are home pages views which does not require any authentication */
+Route::get('/test_route', [TestController::class, 'base']);
 Route::get('/', [HomeController::class, 'home']);
 Route::get('/about', [HomeController::class, 'about']);
 Route::get('/pricing', [HomeController::class, 'pricing']);

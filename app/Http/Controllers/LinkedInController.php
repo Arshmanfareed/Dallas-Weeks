@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 
 class LinkedInController extends Controller
 {
+    var $x_api_key = 'Z+eeumbS.GmXz1XXr2mxTXjEsn9vepK/2xnq+HcR8bpoGSuv/l6w=';
+    var $dsn = 'https://api4.unipile.com:13443/';
+
     public function redirectToLinkedIn()
     {
         $state = bin2hex(random_bytes(16)); // Generate a random state
@@ -61,11 +64,11 @@ class LinkedInController extends Controller
             'verify' => false,
         ]);
         try {
-            $response = $client->request('POST', 'https://api2.unipile.com:13212/api/v1/hosted/accounts/link', [
+            $response = $client->request('POST', $this->dsn . 'api/v1/hosted/accounts/link', [
                 'json' => [
                     'type' => 'create',
                     'providers' => '*',
-                    'api_url' => 'https://api2.unipile.com:13212',
+                    'api_url' => $this->dsn,
                     'expiresOn' => '2024-12-22T12:00:00.701Z',
                     'success_redirect_url' => 'https://networked.staging.designinternal.com/setting',
                     'failure_redirect_url' => 'https://networked.staging.designinternal.com/setting',
@@ -73,7 +76,7 @@ class LinkedInController extends Controller
                     'name' => $email,
                 ],
                 'headers' => [
-                    'X-API-KEY' => 'VFobFFUX.PjiDVA8qO9ftu59V9hsHlYTdmY7wmVrZTKOzeNl3oos=',
+                    'X-API-KEY' => $this->x_api_key,
                     'accept' => 'application/json',
                     'content-type' => 'application/json',
                 ],

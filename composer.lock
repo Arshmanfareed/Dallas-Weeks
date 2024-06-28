@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1a659fcfdcc0318150e074a69e08ef65",
+    "content-hash": "8bfb2eb7caa8b8aeef8466a6d5f63048",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -6666,6 +6666,46 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.2.7"
             },
             "time": "2023-12-08T13:03:43+00:00"
+        },
+        {
+            "name": "unipile/unipile-php-sdk",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/unipile/unipile-php-sdk.git",
+                "reference": "14a53d9eda7c4b3398200a5de33c537de9551c70"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/unipile/unipile-php-sdk/zipball/14a53d9eda7c4b3398200a5de33c537de9551c70",
+                "reference": "14a53d9eda7c4b3398200a5de33c537de9551c70",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Unipile\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arnaud Hartmann",
+                    "email": "arnaud@unipile.com"
+                }
+            ],
+            "description": "Unipile PHP SDK",
+            "support": {
+                "issues": "https://github.com/unipile/unipile-php-sdk/issues",
+                "source": "https://github.com/unipile/unipile-php-sdk/tree/v1.0.0"
+            },
+            "time": "2023-10-17T12:47:08+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

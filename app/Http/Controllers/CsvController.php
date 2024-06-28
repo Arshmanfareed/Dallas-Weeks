@@ -129,4 +129,28 @@ class CsvController extends Controller
                 ->withInput();
         }
     }
+
+    public function importedLeadToArray($imported_lead)
+    {
+        if ($imported_lead !== null) {
+            $fileHandle = fopen(storage_path('app/uploads/' . $imported_lead['file_path']), 'r');
+            if ($fileHandle !== false) {
+                $csvData = [];
+                $delimiter = ',';
+                $enclosure = '"';
+                $escape = '\\';
+                $columnNames = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape);
+                foreach ($columnNames as $colName) {
+                    $csvData[$colName] = [];
+                }
+                while (($rowData = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape)) !== false) {
+                    foreach ($columnNames as $index => $colName) {
+                        $csvData[$colName][] = $rowData[$index] ?? null;
+                    }
+                }
+                return $csvData;
+            }
+        }
+        return null;
+    }
 }

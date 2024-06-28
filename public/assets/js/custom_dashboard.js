@@ -4,6 +4,12 @@
 
 // <script type="text/javascript">
 
+$(document).ready( function() {
+    $('.close').on('click', function() {
+        $('.alert').remove();
+    });
+});
+
 $(function () {
     /*------------------------------------------
     --------------------------------------------

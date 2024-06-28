@@ -218,7 +218,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="linked_set d-flex justify-content-between">
-                                                            <p> Discover new leads only <span>!</span>
+                                                            <p> Discover new leads only <span title="Leads that exist in other campaigns in your seat will not be discovered">!</span>
                                                             </p>
                                                             <div class="switch_box"><input type="checkbox" name="global_settings_discover_new_leads_only" class="linkedin_setting_switch" id="discover_new_leads_only"><label for="discover_new_leads_only">Toggle</label>
                                                             </div>
@@ -267,8 +267,7 @@
                                                                             @php
                                                                             $schedule_days = App\Models\ScheduleDays::where(
                                                                             'schedule_id',
-                                                                            $schedule['id'],
-                                                                            )
+                                                                            $schedule['id'],)
                                                                             ->orderBy('id')
                                                                             ->get();
                                                                             @endphp
@@ -460,7 +459,9 @@
     </div>
 </div> -->
 <script>
-    var campaign_details = {!!$campaign_details_json!!};
+    var campaign_details = {
+        !!$campaign_details_json!!
+    };
     var csrfToken = "{{ csrf_token() }}";
     var createSchedulePath = "{{ route('createSchedule') }}";
     var filterSchedulePath = "{{ route('filterSchedule', ':search') }}";
