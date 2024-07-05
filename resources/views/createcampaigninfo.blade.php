@@ -209,14 +209,14 @@
                                                             <div class="switch_box"><input type="checkbox" name="global_settings_include_leads_that_replied_to_your_messages" class="linkedin_setting_switch" id="include_leads_that_replied_to_your_messages"><label for="include_leads_that_replied_to_your_messages">Toggle</label>
                                                             </div>
                                                         </div>
-                                                        <div class="linked_set d-flex justify-content-between">
+                                                        <!-- <div class="linked_set d-flex justify-content-between">
                                                             <p> Include leads also found in campaigns across your team
                                                                 seats
                                                                 <span>!</span>
                                                             </p>
                                                             <div class="switch_box"><input type="checkbox" name="global_settings_include_leads_also_found_in_campaigns_across_your_team_seats" class="linkedin_setting_switch" id="include_leads_also_found_in_campaigns_across_your_team_seats"><label for="include_leads_also_found_in_campaigns_across_your_team_seats">Toggle</label>
                                                             </div>
-                                                        </div>
+                                                        </div> -->
                                                         <div class="linked_set d-flex justify-content-between">
                                                             <p> Discover new leads only <span title="Leads that exist in other campaigns in your seat will not be discovered">!</span>
                                                             </p>
@@ -459,9 +459,7 @@
     </div>
 </div> -->
 <script>
-    var campaign_details = {
-        !!$campaign_details_json!!
-    };
+    var campaign_details = {!!$campaign_details_json!!};
     var csrfToken = "{{ csrf_token() }}";
     var createSchedulePath = "{{ route('createSchedule') }}";
     var filterSchedulePath = "{{ route('filterSchedule', ':search') }}";

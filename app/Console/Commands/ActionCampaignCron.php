@@ -133,7 +133,7 @@ class ActionCampaignCron extends Command
                     $this->error('Campaign Action to be update is not arrived at: ' . now());
                 }
             } catch (\Exception $e) {
-                $this->error('Failed to insert data: ' . $e->getMessage() . ' at: ' . now());
+                $this->error('Failed to insert data beacause ' . $e . ' at: ' . now());
             }
         }
     }

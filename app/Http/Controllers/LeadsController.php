@@ -226,91 +226,184 @@ class LeadsController extends Controller
         return false;
     }
 
-    function applySettings($campaign_id, $url)
-    {
-        // linkedin_settings_discover_leads_with_open_profile_status_only
-        // global_settings_include_leads_that_replied_to_your_messages
-        // global_settings_include_leads_also_found_in_campaigns_across_your_team_seats
-        // global_settings_discover_new_leads_only
+    // function applySettings($campaign, $url)
+    // {
+    //     // linkedin_settings_discover_leads_with_open_profile_status_only
+    //     // global_settings_include_leads_that_replied_to_your_messages
+    //     // global_settings_discover_new_leads_only
 
-        $user_id = Auth::user()->id;
-        $seat_id = session('seat_id');
-        $lsc = new LinkedinSettingController();
-        $should_remove_leads_pending = $lsc->get_value_of_setting($campaign_id, 'linkedin_settings_remove_leads_with_pending_connections');
-        if (($should_remove_leads_pending && !$this->removeLeadPendingConnections($url)) || !$should_remove_leads_pending) {
-            $seat = SeatInfo::where('id', $seat_id)->first();
-            $account_id = $seat['account_id'];
-            $uc = new UnipileController();
-            $profile = [
-                'account_id' => $account_id,
-                'profile_url' => $url,
-            ];
-            $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
-            $user_profile = $user_profile->getData(true);
-            if (!isset($user_profile['error'])) {
-                $user_profile = $user_profile['user_profile'];
-                $should_only_premium = $lsc->get_value_of_setting($campaign_id, 'linkedin_settings_discover_premium_linked_accounts_only');
-                if (($should_only_premium && $user_profile['is_premium']) || !$should_only_premium) {
-                    $lead = new Leads();
-                    $lead->is_active = 1;
-                    $lead->contact = '';
-                    $lead->title_company = '';
-                    $lead->send_connections = 'discovered';
-                    $lead->next_step = '';
-                    $lead->executed_time = date('H:i:s');
-                    $lead->campaign_id = $campaign_id;
-                    $lead->user_id = $user_id;
-                    $lead->created_at = now();
-                    $lead->updated_at = now();
-                    $lead->profileUrl = $url;
-                    if (isset($user_profile['first_name']) && isset($user_profile['last_name'])) {
-                        $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
-                        $name = ucwords($name);
-                        $lead->title_company = $name;
-                    }
-                    if (isset($user_profile['name'])) {
-                        $name = $user_profile['name'];
-                        $lead->title_company = $name;
-                    }
-                    if (isset($user_profile['contact_info']['emails'][0])) {
-                        $email = $user_profile['contact_info']['emails'][0];
-                        $lead->email = $email;
-                    }
-                    if ($lsc->get_value_of_setting($campaign_id, 'linkedin_settings_collect_contact_information')) {
-                        if (isset($user_profile['contact_info']['phones'][0])) {
-                            $contact = $user_profile['contact_info']['phones'][0];
-                            $lead->contact = $contact;
+    //     $user_id = $campaign->user_id;
+    //     $seat_id = $campaign->seat_id;
+    //     $lsc = new LinkedinSettingController();
+    //     $should_remove_leads_pending = $lsc->get_value_of_setting($campaign->id, 'linkedin_settings_remove_leads_with_pending_connections');
+    //     if (($should_remove_leads_pending && !$this->removeLeadPendingConnections($url)) || !$should_remove_leads_pending) {
+    //         $seat = SeatInfo::where('id', $seat_id)->first();
+    //         $account_id = $seat['account_id'];
+    //         $uc = new UnipileController();
+    //         $profile = [
+    //             'account_id' => $account_id,
+    //             'profile_url' => $url,
+    //         ];
+    //         $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
+    //         $user_profile = $user_profile->getData(true);
+    //         if (!isset($user_profile['error'])) {
+    //             $user_profile = $user_profile['user_profile'];
+    //             $should_only_premium = $lsc->get_value_of_setting($campaign->id, 'linkedin_settings_discover_premium_linked_accounts_only');
+    //             if (($should_only_premium && $user_profile['is_premium']) || !$should_only_premium) {
+    //                 $lead = new Leads();
+    //                 $lead->is_active = 1;
+    //                 $lead->contact = '';
+    //                 $lead->title_company = '';
+    //                 $lead->send_connections = 'discovered';
+    //                 $lead->next_step = '';
+    //                 $lead->executed_time = date('H:i:s');
+    //                 $lead->campaign_id = $campaign_id;
+    //                 $lead->user_id = $user_id;
+    //                 $lead->created_at = now();
+    //                 $lead->updated_at = now();
+    //                 $lead->profileUrl = $url;
+    //                 if (isset($user_profile['first_name']) && isset($user_profile['last_name'])) {
+    //                     $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
+    //                     $name = ucwords($name);
+    //                     $lead->title_company = $name;
+    //                 }
+    //                 if (isset($user_profile['name'])) {
+    //                     $name = $user_profile['name'];
+    //                     $lead->title_company = $name;
+    //                 }
+    //                 if (isset($user_profile['contact_info']['emails'][0])) {
+    //                     $email = $user_profile['contact_info']['emails'][0];
+    //                     $lead->email = $email;
+    //                 }
+    //                 if ($lsc->get_value_of_setting($campaign_id, 'linkedin_settings_collect_contact_information')) {
+    //                     if (isset($user_profile['contact_info']['phones'][0])) {
+    //                         $contact = $user_profile['contact_info']['phones'][0];
+    //                         $lead->contact = $contact;
+    //                     }
+    //                     if (isset($user_profile['adresses'][0])) {
+    //                         $address = $user_profile['adresses'][0];
+    //                         $lead->address = $address;
+    //                     }
+    //                     if (isset($user_profile['websites'][0])) {
+    //                         $website = $user_profile['websites'][0];
+    //                         $lead->website = $website;
+    //                     }
+    //                 }
+    //                 $lead->save();
+    //                 if (isset($lead->id)) {
+    //                     $lead_action = new LeadActions();
+    //                     $campaign_path = CampaignPath::where('campaign_id', $campaign_id)->orderBy('id')->first();
+    //                     $lead_action->current_element_id = 'step_1';
+    //                     $lead_action->next_true_element_id = $campaign_path->current_element_id;
+    //                     $lead_action->campaign_id = $campaign_id;
+    //                     $lead_action->next_false_element_id = '';
+    //                     $lead_action->created_at = now();
+    //                     $lead_action->updated_at = now();
+    //                     $lead_action->status = 'inprogress';
+    //                     $lead_action->lead_id = $lead->id;
+    //                     $lead_action->ending_time = now();
+    //                     $lead_action->save();
+    //                 }
+    //             }
+    //         } else {
+    //             return 'Not found';
+    //         }
+    //     } else {
+    //         return 'Not found';
+    //     }
+    // }
+
+    function applySettings($campaign, $url)
+    {
+        // global_settings_include_leads_that_replied_to_your_messages
+        // global_settings_discover_new_leads_only
+        // global_settings_include_leads_also_found_in_campaigns_across_your_team_seats
+
+        try {
+            $lsc = new LinkedinSettingController();
+            $should_remove_leads_pending = $lsc->get_value_of_setting($campaign->id, 'linkedin_settings_remove_leads_with_pending_connections');
+            if (($should_remove_leads_pending && !$this->removeLeadPendingConnections($url)) || !$should_remove_leads_pending) {
+                $seat = SeatInfo::where('id', $campaign->seat_id)->first();
+                $account_id = $seat['account_id'];
+                $uc = new UnipileController();
+                $profile = [
+                    'account_id' => $account_id,
+                    'profile_url' => $url,
+                ];
+                $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
+                if ($user_profile instanceof JsonResponse) {
+                    $user_profile = $user_profile->getData(true);
+                    $user_profile = $user_profile['user_profile'];
+                    if (!isset($user_profile['error'])) {
+                        $should_discover_lead_with_open_profile = $lsc->get_value_of_setting($campaign->id, 'linkedin_settings_discover_leads_with_open_profile_status_only');
+                        if (($should_discover_lead_with_open_profile && isset($user_profile['can_send_inmail']) && $user_profile['is_premium']) || !$should_discover_lead_with_open_profile) {
+                            $should_only_premium = $lsc->get_value_of_setting($campaign->id, 'linkedin_settings_discover_premium_linked_accounts_only');
+                            if (($should_only_premium && $user_profile['is_premium']) || !$should_only_premium) {
+                                $lead = new Leads();
+                                $lead->is_active = 1;
+                                $lead->contact = '';
+                                $lead->title_company = '';
+                                $lead->send_connections = 'discovered';
+                                $lead->next_step = '';
+                                $lead->executed_time = date('H:i:s');
+                                $lead->campaign_id = $campaign->id;
+                                $lead->user_id = $campaign->user_id;
+                                $lead->created_at = now();
+                                $lead->updated_at = now();
+                                $lead->profileUrl = $url;
+                                if (isset($user_profile['first_name']) && isset($user_profile['last_name'])) {
+                                    $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
+                                    $name = ucwords($name);
+                                    $lead->title_company = $name;
+                                }
+                                if (isset($user_profile['name'])) {
+                                    $name = $user_profile['name'];
+                                    $lead->title_company = $name;
+                                }
+                                if ($lsc->get_value_of_setting($campaign->id, 'linkedin_settings_collect_contact_information')) {
+                                    if (isset($user_profile['contact_info']['phones'][0])) {
+                                        $contact = $user_profile['contact_info']['phones'][0];
+                                        $lead->contact = $contact;
+                                    }
+                                    if (isset($user_profile['contact_info']['emails'][0])) {
+                                        $email = $user_profile['contact_info']['emails'][0];
+                                        $lead->email = $email;
+                                    }
+                                    if (isset($user_profile['adresses'][0])) {
+                                        $address = $user_profile['adresses'][0];
+                                        $lead->address = $address;
+                                    }
+                                    if (isset($user_profile['websites'][0])) {
+                                        $website = $user_profile['websites'][0];
+                                        $lead->website = $website;
+                                    }
+                                }
+                                $lead->save();
+                                if (isset($lead->id)) {
+                                    $lead_action = new LeadActions();
+                                    $campaign_path = CampaignPath::where('campaign_id', $campaign->id)->orderBy('id')->first();
+                                    $lead_action->current_element_id = 'step_1';
+                                    $lead_action->next_true_element_id = $campaign_path->current_element_id;
+                                    $lead_action->campaign_id = $campaign->id;
+                                    $lead_action->next_false_element_id = '';
+                                    $lead_action->created_at = now();
+                                    $lead_action->updated_at = now();
+                                    $lead_action->status = 'inprogress';
+                                    $lead_action->lead_id = $lead->id;
+                                    $lead_action->ending_time = now();
+                                    $lead_action->save();
+                                }
+                            }
                         }
-                        if (isset($user_profile['adresses'][0])) {
-                            $address = $user_profile['adresses'][0];
-                            $lead->address = $address;
-                        }
-                        if (isset($user_profile['websites'][0])) {
-                            $website = $user_profile['websites'][0];
-                            $lead->website = $website;
-                        }
+                    } else {
+                        throw new Exception($user_profile['error']);
                     }
-                    $lead->save();
-                    if (isset($lead->id)) {
-                        $lead_action = new LeadActions();
-                        $campaign_path = CampaignPath::where('campaign_id', $campaign_id)->orderBy('id')->first();
-                        $lead_action->current_element_id = 'step_1';
-                        $lead_action->next_true_element_id = $campaign_path->current_element_id;
-                        $lead_action->campaign_id = $campaign_id;
-                        $lead_action->next_false_element_id = '';
-                        $lead_action->created_at = now();
-                        $lead_action->updated_at = now();
-                        $lead_action->status = 'inprogress';
-                        $lead_action->lead_id = $lead->id;
-                        $lead_action->ending_time = now();
-                        $lead_action->save();
-                    }
+                } else {
+                    throw new Exception('User Profile not Json Response');
                 }
-            } else {
-                return 'Not found';
             }
-        } else {
-            return 'Not found';
+        } catch (\Exception $e) {
+            throw new Exception($e);
         }
     }
 }

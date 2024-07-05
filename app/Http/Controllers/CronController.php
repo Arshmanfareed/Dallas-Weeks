@@ -23,6 +23,7 @@ class CronController extends Controller
             $profile = [
                 'account_id' => $account_id,
                 'profile_url' => $url,
+                'notify' => true,
             ];
             $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
             if ($user_profile instanceof JsonResponse) {
@@ -232,6 +233,46 @@ class CronController extends Controller
         }
     }
 
+    public function follow($action, $account_id)
+    {
+        try {
+            $lead = Leads::where('id', $action->lead_id)->first();
+            $url = $lead->profileUrl;
+            $uc = new UnipileController();
+            $profile = [
+                'account_id' => $account_id,
+                'profile_url' => $url,
+            ];
+            $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
+            if ($user_profile instanceof JsonResponse) {
+                $user_profile = $user_profile->getData(true);
+                if (!isset($user_profile['error'])) {
+                    $user_profile = $user_profile['user_profile'];
+                    if (isset($user_profile['provider_id'])) {
+                        $follow = [
+                            'account_id' => $account_id,
+                            'identifier' => $user_profile['provider_id'],
+                        ];
+                        $follow_user = $uc->follow(new \Illuminate\Http\Request($follow));
+                        if (!isset($follow_user['error'])) {
+                            return true;
+                        } else {
+                            throw new Exception($follow_user['error']);
+                        }
+                    } else {
+                        throw new Exception('User do not have provider_id');
+                    }
+                } else {
+                    throw new Exception($user_profile['error']);
+                }
+            } else {
+                throw new Exception('User Profile is not instance of');
+            }
+        } catch (\Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
     public function email_message($action, $account_id, $element, $campaign_element)
     {
         try {
@@ -289,6 +330,108 @@ class CronController extends Controller
                 }
             } else {
                 throw new Exception('User Profile is not instance of');
+            }
+        } catch (\Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    public function if_connected($action, $account_id)
+    {
+        try {
+            $lead = Leads::where('id', $action->lead_id)->first();
+            $url = $lead->profileUrl;
+            $uc = new UnipileController();
+            $profile = [
+                'account_id' => $account_id,
+                'profile_url' => $url
+            ];
+            $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
+            if ($user_profile instanceof JsonResponse) {
+                $user_profile = $user_profile->getData(true);
+                if (!isset($user_profile['error'])) {
+                    if ($user_profile['is_relationship'] == true) {
+                        return 'true';
+                    } else {
+                        return 'false';
+                    }
+                } else {
+                    throw new Exception($user_profile['error']);
+                }
+            } else {
+                throw new Exception('User Profile is not instance of');
+            }
+        } catch (\Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    public function if_email_is_opened($action)
+    {
+        try {
+            $lead = Leads::where('id', $action['lead_id'])->first();
+            if ($lead) {
+                if (!is_null($lead['email']) && $lead['email'] != '') {
+                    return 'true';
+                } else {
+                    return 'false';
+                }
+            } else {
+                return 'false';
+            }
+        } catch (\Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    public function if_has_imported_email($action)
+    {
+        try {
+            $lead = Leads::where('id', $action['lead_id'])->first();
+            if ($lead) {
+                if (!is_null($lead['email']) && $lead['email'] != '') {
+                    return 'true';
+                } else {
+                    return 'false';
+                }
+            } else {
+                return 'false';
+            }
+        } catch (\Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    public function if_has_verified_email($action)
+    {
+        try {
+            $lead = Leads::where('id', $action['lead_id'])->first();
+            if ($lead) {
+                if (!is_null($lead['email']) && $lead['email'] != '') {
+                    return 'true';
+                } else {
+                    return 'false';
+                }
+            } else {
+                return 'false';
+            }
+        } catch (\Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    public function if_free_inmail($action)
+    {
+        try {
+            $lead = Leads::where('id', $action['lead_id'])->first();
+            if ($lead) {
+                if (!is_null($lead['email']) && $lead['email'] != '') {
+                    return 'true';
+                } else {
+                    return 'false';
+                }
+            } else {
+                return 'false';
             }
         } catch (\Exception $e) {
             throw new Exception($e);

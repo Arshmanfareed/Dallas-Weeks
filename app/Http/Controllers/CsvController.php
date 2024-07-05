@@ -130,10 +130,10 @@ class CsvController extends Controller
         }
     }
 
-    public function importedLeadToArray($imported_lead)
+    public function importedLeadToArray($file_path)
     {
-        if ($imported_lead !== null) {
-            $fileHandle = fopen(storage_path('app/uploads/' . $imported_lead['file_path']), 'r');
+        if ($file_path !== null) {
+            $fileHandle = fopen(storage_path('app/uploads/' . $file_path), 'r');
             if ($fileHandle !== false) {
                 $csvData = [];
                 $delimiter = ',';

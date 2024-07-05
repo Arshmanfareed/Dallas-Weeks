@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class UnipileController extends Controller
-{   
-    var $x_api_key = 'Z+eeumbS.GmXz1XXr2mxTXjEsn9vepK/2xnq+HcR8bpoGSuv/l6w=';
-    var $dsn = 'https://api4.unipile.com:13443/';
+{
+    var $x_api_key = 'x4NeuXA0.VvxKf7JiWZcU0rqYZv6AelyCrHR1Ig+PjsJ1rPKqrzc=';
+    var $dsn = 'https://api3.unipile.com:13326/';
 
     public function get_accounts()
     {
@@ -34,7 +34,7 @@ class UnipileController extends Controller
             $accounts = json_decode($response->getBody(), true);
             return response()->json(['accounts' => $accounts]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e], 400);
         }
     }
 
@@ -59,7 +59,7 @@ class UnipileController extends Controller
             $account = json_decode($response->getBody(), true);
             return response()->json(['account' => $account]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e], 400);
         }
     }
 
@@ -102,7 +102,7 @@ class UnipileController extends Controller
                 return response()->json(['error' => 'No relations found'], 400);
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e], 400);
         }
     }
 
@@ -127,7 +127,7 @@ class UnipileController extends Controller
             $delete_account = json_decode($response->getBody(), true);
             return response()->json(['account' => $delete_account]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e], 400);
         }
     }
 
@@ -161,6 +161,7 @@ class UnipileController extends Controller
         $all = $request->all();
         $account_id = $all['account_id'];
         $profile_url = $all['profile_url'];
+        $notify = isset($all['notify']) ? true : false;
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
@@ -172,7 +173,7 @@ class UnipileController extends Controller
         }
         $profile_url = str_replace('https://www.linkedin.com/company/', $this->dsn . 'api/v1/linkedin/company/', $profile_url);
         $profile_url = str_replace('https://www.linkedin.com/in/', $this->dsn . 'api/v1/users/', $profile_url);
-        $url = $profile_url . '?linkedin_sections=%2A&account_id=' . $account_id;
+        $url = $profile_url . '?linkedin_sections=%2A&notify' . $notify . '&account_id=' . $account_id;
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
@@ -187,7 +188,7 @@ class UnipileController extends Controller
                 return response()->json(['error' => 'No profile found'], 400);
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e], 400);
         }
     }
 
@@ -227,7 +228,7 @@ class UnipileController extends Controller
                 return response()->json(['error' => 'No profile found'], 400);
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e], 400);
         }
     }
 
@@ -271,7 +272,7 @@ class UnipileController extends Controller
             $message = json_decode($response->getBody(), true);
             return response()->json(['message' => $message]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e], 400);
         }
     }
 
@@ -331,7 +332,7 @@ class UnipileController extends Controller
                 return response()->json(['error' => 'For this feature must have premium account'], 400);
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e], 400);
         }
     }
 
@@ -361,7 +362,47 @@ class UnipileController extends Controller
             });
             return response()->json(['success' => true, 'message' => 'Email sent successfully']);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to send email', 'details' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to send email', 'details' => $e], 500);
+        }
+    }
+
+    public function follow(Request $request)
+    {
+        $all = $request->all();
+        $account_id = $all['account_id'];
+        $identifier = $all['identifier'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        if (!$account_id || !$identifier || !$this->x_api_key) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $request_url = "https://www.linkedin.com/voyager/api/feed/dash/followingStates/urn:li:fsd_followingState:urn:li:fsd_profile:" . $identifier;
+        try {
+            $response = $client->request('POST', $this->dsn . 'api/v1/linkedin', [
+                'json' => [
+                    'body' => [
+                        'patch' => [
+                            '$set' => [
+                                'following' => true
+                            ]
+                        ]
+                    ],
+                    'account_id' => $account_id,
+                    'method' => 'POST',
+                    'request_url' => $request_url,
+                    'encoding' => false
+                ],
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                ],
+            ]);
+            $follow = json_decode($response->getBody(), true);
+            return response()->json(['follow' => $follow]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e], 400);
         }
     }
 }
