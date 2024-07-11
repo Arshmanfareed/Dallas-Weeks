@@ -56,7 +56,7 @@ class CronController extends Controller
                 $user_profile = $user_profile->getData(true);
                 if (!isset($user_profile['error'])) {
                     $user_profile = $user_profile['user_profile'];
-                    if (isset($user_profile['provider_id']) && $user_profile['is_relationship'] === true) {
+                    if (isset($user_profile['provider_id'])) {
                         $invite_to_connect = [
                             'account_id' => $account_id,
                             'identifier' => $user_profile['provider_id'],
@@ -88,11 +88,7 @@ class CronController extends Controller
                             }
                         }
                     } else {
-                        if (!isset($user_profile['provider_id'])) {
-                            throw new Exception('User do not have provider_id');
-                        } else {
-                            throw new Exception('User is not in relation');
-                        }
+                        throw new Exception('User do not have provider_id');
                     }
                 } else {
                     throw new Exception($user_profile['error']);
@@ -254,10 +250,15 @@ class CronController extends Controller
                             'identifier' => $user_profile['provider_id'],
                         ];
                         $follow_user = $uc->follow(new \Illuminate\Http\Request($follow));
-                        if (!isset($follow_user['error'])) {
-                            return true;
+                        if ($follow_user instanceof JsonResponse) {
+                            $follow_user = $follow_user->getData(true);
+                            if (!isset($follow_user['error'])) {
+                                return true;
+                            } else {
+                                throw new Exception($follow_user['error']);
+                            }
                         } else {
-                            throw new Exception($follow_user['error']);
+                            throw new Exception('In Mail Message is not instance of');
                         }
                     } else {
                         throw new Exception('User do not have provider_id');

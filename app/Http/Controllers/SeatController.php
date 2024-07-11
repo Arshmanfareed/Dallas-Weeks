@@ -111,4 +111,25 @@ class SeatController extends Controller
             }
         }
     }
+
+    public function get_final_accounts()
+    {
+        $seats = SeatInfo::whereNotNull('account_id')->get();
+        $final_accounts = [];
+        $uc = new UnipileController();
+        for ($i = 0; $i < count($seats); $i++) {
+            $account_id = [
+                'account_id' => $seats[$i]['account_id'],
+            ];
+            $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($account_id));
+            $account = $account->getData(true);
+            if (array_key_exists($account['account']['connection_params']['im']['id'], $final_accounts)) {
+                $final_accounts[$account['account']['connection_params']['im']['id']][] = $seats[$i]['account_id'];
+            } else {
+                $final_accounts[$account['account']['connection_params']['im']['id']] = [];
+                $final_accounts[$account['account']['connection_params']['im']['id']][] = $seats[$i]['account_id'];
+            }
+        }
+        return $final_accounts;
+    }
 }

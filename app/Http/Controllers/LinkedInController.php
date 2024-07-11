@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Auth;
 
 class LinkedInController extends Controller
 {
-    var $x_api_key = 'x4NeuXA0.VvxKf7JiWZcU0rqYZv6AelyCrHR1Ig+PjsJ1rPKqrzc=';
-    var $dsn = 'https://api3.unipile.com:13326/';
+    var $x_api_key = 'Z+eeumbS.GmXz1XXr2mxTXjEsn9vepK/2xnq+HcR8bpoGSuv/l6w=';
+    var $dsn = 'https://api4.unipile.com:13443/';
 
     public function redirectToLinkedIn()
     {

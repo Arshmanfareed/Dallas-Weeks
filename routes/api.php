@@ -34,3 +34,4 @@ Route::post('/inmail_message', [UnipileController::class, 'inmail_message'])->na
 Route::post('/email', [UnipileController::class, 'email'])->name('email');
 Route::post('/sendEmail', [UnipileController::class, 'email_message'])->name('email_message');
 Route::post('/follow', [UnipileController::class, 'follow'])->name('follow');
+Route::post('/search/sales_navigator', [UnipileController::class, 'sales_navigator_search'])->name('sales_navigator_search');

@@ -21,9 +21,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('test:cron')->cron("* * * * *")->appendOutputTo(storage_path('logs/cron.log'));
-        $schedule->command('action:campaign')->cron('* * * * *')->appendOutputTo(storage_path('logs/campaign_action.log'));
-        $schedule->command('action:lead')->cron('* * * * *')->appendOutputTo(storage_path('logs/lead_action.log'));
+        // $schedule->command('action:campaign')->cron('* * * * *');
+        // $schedule->command('action:lead')->cron('* * * * *');
     }
 
     /**
@@ -33,7 +32,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

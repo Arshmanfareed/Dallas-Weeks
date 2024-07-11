@@ -3,25 +3,14 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\LeadsController;
-use App\Http\Controllers\LinkedinSettingController;
 use Illuminate\Console\Command;
 use App\Models\Campaign;
-use App\Models\CampaignActions;
-use App\Models\CampaignElement;
-use App\Models\CampaignPath;
-use App\Models\ElementProperties;
-use Illuminate\Http\Request;
 use App\Models\ImportedLeads;
-use App\Models\LeadActions;
 use App\Models\Leads;
-use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Http\JsonResponse;
 use App\Models\SeatInfo;
-use App\Models\UpdatedCampaignElements;
-use App\Models\UpdatedCampaignProperties;
 use App\Http\Controllers\UnipileController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\CsvController;
+use App\Http\Controllers\SeatController;
 
 class ActionCampaignCron extends Command
 {
@@ -56,84 +45,109 @@ class ActionCampaignCron extends Command
      */
     public function handle()
     {
-        $actions = CampaignActions::where('status', 'inprogress')->get();
-        $current_time = now();
-        foreach ($actions as $action) {
-            try {
-                if ($current_time >= $action->ending_time) {
-                    $campaign = Campaign::where('id', $action->campaign_id)->where('is_active', 1)->where('is_archive', 0)->first();
-                    if (!empty($campaign)) {
-                        if ($action->current_element_id == 'step_1') {
-                            if ($campaign->campaign_type == 'import') {
-                                $imported_leads = ImportedLeads::where('user_id', $campaign->user_id)->where('campaign_id', $campaign->id)->first();
-                                $fileHandle = fopen(storage_path('app/uploads/' . $imported_leads->file_path), 'r');
-                                if ($fileHandle !== false) {
-                                    $csvData = [];
-                                    $delimiter = ',';
-                                    $enclosure = '"';
-                                    $escape = '\\';
-                                    $columnNames = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape);
-                                    foreach ($columnNames as $colName) {
-                                        $csvData[$colName] = [];
-                                    }
-                                    while (($rowData = fgetcsv($fileHandle, 0, $delimiter, $enclosure, $escape)) !== false) {
-                                        foreach ($columnNames as $index => $colName) {
-                                            $csvData[$colName][] = $rowData[$index] ?? null;
-                                        }
-                                    }
-                                    foreach ($csvData as $key => $value) {
-                                        foreach ($value as $url) {
-                                            if (str_contains(strtolower($key), 'url')) {
-                                                $lc = new LeadsController();
-                                                $lc->applySettings($campaign, $url);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        $action->status = 'completed';
-                        $action->save();
-                        if ($action->next_true_element_id != '' || $action->next_false_element_id != '') {
-                            $campaign_path = CampaignPath::where('current_element_id', $action->next_true_element_id)->first();
-                            $new_action = new CampaignActions();
-                            $new_action->current_element_id = $action->next_true_element_id;
-                            if (!empty($campaign_path)) {
-                                $new_action->next_true_element_id = $campaign_path->next_true_element_id;
-                                $new_action->next_false_element_id = $campaign_path->next_false_element_id;
-                            } else {
-                                $new_action->next_true_element_id = '';
-                                $new_action->next_false_element_id = '';
-                            }
-                            $new_action->created_at = now();
-                            $new_action->updated_at = now();
-                            $new_action->campaign_id = $campaign->id;
-                            $new_action->status = 'inprogress';
-                            $properties = UpdatedCampaignProperties::where('element_id', $new_action->current_element_id)->get();
-                            $time = now();
-                            foreach ($properties as $property) {
-                                $campaign_property = ElementProperties::where('id', $property->property_id)->first();
-                                if (!empty($campaign_property) && isset($property->value)) {
-                                    $timeToAdd = intval($property->value);
-                                    if ($campaign_property->property_name == 'Hours') {
-                                        $time->modify('+' . $timeToAdd . ' hours');
-                                    } else if ($campaign_property->property_name == 'Days') {
-                                        $time->modify('+' . $timeToAdd . ' days');
-                                    }
-                                }
-                            }
-                            $new_action->ending_time = $time->format('Y-m-d H:i:s');
-                            $new_action->save();
-                        }
-                        $this->info('Data inserted successfully.' . now());
-                    } else {
-                        $this->error('No Campaign Found of Id: ' . $action->campaign_id . ' at: ' . now());
+        $sc = new SeatController();
+        $final_accounts = $sc->get_final_accounts();
+        foreach ($final_accounts as $final_account) {
+            $seats = SeatInfo::whereIn('account_id', $final_account)->get();
+            $campaigns = Campaign::whereIn('seat_id', $seats->pluck('id')->toArray())->where('is_active', 1)->where('is_archive', 0)->get();
+            if (count($campaigns) > 0) {
+                $lead_distribution_limit = floor(80 / count($campaigns));
+                foreach ($campaigns as $campaign) {
+                    if ($campaign['campaign_type'] == 'import') {
+                        $this->addImportLeads($campaign, $lead_distribution_limit);
+                    } else if ($campaign['campaign_type'] == 'sales_navigator') {
+                        $this->addSalesLeads($campaign, $lead_distribution_limit, 0, 0);
                     }
-                } else {
-                    $this->error('Campaign Action to be update is not arrived at: ' . now());
                 }
-            } catch (\Exception $e) {
-                $this->error('Failed to insert data beacause ' . $e . ' at: ' . now());
+            }
+        }
+    }
+
+    private function addImportLeads($campaign, $lead_distribution_limit)
+    {
+        $logFilePath = storage_path('logs/campaign_action.log');
+        $imported_lead = ImportedLeads::where('user_id', $campaign['user_id'])->where('campaign_id', $campaign['id'])->first();
+        $csvController = new CsvController();
+        $csvData = $csvController->importedLeadToArray($imported_lead['file_path']);
+        $i = 0;
+        if ($csvData !== NULL) {
+            foreach ($csvData as $key => $value) {
+                if (str_contains(strtolower($key), 'url')) {
+                    foreach ($value as $url) {
+                        try {
+                            if ($i >= $lead_distribution_limit) {
+                                break;
+                            }
+                            $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
+                            if (empty($lead) && $i < $lead_distribution_limit) {
+                                $lc = new LeadsController();
+                                if ($lc->applySettings($campaign, $url) !== 'Not found') {
+                                    $i++;
+                                    file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                                }
+                            }
+                        } catch (\Exception $e) {
+                            file_put_contents($logFilePath, 'Failed to insert data beacause ' . $e . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function addSalesLeads($campaign, $lead_distribution_limit, $i, $j)
+    {
+        $logFilePath = storage_path('logs/campaign_action.log');
+        $seat = SeatInfo::where('id', $campaign->seat_id)->first();
+        $account_id = $seat['account_id'];
+        $query = '';
+        $url = $campaign['campaign_url'];
+        $parsed_url = parse_url($url);
+        $query_string = isset($parsed_url['query']) ? $parsed_url['query'] : '';
+        parse_str($query_string, $params);
+        $query = isset($params['query']) ? $params['query'] : null;
+        $request = [
+            'account_id' => $account_id,
+            'query' => $query,
+            'count' => 80,
+            'start' => $j
+        ];
+        $uc = new UnipileController();
+        $searches = $uc->sales_navigator_search(new \Illuminate\Http\Request($request));
+        $searches = $searches->getData(true)['accounts'];
+        if (count($searches) > 0) {
+            foreach ($searches as $search) {
+                try {
+                    if ($i >= $lead_distribution_limit) {
+                        break;
+                    }
+                    $profileUrl = str_replace('urn:li:fs_salesProfile:(', '', $search['entityUrn']);
+                    $index = strpos($profileUrl, ',');
+                    if ($index !== false) {
+                        $profileUrl = substr($profileUrl, 0, $index);
+                    }
+                    $request = [
+                        'account_id' => $account_id,
+                        'profile_url' => $profileUrl,
+                        'sales_navigator' => true,
+                    ];
+                    $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
+                    $profile = $profile->getData(true);
+                    $url = $profile['user_profile']['public_profile_url'];
+                    $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
+                    if (empty($lead) && $i < $lead_distribution_limit) {
+                        $lc = new LeadsController();
+                        if ($lc->applySettings($campaign, $url) !== 'Not found') {
+                            $i++;
+                            file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                        }
+                    }
+                } catch (\Exception $e) {
+                    file_put_contents($logFilePath, 'Failed to insert data beacause ' . $e . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                }
+            }
+            if ($i + 1 < $lead_distribution_limit) {
+                $this->addSalesLeads($campaign, $lead_distribution_limit, $i, count($searches) + $j);
             }
         }
     }
