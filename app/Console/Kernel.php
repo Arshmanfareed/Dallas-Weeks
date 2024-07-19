@@ -21,8 +21,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('action:campaign')->cron('* * * * *');
-        // $schedule->command('action:lead')->cron('* * * * *');
+        $schedule->command('action:campaign')->cron('0 12 * * *');
+        $schedule->command('action:lead')->cron('* * * * *');
     }
 
     /**

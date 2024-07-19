@@ -35,7 +35,7 @@ class UnipileController extends Controller
             $accounts = json_decode($response->getBody(), true);
             return response()->json(['accounts' => $accounts]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e], 400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -60,7 +60,7 @@ class UnipileController extends Controller
             $account = json_decode($response->getBody(), true);
             return response()->json(['account' => $account]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e], 400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -103,7 +103,7 @@ class UnipileController extends Controller
                 return response()->json(['error' => 'No relations found'], 400);
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => $e], 400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -150,7 +150,77 @@ class UnipileController extends Controller
             $result = json_decode($response->getBody(), true);
             return response()->json(['accounts' => $result['data']['elements']]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e], 400);
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    private function queryToString($query)
+    {
+        $string = '';
+        foreach ($query as $key => $value) {
+            $string .= '(key:' . $key . ',value:List(';
+            if (is_array($value)) {
+                $string .= implode(',', $value);
+            } else {
+                $string .= $value;
+            }
+            $string .= ')),';
+        }
+        $string = rtrim($string, ',');
+        return $string;
+    }
+
+    public function linkedin_search(Request $request)
+    {
+        $all = $request->all();
+        $query = $all['query'];
+        $account_id = $all['account_id'];
+        $start = 0;
+        $origin = 'FACETED_SEARCH';
+        $keywords = '';
+        $queryParams = '';
+        if (isset($all['start'])) {
+            $start = $all['start'];
+        }
+        if (isset($query['origin'])) {
+            $origin = $query['origin'];
+            unset($query['origin']);
+        }
+        if (isset($query['keywords'])) {
+            $keywords = $query['keywords'];
+            unset($query['keywords']);
+        }
+        if (!empty($query)) {
+            $queryParams = $this->queryToString($query);
+        }
+        $client = new Client([
+            'verify' => false,
+        ]);
+        if (!isset($account_id) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        try {
+            $response = $client->request('POST', $this->dsn . 'api/v1/linkedin', [
+                'json' => [
+                    'query_params' => [
+                        'variables' => '(start:' . $start . ',origin:' . $origin . ',query:(keywords:' . $keywords . ',flagshipSearchIntent:SEARCH_SRP,queryParameters:List(' . $queryParams . ',(key:resultType,value:List(PEOPLE))),includeFiltersInResponse:false))',
+                        'queryId' => 'voyagerSearchDashClusters.838ad2ecdec3b0347f493f93602336e9'
+                    ],
+                    'account_id' => $account_id,
+                    'method' => 'GET',
+                    'request_url' => 'https://www.linkedin.com/voyager/api/graphql',
+                    'encoding' => false
+                ],
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                    'content-type' => 'application/json'
+                ],
+            ]);
+            $result = json_decode($response->getBody(), true);
+            return response()->json(['accounts' => $result['data']['data']['searchDashClustersByAll']['elements']]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -175,7 +245,7 @@ class UnipileController extends Controller
             $delete_account = json_decode($response->getBody(), true);
             return response()->json(['account' => $delete_account]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e], 400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -240,7 +310,7 @@ class UnipileController extends Controller
                 return response()->json(['error' => 'No profile found'], 400);
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => $e], 400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -280,7 +350,7 @@ class UnipileController extends Controller
                 return response()->json(['error' => 'No profile found'], 400);
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => $e], 400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -324,7 +394,7 @@ class UnipileController extends Controller
             $message = json_decode($response->getBody(), true);
             return response()->json(['message' => $message]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e], 400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -384,7 +454,7 @@ class UnipileController extends Controller
                 return response()->json(['error' => 'For this feature must have premium account'], 400);
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => $e], 400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -454,7 +524,7 @@ class UnipileController extends Controller
             $follow = json_decode($response->getBody(), true);
             return response()->json(['follow' => $follow]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e], 400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 }
