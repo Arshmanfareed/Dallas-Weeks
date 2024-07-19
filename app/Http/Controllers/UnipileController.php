@@ -187,7 +187,7 @@ class UnipileController extends Controller
             unset($query['origin']);
         }
         if (isset($query['keywords'])) {
-            $keywords = $query['keywords'];
+            $keywords = 'keywords:' . $query['keywords'] . ',';
             unset($query['keywords']);
         }
         if (!empty($query)) {
@@ -203,7 +203,7 @@ class UnipileController extends Controller
             $response = $client->request('POST', $this->dsn . 'api/v1/linkedin', [
                 'json' => [
                     'query_params' => [
-                        'variables' => '(start:' . $start . ',origin:' . $origin . ',query:(keywords:' . $keywords . ',flagshipSearchIntent:SEARCH_SRP,queryParameters:List(' . $queryParams . ',(key:resultType,value:List(PEOPLE))),includeFiltersInResponse:false))',
+                        'variables' => '(start:' . $start . ',origin:' . $origin . ',query:(' . $keywords . 'flagshipSearchIntent:SEARCH_SRP,queryParameters:List(' . $queryParams . ',(key:resultType,value:List(PEOPLE))),includeFiltersInResponse:false))',
                         'queryId' => 'voyagerSearchDashClusters.838ad2ecdec3b0347f493f93602336e9'
                     ],
                     'account_id' => $account_id,

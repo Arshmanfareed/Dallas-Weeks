@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Campaign;
 use App\Models\SeatInfo;
+use GuzzleHttp\Client;
 use App\Models\LeadActions;
 use App\Models\CampaignElement;
 use App\Models\CampaignPath;
