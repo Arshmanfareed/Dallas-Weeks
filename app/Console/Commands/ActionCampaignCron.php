@@ -11,6 +11,8 @@ use App\Models\SeatInfo;
 use App\Http\Controllers\UnipileController;
 use App\Http\Controllers\CsvController;
 use App\Http\Controllers\SeatController;
+use Illuminate\Http\JsonResponse;
+use Exception;
 
 class ActionCampaignCron extends Command
 {
@@ -45,21 +47,28 @@ class ActionCampaignCron extends Command
      */
     public function handle()
     {
-        $sc = new SeatController();
-        $final_accounts = $sc->get_final_accounts();
-        foreach ($final_accounts as $final_account) {
-            $seats = SeatInfo::whereIn('account_id', $final_account)->get();
-            $campaigns = Campaign::whereIn('seat_id', $seats->pluck('id')->toArray())->where('is_active', 1)->where('is_archive', 0)->get();
-            if (count($campaigns) > 0) {
-                $lead_distribution_limit = floor(80 / count($campaigns));
-                foreach ($campaigns as $campaign) {
-                    if ($campaign['campaign_type'] == 'import') {
-                        $this->addImportLeads($campaign, $lead_distribution_limit);
-                    } else if ($campaign['campaign_type'] == 'sales_navigator') {
-                        $this->addSalesLeads($campaign, $lead_distribution_limit, 0, 0);
+        $logFilePath = storage_path('logs/campaign_action.log');
+        try {
+            $sc = new SeatController();
+            $final_accounts = $sc->get_final_accounts();
+            foreach ($final_accounts as $final_account) {
+                $seats = SeatInfo::whereIn('account_id', $final_account)->get();
+                $campaigns = Campaign::whereIn('seat_id', $seats->pluck('id')->toArray())->where('is_active', 1)->where('is_archive', 0)->get();
+                if (count($campaigns) > 0) {
+                    $lead_distribution_limit = floor(80 / count($campaigns));
+                    foreach ($campaigns as $campaign) {
+                        if ($campaign['campaign_type'] == 'import') {
+                            $this->addImportLeads($campaign, $lead_distribution_limit);
+                        } else if ($campaign['campaign_type'] == 'sales_navigator') {
+                            $this->addSalesLeads($campaign, $lead_distribution_limit, 0, 0);
+                        }
                     }
+                } else {
+                    file_put_contents($logFilePath, 'Failed to insert data because No campaign found at: ' . now() . PHP_EOL, FILE_APPEND);
                 }
             }
+        } catch (\Exception $e) {
+            file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
         }
     }
 
@@ -85,13 +94,19 @@ class ActionCampaignCron extends Command
                                     $i++;
                                     file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
                                 }
+                            } else if (!empty($lead)) {
+                                file_put_contents($logFilePath, 'Failed to insert data because Lead already existed at: ' . now() . PHP_EOL, FILE_APPEND);
                             }
                         } catch (\Exception $e) {
-                            file_put_contents($logFilePath, 'Failed to insert data beacause ' . $e . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                            file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
                         }
                     }
+                } else {
+                    file_put_contents($logFilePath, 'Failed to insert data because No URL column found at: ' . now() . PHP_EOL, FILE_APPEND);
                 }
             }
+        } else {
+            file_put_contents($logFilePath, 'Failed to insert data because No data in csv file at: ' . now() . PHP_EOL, FILE_APPEND);
         }
     }
 
@@ -132,23 +147,36 @@ class ActionCampaignCron extends Command
                         'sales_navigator' => true,
                     ];
                     $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
-                    $profile = $profile->getData(true);
-                    $url = $profile['user_profile']['public_profile_url'];
-                    $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
-                    if (empty($lead) && $i < $lead_distribution_limit) {
-                        $lc = new LeadsController();
-                        if ($lc->applySettings($campaign, $url) !== 'Not found') {
-                            $i++;
-                            file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                    if ($profile instanceof JsonResponse) {
+                        $profile = $profile->getData(true);
+                        if (!isset($profile['error'])) {
+                            $profile = $profile['user_profile'];
+                            $url = $profile['public_profile_url'];
+                            $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
+                            if (empty($lead) && $i < $lead_distribution_limit) {
+                                $lc = new LeadsController();
+                                if ($lc->applySettings($campaign, $url) !== 'Not found') {
+                                    $i++;
+                                    file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                                }
+                            } else if (!empty($lead)) {
+                                file_put_contents($logFilePath, 'Failed to insert data because Lead already existed at: ' . now() . PHP_EOL, FILE_APPEND);
+                            }
+                        } else {
+                            file_put_contents($logFilePath, 'Failed to insert data because ' . json_encode($profile['error']) . ' at: ' . now() . PHP_EOL, FILE_APPEND);
                         }
+                    } else {
+                        file_put_contents($logFilePath, 'Failed to insert data because User Profile is not instance of JsonResponse at: ' . now() . PHP_EOL, FILE_APPEND);
                     }
                 } catch (\Exception $e) {
-                    file_put_contents($logFilePath, 'Failed to insert data beacause ' . $e . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                    file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
                 }
             }
             if ($i + 1 < $lead_distribution_limit) {
                 $this->addSalesLeads($campaign, $lead_distribution_limit, $i, count($searches) + $j);
             }
+        } else {
+            file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
         }
     }
 }

@@ -343,9 +343,9 @@ class LeadsController extends Controller
 
     function get_view_count($campaigns)
     {
-        $past_time = now()->modify('-1 days')->format('Y-m-d H:i:s');
+        $past_time = now()->modify('-1 days')->format('Y-m-d');
         $views = UpdatedCampaignElements::whereIn('campaign_id', $campaigns->pluck('id')->toArray())->where('element_slug', 'like', 'view_profile%')->get();
-        $views = LeadActions::whereIn('current_element_id', $views->pluck('id')->toArray())->where('created_at', '>', $past_time)->get();
+        $views = LeadActions::whereIn('current_element_id', $views->pluck('id')->toArray())->whereDate('updated_at', '>=', $past_time)->where('status', 'completed')->get();
         $view_count = floor((80 - count($views)) / count($campaigns));
         if ($view_count > 0) {
             return $view_count;
@@ -355,9 +355,9 @@ class LeadsController extends Controller
 
     function get_invite_count($campaigns)
     {
-        $past_time = now()->modify('-1 days')->format('Y-m-d H:i:s');
+        $past_time = now()->modify('-1 days')->format('Y-m-d');
         $invites = UpdatedCampaignElements::whereIn('campaign_id', $campaigns->pluck('id')->toArray())->where('element_slug', 'like', 'invite_to_connect%')->get();
-        $invites = LeadActions::whereIn('current_element_id', $invites->pluck('id')->toArray())->where('created_at', '>', $past_time)->get();
+        $invites = LeadActions::whereIn('current_element_id', $invites->pluck('id')->toArray())->whereDate('updated_at', '>=', $past_time)->where('status', 'completed')->get();
         $invite_count = floor((15 - count($invites)) / count($campaigns));
         if ($invite_count > 0) {
             return $invite_count;
@@ -367,9 +367,9 @@ class LeadsController extends Controller
 
     function get_message_count($campaigns)
     {
-        $past_time = now()->modify('-1 days')->format('Y-m-d H:i:s');
+        $past_time = now()->modify('-1 days')->format('Y-m-d');
         $messages = UpdatedCampaignElements::whereIn('campaign_id', $campaigns->pluck('id')->toArray())->where('element_slug', 'like', 'message%')->get();
-        $messages = LeadActions::whereIn('current_element_id', $messages->pluck('id')->toArray())->where('created_at', '>', $past_time)->get();
+        $messages = LeadActions::whereIn('current_element_id', $messages->pluck('id')->toArray())->whereDate('updated_at', '>=', $past_time)->where('status', 'completed')->get();
         $message_count = floor((80 - count($messages)) / count($campaigns));
         if ($message_count > 0) {
             return $message_count;

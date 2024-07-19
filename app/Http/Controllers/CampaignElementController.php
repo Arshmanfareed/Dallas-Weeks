@@ -23,14 +23,18 @@ class CampaignElementController extends Controller
 {
     function campaignElement($slug)
     {
-        $elements = CampaignElement::where('element_slug', $slug)->first();
-        if ($elements) {
-            $properties = ElementProperties::where('element_id', $elements->id)->get();
-            if ($properties->isNotEmpty()) {
-                return response()->json(['success' => true, 'properties' => $properties]);
-            } else {
-                return response()->json(['success' => false, 'message' => 'No Properties Found']);
+        if (Auth::check()) {
+            $elements = CampaignElement::where('element_slug', $slug)->first();
+            if ($elements) {
+                $properties = ElementProperties::where('element_id', $elements->id)->get();
+                if ($properties->isNotEmpty()) {
+                    return response()->json(['success' => true, 'properties' => $properties]);
+                } else {
+                    return response()->json(['success' => false, 'message' => 'No Properties Found']);
+                }
             }
+        } else {
+            return redirect(url('/'));
         }
     }
 
@@ -219,12 +223,18 @@ class CampaignElementController extends Controller
     function getElements($campaign_id)
     {
         $elements = UpdatedCampaignElements::where('campaign_id', $campaign_id)->orderBy('id')->get();
-        foreach ($elements as $element) {
-            $element['original_element'] = CampaignElement::where('id', $element->element_id)->first();
-            $element['properties'] = UpdatedCampaignProperties::where('element_id', $element->id)->get();
-            foreach ($element['properties'] as $property) {
-                $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
+        if (Auth::check()) {
+            foreach ($elements as $element) {
+                $element['original_element'] = CampaignElement::where('id', $element->element_id)->first();
+                $element['properties'] = UpdatedCampaignProperties::where('element_id', $element->id)->get();
+                foreach ($element['properties'] as $property) {
+                    $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
+                }
             }
+            $path = CampaignPath::where('campaign_id', $campaign_id)->orderBy('id')->get();
+            return response()->json(['success' => true, 'elements_array' => $elements, 'path' => $path]);
+        } else {
+            return redirect(url('/'));
         }
         $path = CampaignPath::where('campaign_id', $campaign_id)->orderBy('id')->get();
         return response()->json(['success' => true, 'elements_array' => $elements, 'path' => $path]);
@@ -232,16 +242,20 @@ class CampaignElementController extends Controller
 
     function getcampaignelementbyid($element_id)
     {
-        $properties = UpdatedCampaignProperties::where('element_id', $element_id)->get();
-        if ($properties->isNotEmpty()) {
-            foreach ($properties as $property) {
-                $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
+        if (Auth::check()) {
+            $properties = UpdatedCampaignProperties::where('element_id', $element_id)->get();
+            if ($properties->isNotEmpty()) {
+                foreach ($properties as $property) {
+                    $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
+                }
+                return response()->json(['success' => true, 'properties' => $properties]);
+            } else {
+                $element = CampaignElement::where('element_slug', $this->remove_prefix($element_id))->first();
+                $properties = ElementProperties::where('element_id', $element->id)->get();
+                return response()->json(['success' => false, 'properties' => $properties]);
             }
-            return response()->json(['success' => true, 'properties' => $properties]);
         } else {
-            $element = CampaignElement::where('element_slug', $this->remove_prefix($element_id))->first();
-            $properties = ElementProperties::where('element_id', $element->id)->get();
-            return response()->json(['success' => false, 'properties' => $properties]);
+            return redirect(url('/'));
         }
     }
 }

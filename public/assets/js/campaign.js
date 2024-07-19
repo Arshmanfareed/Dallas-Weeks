@@ -275,6 +275,9 @@ $(document).ready(function () {
                     $(".archive_campaign").html("Archive campaign");
                 }
             },
+            beforeSend: function () {
+                $("#loader").show();
+            },
             error: function (xhr, status, error) {
                 var html = ``;
                 html += '<tr><td colspan="8">';
@@ -282,6 +285,9 @@ $(document).ready(function () {
                     '<div class="text-center text-danger" style="font-size: 25px; font-weight: bold; font-style: italic;">Not Found!</div>';
                 html += "</td></tr>";
                 $("#campaign_table_body").html(html);
+            },
+            complete: function () {
+                $("#loader").hide();
             },
         });
     }
