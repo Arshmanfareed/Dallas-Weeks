@@ -224,6 +224,61 @@ class UnipileController extends Controller
         }
     }
 
+    public function post_search(Request $request)
+    {
+        $all = $request->all();
+        $account_id = $all['account_id'];
+        $identifier = $all['identifier'];
+        if (!isset($account_id) || !isset($identifier) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $client = new Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/posts/' . $identifier . '?account_id=' . $account_id;
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $result = json_decode($response->getBody(), true);
+            return response()->json(['post' => $result]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function reactions_post_search(Request $request)
+    {
+        $all = $request->all();
+        $account_id = $all['account_id'];
+        $identifier = $all['identifier'];
+        if (!isset($account_id) || !isset($identifier) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $client = new Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/posts/' . $identifier . '/reactions?account_id=' . $account_id;
+        if (isset($all['cursor'])) {
+            $url .= '&cursor=' . $all['cursor'];
+        }
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $result = json_decode($response->getBody(), true);
+            return response()->json(['reactions' => $result]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
     public function delete_account(Request $request)
     {
         $all = $request->all();
@@ -484,7 +539,7 @@ class UnipileController extends Controller
             });
             return response()->json(['success' => true, 'message' => 'Email sent successfully']);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to send email', 'details' => $e], 500);
+            return response()->json(['error' => 'Failed to send email', 'details' => $e->getMessage()], 500);
         }
     }
 

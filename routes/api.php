@@ -36,3 +36,5 @@ Route::post('/sendEmail', [UnipileController::class, 'email_message'])->name('em
 Route::post('/follow', [UnipileController::class, 'follow'])->name('follow');
 Route::post('/search/sales_navigator', [UnipileController::class, 'sales_navigator_search'])->name('sales_navigator_search');
 Route::post('/search/linkedin', [UnipileController::class, 'linkedin_search'])->name('linkedin_search');
+Route::post('/search/post', [UnipileController::class, 'post_search'])->name('post_search');
+Route::post('/search/post/reactions', [UnipileController::class, 'reactions_post_search'])->name('reactions_post_search');

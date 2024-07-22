@@ -64,6 +64,8 @@ class ActionCampaignCron extends Command
                             $this->addSalesLeads($campaign, $lead_distribution_limit, 0, 0);
                         } else if ($campaign['campaign_type'] == 'linkedin') {
                             $this->addLinkedinLeads($campaign, $lead_distribution_limit, 0, 0);
+                        } else if ($campaign['campaign_type'] == 'post_engagement') {
+                            $this->addPostLeads($campaign, $lead_distribution_limit, 0, 0);
                         }
                     }
                 } else {
@@ -269,6 +271,83 @@ class ActionCampaignCron extends Command
             }
         } else {
             file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
+        }
+    }
+
+    private function addPostLeads($campaign, $lead_distribution_limit, $i, $j, $cursor = null)
+    {
+        $logFilePath = storage_path('logs/campaign_action.log');
+        $seat = SeatInfo::where('id', $campaign->seat_id)->first();
+        $account_id = $seat['account_id'];
+        $url = $campaign['campaign_url'];
+        preg_match('/activity-([0-9]+)/', $url, $matches);
+        if (isset($matches[1])) {
+            $request = [
+                'account_id' => $account_id,
+                'identifier' => $matches[1]
+            ];
+            $uc = new UnipileController();
+            $post = $uc->post_search(new \Illuminate\Http\Request($request));
+            $post = $post->getData(true)['post'];
+            if (count($post) > 0) {
+                $request = [
+                    'account_id' => $account_id,
+                    'identifier' => $post['social_id'],
+                    'cursor' => $cursor
+                ];
+                $reactions = $uc->reactions_post_search(new \Illuminate\Http\Request($request));
+                $paging = $reactions->getData(true)['reactions']['paging'];
+                $reactions = $reactions->getData(true)['reactions']['items'];
+                if (count($reactions) > 0) {
+                    foreach ($reactions as $reaction) {
+                        try {
+                            $author = $reaction['author'];
+                            $request = [
+                                'account_id' => $account_id,
+                                'profile_url' => $author['id'],
+                                'sales_navigator' => true
+                            ];
+                            $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
+                            if ($profile instanceof JsonResponse) {
+                                $profile = $profile->getData(true);
+                                if (!isset($profile['error'])) {
+                                    $profile = $profile['user_profile'];
+                                    $url = $profile['public_profile_url'];
+                                    $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
+                                    if (empty($lead) && $i < $lead_distribution_limit) {
+                                        $lc = new LeadsController();
+                                        if ($lc->applySettings($campaign, $url) !== 'Not found') {
+                                            $i++;
+                                            file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                    } else if (!empty($lead)) {
+                                        file_put_contents($logFilePath, 'Failed to insert data because Lead already existed at: ' . now() . PHP_EOL, FILE_APPEND);
+                                    }
+                                } else {
+                                    file_put_contents($logFilePath, 'Failed to insert data because ' . json_encode($profile['error']) . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                }
+                            } else {
+                                file_put_contents($logFilePath, 'Failed to insert data because User Profile is not instance of JsonResponse at: ' . now() . PHP_EOL, FILE_APPEND);
+                            }
+                        } catch (\Exception $e) {
+                            file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                        }
+                    }
+                } else {
+                    file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
+                }
+                if ($i + 1 < $lead_distribution_limit && isset($paging['cursor'])) {
+                    $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, $paging['cursor']);
+                } else {
+                    if (!isset($paging['cursor'])) {
+                        file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
+                    }
+                }
+            } else {
+                file_put_contents($logFilePath, 'Failed to insert data because No post found at: ' . now() . PHP_EOL, FILE_APPEND);
+            }
+        } else {
+            file_put_contents($logFilePath, 'Failed to insert data because No activity keyward found in post URL at: ' . now() . PHP_EOL, FILE_APPEND);
         }
     }
 }
