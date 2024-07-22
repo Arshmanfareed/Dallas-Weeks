@@ -312,6 +312,19 @@ class ActionCampaignCron extends Command
                                 $profile = $profile->getData(true);
                                 if (!isset($profile['error'])) {
                                     $profile = $profile['user_profile'];
+                                    // $conn = true;
+                                    // $connection_map = [
+                                    //     1 => 'FIRST_DEGREE',
+                                    //     2 => 'SECOND_DEGREE',
+                                    //     3 => 'THIRD_DEGREE'
+                                    // ];
+                                    // if (
+                                    //     isset($connection_map[$campaign['campaign_connection']]) &&
+                                    //     $author['network_distance'] != $connection_map[$campaign['campaign_connection']]
+                                    // ) {
+                                    //     $conn = false;
+                                    // }
+                                    // if ($conn) {
                                     $url = $profile['public_profile_url'];
                                     $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
                                     if (empty($lead) && $i < $lead_distribution_limit) {
@@ -323,6 +336,7 @@ class ActionCampaignCron extends Command
                                     } else if (!empty($lead)) {
                                         file_put_contents($logFilePath, 'Failed to insert data because Lead already existed at: ' . now() . PHP_EOL, FILE_APPEND);
                                     }
+                                    // }
                                 } else {
                                     file_put_contents($logFilePath, 'Failed to insert data because ' . json_encode($profile['error']) . ' at: ' . now() . PHP_EOL, FILE_APPEND);
                                 }
@@ -340,6 +354,7 @@ class ActionCampaignCron extends Command
                     $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, $paging['cursor']);
                 } else {
                     if (!isset($paging['cursor'])) {
+                        // Get leads from comments
                         file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
                     }
                 }
