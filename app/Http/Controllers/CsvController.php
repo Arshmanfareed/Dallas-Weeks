@@ -2,25 +2,18 @@
 
 namespace App\Http\Controllers;
 
-<<<<<<< HEAD
 use Validator;
-=======
->>>>>>> seat_work
 use App\Models\ImportedLeads;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-<<<<<<< HEAD
 use App\Models\SeatInfo;
-=======
->>>>>>> seat_work
 
 class CsvController extends Controller
 {
     function import_csv(Request $request)
     {
-<<<<<<< HEAD
         $validator = Validator::make($request->all(), [
             'campaign_url' => 'required|file|mimes:csv,txt'
         ]);
@@ -28,13 +21,6 @@ class CsvController extends Controller
             $user_id = Auth::user()->id;
             $seat_id = session('seat_id');
             $seat = SeatInfo::find($seat_id);
-=======
-        if (Auth::check()) {
-            $validated = $request->validate([
-                'campaign_url' => 'required|file|mimes:csv,txt'
-            ]);
-            $user_id = Auth::user()->id;
->>>>>>> seat_work
             if ($_FILES['campaign_url']['error'] === UPLOAD_ERR_OK) {
                 $file = $request->file('campaign_url');
                 $fileType = $file->getClientMimeType();
@@ -70,11 +56,7 @@ class CsvController extends Controller
                             $total_without_duplicate_blacklist = 0;
                             foreach ($csvData as $key => $value) {
                                 $key = str_replace(['_', ' ', '-', ',', ';'], '', $key);
-<<<<<<< HEAD
                                 if (str_contains(strtolower($key), 'profileurl')) {
-=======
-                                if (str_contains(strtolower($key), 'profileurl') || str_contains(strtolower($key), 'email')) {
->>>>>>> seat_work
                                     $has_url_or_email = true;
                                     foreach ($value as $url) {
                                         ++$count;
@@ -84,13 +66,10 @@ class CsvController extends Controller
                                         }
                                         if (filter_var($url, FILTER_VALIDATE_URL)) {
                                             if (stripos($url, 'https://www.linkedin.com/in/') !== false || stripos($url, 'https://www.linkedin.com/company/') !== false) {
-<<<<<<< HEAD
                                                 $lc = new LeadsController();
                                                 if ($lc->duplicateUrl($url)) {
                                                     $duplicates_across_team++;
                                                 }
-=======
->>>>>>> seat_work
                                                 $total_Urls[] = $url;
                                                 ++$total;
                                             } else {
@@ -112,7 +91,6 @@ class CsvController extends Controller
                                 return response()->json(['success' => false, 'message' => 'No Profile Url or Email Column Found']);
                             }
                             fclose($fileHandle);
-<<<<<<< HEAD
                             $lead = new ImportedLeads();
                             $lead->user_id = $user_id;
                             $lead->file_path = $fileName;
@@ -122,31 +100,6 @@ class CsvController extends Controller
                             return response()->json([
                                 'success' => true,
                                 'path' => $lead->file_path,
-=======
-                            $imported_leads = ImportedLeads::where('user_id', $user_id)->get();
-                            if ($imported_leads->isEmpty()) {
-                                $lead = new ImportedLeads();
-                                $lead->user_id = $user_id;
-                                $lead->file_path = $fileName;
-                                $lead->created_at = now();
-                                $lead->updated_at = now();
-                                $lead->save();
-                            } else {
-                                foreach ($imported_leads as $imported_lead) {
-                                    $prevFilePath = 'uploads/' . $imported_lead->file_path;
-                                    Storage::delete($prevFilePath);
-                                }
-                                ImportedLeads::where('user_id', $user_id)->delete();
-                                $lead = new ImportedLeads();
-                                $lead->user_id = $user_id;
-                                $lead->file_path = $fileName;
-                                $lead->created_at = now();
-                                $lead->updated_at = now();
-                                $lead->save();
-                            }
-                            return response()->json([
-                                'success' => true,
->>>>>>> seat_work
                                 'total' => $total,
                                 'total_Urls' => $total_Urls,
                                 'duplicates' => $duplicates,
@@ -171,7 +124,6 @@ class CsvController extends Controller
                 return response()->json(['success' => false, 'message' => "Error uploading file"]);
             }
         } else {
-<<<<<<< HEAD
             return redirect('post')
                 ->withErrors($validator)
                 ->withInput();
@@ -201,9 +153,4 @@ class CsvController extends Controller
         }
         return null;
     }
-=======
-            return redirect(url('/'));
-        }
-    }
->>>>>>> seat_work
 }

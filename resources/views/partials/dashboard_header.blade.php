@@ -103,22 +103,12 @@
                         <a type="button" class="user_toggle" id=""><i class="fa-solid fa-chevron-down"></i></a>
                         <ul class="user_toggle_list" style="display: none">
                             <li><a href="{{ route('logout-user') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-<<<<<<< HEAD
                                     <i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                                 <form id="logout-form" action="{{ route('logout-user') }}" method="POST" style="display: none;">
                                     @csrf
                                 </form>
                             </li>
 
-=======
-                                <i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-                                    <form id="logout-form" action="{{ route('logout-user') }}" method="POST"
-                                        style="display: none;">
-                                        @csrf
-                                    </form>
-                            </li>
-                            
->>>>>>> seat_work
                         </ul>
                     </li>
                     <li class="darkmode"><a href="javascript:;" id="darkModeToggle"><i class="fa-solid fa-sun"></i></a>
@@ -136,7 +126,6 @@
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         @if (Str::contains(request()->url(), URL('campaign/createcampaignfromscratch')))
-<<<<<<< HEAD
         <script src="{{ asset('assets/js/createCampaignFromScratch.js') }}"></script>
         @elseif (Str::contains(request()->url(), URL('campaign/createcampaign')))
         <script src="{{ asset('assets/js/createCampaign.js') }}"></script>
@@ -160,31 +149,6 @@
     </footer>
     <script>
         $(".user_toggle").on("click", function(e) {
-=======
-            <script src="{{ asset('assets/js/createCampaignFromScratch.js') }}"></script>
-        @elseif (Str::contains(request()->url(), URL('campaign/createcampaign')))
-            <script src="{{ asset('assets/js/createCampaign.js') }}"></script>
-        @elseif (Str::contains(request()->url(), URL('campaign/campaigninfo')))
-            <script src="{{ asset('assets/js/campaignInfo.js') }}"></script>
-        @elseif (Str::contains(request()->url(), URL('campaign/campaignDetails')))
-            <script src="{{ asset('assets/js/campaignDetails.js') }}"></script>
-        @elseif (Str::contains(request()->url(), URL('campaign/editcampaign')))
-            <script src="{{ asset('assets/js/editcampaign.js') }}"></script>
-        @elseif (Str::contains(request()->url(), URL('campaign/editCampaignInfo')))
-            <script src="{{ asset('assets/js/editCampaignInfo.js') }}"></script>
-        @elseif (Str::contains(request()->url(), URL('campaign/editCampaignSequence')))
-            <script src="{{ asset('assets/js/editCampaignSequence.js') }}"></script>
-        @elseif (Str::contains(request()->url(), URL('campaign')))
-            <script src="{{ asset('assets/js/campaign.js') }}"></script>
-        @elseif (Str::contains(request()->url(), URL('leads')))
-            <script src="{{ asset('assets/js/leads.js') }}"></script>
-        @elseif (Str::contains(request()->url(), URL('setting')))
-            <script src="{{ asset('assets/js/setting.js') }}"></script>
-        @endif
-    </footer>
-    <script>
-        $(".user_toggle").on("click", function (e) {
->>>>>>> seat_work
             $(".user_toggle_list").toggle();
         });
     </script>

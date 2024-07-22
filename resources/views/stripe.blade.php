@@ -36,7 +36,7 @@
                             method="post" 
                             class="require-validation"
                             data-cc-on-file="false"
-                            data-stripe-publishable-key="pk_test_51OCjd6BuZnZjGIGMiMdLJDTNrak3WOsSrXP1BBWJLncTx8h2VzAhFPXdF3fvvCWa4EFwLiaraA12BdGoeSOtORuU00ncl9rtwQ"
+                            data-stripe-publishable-key="{{ env('STRIPE_KEY') }}"
                             id="payment-form">
                         @csrf
     

@@ -4,14 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
-<<<<<<< HEAD
 use App\Models\SeatInfo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-=======
-use GuzzleHttp\Client;
-
->>>>>>> seat_work
 
 class LinkedInController extends Controller
 {
@@ -60,11 +55,7 @@ class LinkedInController extends Controller
 
         return redirect()->route('home')->with('success', 'LinkedIn login successful');
     }
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> seat_work
     public function createLinkAccount(Request $request)
     {
         $all = $request->all();
@@ -73,19 +64,11 @@ class LinkedInController extends Controller
             'verify' => false,
         ]);
         try {
-<<<<<<< HEAD
             $response = $client->request('POST', $this->dsn . 'api/v1/hosted/accounts/link', [
                 'json' => [
                     'type' => 'create',
                     'providers' => '*',
                     'api_url' => $this->dsn,
-=======
-            $response = $client->request('POST', 'https://api2.unipile.com:13214/api/v1/hosted/accounts/link', [
-                'json' => [
-                    'type' => 'create',
-                    'providers' => '*',
-                    'api_url' => 'https://api2.unipile.com:13214',
->>>>>>> seat_work
                     'expiresOn' => '2024-12-22T12:00:00.701Z',
                     'success_redirect_url' => 'https://networked.staging.designinternal.com/setting',
                     'failure_redirect_url' => 'https://networked.staging.designinternal.com/setting',
@@ -93,19 +76,11 @@ class LinkedInController extends Controller
                     'name' => $email,
                 ],
                 'headers' => [
-<<<<<<< HEAD
                     'X-API-KEY' => $this->x_api_key,
-=======
-                    'X-API-KEY' => 'Cy9ubZA9.MPZvu94YyV6Ilrjz0IPY+xJdOjji4E+ZymQTSXCvD8c=',
->>>>>>> seat_work
                     'accept' => 'application/json',
                     'content-type' => 'application/json',
                 ],
             ]);
-<<<<<<< HEAD
-=======
-
->>>>>>> seat_work
             return response()->json([
                 'status' => 'success',
                 'data' => json_decode($response->getBody()->getContents(), true)
@@ -124,7 +99,6 @@ class LinkedInController extends Controller
             ], 500);
         }
     }
-<<<<<<< HEAD
 
     public function delete_an_account()
     {
@@ -154,6 +128,4 @@ class LinkedInController extends Controller
             return redirect(route('dash-settings'));
         }
     }
-=======
->>>>>>> seat_work
 }

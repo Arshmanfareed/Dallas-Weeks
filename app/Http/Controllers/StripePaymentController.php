@@ -51,13 +51,8 @@ class StripePaymentController extends Controller
         //     return back()->withErrors($validator)->withInput();
         // }
 
-<<<<<<< HEAD
      
        Stripe\Stripe::setApiKey(config('services.stripe.secret'));
-=======
-
-        Stripe\Stripe::setApiKey(config('services.stripe.secret'));
->>>>>>> seat_work
 
         try {
             $customer = Stripe\Customer::create([
@@ -114,11 +109,8 @@ class StripePaymentController extends Controller
                 $currency = $response['currency'];
                 $date = now();
 
-<<<<<<< HEAD
                 
 
-=======
->>>>>>> seat_work
                 $seat_user_id = $user->id;
                 $seat_username = $request->username;
                 $city = $request->city;

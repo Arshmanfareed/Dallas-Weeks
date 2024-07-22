@@ -48,6 +48,7 @@ class ActionCampaignCron extends Command
     public function handle()
     {
         $logFilePath = storage_path('logs/campaign_action.log');
+        file_put_contents($logFilePath, 'Action Campaigns started at: ' . now() . PHP_EOL, FILE_APPEND);
         try {
             $sc = new SeatController();
             $final_accounts = $sc->get_final_accounts();

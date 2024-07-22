@@ -167,11 +167,7 @@
         </div>
     </section>
     <script>
-<<<<<<< HEAD
         var campaign_details = {!! $settings !!};
-=======
-        var settings = {!! $settings !!};
->>>>>>> seat_work
         var createCampaignPath = "{{ route('createCampaign') }}";
         var campaignsPath = "{{ route('campaigns') }}";
         var getCampaignElementPath = "{{ route('getcampaignelementbyslug', ':slug') }}";

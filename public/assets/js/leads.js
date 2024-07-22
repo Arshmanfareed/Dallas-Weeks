@@ -103,11 +103,7 @@ $(document).ready(function () {
                         .slice(0, 16);
                     $("#created_at").html(
                         '<i class="fa-solid fa-calendar-days"></i>Created at: ' +
-<<<<<<< HEAD
                         formattedTimestamp
-=======
-                            formattedTimestamp
->>>>>>> seat_work
                     );
                 } else {
                     $("#campaign-name").val("");
@@ -130,11 +126,7 @@ $(document).ready(function () {
                     const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
                     $("#created_at").html(
                         '<i class="fa-solid fa-calendar-days"></i>Created at: ' +
-<<<<<<< HEAD
                         formattedDate
-=======
-                            formattedDate
->>>>>>> seat_work
                     );
                 }
                 $(".setting_btn").on("click", setting_list);

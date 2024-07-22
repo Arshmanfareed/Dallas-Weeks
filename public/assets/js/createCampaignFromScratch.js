@@ -1,32 +1,13 @@
 $(document).ready(function () {
-<<<<<<< HEAD
     var settings = JSON.parse(sessionStorage.getItem("settings"));
-=======
->>>>>>> seat_work
     var choosedElement = null;
     var inputElement = null;
     var outputElement = null;
     var elements_array = sessionStorage.getItem("elements_array");
-<<<<<<< HEAD
     var elements_data_array = JSON.parse(sessionStorage.getItem("elements_data_array") || "{}");
     sessionStorage.setItem("elements_data_array", JSON.stringify(elements_data_array));
     var condition = "";
 
-=======
-    var elements_data_array = sessionStorage.getItem("elements_data_array");
-    var condition = "";
-
-    if (elements_data_array) {
-        elements_data_array = JSON.parse(elements_data_array);
-    } else {
-        elements_data_array = {};
-        sessionStorage.setItem(
-            "elements_data_array",
-            JSON.stringify(elements_data_array)
-        );
-    }
-
->>>>>>> seat_work
     if (elements_array) {
         elements_array = JSON.parse(elements_array);
         var maxDropPadHeight = 0;
@@ -69,11 +50,7 @@ $(document).ready(function () {
                                     if (property["property_name"] == "Days") {
                                         if (
                                             elements_data_array[key][
-<<<<<<< HEAD
                                             prop_key
-=======
-                                                prop_key
->>>>>>> seat_work
                                             ] == ""
                                         ) {
                                             clone.find(".item_days").html("0");
@@ -82,11 +59,7 @@ $(document).ready(function () {
                                                 .find(".item_days")
                                                 .html(
                                                     elements_data_array[key][
-<<<<<<< HEAD
                                                     prop_key
-=======
-                                                        prop_key
->>>>>>> seat_work
                                                     ]
                                                 );
                                         }
@@ -95,11 +68,7 @@ $(document).ready(function () {
                                     ) {
                                         if (
                                             elements_data_array[key][
-<<<<<<< HEAD
                                             prop_key
-=======
-                                                prop_key
->>>>>>> seat_work
                                             ] == ""
                                         ) {
                                             clone.find(".item_hours").html("0");
@@ -108,11 +77,7 @@ $(document).ready(function () {
                                                 .find(".item_hours")
                                                 .html(
                                                     elements_data_array[key][
-<<<<<<< HEAD
                                                     prop_key
-=======
-                                                        prop_key
->>>>>>> seat_work
                                                     ]
                                                 );
                                         }
@@ -558,17 +523,10 @@ $(document).ready(function () {
                     }
                     $(".drop-pad").append(
                         '<div class="line" id="' +
-<<<<<<< HEAD
                         outputElement.attr("id") +
                         "-to-" +
                         inputElement.attr("id") +
                         '"><div class="path-cancel-icon"><i class="fa-solid fa-xmark"></i></div></div>'
-=======
-                            outputElement.attr("id") +
-                            "-to-" +
-                            inputElement.attr("id") +
-                            '"><div class="path-cancel-icon"><i class="fa-solid fa-xmark"></i></div></div>'
->>>>>>> seat_work
                     );
                     $(".path-cancel-icon").on("click", removePath);
                     var attachInputElement = $(inputElement).find(
@@ -647,11 +605,7 @@ $(document).ready(function () {
                     data: JSON.stringify({
                         final_data: elements_data_array,
                         final_array: elements_array,
-<<<<<<< HEAD
                         settings: campaign_details,
-=======
-                        settings: settings,
->>>>>>> seat_work
                         img_url: img,
                     }),
                     headers: {
@@ -686,38 +640,6 @@ $(document).ready(function () {
         $("#properties").addClass("active");
         $("#element-list-btn").removeClass("active");
         $("#properties-btn").addClass("active");
-<<<<<<< HEAD
-=======
-        var property_input = $(".property_input");
-        if (
-            property_input.length > 0 &&
-            $(this).prop("id") != $(".element_name").data("bs-target")
-        ) {
-            for (var i = 0; i < property_input.length; i++) {
-                var input = property_input.eq(i);
-                var target_element = $(property_input[0])
-                    .closest(".element_properties")
-                    .find(".element_name")
-                    .data("bs-target");
-                if (input.prop("required") && input.val() == "") {
-                    input.addClass("error");
-                    $("#" + target_element).addClass("error");
-                    $("#" + target_element)
-                        .find(".item_name")
-                        .addClass("error");
-                } else {
-                    input.removeClass("error");
-                    $("#" + target_element).removeClass("error");
-                    $("#" + target_element)
-                        .find(".item_name")
-                        .removeClass("error");
-                    $(".drop-pad-element#" + target_element).addClass(
-                        "success"
-                    );
-                }
-            }
-        }
->>>>>>> seat_work
         $(this).removeClass("error");
         $(this).find(".item_name").removeClass("error");
         $(".drop-pad-element .cancel-icon").css({
@@ -1147,15 +1069,9 @@ $(document).ready(function () {
                 if (
                     $(".drop-pad").find(
                         "#" +
-<<<<<<< HEAD
                         current_element_id +
                         "-to-" +
                         next_false_element_id
-=======
-                            current_element_id +
-                            "-to-" +
-                            next_false_element_id
->>>>>>> seat_work
                     ).length > 0
                 ) {
                     var attachInputElement = $(
@@ -1259,11 +1175,7 @@ $(document).ready(function () {
                                             .addClass("error");
                                         toastr.error(
                                             property["property_name"] +
-<<<<<<< HEAD
                                             " is not filled as required."
-=======
-                                                " is not filled as required."
->>>>>>> seat_work
                                         );
                                         errorOccurred = true;
                                     }

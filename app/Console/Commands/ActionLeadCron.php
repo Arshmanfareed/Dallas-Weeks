@@ -49,6 +49,7 @@ class ActionLeadCron extends Command
     public function handle()
     {
         $logFilePath = storage_path('logs/lead_action.log');
+        file_put_contents($logFilePath, 'Action Leads started at: ' . now() . PHP_EOL, FILE_APPEND);
         try {
             $current_time = now();
             $sc = new SeatController();
