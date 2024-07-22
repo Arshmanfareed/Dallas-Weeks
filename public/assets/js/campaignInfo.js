@@ -1,6 +1,7 @@
 $(document).ready(function () {
     sessionStorage.removeItem("elements_array");
     sessionStorage.removeItem("elements_data_array");
+<<<<<<< HEAD
     var settings = JSON.parse(sessionStorage.getItem("settings"));
     if (settings) {
         Object.keys(settings).forEach(key => {
@@ -10,6 +11,21 @@ $(document).ready(function () {
                 checkbox.prop("checked", true);
             } else {
                 checkbox.prop("checked", false);
+=======
+
+    var settings = JSON.parse(sessionStorage.getItem("settings"));
+
+    if (settings) {
+        $(".linkedin_setting_switch").each(function (e) {
+            var name = $(this).attr("name");
+            if (settings[name] === "no") {
+                $(this).attr("value", "no");
+                $(this).prop("checked", false);
+                console.log($(this)[0]);
+            } else {
+                $(this).attr("value", "yes");
+                $(this).attr("checked", true);
+>>>>>>> seat_work
             }
         });
     } else {
@@ -24,11 +40,14 @@ $(document).ready(function () {
         sessionStorage.setItem("settings", JSON.stringify(settings));
     }
 
+<<<<<<< HEAD
     $('.linkedin_setting_switch').on('change', function () {
         var name = $(this).prop('name');
         settings[name] = $(this).is(":checked") ? "yes" : "no";
     });
 
+=======
+>>>>>>> seat_work
     var form = $("#settings");
     form.append(
         $("<input>")
@@ -48,12 +67,24 @@ $(document).ready(function () {
             .attr("name", "campaign_url")
             .val(campaign_details["campaign_url"])
     );
+<<<<<<< HEAD
     form.append(
         $("<input>")
             .attr("type", "hidden")
             .attr("name", "campaign_url_hidden")
             .val(campaign_details["campaign_url_hidden"])
     );
+=======
+
+    if (campaign_details["campaign_type"] == "sales_navigator") {
+        form.append(
+            $("<input>")
+                .attr("type", "hidden")
+                .attr("name", "lead_details")
+                .val(campaign_details["lead_details"])
+        );
+    }
+>>>>>>> seat_work
 
     if (campaign_details["connections"] != undefined) {
         form.append(

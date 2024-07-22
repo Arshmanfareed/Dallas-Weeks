@@ -1,7 +1,11 @@
 $(document).ready(function () {
+<<<<<<< HEAD
     $(".setting_btn").on("click", setting_list);
     $("#search_seat").on("input", filter_search);
     
+=======
+    // $(".setting_btn").on("click", setting_list);
+>>>>>>> seat_work
     $(".seat_table_data").on("click", function (e) {
         var id = $(this).parent().attr("id").replace("table_row_", "");
         var form = document.createElement("form");
@@ -24,6 +28,7 @@ $(document).ready(function () {
         form.submit();
     });
 
+<<<<<<< HEAD
     function filter_search(e) {
         e.preventDefault();
         var search = $("#search_seat").val();
@@ -144,4 +149,8 @@ $(document).ready(function () {
             }
         });
     });
+=======
+    // function setting_list(e) {
+    // }
+>>>>>>> seat_work
 });

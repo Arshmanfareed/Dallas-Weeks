@@ -32,7 +32,11 @@ Route::post('/invite_to_connect', [UnipileController::class, 'invite_to_connect'
 Route::post('/message', [UnipileController::class, 'message'])->name('message');
 Route::post('/inmail_message', [UnipileController::class, 'inmail_message'])->name('inmailMessage');
 Route::post('/email', [UnipileController::class, 'email'])->name('email');
+<<<<<<< HEAD
 Route::post('/sendEmail', [UnipileController::class, 'email_message'])->name('email_message');
 Route::post('/follow', [UnipileController::class, 'follow'])->name('follow');
 Route::post('/search/sales_navigator', [UnipileController::class, 'sales_navigator_search'])->name('sales_navigator_search');
 Route::post('/search/linkedin', [UnipileController::class, 'linkedin_search'])->name('linkedin_search');
+=======
+Route::post('/delete_account', [UnipileController::class, 'delete_account'])->name('delete_account');
+>>>>>>> seat_work

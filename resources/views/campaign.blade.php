@@ -1,5 +1,6 @@
 @extends('partials/dashboard_header')
 @section('content')
+<<<<<<< HEAD
 <style>
     #payment-form input.form-control {
         color: white !important;
@@ -150,6 +151,28 @@ session()->forget('edit_campaign_details');
                             </div>
                         </div>
                     </div>
+=======
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>{{ session('success') }}</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @php
+            session()->forget('success');
+        @endphp
+    @endif
+    @php
+        session()->forget('campaign_details');
+        session()->forget('edit_campaign_details');
+    @endphp
+    <section class="main_dashboard blacklist campaign_sec">
+        <div class="container_fluid">
+            <div class="row">
+                <div class="col-lg-1">
+                    @include('partials/dashboard_sidebar_menu')
+>>>>>>> seat_work
                 </div>
                 <div class="row">
                     <div class="col-12">
@@ -184,6 +207,7 @@ session()->forget('edit_campaign_details');
                             <p>Easily track your campaigns in one place.</p>
                         </div>
                     </div>
+<<<<<<< HEAD
                 </div>
                 <div class="row">
                     <div class="col-12">
@@ -290,12 +314,119 @@ session()->forget('edit_campaign_details');
                                         @endif
                                     </tbody>
                                 </table>
+=======
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="border_box ">
+                                <div class="campaign_list">
+                                    <table class="data_table w-100">
+                                        <thead>
+                                            <tr>
+                                                <th width="5%">Status</th>
+                                                <th width="20%">Campaign name</th>
+                                                <th width="10%">Total leads</th>
+                                                <th width="10%">Sent messages</th>
+                                                <th width="30%" class="stat">States</th>
+                                                <th width="10%">Acceptance</th>
+                                                <th width="10%">Response</th>
+                                                <th width="5%">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="campaign_table_body">
+                                            @if (!empty($campaigns->first()))
+                                                @foreach ($campaigns as $campaign)
+                                                    <tr id="{{ 'table_row_' . $campaign->id }}" class="campaign_table_row">
+                                                        <td>
+                                                            <div class="switch_box">
+                                                                @if ($campaign->is_active == 1)
+                                                                    <input type="checkbox" class="switch"
+                                                                        id="switch{{ $campaign->id }}" checked>
+                                                                @else
+                                                                    <input type="checkbox" class="switch"
+                                                                        id="switch{{ $campaign->id }}">
+                                                                @endif
+                                                                <label for="switch{{ $campaign->id }}">Toggle</label>
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ $campaign->campaign_name }}</td>
+                                                        <td>
+                                                            @php
+                                                                $leads = App\Models\Leads::where(
+                                                                    'campaign_id',
+                                                                    $campaign->id,
+                                                                )->get();
+                                                            @endphp
+                                                            {{ count($leads) }}
+                                                        </td>
+                                                        <td>105</td>
+                                                        <td class="stats">
+                                                            <ul
+                                                                class="status_list d-flex align-items-center list-unstyled p-0 m-0">
+                                                                <li><span><img src="{{ asset('assets/img/eye.svg') }}"
+                                                                            alt="">10</span></li>
+                                                                <li><span><img src="{{ asset('assets/img/request.svg') }}"
+                                                                            alt="">42</span></li>
+                                                                <li><span><img src="{{ asset('assets/img/mailmsg.svg') }}"
+                                                                            alt="">10</span></li>
+                                                                <li><span><img src="{{ asset('assets/img/mailopen.svg') }}"
+                                                                            alt="">16</span></li>
+                                                            </ul>
+                                                        </td>
+                                                        <td>
+                                                            <div class="per up">34%</div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="per down">23%</div>
+                                                        </td>
+                                                        <td>
+                                                            <a type="button" class="setting setting_btn"
+                                                                id=""><i class="fa-solid fa-gear"></i></a>
+                                                            <ul class="setting_list" style="display: none">
+                                                                <li><a
+                                                                        href="{{ route('campaignDetails', ['campaign_id' => $campaign->id]) }}">Check
+                                                                        campaign details</a></li>
+                                                                <li><a
+                                                                        href="{{ route('editCampaign', ['campaign_id' => $campaign->id]) }}">Edit
+                                                                        campaign</a></li>
+                                                                {{-- <li><a href="#">Duplicate campaign steps</a></li> --}}
+                                                                {{-- <li><a href="javascript:;" data-bs-toggle="modal"
+                                                                        data-bs-target="#add_new_leads_modal">Add new
+                                                                        leads</a> --}}
+                                                                </li>
+                                                                {{-- <li><a href="#">Export data</a></li> --}}
+                                                                <li><a class="archive_campaign"
+                                                                        id="{{ 'archive' . $campaign->id }}">Archive
+                                                                        campaign</a>
+                                                                </li>
+                                                                <li><a class="delete_campaign"
+                                                                        id="{{ 'delete' . $campaign->id }}">Delete
+                                                                        campaign</a>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td colspan="8">
+                                                        <div class="text-center text-danger"
+                                                            style="font-size: 25px; font-weight: bold; font-style: italic;">
+                                                            Campaign Not Found!
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
+>>>>>>> seat_work
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
     </div>
 </section>
 <script>
@@ -310,6 +441,17 @@ session()->forget('edit_campaign_details');
     var sentMessageRoute = "{{ route('getSentMessageByCampaign', ':id') }}";
 </script>
 {{-- <div class="modal fade create_sequence_modal" id="sequance_modal" tabindex="-1" aria-labelledby="sequance_modal"
+        aria-hidden="true">
+=======
+    </section>
+    <script>
+        var filterCampaignRoute = "{{ route('filterCampaign', [':filter', ':search']) }}";
+        var deleteCampaignRoute = "{{ route('deleteCampaign', ':id') }}";
+        var activateCampaignRoute = "{{ route('changeCampaignStatus', ':campaign_id') }}";
+        var archiveCampaignRoute = "{{ route('archiveCampaign', ':id') }}";
+        var leadsCountRoute = "{{ route('getLeadsCountByCampaign', ':id') }}";
+    </script>
+    {{-- <div class="modal fade create_sequence_modal" id="sequance_modal" tabindex="-1" aria-labelledby="sequance_modal"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -351,6 +493,64 @@ session()->forget('edit_campaign_details');
             </div>
         </div>
     </div> --}}
+    <div class="modal fade create_add_new_leads_modal" id="add_new_leads_modal" tabindex="-1"
+        aria-labelledby="add_new_leads_modal" aria-hidden="true">
+>>>>>>> seat_work
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sequance_modal">Duplicate & Blacklisted items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
+                            class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+<<<<<<< HEAD
+                        <div class="col-lg-12" style="text-align: left">
+                            <p>This file contains:</p>
+                            <ul>
+                                <li>Total: <span class="bold_lead" id="total_leads">0 leads</span></li>
+                                <li>Blacklisted items (found on your and global blacklist): <span class="bold_lead"
+                                        id="blacklist_leads">0 leads</span></li>
+                                <li>Duplicates found across your and your team's campaigns: <span class="bold_lead"
+                                        id="duplicate_among_teams">0 leads</span></li>
+                                <li>Duplicates found across CSV file: <span class="bold_lead" id="duplicate_csv_file">0
+                                        leads</span></li>
+                                <li>Total without duplicates and blacklisted leades: <span class="bold_lead"
+                                        id="total_without_leads">0 leads</span></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-12 modal_info">
+                            <div class="info_icon"
+                                title="Duplicates are found based on either profileUrl or email columns. We won't be able to identify duplicates with Sales Navigator URLs. This action will automatically remove the items that match all blacklists and existing duplicates within this line.">
+                                !</div>
+                            <p>Duplicates are found based on either profileUrl or email columns. We won't be able to
+                                identify duplicates with Sales Navigator URLs.<br>This action will automatically remove the
+                                items that match all blacklists and existing duplicates within this line.</p>
+=======
+                        <div class="schedule-tab">
+                            <button class="schedule-btn active" id="my_schedule_btn" data-tab="from_csv_file">From CSV
+                                File</button>
+                            <button class="schedule-btn " id="team_schedule_btn" data-tab="from_url">From URL</button>
+                        </div>
+                        <div class="active schedule-content" id="from_csv_file">
+                            <label for="">Upload CSV File</label>
+                            <input type="file" name="csv_file" id="csv_file">
+                        </div>
+                        <div class=" schedule-content" id="from_url">
+
+>>>>>>> seat_work
+                        </div>
+                        <a href="javascript:;" class="blacklist_btn cancel_btn" data-bs-dismiss="modal"
+                            aria-label="Close">Cancel</a>
+                        <a href="javascript:;" class="blacklist_btn import_btn">Import <i
+                                class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+<<<<<<< HEAD
+    </div> --}}
 <div class="modal fade create_add_new_leads_modal" id="add_new_leads_modal" tabindex="-1" aria-labelledby="add_new_leads_modal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -378,3 +578,7 @@ session()->forget('edit_campaign_details');
     </div>
 </div>
 @endsection
+=======
+    </div>
+@endsection
+>>>>>>> seat_work

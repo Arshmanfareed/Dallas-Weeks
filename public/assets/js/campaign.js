@@ -60,7 +60,11 @@ $(document).ready(function () {
             },
         });
     });
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> seat_work
     $(document).on("click", ".delete_campaign", function (e) {
         if (confirm("Are you sure to delete this campaign?")) {
             var campaign_id = $(this).attr("id").replace("delete", "");
@@ -212,12 +216,21 @@ $(document).ready(function () {
                             html +=
                                 `<td>` + campaign["campaign_name"] + `</td>`;
                             html += `<td id="lead_count_${campaign["id"]}">0</td>`;
+<<<<<<< HEAD
                             html += `<td id="sent_message_count_${campaign["id"]}">0</td>`;
                             html += `<td class="stats"><ul class="status_list d-flex align-items-center list-unstyled p-0 m-0">`;
                             html += `<li><span><img src="/assets/img/eye.svg" alt=""><span id="view_profile_count_${campaign["id"]}">0</span></span></li>`;
                             html += `<li><span><img src="/assets/img/request.svg" alt=""><span id="invite_to_connect_count_${campaign["id"]}">0</span></span></li>`;
                             html += `<li><span><img src="/assets/img/mailmsg.svg" alt=""><span id="email_message_count_${campaign['id']}">0</span></span></li>`;
                             // html += `<li><span><img src="/assets/img/mailopen.svg" alt="">16</span></li></ul></td>`;
+=======
+                            html += `<td>105</td>`;
+                            html += `<td class="stats"><ul class="status_list d-flex align-items-center list-unstyled p-0 m-0">`;
+                            html += `<li><span><img src="/assets/img/eye.svg" alt="">10</span></li>`;
+                            html += `<li><span><img src="/assets/img/request.svg" alt="">42</span></li>`;
+                            html += `<li><span><img src="/assets/img/mailmsg.svg" alt="">10</span></li>`;
+                            html += `<li><span><img src="/assets/img/mailopen.svg" alt="">16</span></li></ul></td>`;
+>>>>>>> seat_work
                             html += `<td><div class="per up">34%</div></td>`;
                             html += `<td><div class="per down">23%</div></td>`;
                             html += `<td><a type="button" class="setting setting_btn" id=""><i class="fa-solid fa-gear"></i></a>`;
@@ -245,6 +258,7 @@ $(document).ready(function () {
                             leads_count(campaign["id"], function (count) {
                                 $("#lead_count_" + campaign["id"]).text(count);
                             });
+<<<<<<< HEAD
                             view_profile_count(campaign["id"], function (count) {
                                 $("#view_profile_count_" + campaign["id"]).text(count);
                             });
@@ -257,6 +271,8 @@ $(document).ready(function () {
                             sent_message_count(campaign["id"], function (count) {
                                 $('#sent_message_count_' + campaign["id"]).text(count);
                             });
+=======
+>>>>>>> seat_work
                         }
                     }
                     $("#campaign_table_body").html(html);
@@ -275,9 +291,12 @@ $(document).ready(function () {
                     $(".archive_campaign").html("Archive campaign");
                 }
             },
+<<<<<<< HEAD
             beforeSend: function () {
                 $("#loader").show();
             },
+=======
+>>>>>>> seat_work
             error: function (xhr, status, error) {
                 var html = ``;
                 html += '<tr><td colspan="8">';
@@ -286,9 +305,12 @@ $(document).ready(function () {
                 html += "</td></tr>";
                 $("#campaign_table_body").html(html);
             },
+<<<<<<< HEAD
             complete: function () {
                 $("#loader").hide();
             },
+=======
+>>>>>>> seat_work
         });
     }
 
@@ -318,6 +340,7 @@ $(document).ready(function () {
             },
         });
     }
+<<<<<<< HEAD
 
     function view_profile_count(campaign_id, callback) {
         $.ajax({
@@ -375,4 +398,6 @@ $(document).ready(function () {
         });
     }
 
+=======
+>>>>>>> seat_work
 });

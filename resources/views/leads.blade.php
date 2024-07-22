@@ -48,17 +48,30 @@
                                         </button>
                                     </form>
                                     <div class="filt_opt">
+<<<<<<< HEAD
                                         <select name="num" id="num">
                                             <option value="01">10</option>
                                             <option value="02">20</option>
                                             <option value="03">30</option>
                                             <option value="04">40</option>
                                         </select>
+=======
+                                        @if (!empty($campaigns))
+                                            <select name="campaign" id="campaign">
+                                                <option value="all">All Campaigns</option>
+                                                @foreach ($campaigns as $campaign)
+                                                    <option value="{{ $campaign->id }}">{{ $campaign->campaign_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        @endif
+>>>>>>> seat_work
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+<<<<<<< HEAD
                 </div>
                 <div class="row">
                     <div class="col-12">
@@ -158,6 +171,33 @@
                                                     @endif
                                                 </tbody>
                                             </table>
+=======
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="filter_head_row d-flex">
+                            </div>
+                            <div class="filtr_desc">
+                                <div class="d-flex">
+                                    <strong>Leads</strong>
+                                    <div class="filter">
+                                        <a href="javascript:;" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#filter_modal"><i class="fa-solid fa-filter"></i></a>
+                                        <form action="/search" method="get" class="search-form">
+                                            @csrf
+                                            <input type="text" name="q" placeholder="Search Lead here..."
+                                                id="search_lead">
+                                            <button type="submit">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </form>
+                                        <div class="filt_opt">
+                                            <select name="num" id="num">
+                                                <option value="01">10</option>
+                                                <option value="02">20</option>
+                                                <option value="03">30</option>
+                                                <option value="04">40</option>
+                                            </select>
+>>>>>>> seat_work
                                         </div>
                                     </div>
                                 </div>
@@ -165,6 +205,7 @@
                                 <div class="tab-pane lead_pane" id="Steps" role="tabpanel">
                                     <div class="lead_step_cont">
                                         <div class="border_box">
+<<<<<<< HEAD
                                             <form id="" class="lead_step_form">
                                                 <div class="row">
                                                     <div class="comp_name">
@@ -181,6 +222,90 @@
                                             </form>
                                             <div class="date" id="created_at">
                                                 <i class="fa-solid fa-calendar-days"></i>Created at: 2023-10-05 16:48
+=======
+                                            <div class="scroll_div leads_list">
+                                                <table class="data_table w-100">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="5%">Status</th>
+                                                            <th width="20%">Contact</th>
+                                                            <th width="25%">Title/Company</th>
+                                                            <th width="15%">Send Connections</th>
+                                                            <th width="10%">Current step</th>
+                                                            <th width="10%">Next step</th>
+                                                            <th width="10%">Executed time</th>
+                                                            <th width="5%">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (!empty($leads))
+                                                            @foreach ($leads as $lead)
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="switch_box"><input type="checkbox"
+                                                                                class="switch"
+                                                                                id="{{ 'swicth' . $lead['id'] }}"
+                                                                                {{ $lead['is_active'] == 1 ? 'checked' : '' }}><label
+                                                                                for="{{ 's
+                                                                                                                                                                wicth' . $lead['id'] }}">Toggle</label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="title_cont">{{ $lead['contact'] }}</td>
+                                                                    <td class="title_comp">
+                                                                        {{ $lead['title_company'] }}
+                                                                    </td>
+                                                                    <td class="">
+                                                                        @if ($lead['send_connections'] == 'discovered')
+                                                                            <div class="per discovered">Discovered</div>
+                                                                        @elseif ($lead['send_connections'] == 'connected_not_replied')
+                                                                            <div class="per connected_not_replied">
+                                                                                Connected, not replied</div>
+                                                                        @elseif ($lead['send_connections'] == 'replied_not_connected')
+                                                                            <div class="per replied_not_connected">Replied,
+                                                                                not connected</div>
+                                                                        @elseif ($lead['send_connections'] == 'connection_pending')
+                                                                            <div class="per connection_pending">Connection
+                                                                                pending</div>
+                                                                        @elseif ($lead['send_connections'] == 'replied')
+                                                                            <div class="per replied">Replied</div>
+                                                                        @else
+                                                                            <div class="per replied">Disconnected</div>
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>23</td>
+                                                                    <td>
+                                                                        {{ $lead['next_step'] }}
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="">
+                                                                            {{ $lead['created_at']->diffInDays(now()) }}
+                                                                            days ago</div>
+                                                                    </td>
+                                                                    <!-- <td><div class="per">23%</div> -->
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="javascript:;" type="button"
+                                                                            class="setting setting_btn" id=""><i
+                                                                                class="fa-solid fa-gear"></i></a>
+                                                                        <!--<ul class="setting_list" style="display: block;">-->
+                                                                        <!--    <li><a href="#">Edit</a></li>-->
+                                                                        <!--    <li><a href="#">Delete</a></li>-->
+                                                                        <!--</ul>-->
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @else
+                                                            <tr>
+                                                                <td colspan="8">
+                                                                    <div class="text-center text-danger"
+                                                                        style="font-size: 25px; font-weight: bold; font-style: italic;">
+                                                                        Not Found!</div>
+                                                                </td>
+                                                            </tr>
+                                                        @endif
+                                                    </tbody>
+                                                </table>
+>>>>>>> seat_work
                                             </div>
                                         </div>
                                         <div class="email_setting">
@@ -193,6 +318,7 @@
                                                                 Email accounts to use for this campaign
                                                             </a>
                                                         </div>
+<<<<<<< HEAD
                                                         <div id="collapseOne" class="collapse " data-parent="#accordion">
                                                             <div class="card-body">
                                                                 Lorem ipsum dolor sit amet, consectetur adipisicing
@@ -200,6 +326,76 @@
                                                                 dolore magna aliqua. Ut enim ad minim veniam, quis
                                                                 nostrud exercitation ullamco laboris nisi ut aliquip ex
                                                                 ea commodo consequat.
+=======
+                                                        <div class="comp_url">
+                                                            <label for="linkedin-url">LinkedIn URL:</label>
+                                                            <input type="url" id="linkedin-url" name="linkedin-url"
+                                                                placeholder="LinkedIn search URL" required="">
+                                                        </div>
+                                                        <button>Save changes</button>
+                                                    </div>
+                                                </form>
+                                                <div class="date" id="created_at">
+                                                    <i class="fa-solid fa-calendar-days"></i>Created at: 2023-10-05 16:48
+                                                </div>
+                                            </div>
+                                            <div class="email_setting">
+                                                <div class="border_box">
+                                                    <h3>Email settings</h3>
+                                                    <div id="accordion">
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <a class="card-link" data-toggle="collapse"
+                                                                    href="#collapseOne">
+                                                                    Email accounts to use for this campaign
+                                                                </a>
+                                                            </div>
+                                                            <div id="collapseOne" class="collapse "
+                                                                data-parent="#accordion">
+                                                                <div class="card-body">
+                                                                    Lorem ipsum dolor sit amet, consectetur adipisicing
+                                                                    elit, sed do eiusmod tempor incididunt ut labore et
+                                                                    dolore magna aliqua. Ut enim ad minim veniam, quis
+                                                                    nostrud exercitation ullamco laboris nisi ut aliquip ex
+                                                                    ea commodo consequat.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <a class="collapsed card-link" data-toggle="collapse"
+                                                                    href="#collapseTwo">
+                                                                    Schedule email
+                                                                </a>
+                                                            </div>
+                                                            <div id="collapseTwo" class="collapse"
+                                                                data-parent="#accordion">
+                                                                <div class="card-body">
+                                                                    Lorem ipsum dolor sit amet, consectetur adipisicing
+                                                                    elit, sed do eiusmod tempor incididunt ut labore et
+                                                                    dolore magna aliqua. Ut enim ad minim veniam, quis
+                                                                    nostrud exercitation ullamco laboris nisi ut aliquip ex
+                                                                    ea commodo consequat.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <a class="collapsed card-link" data-toggle="collapse"
+                                                                    href="#collapseThree">
+                                                                    Email tracking preference
+                                                                </a>
+                                                            </div>
+                                                            <div id="collapseThree" class="collapse"
+                                                                data-parent="#accordion">
+                                                                <div class="card-body">
+                                                                    Lorem ipsum dolor sit amet, consectetur adipisicing
+                                                                    elit, sed do eiusmod tempor incididunt ut labore et
+                                                                    dolore magna aliqua. Ut enim ad minim veniam, quis
+                                                                    nostrud exercitation ullamco laboris nisi ut aliquip ex
+                                                                    ea commodo consequat.
+                                                                </div>
+>>>>>>> seat_work
                                                             </div>
                                                         </div>
                                                     </div>
@@ -542,6 +738,7 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 </div>
 <!-- Modal Export leads -->
 <div class="modal fade create_sequence_modal export_modal" id="export_modal" tabindex="-1" aria-labelledby="export_modal" aria-hidden="true">
@@ -561,6 +758,32 @@
                                 <input name="export_email" id="export_email" type="email" placeholder="example@gmail.com">
                                 <span style="color: red; display: none;" id="email_error"></span>
                             </div>
+=======
+    <!-- Modal Export leads -->
+    <div class="modal fade create_sequence_modal export_modal" id="export_modal" tabindex="-1"
+        aria-labelledby="export_modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sequance_modal">Export data from all campaigns</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
+                            class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form id="export_form">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="">
+                                    <p class="w-75">Once the export is complete, we will send you the exported data is a
+                                        CSV file. Please insert the email you would like us to use.</p>
+                                    <input name="export_email" id="export_email" type="email"
+                                        placeholder="example@gmail.com">
+                                    <span style="color: red; display: none;" id="email_error"></span>
+                                </div>
+                            </div>
+                            <a href="javascript:;" id="export_leads" class="crt_btn ">Submit<i
+                                    class="fa-solid fa-arrow-right"></i></a>
+>>>>>>> seat_work
                         </div>
                         <a href="javascript:;" id="export_leads" class="crt_btn ">Submit<i class="fa-solid fa-arrow-right"></i></a>
                     </div>
@@ -568,6 +791,7 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 </div>
 <script>
     var leadsCampaignFilterPath = "{{ route('getLeadsByCampaign', [':id', ':search']) }}";
@@ -588,6 +812,33 @@
         $(".setting_btn").on("click", function(e) {
             $(".setting_list").not($(this).siblings(".setting_list")).hide();
             $(this).siblings(".setting_list").toggle();
+=======
+    <script>
+        var leadsCampaignFilterPath = "{{ route('getLeadsByCampaign', [':id', ':search']) }}";
+        var sendLeadsToEmail = "{{ route('sendLeadsToEmail') }}";
+        $(document).ready(function() {
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const hours = String(currentDate.getHours()).padStart(2, '0');
+            const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+            $("#created_at").html(
+                '<i class="fa-solid fa-calendar-days"></i>Created at: ' +
+                formattedDate
+            );
+            $(".setting_list").hide();
+            $(".setting_btn").on("click", function(e) {
+                $(".setting_list").not($(this).siblings(".setting_list")).hide();
+                $(this).siblings(".setting_list").toggle();
+            });
+            $(document).on("click", function(e) {
+                if (!$(event.target).closest(".setting").length) {
+                    $(".setting_list").hide();
+                }
+            });
+>>>>>>> seat_work
         });
         $(document).on("click", function(e) {
             if (!$(event.target).closest(".setting").length) {

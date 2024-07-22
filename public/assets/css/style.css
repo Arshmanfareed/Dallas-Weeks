@@ -6529,6 +6529,7 @@ body.light-mode .lead_sec .filt_opt > .filt_opt select {
     background-color: #fff !important;
     color: #000 !important;
 }
+<<<<<<< HEAD
 
 .seat_table_data {
     cursor: pointer;
@@ -6546,3 +6547,5 @@ body.light-mode .lead_sec .filt_opt > .filt_opt select {
 .action_elements ul.drop-list li:nth-child(8) {
     display: none;
 }
+=======
+>>>>>>> seat_work

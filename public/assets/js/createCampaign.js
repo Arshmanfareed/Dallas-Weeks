@@ -2,6 +2,7 @@ $(document).ready(function () {
     sessionStorage.removeItem("settings");
     sessionStorage.removeItem("elements_array");
     sessionStorage.removeItem("elements_data_array");
+<<<<<<< HEAD
 
     $(document).on("change", "#campaign_url", function (e) {
         var file = e.target.files[0];
@@ -23,6 +24,34 @@ $(document).ready(function () {
                 'd="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z">';
             html += "</path></svg><span>Upload file</span></label>";
             $(".import_field").append(html);
+=======
+    $(document).on("change", "#campaign_url", function (e) {
+        var active_form = $(".campaign_pane.active").find("form");
+        if (active_form.attr("id") == "campaign_form_4") {
+            var file = e.target.files[0];
+            if (file) {
+                $(".import_field").find("label").remove();
+                $(".import_field").append(
+                    '<label style="margin-bottom: 0px">' +
+                        file.name +
+                        "</label>"
+                );
+            } else {
+                $(".import_field").find("label").remove();
+                html = "";
+                html +=
+                    '<label class="file-input__label" for="file-input"><svg aria-hidden="true"';
+                html +=
+                    'focusable="false" data-prefix="fas" data-icon="upload"';
+                html += 'class="svg-inline--fa fa-upload fa-w-16"';
+                html += 'role="img" xmlns="http://www.w3.org/2000/svg"';
+                html += 'viewBox="0 0 512 512"> <path fill="currentColor"';
+                html +=
+                    'd="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z">';
+                html += "</path></svg><span>Upload file</span></label>";
+                $(".import_field").append(html);
+            }
+>>>>>>> seat_work
         }
     });
 
@@ -85,6 +114,7 @@ $(document).ready(function () {
 
     $(".campaign_url").on("change", function (e) {
         var active_form = $(".campaign_pane.active").find("form");
+<<<<<<< HEAD
         if (active_form.attr("id") != "campaign_form_4") {
             if (active_form.attr("id") == "campaign_form_1") {
                 var url = $(".campaign_pane.active")
@@ -115,6 +145,59 @@ $(document).ready(function () {
                 const query = params.get('query');
                 find_connection_sales_navigator(query);
             }
+=======
+        if (active_form.attr("id") == "campaign_form_2") {
+            var queryString = $(".campaign_pane.active")
+                .find("#campaign_url")
+                .val();
+            var decodedUrl = decodeURI(decodeURI(queryString));
+            var queryParams = getQueryParams(decodedUrl);
+            var query = queryParams.query;
+            query = query.replaceAll("(", "{").replaceAll(")", "}");
+            query = lister(query);
+            query = removeExtraColons(query);
+            query = wrapKeysInQuotes(query);
+            query = wrapValuesInQuotes(query);
+            try {
+                queryJson = JSON.parse(query);
+                queryParams.query = queryJson;
+                var filters = queryParams.query.filters;
+                var active_form = $(".campaign_pane.active").find("form");
+                filters.forEach(function (filter) {
+                    var type = filter["type"];
+                    if (type == "RELATIONSHIP") {
+                        var values = filter["values"];
+                        values.forEach(function (value) {
+                            if (value["text"].includes("1st")) {
+                                active_form.find("#connections").val("1");
+                            } else if (value["text"].includes("2nd")) {
+                                active_form.find("#connections").val("2");
+                            } else if (value["text"].includes("3rd")) {
+                                active_form.find("#connections").val("3");
+                            } else {
+                                active_form.find("#connections").val("o");
+                            }
+                        });
+                        active_form.find("#connections").prop("disabled", true);
+                    }
+                });
+                var jsonString = JSON.stringify(queryParams);
+                var jsonInput = $("<input>")
+                    .attr("type", "hidden")
+                    .attr("name", "lead_details")
+                    .val(jsonString);
+                active_form.append(jsonInput);
+            } catch (e) {
+                $(".campaign_pane.active")
+                    .find("form")
+                    .find("#campaign_url")
+                    .css({
+                        border: "1px solid red",
+                        "margin-bottom": "7px !important",
+                    });
+            }
+        } else {
+>>>>>>> seat_work
             campaign_details["campaign_url"] = $(this).val();
             sessionStorage.setItem(
                 "campaign_details",
@@ -123,6 +206,7 @@ $(document).ready(function () {
         }
     });
 
+<<<<<<< HEAD
     function find_connection_sales_navigator(query) {
         var relation_index = query.search(/RELATIONSHIP/i);
         if (relation_index > 0) {
@@ -180,6 +264,102 @@ $(document).ready(function () {
             "campaign_details",
             JSON.stringify(campaign_details)
         );
+=======
+    function getQueryParams(url) {
+        var params = {};
+        var parser = document.createElement("a");
+        parser.href = url;
+        var query = parser.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            var key = decodeURIComponent(pair[0]);
+            var value = decodeURIComponent(pair[1]);
+            if (key != "query") {
+                if (value.includes("true")) {
+                    value = true;
+                } else if (value.includes("false")) {
+                    value = false;
+                }
+            }
+            params[key] = value;
+        }
+        return params;
+    }
+
+    function wrapValuesInQuotes(jsonString) {
+        jsonString = jsonString.replace(/(\w+):/g, '"$1":');
+        jsonString = jsonString.replace(
+            /:\s*([^"\[{].*?)([,}\]])/g,
+            function (match, p1, p2) {
+                if (/^(true|false|\d+)$/.test(p1.trim())) {
+                    return ": " + p1 + p2;
+                } else {
+                    return ': "' + p1 + '"' + p2;
+                }
+            }
+        );
+        jsonString = jsonString.replace(/:"(\{[^{}]*\})"/g, ":$1");
+        jsonString = jsonString.replace(/:"(\[[^\[\]]*\])"/g, ":$1");
+        return jsonString;
+    }
+
+    function wrapKeysInQuotes(jsonString) {
+        jsonString = jsonString.replace(/(\w+):/g, '"$1":');
+        jsonString = jsonString.replace(/(\{[^{}]*\}):/g, "$1:");
+        jsonString = jsonString.replace(/(\[[^\[\]]*\]):/g, "$1:");
+        return jsonString;
+    }
+
+    function lister(queryString) {
+        if (queryString.includes("List{")) {
+            var count = 1;
+            var newQueryString = "";
+            for (
+                var i = queryString.indexOf("List{") + 5;
+                i < queryString.length;
+                i++
+            ) {
+                if (queryString[i] == "{") {
+                    count++;
+                } else if (queryString[i] == "}") {
+                    count--;
+                }
+                if (count == 0) {
+                    newQueryString =
+                        queryString.substring(0, i) +
+                        "]" +
+                        queryString.substring(i + 1);
+                    break;
+                }
+            }
+            newQueryString = newQueryString.replace("List{", "[");
+            queryString = lister(newQueryString);
+        }
+        return queryString;
+    }
+
+    function removeExtraColons(queryString) {
+        for (var i = 0; i < queryString.length; i++) {
+            if (queryString[i] == ":") {
+                for (var j = i + 1; j < queryString.length; j++) {
+                    if (queryString[j] == "," || queryString[j] == "{") {
+                        break;
+                    } else if (queryString[j] == ":") {
+                        break;
+                    }
+                }
+                if (queryString[j] == ":") {
+                    queryString =
+                        queryString.slice(0, j) +
+                        " " +
+                        queryString.slice(j + 1);
+                    i--;
+                }
+            }
+        }
+        return queryString;
+>>>>>>> seat_work
     }
 
     $(".connections").on("change", function (e) {
@@ -261,6 +441,7 @@ $(document).ready(function () {
                             .find("ul li #total_without_leads")
                             .text(
                                 response.total_without_duplicate_blacklist +
+<<<<<<< HEAD
                                 " leads"
                             );
                         $("#campaign_url_hidden").val(response.path);
@@ -269,6 +450,10 @@ $(document).ready(function () {
                             "campaign_details",
                             JSON.stringify(campaign_details)
                         );
+=======
+                                    " leads"
+                            );
+>>>>>>> seat_work
                         $("#sequance_modal").modal("show");
                     } else {
                         toastr.options = {
@@ -292,6 +477,7 @@ $(document).ready(function () {
                     }
                 },
                 error: function (xhr, status, error) {
+<<<<<<< HEAD
                     form.find("span.campaign_url").text(error);
                     form.find(".import_field").css({
                         border: "1px solid red",
@@ -300,13 +486,32 @@ $(document).ready(function () {
                     form.find(".file-input__label").css({
                         "background-color": "red",
                     });
+=======
+                    if (xhr.status === 422) {
+                        var response = JSON.parse(xhr.responseText);
+                        var errorMessage = response.errors.campaign_url[0];
+                        form.find("span.campaign_url").text(errorMessage);
+                        form.find(".import_field").css({
+                            border: "1px solid red",
+                            "margin-bottom": "7px !important",
+                        });
+                        form.find(".file-input__label").css({
+                            "background-color": "red",
+                        });
+                    } else {
+                        console.error("Upload failed:", error);
+                    }
+>>>>>>> seat_work
                 },
                 complete: function () {
                     $("#loader").hide();
                 },
             });
         } else {
+<<<<<<< HEAD
             form.find('.connections').prop('disabled', false);
+=======
+>>>>>>> seat_work
             form.submit();
         }
     });

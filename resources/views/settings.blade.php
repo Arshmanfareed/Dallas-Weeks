@@ -39,6 +39,7 @@
                             </button>
                         </div>
                     @endif
+<<<<<<< HEAD
                     @if (session()->has('delete_account'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <strong>Disconnected! </strong> Linkedin disconnected successfully.
@@ -47,6 +48,8 @@
                             </button>
                         </div>
                     @endif
+=======
+>>>>>>> seat_work
                     <div class="row">
                         <div class="col-12">
                             <div class="d-flex align-items-center justify-content-between w-100 setting_head">
@@ -77,7 +80,12 @@
                                     <div class="tab-pane setting_pane active" id="LinkedIn" role="tabpanel">
                                         <ul class="nav nav-tabs" role="tablist">
                                             <li class="nav-item">
+<<<<<<< HEAD
                                                 <a class="nav-link linkedin_setting {{ session()->has('add_account') ? '' : 'active' }}" data-bs-target="Global" data-toggle="tab" href="javascript;"
+=======
+                                                <a class="nav-link linkedin_setting {{ session()->has('add_account') ? '' : 'active' }}"
+                                                    data-bs-target="Global" data-toggle="tab" href="javascript;"
+>>>>>>> seat_work
                                                     role="tab">Global limits for
                                                     campaigns</a>
                                             </li>
@@ -86,7 +94,12 @@
                                                     data-toggle="tab" href="javascript;" role="tab">Account health</a>
                                             </li>
                                             <li class="nav-item">
+<<<<<<< HEAD
                                                 <a class="nav-link linkedin_setting {{ session()->has('add_account') ? 'active' : '' }}" data-bs-target="integrations" data-toggle="tab" href="javascript;"
+=======
+                                                <a class="nav-link linkedin_setting {{ session()->has('add_account') ? 'active' : '' }}"
+                                                    data-bs-target="integrations" data-toggle="tab" href="javascript;"
+>>>>>>> seat_work
                                                     role="tab">LinkedIn
                                                     integrations</a>
                                             </li>
@@ -177,11 +190,29 @@
                                                     </div>
                                                 </div>
                                             </div>
+<<<<<<< HEAD
                                             <div class="tab-pane linkedin_pane integrations_tab {{ session()->has('add_account') ? 'active' : '' }}" id="integrations" role="tabpanel">
                                                 <h4>Connect your LinkedIn account</h4>
                                                 @if ($data['paymentStatus'] == 'success' && !empty($data['account']) && !empty($data['account']['account']) && $seatData['connected'])
                                                     <div class="grey_box d-flex align-items-center">
                                                         <div class="linked">
+=======
+                                            <div class="tab-pane linkedin_pane integrations_tab {{ session()->has('add_account') ? 'active' : '' }}"
+                                                id="integrations" role="tabpanel">
+                                                <h4>Connect your LinkedIn account</h4>
+<<<<<<< HEAD
+                                                @if ($data['paymentStatus'] == 'success' && !empty($data['account']['account']) && $seatData['connected'])
+=======
+                                                @if ($data['paymentStatus'] == 'success' && !$seatData['connected'])
+                                                    <input type="hidden" id="user_email" value="{{ $data['seat_id'] }}">
+                                                    <button id="submit-btn" type="button" class="theme_btn mb-3">Connect
+                                                        Linked in</button>
+                                                @else
+>>>>>>> 308ccdb762c0a3c60b844c12a33fbe38b6d9eb31
+                                                    <div class="grey_box d-flex align-items-center">
+                                                        <div class="linked">
+                                                            <h4>Connect your LinkedIn account</h4>
+>>>>>>> seat_work
                                                             <div class="cont">
                                                                 <i class="fa-brands fa-linkedin"></i>
                                                                 <div class="head_cont">
@@ -193,7 +224,12 @@
                                                         @if ($seatData['connected'])
                                                             <div class="con">Status: Connected</div>
                                                             <div class="add_btn">
+<<<<<<< HEAD
                                                                 <a href="javascript:;" class="disconnect_account" type="button"><img
+=======
+                                                                <a href="javascript:;" class="" type="button"
+                                                                    data-bs-toggle="modal" data-bs-target="#"><img
+>>>>>>> seat_work
                                                                         class="img-fluid"
                                                                         src="{{ asset('assets/img/disconnect.png') }}"
                                                                         alt=""></a>Disconnect
@@ -338,6 +374,7 @@
         </div>
     </div>
     {{ session()->forget('add_account') }}
+<<<<<<< HEAD
     {{ session()->forget('delete_account') }}
     <script>
         $(document).ready(function() {
@@ -385,3 +422,36 @@
         });
     </script>
 @endsection
+=======
+    <script>
+        $(document).ready(function() {
+            $('#submit-btn').on('click', function() {
+
+                    $.ajax({
+                        url: '/api/create-link-account',
+                        type: 'POST',
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                        },
+                        data: {
+                            'email': $('#user_email').val()
+                        },
+                        success: function(response) {
+                            console.log(response);
+
+                            if (response.status === 'success' && response.data && response.data
+                                .url) {
+                                console.log(response.data);
+                                console.log(response.data.url);
+                                window.open(response.data.url, '_blank');
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+                });
+            });
+        </script>
+    @endsection
+>>>>>>> seat_work
