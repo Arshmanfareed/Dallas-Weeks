@@ -15,3 +15,4 @@ yarn-error.log
 /.vscode
 networked.staging.designinternal.com
 path/to/large/file
+*.zip
