@@ -39,11 +39,14 @@ class MaindashboardController extends Controller
                 $account = array();
                 $seat['connected'] = false;
             }
+            $count = $uc->get_connection_count(new \Illuminate\Http\Request($request));
+            $count = $count->getData(true)['count'];
             if ($seat['connected']) {
-                $campaigns = Campaign::where('seat_id', $seat_id)->get();
+                $campaigns = Campaign::where('seat_id', $seat_id)->orderBy('is_active', 'desc')->get();
                 $data = [
                     'title' => 'Account Dashboard',
                     'campaigns' => $campaigns,
+                    'connection_count' => $count
                 ];
                 return view('main-dashboard', $data);
             } else {

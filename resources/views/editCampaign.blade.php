@@ -133,7 +133,7 @@
                                                             <option value="3" {{ $campaign->campaign_connection == '3' ? 'selected' : '' }}>
                                                                 3rd-degree
                                                             </option>
-                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>Other
+                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>All degrees
                                                             </option>
                                                         </select>
                                                     </div>
@@ -179,7 +179,7 @@
                                                             <option value="3" {{ $campaign->campaign_connection == '3' ? 'selected' : '' }}>
                                                                 3rd-degree
                                                             </option>
-                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>Other
+                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>All degrees
                                                             </option>
                                                         </select>
                                                     </div>
@@ -295,7 +295,7 @@
                                                             <option value="3" {{ $campaign->campaign_connection == '3' ? 'selected' : '' }}>
                                                                 3rd-degree
                                                             </option>
-                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>Other
+                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>All degrees
                                                             </option>
                                                         </select>
                                                     </div>
@@ -341,7 +341,7 @@
                                                             <option value="3" {{ $campaign->campaign_connection == '3' ? 'selected' : '' }}>
                                                                 3rd-degree
                                                             </option>
-                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>Other
+                                                            <option value="o" {{ $campaign->campaign_connection == 'o' ? 'selected' : '' }}>All degrees
                                                             </option>
                                                         </select>
                                                     </div>

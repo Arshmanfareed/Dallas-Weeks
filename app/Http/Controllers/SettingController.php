@@ -29,7 +29,7 @@ class SettingController extends Controller
             'paymentStatus' => $paymentStatus,
             'seat_id' => $seat_id,
         ];
-        if ($seat['account_id'] !== NULL) {
+        if (isset($seat['account_id'])) {
             $request = [
                 'account_id' => $seat['account_id'],
             ];

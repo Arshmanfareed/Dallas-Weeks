@@ -71,7 +71,7 @@
                 </div>
                 <div class="right_nav">
                     <ul class="d-flex list-unstyled">
-                        <li><a href="/setting"><i class="fa-solid fa-gear"></i></a></li>
+                        <!-- <li><a href="/setting"><i class="fa-solid fa-gear"></i></a></li> -->
                         <li><a href="#"><i class="fa-solid fa-arrow-up-from-bracket"></i></a></li>
                         <li class="acc d-flex align-item-center">
                             <img src="{{ asset('/assets/img/acc.png') }}" alt="">

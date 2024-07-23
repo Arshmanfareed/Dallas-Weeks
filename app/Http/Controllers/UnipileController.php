@@ -9,7 +9,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use App\Models\SeatInfo;
 use GuzzleHttp\Psr7\Request as IlluminateRequest;
+use Symfony\Component\Translation\Provider\Dsn;
 
 class UnipileController extends Controller
 {
@@ -37,6 +39,30 @@ class UnipileController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
+    }
+
+    public function get_connection_count(Request $request)
+    {
+        $all = $request->all();
+        $account_id = $all['account_id'];
+        $cursor = null;
+        $requestParams = ['account_id' => $account_id];
+        $count = 0;
+        $allCursors = [];
+        $allItems = [];
+        for ($i=0; $i >-1 ; $i++) {
+            $params = array_merge($requestParams, $cursor ? ['cursor' => $cursor] : []);
+            $relations = $this->get_relations(new \Illuminate\Http\Request($params));;
+            $data = $relations->getData(true)['relations'] ?? [];
+            $allCursors[] = $data['cursor'] ?? [];
+            $allItems = array_merge($data['items'] ?? [], $allItems);
+            $count += count($data['items'] ?? []);
+            $cursor = $data['cursor'] ?? null;
+            if (is_null($cursor)) {
+                break;
+            }
+        }
+        return response()->json(['count' => $count]);
     }
 
     public function retrieve_an_account(Request $request)
@@ -74,7 +100,10 @@ class UnipileController extends Controller
         if (!isset($account_id) || !isset($this->x_api_key) || !isset($this->dsn)) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
-        $url = $this->dsn . 'api/v1/users/relations' . '?account_id=' . $account_id;
+        $url = $this->dsn . 'api/v1/users/relations' . '?account_id=' . $account_id . '&limit=1000';
+        if (isset($all['cursor'])) {
+            $url .= '&cursor=' . $all['cursor'];
+        }
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
@@ -82,23 +111,9 @@ class UnipileController extends Controller
                     'accept' => 'application/json',
                 ],
             ]);
-            $responses = json_decode($response->getBody(), true);
-            $relations = array();
-            if (!empty($responses)) {
-                foreach ($responses['items'] as $response) {
-                    $url = '';
-                    if ($response['object'] == 'UserRelation') {
-                        $url = $this->dsn . 'api/v1/users/' . $response['member_id'];
-                    } elseif ($response['object'] == 'CompanyProfile') {
-                        $url = '' . $response[''];
-                    }
-                    $profile = [
-                        'account_id' => $account_id,
-                        'profile_url' => $url
-                    ];
-                    $relations[] = $this->view_profile(new \Illuminate\Http\Request($profile))->getData(true)['user_profile'];
-                }
-                return response()->json(['relations' => $relations]);
+            $result = json_decode($response->getBody(), true);
+            if (!empty($result)) {
+                return response()->json(['relations' => $result]);
             } else {
                 return response()->json(['error' => 'No relations found'], 400);
             }

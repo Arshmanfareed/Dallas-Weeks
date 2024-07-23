@@ -18,6 +18,8 @@ use App\Models\UpdatedCampaignProperties;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class CampaignElementController extends Controller
 {
@@ -50,6 +52,16 @@ class CampaignElementController extends Controller
             $final_data = $data['final_data'];
             $settings = $data['settings'];
             $img_path = $data['img_url'];
+            $oneMinuteAgo = Carbon::now()->subMinute();
+            $existing_campaign = Campaign::where('campaign_name', $settings['campaign_name'])
+                                         ->where('user_id', $user_id)
+                                         ->where('seat_id', $seat_id)
+                                         ->where('created_at', '>=', $oneMinuteAgo)
+                                         ->first();
+            if ($existing_campaign) {
+                $request->session()->flash('success', 'Campaign successfully saved!');
+                return response()->json(['success' => true]);
+            }
             $campaign = new Campaign([
                 'campaign_name' => $settings['campaign_name'],
                 'campaign_type' => $settings['campaign_type'],
@@ -84,7 +96,7 @@ class CampaignElementController extends Controller
             if ($campaign !== null) {
                 $this->deleteCampaignData($campaign->id);
             }
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Campaign save unsuccesfull']);
         }
     }
 

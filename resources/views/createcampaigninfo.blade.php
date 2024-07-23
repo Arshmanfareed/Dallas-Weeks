@@ -179,12 +179,12 @@
                                             </div>
                                         </div>
                                         <div class="linked_set d-flex justify-content-between">
-                                            <p> Collect contact information <span title="Collect publicly available contact information Collect publicly available contact information from the leads' Linkedin profiles (e.g. email, phone number, Twitter, or website). This option automatically adds a View profile after the Invite to connect step into the campaign.">!</span>
+                                            <p> Collect contact information <span title="Collect publicly available contact information from the leads' Linkedin profiles (e.g. email, phone number, Twitter, or website). This option automatically adds a View profile after the Invite to connect step into the campaign.">!</span>
                                             </p>
                                             <div class="switch_box"><input type="checkbox" name="linkedin_settings_collect_contact_information" class="linkedin_setting_switch" id="collect_contact_information"><label for="collect_contact_information">Toggle</label></div>
                                         </div>
                                         <div class="linked_set d-flex justify-content-between">
-                                            <p> Remove leads with pending connections <span>!</span></p>
+                                            <p> Remove leads with pending connections <span title="Leads that exist in other campaigns in your seat with pending connections will not be discovered">!</span></p>
                                             <div class="switch_box"><input type="checkbox" name="linkedin_settings_remove_leads_with_pending_connections" class="linkedin_setting_switch" id="remove_leads_with_pending_connections"><label for="remove_leads_with_pending_connections">Toggle</label></div>
                                         </div>
                                         <div class="cmp_btns d-flex justify-content-center align-items-center">

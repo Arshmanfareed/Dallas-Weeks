@@ -134,7 +134,7 @@
                                                                 3rd-degree
                                                             </option>
                                                             <option value="o"
-                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>Other
+                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>All degrees
                                                             </option>
                                                         </select>
                                                     </div>
@@ -184,7 +184,7 @@
                                                                 3rd-degree
                                                             </option>
                                                             <option value="o"
-                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>Other
+                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>All degrees
                                                             </option>
                                                         </select>
                                                     </div>
@@ -306,7 +306,7 @@
                                                                 3rd-degree
                                                             </option>
                                                             <option value="o"
-                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>Other
+                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>All degrees
                                                             </option>
                                                         </select>
                                                     </div>
@@ -356,7 +356,7 @@
                                                                 3rd-degree
                                                             </option>
                                                             <option value="o"
-                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>Other
+                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>All degrees
                                                             </option>
                                                         </select>
                                                     </div>
