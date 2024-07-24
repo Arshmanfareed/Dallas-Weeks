@@ -336,6 +336,8 @@ class ActionCampaignCron extends Command
                                         } else if (!empty($lead)) {
                                             file_put_contents($logFilePath, 'Failed to insert data because Lead already existed at: ' . now() . PHP_EOL, FILE_APPEND);
                                         }
+                                    } else {
+                                        file_put_contents($logFilePath, 'Failed to insert data because connection is not ' . $campaign['campaign_connection'] . ' at: ' . now() . PHP_EOL, FILE_APPEND);
                                     }
                                 } else {
                                     file_put_contents($logFilePath, 'Failed to insert data because ' . json_encode($profile['error']) . ' at: ' . now() . PHP_EOL, FILE_APPEND);

@@ -15,6 +15,8 @@ use App\Models\ImportedLeads;
 use App\Models\UpdatedCampaignElements;
 use App\Models\UpdatedCampaignProperties;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use App\Models\PhysicalPayment;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -22,14 +24,5 @@ class TestController extends Controller
 {
     public function base()
     {
-        $seat_id = session('seat_id');
-        $seat = SeatInfo::where('id', $seat_id)->first();
-        $request = [
-            'account_id' => $seat['account_id'],
-        ];
-        $uc = new UnipileController();
-        $count = $uc->get_connection_count(new \Illuminate\Http\Request($request));
-        $count = $count->getData(true)['count'];
-        dd($count);
     }
 }

@@ -10,7 +10,7 @@
                 <div class="col-lg-4 col-sm-12">
                     <div class="border_box dashboard_box">
                         <div class="count_div">
-                            <strong>{{ $connection_count ?? 0 }}</strong>
+                            <strong>1092</strong>
                             <div class="cont">
                                 <span>Total connections</span>
                                 <div class="gray_back d-flex">
