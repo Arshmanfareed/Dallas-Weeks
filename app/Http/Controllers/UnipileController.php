@@ -50,7 +50,7 @@ class UnipileController extends Controller
         $count = 0;
         $allCursors = [];
         $allItems = [];
-        for ($i=0; $i >-1 ; $i++) {
+        for ($i = 0; $i > -1; $i++) {
             $params = array_merge($requestParams, $cursor ? ['cursor' => $cursor] : []);
             $relations = $this->get_relations(new \Illuminate\Http\Request($params));;
             $data = $relations->getData(true)['relations'] ?? [];
@@ -294,6 +294,35 @@ class UnipileController extends Controller
         }
     }
 
+    public function comments_post_search(Request $request)
+    {
+        $all = $request->all();
+        $account_id = $all['account_id'];
+        $identifier = $all['identifier'];
+        if (!isset($account_id) || !isset($identifier) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $client = new Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/posts/' . $identifier . '/comments?account_id=' . $account_id;
+        if (isset($all['cursor'])) {
+            $url .= '&cursor=' . $all['cursor'];
+        }
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $result = json_decode($response->getBody(), true);
+            return response()->json(['reactions' => $result]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
     public function delete_account(Request $request)
     {
         $all = $request->all();
@@ -362,8 +391,13 @@ class UnipileController extends Controller
         if (isset($all['sales_navigator'])) {
             $url =  $this->dsn . 'api/v1/users/' . $profile_url . '?linkedin_api=sales_navigator&linkedin_sections=%2A&notify=' . $notify . '&account_id=' . $account_id;
         } else {
-            $profile_url = str_replace('https://www.linkedin.com/company/', $this->dsn . 'api/v1/linkedin/company/', $profile_url);
-            $profile_url = str_replace('https://www.linkedin.com/in/', $this->dsn . 'api/v1/users/', $profile_url);
+            if (strpos('https://www.linkedin.com/company/', $profile_url) !== false) {
+                $profile_url = str_replace('https://www.linkedin.com/company/', $this->dsn . 'api/v1/linkedin/company/', $profile_url);
+            } else if (strpos('https://www.linkedin.com/in/', $profile_url) !== false) {
+                $profile_url = str_replace('https://www.linkedin.com/in/', $this->dsn . 'api/v1/users/', $profile_url);
+            } else {
+                $profile_url =  $this->dsn . 'api/v1/users/' . $profile_url;
+            }
             $url = $profile_url . '?linkedin_sections=%2A&notify=' . $notify . '&account_id=' . $account_id;
         }
         try {

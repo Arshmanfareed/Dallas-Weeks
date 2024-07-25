@@ -121,6 +121,7 @@ class ActionCampaignCron extends Command
         $logFilePath = storage_path('logs/campaign_action.log');
         $seat = SeatInfo::where('id', $campaign->seat_id)->first();
         $account_id = $seat['account_id'];
+        $uc = new UnipileController();
         $query = '';
         $url = $campaign['campaign_url'];
         $parsed_url = parse_url($url);
@@ -133,9 +134,8 @@ class ActionCampaignCron extends Command
             'count' => 80,
             'start' => $j
         ];
-        $uc = new UnipileController();
-        $searches = $uc->sales_navigator_search(new \Illuminate\Http\Request($request));
-        $searches = $searches->getData(true)['accounts'];
+        $sales_navigator_search = $uc->sales_navigator_search(new \Illuminate\Http\Request($request));
+        $searches = $sales_navigator_search->getData(true)['accounts'];
         if (count($searches) > 0) {
             foreach ($searches as $search) {
                 try {
@@ -215,8 +215,8 @@ class ActionCampaignCron extends Command
             'start' => $j
         ];
         $uc = new UnipileController();
-        $searches = $uc->linkedin_search(new \Illuminate\Http\Request($request));
-        $searches = $searches->getData(true)['accounts'];
+        $linkedin_search = $uc->linkedin_search(new \Illuminate\Http\Request($request));
+        $searches = $linkedin_search->getData(true)['accounts'];
         if (count($searches) > 0) {
             foreach ($searches as $search) {
                 $items = $search['items'];
@@ -236,14 +236,17 @@ class ActionCampaignCron extends Command
                             $request = [
                                 'account_id' => $account_id,
                                 'profile_url' => $profileUrl,
-                                'sales_navigator' => true,
                             ];
                             $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
                             if ($profile instanceof JsonResponse) {
                                 $profile = $profile->getData(true);
                                 if (!isset($profile['error'])) {
                                     $profile = $profile['user_profile'];
-                                    $url = $profile['public_profile_url'];
+                                    if (strpos($profile['public_identifier'], 'https://www.linkedin.com/in/') !== false) {
+                                        $url = $profile['public_identifier'];
+                                    } else {
+                                        $url = 'https://www.linkedin.com/in/' . $profile['public_identifier'];
+                                    }
                                     $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
                                     if (empty($lead) && $i < $lead_distribution_limit) {
                                         $lc = new LeadsController();
@@ -274,11 +277,12 @@ class ActionCampaignCron extends Command
         }
     }
 
-    private function addPostLeads($campaign, $lead_distribution_limit, $i, $j, $cursor = null)
+    private function addPostLeads($campaign, $lead_distribution_limit, $i, $j, $cursor = null, $is_comment = false, $post_search = null)
     {
         $logFilePath = storage_path('logs/campaign_action.log');
         $seat = SeatInfo::where('id', $campaign->seat_id)->first();
         $account_id = $seat['account_id'];
+        $matches = array();
         $url = $campaign['campaign_url'];
         preg_match('/activity-([0-9]+)/', $url, $matches);
         if (isset($matches[1])) {
@@ -287,25 +291,40 @@ class ActionCampaignCron extends Command
                 'identifier' => $matches[1]
             ];
             $uc = new UnipileController();
-            $post = $uc->post_search(new \Illuminate\Http\Request($request));
-            $post = $post->getData(true)['post'];
+            if (!isset($post_search)) {
+                $post_search = $uc->post_search(new \Illuminate\Http\Request($request));
+            }
+            $post = $post_search->getData(true)['post'];
             if (count($post) > 0) {
                 $request = [
                     'account_id' => $account_id,
                     'identifier' => $post['social_id'],
                     'cursor' => $cursor
                 ];
-                $reactions = $uc->reactions_post_search(new \Illuminate\Http\Request($request));
-                $paging = $reactions->getData(true)['reactions']['paging'];
-                $reactions = $reactions->getData(true)['reactions']['items'];
+                if ($is_comment) {
+                    $response_post_search = $uc->comments_post_search(new \Illuminate\Http\Request($request));
+                    if (count($response_post_search->getData(true)['reactions']['items']) > 0) {
+                        $paging['cursor'] = $response_post_search->getData(true)['reactions']['cursor'];
+                    } else {
+                        $paging['cursor'] = null;
+                    }
+                    $reactions = $response_post_search->getData(true)['reactions']['items'];
+                } else {
+                    $response_post_search = $uc->reactions_post_search(new \Illuminate\Http\Request($request));
+                    $paging = $response_post_search->getData(true)['reactions']['paging'];
+                    $reactions = $response_post_search->getData(true)['reactions']['items'];
+                }
                 if (count($reactions) > 0) {
                     foreach ($reactions as $reaction) {
                         try {
-                            $author = $reaction['author'];
+                            if ($is_comment) {
+                                $author = $reaction['author_details'];
+                            } else {
+                                $author = $reaction['author'];
+                            }
                             $request = [
                                 'account_id' => $account_id,
                                 'profile_url' => $author['id'],
-                                'sales_navigator' => true
                             ];
                             $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
                             if ($profile instanceof JsonResponse) {
@@ -325,7 +344,11 @@ class ActionCampaignCron extends Command
                                         $conn = false;
                                     }
                                     if ($conn) {
-                                        $url = $profile['public_profile_url'];
+                                        if (strpos($profile['public_identifier'], 'https://www.linkedin.com/in/') !== false) {
+                                            $url = $profile['public_identifier'];
+                                        } else {
+                                            $url = 'https://www.linkedin.com/in/' . $profile['public_identifier'];
+                                        }
                                         $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
                                         if (empty($lead) && $i < $lead_distribution_limit) {
                                             $lc = new LeadsController();
@@ -353,10 +376,15 @@ class ActionCampaignCron extends Command
                     file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
                 }
                 if ($i + 1 < $lead_distribution_limit && isset($paging['cursor'])) {
-                    $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, $paging['cursor']);
-                } else {
-                    if (!isset($paging['cursor'])) {
-                        // Get leads from comments
+                    if (!$is_comment) {
+                        $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, $paging['cursor'], false, $post_search);
+                    } else if ($is_comment) {
+                        $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, $paging['cursor'], true, $post_search);
+                    }
+                } else if (!isset($paging['cursor'])) {
+                    if (!$is_comment) {
+                        $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, null, true, $post_search);
+                    } else if ($is_comment) {
                         file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
                     }
                 }
@@ -364,7 +392,7 @@ class ActionCampaignCron extends Command
                 file_put_contents($logFilePath, 'Failed to insert data because No post found at: ' . now() . PHP_EOL, FILE_APPEND);
             }
         } else {
-            file_put_contents($logFilePath, 'Failed to insert data because No activity keyward found in post URL at: ' . now() . PHP_EOL, FILE_APPEND);
+            file_put_contents($logFilePath, 'Failed to insert data because No url keyward found in post URL at: ' . now() . PHP_EOL, FILE_APPEND);
         }
     }
 }
