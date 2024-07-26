@@ -19,12 +19,6 @@ class RegisterController extends Controller
 
     function registerUser(Request $request)
     {
-        // dd($request);
-        // echo $request->input('name');
-        // echo $request->input('email');
-        // echo $request->input('password');
-        // echo $request->input('confirm_password');
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:users',
             'email' => 'required|email|unique:users',

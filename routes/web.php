@@ -52,7 +52,6 @@ Route::get('/auth/linkedin/redirect', function () {
 Route::get('/auth/linkedin/callback', function () {
     $user = Socialite::driver('linkedin-openid')->stateless()->user();
     // echo $user->token;
-    // dd($user);
 
     $data = [
         'title' => 'Setting'

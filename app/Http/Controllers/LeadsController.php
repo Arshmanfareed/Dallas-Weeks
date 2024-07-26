@@ -317,27 +317,35 @@ class LeadsController extends Controller
                                         $lead_action->lead_id = $lead->id;
                                         $lead_action->ending_time = now();
                                         $lead_action->save();
+                                        if (isset($lead_action->id)) {
+                                            return true;
+                                        } else {
+                                            $lead->delete();
+                                            return false;
+                                        }
+                                    } else {
+                                        return false;
                                     }
                                 } else {
-                                    return 'Not found';
+                                    return false;
                                 }
                             } else {
-                                return 'Not found';
+                                return false;
                             }
                         } else {
-                            return 'Not found';
+                            return false;
                         }
                     } else {
-                        return 'Not found';
+                        return false;
                     }
                 } else {
-                    return 'Not found';
+                    return false;
                 }
             } else {
-                return 'Not found';
+                return false;
             }
         } catch (\Exception $e) {
-            return 'Not found';
+            return false;
         }
     }
 
