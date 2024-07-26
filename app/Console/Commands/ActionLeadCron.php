@@ -51,153 +51,159 @@ class ActionLeadCron extends Command
         $logFilePath = storage_path('logs/lead_action.log');
         file_put_contents($logFilePath, 'Action Leads started at: ' . now() . PHP_EOL, FILE_APPEND);
         try {
-            $current_time = now();
             $sc = new SeatController();
             $final_accounts = $sc->get_final_accounts();
             foreach ($final_accounts as $final_account) {
                 $seats = SeatInfo::whereIn('account_id', $final_account)->get();
                 $campaigns = Campaign::whereIn('seat_id', $seats->pluck('id')->toArray())->where('is_active', 1)->where('is_archive', 0)->get();
-                if (count($campaigns) > 0) {
-                    $lc = new LeadsController();
-                    $view_distribution_limit = $lc->get_view_count($campaigns);
-                    $invitation_distribution_limit = $lc->get_invite_count($campaigns);
-                    $message_distribution_limit = $lc->get_message_count($campaigns);
-                    foreach ($campaigns as $campaign) {
-                        $actions = LeadActions::where('campaign_id', $campaign['id'])->where('status', 'inprogress')->get();
-                        $view_count = 0;
-                        $invite_count = 0;
-                        $message_count = 0;
-                        foreach ($actions as $action) {
-                            try {
-                                $success = false;
-                                $conditional_output = '';
-                                if ($action['current_element_id'] != 'step_1') {
-                                    $campaign_element = UpdatedCampaignElements::where('id', $action['current_element_id'])->first();
-                                    $element = CampaignElement::where('id', $campaign_element['element_id'])->first();
-                                    $seat = SeatInfo::where('id', $campaign['seat_id'])->first();
-                                    $account_id = $seat['account_id'];
-                                    if ($current_time <= $action['ending_time']) {
-                                        $cc = new CronController();
-                                        switch ($element['element_slug']) {
-                                            case 'view_profile':
-                                                if ($view_count < $view_distribution_limit) {
-                                                    $success = $cc->view_profile($action, $account_id);
-                                                    if ($success) {
-                                                        file_put_contents($logFilePath, 'Profile viewed successfully at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                    }
-                                                    $view_count++;
-                                                } else if ($view_distribution_limit == 0) {
-                                                    file_put_contents($logFilePath, 'Failed to insert data because allowed View Profile is 0' . ' at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                                break;
-                                            case 'invite_to_connect':
-                                                if ($invite_count < $invitation_distribution_limit) {
-                                                    $success = $cc->invite_to_connect($action, $account_id, $element, $campaign_element);
-                                                    if ($success) {
-                                                        file_put_contents($logFilePath, 'Invitation to connect sent successfully at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                    }
-                                                    $invite_count++;
-                                                } else if ($invitation_distribution_limit == 0) {
-                                                    file_put_contents($logFilePath, 'Failed to insert data because allowed Invite to connect is 0' . ' at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                                break;
-                                            case 'message':
-                                                if ($message_count < $message_distribution_limit) {
-                                                    $success = $cc->message($action, $account_id, $element, $campaign_element);
-                                                    if ($success) {
-                                                        file_put_contents($logFilePath, 'Message sent successfully at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                    }
-                                                    $message_count++;
-                                                } else if ($message_distribution_limit == 0) {
-                                                    file_put_contents($logFilePath, 'Failed to insert data because allowed Message is 0' . ' at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                                break;
-                                            case 'inmail_message':
-                                                $success = $cc->inmail_message($action, $account_id, $element, $campaign_element);
-                                                if ($success) {
-                                                    file_put_contents($logFilePath, 'Inmail message sent successfully at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                                break;
-                                            case 'follow':
-                                                $success = $cc->follow($action, $account_id);
-                                                if ($success) {
-                                                    file_put_contents($logFilePath, 'Follow user successfully at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                                break;
-                                            case 'email_message':
-                                                $success = $cc->email_message($action, $account_id, $element, $campaign_element);
-                                                if ($success) {
-                                                    file_put_contents($logFilePath, 'Email sent successfully at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                                break;
-                                            case 'if_connected':
-                                                $conditional_output = $cc->if_connected($action, $account_id);
-                                                if ($conditional_output == 'true') {
-                                                    file_put_contents($logFilePath, 'Lead is already connected at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                } else {
-                                                    file_put_contents($logFilePath, 'Lead is not connected at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                                $success = true;
-                                                break;
-                                            case 'if_email_is_opened':
-                                                $conditional_output = $cc->if_email_is_opened($action);
-                                                if ($conditional_output == 'true') {
-                                                    file_put_contents($logFilePath, 'Email is already opened at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                } else {
-                                                    file_put_contents($logFilePath, 'Email is not opened at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                                $success = true;
-                                                break;
-                                            case 'if_has_imported_email':
-                                                $conditional_output = $cc->if_has_imported_email($action);
-                                                if ($conditional_output == 'true') {
-                                                    file_put_contents($logFilePath, 'Email is already opened at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                } else {
-                                                    file_put_contents($logFilePath, 'Email is not opened at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                                $success = true;
-                                                break;
-                                            case 'if_has_verified_email':
-                                                $conditional_output = $cc->if_has_verified_email($action);
-                                                if ($conditional_output == 'true') {
-                                                    file_put_contents($logFilePath, 'Email is already verified at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                } else {
-                                                    file_put_contents($logFilePath, 'Email is not verified at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                                $success = true;
-                                                break;
-                                            case 'if_free_inmail':
-                                                $conditional_output = $cc->if_free_inmail($action);
-                                                if ($conditional_output == 'true') {
-                                                    file_put_contents($logFilePath, 'Inmail is already free at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                } else {
-                                                    file_put_contents($logFilePath, 'Inmail is not free at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                                $success = true;
-                                                break;
-                                        }
-                                    }
-                                } else {
-                                    $element = new CampaignElement();
-                                    $element['is_conditional'] = 0;
-                                }
-                                if ($success || $action['current_element_id'] == 'step_1' || $current_time > $action['ending_time']) {
-                                    $action['status'] = 'completed';
-                                    $action['updated_at'] = now();
-                                    $action->save();
-                                    $this->handleNextActions($action, $element, $conditional_output, $campaign);
-                                }
-                            } catch (\Exception $e) {
-                                file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
-                            }
-                        }
-                    }
-                } else {
-                    file_put_contents($logFilePath, 'Failed to insert data because No campaign found at: ' . now() . PHP_EOL, FILE_APPEND);
-                }
-            }   
+                $this->campaign_working($campaigns);
+            }
         } catch (\Exception $e) {
             file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+        }
+    }
+
+    private function campaign_working($campaigns)
+    {
+        $logFilePath = storage_path('logs/lead_action.log');
+        if (count($campaigns) > 0) {
+            $current_time = now();
+            $lc = new LeadsController();
+            $view_distribution_limit = $lc->get_view_count($campaigns);
+            $invitation_distribution_limit = $lc->get_invite_count($campaigns);
+            $message_distribution_limit = $lc->get_message_count($campaigns);
+            foreach ($campaigns as $campaign) {
+                $actions = LeadActions::where('campaign_id', $campaign['id'])->where('status', 'inprogress')->get();
+                $view_count = 0;
+                $invite_count = 0;
+                $message_count = 0;
+                foreach ($actions as $action) {
+                    try {
+                        $success = false;
+                        $conditional_output = '';
+                        if ($action['current_element_id'] != 'step_1') {
+                            $campaign_element = UpdatedCampaignElements::where('id', $action['current_element_id'])->first();
+                            $element = CampaignElement::where('id', $campaign_element['element_id'])->first();
+                            $seat = SeatInfo::where('id', $campaign['seat_id'])->first();
+                            $account_id = $seat['account_id'];
+                            if ($current_time <= $action['ending_time']) {
+                                $cc = new CronController();
+                                switch ($element['element_slug']) {
+                                    case 'view_profile':
+                                        if ($view_count < $view_distribution_limit) {
+                                            $success = $cc->view_profile($action, $account_id);
+                                            if ($success) {
+                                                file_put_contents($logFilePath, 'Profile viewed successfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                                            }
+                                            $view_count++;
+                                        } else if ($view_distribution_limit == 0) {
+                                            file_put_contents($logFilePath, 'Failed to insert data because allowed View Profile is 0' . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                        break;
+                                    case 'invite_to_connect':
+                                        if ($invite_count < $invitation_distribution_limit) {
+                                            $success = $cc->invite_to_connect($action, $account_id, $element, $campaign_element);
+                                            if ($success) {
+                                                file_put_contents($logFilePath, 'Invitation to connect sent successfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                                            }
+                                            $invite_count++;
+                                        } else if ($invitation_distribution_limit == 0) {
+                                            file_put_contents($logFilePath, 'Failed to insert data because allowed Invite to connect is 0' . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                        break;
+                                    case 'message':
+                                        if ($message_count < $message_distribution_limit) {
+                                            $success = $cc->message($action, $account_id, $element, $campaign_element);
+                                            if ($success) {
+                                                file_put_contents($logFilePath, 'Message sent successfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                                            }
+                                            $message_count++;
+                                        } else if ($message_distribution_limit == 0) {
+                                            file_put_contents($logFilePath, 'Failed to insert data because allowed Message is 0' . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                        break;
+                                    case 'inmail_message':
+                                        $success = $cc->inmail_message($action, $account_id, $element, $campaign_element);
+                                        if ($success) {
+                                            file_put_contents($logFilePath, 'Inmail message sent successfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                        break;
+                                    case 'follow':
+                                        $success = $cc->follow($action, $account_id);
+                                        if ($success) {
+                                            file_put_contents($logFilePath, 'Follow user successfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                        break;
+                                    case 'email_message':
+                                        $success = $cc->email_message($action, $account_id, $element, $campaign_element);
+                                        if ($success) {
+                                            file_put_contents($logFilePath, 'Email sent successfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                        break;
+                                    case 'if_connected':
+                                        $conditional_output = $cc->if_connected($action, $account_id);
+                                        if ($conditional_output == 'true') {
+                                            file_put_contents($logFilePath, 'Lead is already connected at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        } else {
+                                            file_put_contents($logFilePath, 'Lead is not connected at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                        $success = true;
+                                        break;
+                                    case 'if_email_is_opened':
+                                        $conditional_output = $cc->if_email_is_opened($action);
+                                        if ($conditional_output == 'true') {
+                                            file_put_contents($logFilePath, 'Email is already opened at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        } else {
+                                            file_put_contents($logFilePath, 'Email is not opened at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                        $success = true;
+                                        break;
+                                    case 'if_has_imported_email':
+                                        $conditional_output = $cc->if_has_imported_email($action);
+                                        if ($conditional_output == 'true') {
+                                            file_put_contents($logFilePath, 'Email is already opened at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        } else {
+                                            file_put_contents($logFilePath, 'Email is not opened at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                        $success = true;
+                                        break;
+                                    case 'if_has_verified_email':
+                                        $conditional_output = $cc->if_has_verified_email($action);
+                                        if ($conditional_output == 'true') {
+                                            file_put_contents($logFilePath, 'Email is already verified at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        } else {
+                                            file_put_contents($logFilePath, 'Email is not verified at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                        $success = true;
+                                        break;
+                                    case 'if_free_inmail':
+                                        $conditional_output = $cc->if_free_inmail($action);
+                                        if ($conditional_output == 'true') {
+                                            file_put_contents($logFilePath, 'Inmail is already free at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        } else {
+                                            file_put_contents($logFilePath, 'Inmail is not free at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        }
+                                        $success = true;
+                                        break;
+                                }
+                            }
+                        } else {
+                            $element = new CampaignElement();
+                            $element['is_conditional'] = 0;
+                        }
+                        if ($success || $action['current_element_id'] == 'step_1' || $current_time > $action['ending_time']) {
+                            $action['status'] = 'completed';
+                            $action['updated_at'] = now();
+                            $action->save();
+                            $this->handleNextActions($action, $element, $conditional_output, $campaign);
+                        }
+                    } catch (\Exception $e) {
+                        file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                    }
+                }
+            }
+        } else {
+            file_put_contents($logFilePath, 'Failed to insert data because No campaign found at: ' . now() . PHP_EOL, FILE_APPEND);
         }
     }
 

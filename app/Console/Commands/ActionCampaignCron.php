@@ -55,25 +55,50 @@ class ActionCampaignCron extends Command
             foreach ($final_accounts as $final_account) {
                 $seats = SeatInfo::whereIn('account_id', $final_account)->get();
                 $campaigns = Campaign::whereIn('seat_id', $seats->pluck('id')->toArray())->where('is_active', 1)->where('is_archive', 0)->get();
-                if (count($campaigns) > 0) {
-                    $lead_distribution_limit = floor(80 / count($campaigns));
-                    foreach ($campaigns as $campaign) {
-                        if ($campaign['campaign_type'] == 'import') {
-                            $this->addImportLeads($campaign, $lead_distribution_limit);
-                        } else if ($campaign['campaign_type'] == 'sales_navigator') {
-                            $this->addSalesLeads($campaign, $lead_distribution_limit, 0, 0);
-                        } else if ($campaign['campaign_type'] == 'linkedin') {
-                            $this->addLinkedinLeads($campaign, $lead_distribution_limit, 0, 0);
-                        } else if ($campaign['campaign_type'] == 'post_engagement') {
-                            $this->addPostLeads($campaign, $lead_distribution_limit, 0, 0);
-                        }
-                    }
-                } else {
-                    file_put_contents($logFilePath, 'Failed to insert data because No campaign found at: ' . now() . PHP_EOL, FILE_APPEND);
-                }
+                $this->campaign_working($campaigns);
             }
         } catch (\Exception $e) {
             file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+        }
+    }
+
+    private function campaign_working($campaigns, $remain_distribution_limit = 80)
+    {
+        $logFilePath = storage_path('logs/campaign_action.log');
+        if (count($campaigns) > 0) {
+            if ($remain_distribution_limit < count($campaigns)) {
+                $final_campaigns = [];
+                for ($i = 0; $i < $remain_distribution_limit; $i++) {
+                    $final_campaigns[$i] = $campaigns[$i];
+                }
+                $campaigns = $final_campaigns;
+            }
+            $lead_distribution_limit = floor($remain_distribution_limit / count($campaigns));
+            $remain_distribution_limit = 0;
+            $campaignsToRemove = [];
+            foreach ($campaigns as $index => $campaign) {
+                if ($campaign['campaign_type'] == 'import') {
+                    $remain_distribution_limit = $this->addImportLeads($campaign, $lead_distribution_limit + $remain_distribution_limit);
+                } else if ($campaign['campaign_type'] == 'sales_navigator') {
+                    $remain_distribution_limit = $this->addSalesLeads($campaign, $lead_distribution_limit + $remain_distribution_limit, 0, 0);
+                } else if ($campaign['campaign_type'] == 'linkedin') {
+                    $remain_distribution_limit = $this->addLinkedinLeads($campaign, $lead_distribution_limit + $remain_distribution_limit, 0, 0);
+                } else if ($campaign['campaign_type'] == 'post_engagement') {
+                    $remain_distribution_limit = $this->addPostLeads($campaign, $lead_distribution_limit + $remain_distribution_limit, 0, 0);
+                }
+                if ($remain_distribution_limit > 0) {
+                    $campaignsToRemove[] = $index;
+                }
+            }
+            foreach ($campaignsToRemove as $index) {
+                unset($campaigns[$index]);
+            }
+            if (count($campaigns) > 0 && $remain_distribution_limit > 0) {
+                file_put_contents($logFilePath, 'Rewind campaigns at: ' . now() . PHP_EOL, FILE_APPEND);
+                $this->campaign_working($campaigns, $remain_distribution_limit);
+            }
+        } else {
+            file_put_contents($logFilePath, 'Failed to insert data because No campaign found at: ' . now() . PHP_EOL, FILE_APPEND);
         }
     }
 
@@ -84,6 +109,7 @@ class ActionCampaignCron extends Command
         $csvController = new CsvController();
         $csvData = $csvController->importedLeadToArray($imported_lead['file_path']);
         $i = 0;
+        $have_url = false;
         if ($csvData !== NULL) {
             foreach ($csvData as $key => $value) {
                 if (str_contains(strtolower($key), 'url')) {
@@ -95,7 +121,7 @@ class ActionCampaignCron extends Command
                             $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
                             if (empty($lead) && $i < $lead_distribution_limit) {
                                 $lc = new LeadsController();
-                                if ($lc->applySettings($campaign, $url) !== 'Not found') {
+                                if ($lc->applySettings($campaign, $url)) {
                                     $i++;
                                     file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
                                 }
@@ -106,14 +132,21 @@ class ActionCampaignCron extends Command
                             file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
                         }
                     }
-                } else {
-                    file_put_contents($logFilePath, 'Failed to insert data because No URL column found at: ' . now() . PHP_EOL, FILE_APPEND);
+                    $have_url = true;
                 }
             }
-            file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
+            if (!$have_url) {
+                file_put_contents($logFilePath, 'Failed to insert data because No URL column found at: ' . now() . PHP_EOL, FILE_APPEND);
+            }
+            if ($i < $lead_distribution_limit) {
+                file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
+            } else {
+                file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
+            }
         } else {
             file_put_contents($logFilePath, 'Failed to insert data because No data in csv file at: ' . now() . PHP_EOL, FILE_APPEND);
         }
+        return $lead_distribution_limit - $i;
     }
 
     private function addSalesLeads($campaign, $lead_distribution_limit, $i, $j)
@@ -161,7 +194,7 @@ class ActionCampaignCron extends Command
                             $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
                             if (empty($lead) && $i < $lead_distribution_limit) {
                                 $lc = new LeadsController();
-                                if ($lc->applySettings($campaign, $url) !== 'Not found') {
+                                if ($lc->applySettings($campaign, $url)) {
                                     $i++;
                                     file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
                                 }
@@ -178,12 +211,19 @@ class ActionCampaignCron extends Command
                     file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
                 }
             }
-            if ($i + 1 < $lead_distribution_limit) {
-                $this->addSalesLeads($campaign, $lead_distribution_limit, $i, count($searches) + $j);
+            if ($i < $lead_distribution_limit) {
+                return $this->addSalesLeads($campaign, $lead_distribution_limit, $i, count($searches) + $j);
+            } else {
+                file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
             }
         } else {
-            file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
+            if ($i < $lead_distribution_limit) {
+                file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
+            } else {
+                file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
+            }
         }
+        return $lead_distribution_limit - $i;
     }
 
     private function addLinkedinLeads($campaign, $lead_distribution_limit, $i, $j)
@@ -250,7 +290,7 @@ class ActionCampaignCron extends Command
                                     $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
                                     if (empty($lead) && $i < $lead_distribution_limit) {
                                         $lc = new LeadsController();
-                                        if ($lc->applySettings($campaign, $url) !== 'Not found') {
+                                        if ($lc->applySettings($campaign, $url)) {
                                             $i++;
                                             file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
                                         }
@@ -269,12 +309,19 @@ class ActionCampaignCron extends Command
                     }
                 }
             }
-            if ($i + 1 < $lead_distribution_limit) {
-                $this->addLinkedinLeads($campaign, $lead_distribution_limit, $i, $k + $j);
+            if ($i < $lead_distribution_limit) {
+                return $this->addLinkedinLeads($campaign, $lead_distribution_limit, $i, $k + $j);
+            } else {
+                file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
             }
         } else {
-            file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
+            if ($i < $lead_distribution_limit) {
+                file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
+            } else {
+                file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
+            }
         }
+        return $lead_distribution_limit - $i;
     }
 
     private function addPostLeads($campaign, $lead_distribution_limit, $i, $j, $cursor = null, $is_comment = false, $post_search = null)
@@ -333,13 +380,13 @@ class ActionCampaignCron extends Command
                                     $profile = $profile['user_profile'];
                                     $conn = true;
                                     $connection_map = [
-                                        1 => 'FIRST_DEGREE',
-                                        2 => 'SECOND_DEGREE',
-                                        3 => 'THIRD_DEGREE'
+                                        1 => ['DISTANCE_1', 'FIRST_DEGREE'],
+                                        2 => ['DISTANCE_2', 'SECOND_DEGREE'],
+                                        3 => ['DISTANCE_3', 'THIRD_DEGREE']
                                     ];
                                     if (
                                         isset($connection_map[$campaign['campaign_connection']]) &&
-                                        $author['network_distance'] != $connection_map[$campaign['campaign_connection']]
+                                        !in_array($author['network_distance'], $connection_map[$campaign['campaign_connection']])
                                     ) {
                                         $conn = false;
                                     }
@@ -352,7 +399,7 @@ class ActionCampaignCron extends Command
                                         $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
                                         if (empty($lead) && $i < $lead_distribution_limit) {
                                             $lc = new LeadsController();
-                                            if ($lc->applySettings($campaign, $url) !== 'Not found') {
+                                            if ($lc->applySettings($campaign, $url)) {
                                                 $i++;
                                                 file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
                                             }
@@ -372,27 +419,38 @@ class ActionCampaignCron extends Command
                             file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
                         }
                     }
-                } else {
-                    file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
                 }
-                if ($i + 1 < $lead_distribution_limit && isset($paging['cursor'])) {
-                    if (!$is_comment) {
-                        $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, $paging['cursor'], false, $post_search);
-                    } else if ($is_comment) {
-                        $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, $paging['cursor'], true, $post_search);
-                    }
-                } else if (!isset($paging['cursor'])) {
-                    if (!$is_comment) {
-                        $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, null, true, $post_search);
-                    } else if ($is_comment) {
+                if ($i < $lead_distribution_limit) {
+                    if (isset($paging['cursor'])) {
+                        if (!$is_comment) {
+                            return $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, $paging['cursor'], false, $post_search);
+                        } else if ($is_comment) {
+                            return $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, $paging['cursor'], true, $post_search);
+                        }
+                    } else if (!isset($paging['cursor'])) {
+                        if (!$is_comment) {
+                            return $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, null, true, $post_search);
+                        }
+                    } else {
                         file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
                     }
+                } else {
+                    file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
                 }
             } else {
-                file_put_contents($logFilePath, 'Failed to insert data because No post found at: ' . now() . PHP_EOL, FILE_APPEND);
+                if ($i < $lead_distribution_limit) {
+                    file_put_contents($logFilePath, 'Failed to insert data because No post found at: ' . now() . PHP_EOL, FILE_APPEND);
+                } else {
+                    file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
+                }
             }
         } else {
-            file_put_contents($logFilePath, 'Failed to insert data because No url keyward found in post URL at: ' . now() . PHP_EOL, FILE_APPEND);
+            if ($i < $lead_distribution_limit) {
+                file_put_contents($logFilePath, 'Failed to insert data because No url keyward found in post URL at: ' . now() . PHP_EOL, FILE_APPEND);
+            } else {
+                file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
+            }
         }
+        return $lead_distribution_limit - $i;
     }
 }

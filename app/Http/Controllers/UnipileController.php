@@ -391,9 +391,9 @@ class UnipileController extends Controller
         if (isset($all['sales_navigator'])) {
             $url =  $this->dsn . 'api/v1/users/' . $profile_url . '?linkedin_api=sales_navigator&linkedin_sections=%2A&notify=' . $notify . '&account_id=' . $account_id;
         } else {
-            if (strpos('https://www.linkedin.com/company/', $profile_url) !== false) {
+            if (strpos($profile_url, 'https://www.linkedin.com/company/') !== false) {
                 $profile_url = str_replace('https://www.linkedin.com/company/', $this->dsn . 'api/v1/linkedin/company/', $profile_url);
-            } else if (strpos('https://www.linkedin.com/in/', $profile_url) !== false) {
+            } else if (strpos($profile_url, 'https://www.linkedin.com/in/') !== false) {
                 $profile_url = str_replace('https://www.linkedin.com/in/', $this->dsn . 'api/v1/users/', $profile_url);
             } else {
                 $profile_url =  $this->dsn . 'api/v1/users/' . $profile_url;
