@@ -61,6 +61,13 @@ class CampaignController extends Controller
             if ($validated) {
                 $schedules = CampaignSchedule::where('user_id', $user_id)->orWhere('user_id', 0)->get();
                 $all = $request->except('_token');
+                if ($all['campaign_type'] == 'linkedin' && strpos($all['campaign_url'], 'https://www.linkedin.com/search/results/people') == false) {
+                    return redirect()->back()->withErrors(['campaign_url' => 'Invalid URL for LinkedIn search']);
+                } else if ($all['campaign_type'] == 'sales_navigator' && strpos($all['campaign_url'], 'https://www.linkedin.com/sales/search/people') == false) {
+                    return redirect()->back()->withErrors(['campaign_url' => 'Invalid URL for Sales Navigator search']);
+                } else if ($all['campaign_type'] == 'post_engagement' && strpos($all['campaign_url'], 'https://www.linkedin.com/posts') == false) {
+                    return redirect()->back()->withErrors(['campaign_url' => 'Invalid URL for Posts']);
+                }
                 $campaign_details = [];
                 foreach ($all as $key => $value) {
                     $campaign_details[$key] = $value;
