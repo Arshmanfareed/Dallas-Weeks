@@ -1135,12 +1135,10 @@ $(document).ready(function () {
                 }
                 $("#properties").html(name_html);
                 $("#save").on("click", onSave);
+                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
-            },
-            complete: function () {
-                $("#loader").hide();
             },
         });
     }
@@ -1173,12 +1171,10 @@ $(document).ready(function () {
                 } else {
                     toastr.error(response.properties);
                 }
+                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
-            },
-            complete: function () {
-                $("#loader").hide();
             },
         });
     });

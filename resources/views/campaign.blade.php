@@ -219,34 +219,18 @@ session()->forget('edit_campaign_details');
                                             <td>{{ $campaign->campaign_name }}</td>
                                             @php
                                             $leads = App\Models\Leads::where('campaign_id', $campaign->id)->get();
-                                            $lc = new App\Http\Controllers\LeadsController();
-                                            $lead = $lc->getLeadsCountByCampaign($campaign->id);
-                                            $lead = json_decode($lead->getContent(), true);
-                                            $viewProfile = $lc->getViewProfileByCampaign($campaign->id);
-                                            $viewProfile = json_decode($viewProfile->getContent(), true);
-                                            $inviteToConnect = $lc->getInviteToConnectByCampaign($campaign->id);
-                                            $inviteToConnect = json_decode($inviteToConnect->getContent(), true);
-                                            $message = $lc->getSentMessageByCampaign($campaign->id);
-                                            $message = json_decode($message->getContent(), true);
-                                            $emailMessage = $lc->getSentEmailByCampaign($campaign->id);
-                                            $emailMessage = json_decode($emailMessage->getContent(), true);
-                                            $lead_count = $lead['count'];
-                                            $viewProfile_count = $viewProfile['count'];
-                                            $inviteToConnect_count = $inviteToConnect['count'];
-                                            $message_count = $message['count'];
-                                            $emailMessage_count = $emailMessage['count'];
                                             @endphp
                                             <td id="{{ 'lead_count_' .  $campaign['id'] }}">
-                                                {{ $lead_count }}
+                                                {{ $campaign['lead_count'] }}
                                             </td>
                                             <td id="{{ 'sent_message_count_' .  $campaign['id'] }}">
-                                                {{ $message_count }}
+                                                {{ $campaign['message_count'] }}
                                             </td>
                                             <td class="stats">
                                                 <ul class="status_list d-flex align-items-center list-unstyled p-0 m-0">
-                                                    <li><span><img src="{{ asset('assets/img/eye.svg') }}" alt=""><span id="{{ 'view_profile_count_' .  $campaign['id'] }}">{{ $viewProfile_count }}</span></span></li>
-                                                    <li><span><img src="{{ asset('assets/img/request.svg') }}" alt=""><span id="{{ 'invite_to_connect_count_' .  $campaign['id'] }}">{{ $inviteToConnect_count }}</span></span></li>
-                                                    <li><span><img src="{{ asset('assets/img/mailmsg.svg') }}" alt=""><span id="{{ 'email_message_count_' .  $campaign['id'] }}">{{ $emailMessage_count }}</span></span></li>
+                                                    <li><span><img src="{{ asset('assets/img/eye.svg') }}" alt=""><span id="{{ 'view_profile_count_' .  $campaign['id'] }}">{{ $campaign['view_action_count'] }}</span></span></li>
+                                                    <li><span><img src="{{ asset('assets/img/request.svg') }}" alt=""><span id="{{ 'invite_to_connect_count_' .  $campaign['id'] }}">{{ $campaign['invite_action_count'] }}</span></span></li>
+                                                    <li><span><img src="{{ asset('assets/img/mailmsg.svg') }}" alt=""><span id="{{ 'email_message_count_' .  $campaign['id'] }}">{{ $campaign['email_action_count'] }}</span></span></li>
                                                     <!-- <li><span><img src="{{ asset('assets/img/mailopen.svg') }}" alt="">16</span></li> -->
                                                 </ul>
                                             </td>
@@ -303,11 +287,6 @@ session()->forget('edit_campaign_details');
     var deleteCampaignRoute = "{{ route('deleteCampaign', ':id') }}";
     var activateCampaignRoute = "{{ route('changeCampaignStatus', ':campaign_id') }}";
     var archiveCampaignRoute = "{{ route('archiveCampaign', ':id') }}";
-    var leadsCountRoute = "{{ route('getLeadsCountByCampaign', ':id') }}";
-    var viewProfileCountRoute = "{{ route('getViewProfileByCampaign', ':id') }}";
-    var inviteToConnectCountRoute = "{{ route('getInviteToConnectByCampaign', ':id') }}";
-    var sentEmailRoute = "{{ route('getSentEmailByCampaign', ':id') }}";
-    var sentMessageRoute = "{{ route('getSentMessageByCampaign', ':id') }}";
 </script>
 {{-- <div class="modal fade create_sequence_modal" id="sequance_modal" tabindex="-1" aria-labelledby="sequance_modal"
         aria-hidden="true">

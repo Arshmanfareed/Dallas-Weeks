@@ -92,11 +92,11 @@ $(document).ready(function () {
                     html += ` font-style: italic;">Not Found!</div></td></tr>`;
                     $(".leads_list table tbody").html(html);
                 }
-                if (response.campaign) {
+                if (response.campaign != null) {
                     var campaign = response.campaign;
-                    $("#campaign-name").val(campaign[0]["campaign_name"]);
-                    $("#linkedin-url").val(campaign[0]["campaign_url"]);
-                    const timestamp = campaign[0]["created_at"];
+                    $("#campaign-name").val(campaign["campaign_name"]);
+                    $("#linkedin-url").val(campaign["campaign_url"]);
+                    const timestamp = campaign["created_at"];
                     const formattedTimestamp = new Date(timestamp)
                         .toISOString()
                         .replace("T", " ")
@@ -105,6 +105,15 @@ $(document).ready(function () {
                         '<i class="fa-solid fa-calendar-days"></i>Created at: ' +
                         formattedTimestamp
                     );
+                    var linkedin_settings = response.settings.linkedin_setting;
+                    linkedin_settings.forEach(element => {
+                        var field = $('#'+element['setting_slug']);
+                        if (element['value'] == 'yes') {
+                            field.prop('checked', true);
+                        } else if (element['value'] == 'no') {
+                            field.prop('checked', false);
+                        }
+                    });
                 } else {
                     $("#campaign-name").val("");
                     $("#linkedin-url").val("");
@@ -131,12 +140,10 @@ $(document).ready(function () {
                 }
                 $(".setting_btn").on("click", setting_list);
                 $(".setting_list").hide();
+                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
-            },
-            complete: function () {
-                $("#loader").hide();
             },
         });
     }
@@ -170,12 +177,10 @@ $(document).ready(function () {
                     if (response.success) {
                         $("#export_modal").modal("hide");
                     }
+                    $("#loader").hide();
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
-                },
-                complete: function () {
-                    $("#loader").hide();
                 },
             });
         } else {

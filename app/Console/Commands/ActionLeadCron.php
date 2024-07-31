@@ -98,6 +98,7 @@ class ActionLeadCron extends Command
                                             $view_count++;
                                         } else if ($view_distribution_limit == 0) {
                                             file_put_contents($logFilePath, 'Failed to insert data because allowed View Profile is 0' . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                            break 2;
                                         }
                                         break;
                                     case 'invite_to_connect':
@@ -109,6 +110,7 @@ class ActionLeadCron extends Command
                                             $invite_count++;
                                         } else if ($invitation_distribution_limit == 0) {
                                             file_put_contents($logFilePath, 'Failed to insert data because allowed Invite to connect is 0' . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                            break 2;
                                         }
                                         break;
                                     case 'message':
@@ -120,6 +122,7 @@ class ActionLeadCron extends Command
                                             $message_count++;
                                         } else if ($message_distribution_limit == 0) {
                                             file_put_contents($logFilePath, 'Failed to insert data because allowed Message is 0' . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                            break 2;
                                         }
                                         break;
                                     case 'inmail_message':

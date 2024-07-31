@@ -155,12 +155,10 @@ $(document).ready(function () {
                         )
                     );
                 }
+                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(error);
-            },
-            complete: function () {
-                $("#loader").hide();
             },
         });
     });
@@ -241,12 +239,10 @@ $(document).ready(function () {
                         $("#schedule_list_1").html(html);
                     }
                 }
+                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(error);
-            },
-            complete: function () {
-                $("#loader").hide();
             },
         });
     });

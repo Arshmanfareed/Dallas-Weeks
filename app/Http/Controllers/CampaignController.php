@@ -26,8 +26,18 @@ class CampaignController extends Controller
     function campaign()
     {
         if (Auth::check()) {
+            $lc = new LeadsController();
             $user_id = Auth::user()->id;
-            $campaigns = Campaign::where('user_id', $user_id)->where('is_active', 1)->where('is_archive', 0)->get();
+            $seat_id = session('seat_id');
+            $campaigns = Campaign::where('user_id', $user_id)->where('seat_id', $seat_id)->where('is_active', 1)->where('is_archive', 0)->get();
+            foreach ($campaigns as $campaign) {
+                $campaign['lead_count'] = $lc->getLeadsCountByCampaign($user_id, $campaign->id);
+                $campaign['view_action_count'] = $lc->getViewProfileByCampaign($user_id, $campaign->id);
+                $campaign['invite_action_count'] = $lc->getInviteToConnectByCampaign($user_id, $campaign->id);
+                $campaign['message_count'] = $lc->getSentMessageByCampaign($user_id, $campaign->id);
+                $campaign['email_action_count'] = $lc->getSentEmailByCampaign($user_id, $campaign->id);
+            }
+            $campaigns = $campaigns->sortByDesc('lead_count')->values();
             $data = [
                 'title' => 'Campaign',
                 'campaigns' => $campaigns,
@@ -185,6 +195,7 @@ class CampaignController extends Controller
     function filterCampaign($filter, $search)
     {
         if (Auth::check()) {
+            $lc = new LeadsController();
             $user_id = Auth::user()->id;
             $campaigns = Campaign::where('user_id', $user_id);
             if ($search != 'null') {
@@ -198,6 +209,14 @@ class CampaignController extends Controller
                 $campaigns = $campaigns->where('is_archive', 1)->get();
             }
             if (count($campaigns) != 0) {
+                foreach ($campaigns as $campaign) {
+                    $campaign['lead_count'] = $lc->getLeadsCountByCampaign($user_id, $campaign->id);
+                    $campaign['view_action_count'] = $lc->getViewProfileByCampaign($user_id, $campaign->id);
+                    $campaign['invite_action_count'] = $lc->getInviteToConnectByCampaign($user_id, $campaign->id);
+                    $campaign['message_count'] = $lc->getSentMessageByCampaign($user_id, $campaign->id);
+                    $campaign['email_action_count'] = $lc->getSentEmailByCampaign($user_id, $campaign->id);
+                }
+                $campaigns = $campaigns->sortByDesc('lead_count')->values();
                 return response()->json(['success' => true, 'campaigns' => $campaigns]);
             } else {
                 return response()->json(['success' => false, 'campaigns' => 'Campaign not Found']);

@@ -242,19 +242,19 @@
                                                     <ul class="list-unstyled p-0">
                                                         <li class="d-flex justify-content-between align-items-center ">
                                                             <span>Discover premium LinkedIn account only</span>
-                                                            <div class="switch_box"><input type="checkbox" class="switch" id="switch0"><label for="switch0">Toggle</label></div>
+                                                            <div class="switch_box"><input type="checkbox" class="switch" id="linkedin_settings_discover_premium_linked_accounts_only"><label for="linkedin_settings_discover_premium_linked_accounts_only">Toggle</label></div>
                                                         </li>
                                                         <li class="d-flex justify-content-between align-items-center">
                                                             <span>Discover leads with open profile status only</span>
-                                                            <div class="switch_box"><input type="checkbox" class="switch" id="switch1"><label for="switch1">Toggle</label></div>
+                                                            <div class="switch_box"><input type="checkbox" class="switch" id="linkedin_settings_discover_leads_with_open_profile_status_only"><label for="linkedin_settings_discover_leads_with_open_profile_status_only">Toggle</label></div>
                                                         </li>
                                                         <li class="d-flex justify-content-between align-items-center">
                                                             <span> Collect contact information</span>
-                                                            <div class="switch_box"><input type="checkbox" class="switch" id="switch2"><label for="switch2">Toggle</label></div>
+                                                            <div class="switch_box"><input type="checkbox" class="switch" id="linkedin_settings_collect_contact_information"><label for="linkedin_settings_collect_contact_information">Toggle</label></div>
                                                         </li>
                                                         <li class="d-flex justify-content-between align-items-center">
                                                             <span>Remove leads with pending connection requests</span>
-                                                            <div class="switch_box"><input type="checkbox" class="switch" id="switch3"><label for="switch3">Toggle</label></div>
+                                                            <div class="switch_box"><input type="checkbox" class="switch" id="linkedin_settings_remove_leads_with_pending_connections"><label for="linkedin_settings_remove_leads_with_pending_connections">Toggle</label></div>
                                                         </li>
                                                     </ul>
                                                 </div>

@@ -290,6 +290,7 @@ $(document).ready(function () {
                         };
                         toastr.error(response.message);
                     }
+                    $("#loader").hide();
                 },
                 error: function (xhr, status, error) {
                     form.find("span.campaign_url").text(error);
@@ -300,9 +301,6 @@ $(document).ready(function () {
                     form.find(".file-input__label").css({
                         "background-color": "red",
                     });
-                },
-                complete: function () {
-                    $("#loader").hide();
                 },
             });
         } else {

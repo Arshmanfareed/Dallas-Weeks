@@ -137,11 +137,6 @@ Route::middleware(['userAuth'])->group(function () {
             Route::get('/', [LeadsController::class, 'leads'])->name('dash-leads');
             Route::get('/getLeadsByCampaign/{id}/{search}', [LeadsController::class, 'getLeadsByCampaign'])->name('getLeadsByCampaign');
             Route::post('/sendLeadsToEmail', [LeadsController::class, 'sendLeadsToEmail'])->name('sendLeadsToEmail');
-            Route::get('/getLeadsCountByCampaign/{id}', [LeadsController::class, 'getLeadsCountByCampaign'])->name('getLeadsCountByCampaign');
-            Route::get('/getViewProfileByCampaign/{id}', [LeadsController::class, 'getViewProfileByCampaign'])->name('getViewProfileByCampaign');
-            Route::get('/getInviteToConnectByCampaign/{id}', [LeadsController::class, 'getInviteToConnectByCampaign'])->name('getInviteToConnectByCampaign');
-            Route::get('/getSentMessageByCampaign/{id}', [LeadsController::class, 'getSentMessageByCampaign'])->name('getSentMessageByCampaign');
-            Route::get('/getSentEmailByCampaign/{id}', [LeadsController::class, 'getSentEmailByCampaign'])->name('getSentEmailByCampaign');
         });
         Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
         Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');

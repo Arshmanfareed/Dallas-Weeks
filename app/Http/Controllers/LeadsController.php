@@ -17,6 +17,9 @@ use App\Models\SeatInfo;
 use App\Models\UpdatedCampaignElements;
 use Illuminate\Http\JsonResponse;
 use App\Models\CampaignPath;
+use App\Models\EmailSetting;
+use App\Models\GlobalSetting;
+use App\Models\LinkedinSetting;
 use Exception;
 
 class LeadsController extends Controller
@@ -25,18 +28,11 @@ class LeadsController extends Controller
     {
         $user_id = Auth::user()->id;
         $seat_id = session('seat_id');
-        $seat = SeatInfo::find($seat_id);
-        $campaigns = Campaign::where('seat_id', $seat_id)->get();
-        $final_leads = [];
-        foreach ($campaigns as $campaign) {
-            $leads = Leads::where('campaign_id', $campaign->id)->get();
-            foreach ($leads as $lead) {
-                $final_leads[] = $lead;
-            }
-        }
+        $campaigns = Campaign::where('user_id', $user_id)->where('seat_id', $seat_id)->where('is_archive', 0)->get();
+        $leads = Leads::whereIn('campaign_id', $campaigns->pluck('id')->toArray())->get();
         $data = [
             'title' => 'Leads',
-            'leads' => $final_leads,
+            'leads' => $leads,
             'campaigns' => $campaigns,
         ];
         return view('leads', $data);
@@ -46,35 +42,53 @@ class LeadsController extends Controller
     {
         $user_id = Auth::user()->id;
         $seat_id = session('seat_id');
-        $seat = SeatInfo::find($seat_id);
-        $leads = Leads::where('user_id', $user_id);
+        $lead = null;
         $campaign = null;
-        if ($search != 'null') {
-            $leads = $leads->where(function ($query) use ($search) {
-                $query->where('contact', 'LIKE', '%' . $search . '%')
-                    ->orWhere('title_company', 'LIKE', '%' . $search . '%');
-            });
-        }
-        if ($id != 'all') {
-            $leads = $leads->where('campaign_id', $id);
-            $campaign = Campaign::where('user_id', $user_id)->where('id', $id)->get();
+        $email_setting = null;
+        $linkedin_setting = null;
+        $global_setting = null;
+        if ($search != 'null' && $id != 'all') {
+            $campaign = Campaign::where('user_id', $user_id)->where('id', $id)->first();
+            $lead = Leads::where('user_id', $user_id)
+                ->where(function ($query) use ($search) {
+                    $query->where('contact', 'LIKE', '%' . $search . '%')
+                        ->orWhere('title_company', 'LIKE', '%' . $search . '%');
+                })
+                ->where('campaign_id', $campaign->id)
+                ->get();
+            $email_setting = EmailSetting::where('campaign_id', $campaign->id)->get();
+            $linkedin_setting = LinkedinSetting::where('campaign_id', $campaign->id)->get();
+            $global_setting = GlobalSetting::where('campaign_id', $campaign->id)->get();
+        } else if ($id != 'all') {
+            $campaign = Campaign::where('user_id', $user_id)->where('id', $id)->first();
+            $lead = Leads::where('user_id', $user_id)->where('campaign_id', $campaign->id)->get();
+            $email_setting = EmailSetting::where('campaign_id', $campaign->id)->get();
+            $linkedin_setting = LinkedinSetting::where('campaign_id', $campaign->id)->get();
+            $global_setting = GlobalSetting::where('campaign_id', $campaign->id)->get();
+        } else if ($search != 'null') {
+            $campaign = Campaign::where('seat_id', $seat_id)->get();
+            $lead = Leads::where('user_id', $user_id)
+                ->where(function ($query) use ($search) {
+                    $query->where('contact', 'LIKE', '%' . $search . '%')
+                        ->orWhere('title_company', 'LIKE', '%' . $search . '%');
+                })
+                ->whereIn('campaign_id', $campaign->pluck('id')->toArray())
+                ->get();
+            $campaign = null;
         } else {
-            $campaigns = Campaign::where('seat_id', $seat_id)->get();
-            $final_leads = [];
-            foreach ($campaigns as $campaign) {
-                $leads = Leads::where('campaign_id', $campaign->id)->get();
-                foreach ($leads as $lead) {
-                    $final_leads[] = $lead;
-                }
-            }
-            $leads = $final_leads;
-            return response()->json(['success' => true, 'leads' => $leads, 'campaign' => $campaigns]);
+            $campaign = Campaign::where('seat_id', $seat_id)->get();
+            $lead = Leads::where('user_id', $user_id)->whereIn('campaign_id', $campaign->pluck('id')->toArray())->get();
+            $campaign = null;
         }
-        $leads = $leads->get();
-        if (!$leads->isEmpty()) {
-            return response()->json(['success' => true, 'leads' => $leads, 'campaign' => $campaign]);
+        $settings = [
+            'email_setting' => $email_setting,
+            'linkedin_setting' => $linkedin_setting,
+            'global_setting' => $global_setting
+        ];
+        if (count($lead) > 0) {
+            return response()->json(['success' => true, 'leads' => $lead, 'campaign' => $campaign, 'settings' => $settings]);
         } else {
-            return response()->json(['success' => false, 'message' => 'Leads not found!', 'campaign' => $campaign]);
+            return response()->json(['success' => false, 'leads' => $lead, 'campaign' => $campaign, 'settings' => $settings]);
         }
     }
 
@@ -137,59 +151,38 @@ class LeadsController extends Controller
         return response()->json(['success' => true]);
     }
 
-    function getLeadsCountByCampaign($campaign_id)
+    function getLeadsCountByCampaign($user_id, $campaign_id)
     {
-        $user_id = Auth::user()->id;
-        $leads = Leads::where('user_id', $user_id)->where('campaign_id', $campaign_id)->get();
-        return response()->json(['success' => true, 'count' => count($leads)]);
+        $lead_count = Leads::where('user_id', $user_id)->where('campaign_id', $campaign_id)->count();
+        return $lead_count;
     }
 
-    function getViewProfileByCampaign($campaign_id)
+    function getViewProfileByCampaign($user_id, $campaign_id)
     {
-        $count = 0;
-        $user_id = Auth::user()->id;
         $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', 'view_profile%')->get();
-        foreach ($campaign_elements as $element) {
-            $leads = LeadActions::where('current_element_id', $element->id)->where('status', 'completed')->get();
-            $count += count($leads);
-        }
-        return response()->json(['success' => true, 'count' => $count]);
+        $view_action_count = LeadActions::whereIn('current_element_id', $campaign_elements->pluck('id')->toArray())->where('status', 'completed')->count();
+        return $view_action_count;
     }
 
-    function getInviteToConnectByCampaign($campaign_id)
+    function getInviteToConnectByCampaign($user_id, $campaign_id)
     {
-        $count = 0;
-        $user_id = Auth::user()->id;
         $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', 'invite_to_connect%')->get();
-        foreach ($campaign_elements as $element) {
-            $leads = LeadActions::where('current_element_id', $element->id)->where('status', 'completed')->get();
-            $count += count($leads);
-        }
-        return response()->json(['success' => true, 'count' => $count]);
+        $invite_action_count = LeadActions::whereIn('current_element_id', $campaign_elements->pluck('id')->toArray())->where('status', 'completed')->count();
+        return $invite_action_count;
     }
 
-    function getSentMessageByCampaign($campaign_id)
+    function getSentMessageByCampaign($user_id, $campaign_id)
     {
-        $count = 0;
-        $user_id = Auth::user()->id;
         $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', 'message%')->get();
-        foreach ($campaign_elements as $element) {
-            $leads = LeadActions::where('current_element_id', $element->id)->where('status', 'completed')->get();
-            $count += count($leads);
-        }
-        return response()->json(['success' => true, 'count' => $count]);
+        $message_count = LeadActions::whereIn('current_element_id', $campaign_elements->pluck('id')->toArray())->where('status', 'completed')->count();
+        return $message_count;
     }
 
-    function getSentEmailByCampaign($campaign_id)
+    function getSentEmailByCampaign($user_id, $campaign_id)
     {
-        $count = 0;
-        $user_id = Auth::user()->id;
         $campaign_elements = UpdatedCampaignElements::where('user_id', $user_id)->where('campaign_id', $campaign_id)->where('element_slug', 'like', 'email_message%')->get();
-        foreach ($campaign_elements as $element) {
-            $leads = LeadActions::where('current_element_id', $element->id)->where('status', 'completed')->get();
-            $count += count($leads);
-        }
-        return response()->json(['success' => true, 'count' => $count]);
+        $email_count = LeadActions::whereIn('current_element_id', $campaign_elements->pluck('id')->toArray())->where('status', 'completed')->count();
+        return $email_count;
     }
 
     function duplicateUrl($url)

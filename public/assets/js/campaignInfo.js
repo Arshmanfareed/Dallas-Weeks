@@ -190,12 +190,10 @@ $(document).ready(function () {
                         )
                     );
                 }
+                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(error);
-            },
-            complete: function () {
-                $("#loader").hide();
             },
         });
     });

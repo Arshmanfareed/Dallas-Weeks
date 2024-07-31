@@ -83,12 +83,10 @@ $(document).ready(function () {
                                         }
                                     }
                                 }
+                                $("#loader").hide();
                             },
                             error: function (xhr, status, error) {
                                 console.error(xhr.responseText);
-                            },
-                            complete: function () {
-                                $("#loader").hide();
                             },
                         });
                     }
@@ -623,12 +621,10 @@ $(document).ready(function () {
                             toastr.error(response.message);
                             console.log(response);
                         }
+                        $("#loader").hide();
                     },
                     error: function (xhr, status, error) {
                         console.error(xhr.responseText);
-                    },
-                    complete: function () {
-                        $("#loader").hide();
                     },
                 });
             }
@@ -725,12 +721,10 @@ $(document).ready(function () {
                     }
                     $("#properties").html(name_html);
                     $(".property_input").on("input", propertyInput);
+                    $("#loader").hide();
                 },
                 error: function (xhr, status, error) {
                     console.error(xhr.responseText);
-                },
-                complete: function () {
-                    $("#loader").hide();
                 },
             });
         } else {
@@ -1180,12 +1174,10 @@ $(document).ready(function () {
                                         errorOccurred = true;
                                     }
                                 }
+                                $("#loader").hide();
                             },
                             error: function (xhr, status, error) {
                                 console.error(xhr.responseText);
-                            },
-                            complete: function () {
-                                $("#loader").hide();
                             },
                         });
                         if (errorOccurred) {

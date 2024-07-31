@@ -51,16 +51,14 @@ $(document).ready(function () {
                     html += "</td></tr>";
                     $("#campaign_table_body").html(html);
                 }
+                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
             },
-            complete: function () {
-                $("#loader").hide();
-            },
         });
     });
-    
+
     $(document).on("click", ".delete_campaign", function (e) {
         if (confirm("Are you sure to delete this campaign?")) {
             var campaign_id = $(this).attr("id").replace("delete", "");
@@ -102,12 +100,10 @@ $(document).ready(function () {
                         html += "</td></tr>";
                         $("#campaign_table_body").html(html);
                     }
+                    $("#loader").hide();
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
-                },
-                complete: function () {
-                    $("#loader").hide();
                 },
             });
         }
@@ -154,12 +150,10 @@ $(document).ready(function () {
                         html += "</td></tr>";
                         $("#campaign_table_body").html(html);
                     }
+                    $("#loader").hide();
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
-                },
-                complete: function () {
-                    $("#loader").hide();
                 },
             });
         }
@@ -211,12 +205,12 @@ $(document).ready(function () {
                                 `">Toggle</label></div></td>`;
                             html +=
                                 `<td>` + campaign["campaign_name"] + `</td>`;
-                            html += `<td id="lead_count_${campaign["id"]}">0</td>`;
-                            html += `<td id="sent_message_count_${campaign["id"]}">0</td>`;
+                            html += `<td id="lead_count_${campaign["id"]}">` + campaign["lead_count"] + `</td>`;
+                            html += `<td id="sent_message_count_${campaign["id"]}">` + campaign['message_count'] + `</td>`;
                             html += `<td class="stats"><ul class="status_list d-flex align-items-center list-unstyled p-0 m-0">`;
-                            html += `<li><span><img src="/assets/img/eye.svg" alt=""><span id="view_profile_count_${campaign["id"]}">0</span></span></li>`;
-                            html += `<li><span><img src="/assets/img/request.svg" alt=""><span id="invite_to_connect_count_${campaign["id"]}">0</span></span></li>`;
-                            html += `<li><span><img src="/assets/img/mailmsg.svg" alt=""><span id="email_message_count_${campaign['id']}">0</span></span></li>`;
+                            html += `<li><span><img src="/assets/img/eye.svg" alt=""><span id="view_profile_count_${campaign["id"]}">` + campaign['view_action_count'] + `</span></span></li>`;
+                            html += `<li><span><img src="/assets/img/request.svg" alt=""><span id="invite_to_connect_count_${campaign["id"]}">` + campaign['invite_action_count'] + `</span></span></li>`;
+                            html += `<li><span><img src="/assets/img/mailmsg.svg" alt=""><span id="email_message_count_${campaign['id']}">` + campaign['email_action_count'] + `</span></span></li>`;
                             // html += `<li><span><img src="/assets/img/mailopen.svg" alt="">16</span></li></ul></td>`;
                             html += `<td><div class="per up">34%</div></td>`;
                             html += `<td><div class="per down">23%</div></td>`;
@@ -242,21 +236,6 @@ $(document).ready(function () {
                                 campaign["id"] +
                                 `">Delete campaign</a></li>`;
                             html += `</ul></td></tr>`;
-                            leads_count(campaign["id"], function (count) {
-                                $("#lead_count_" + campaign["id"]).text(count);
-                            });
-                            view_profile_count(campaign["id"], function (count) {
-                                $("#view_profile_count_" + campaign["id"]).text(count);
-                            });
-                            invite_to_connect_count(campaign["id"], function (count) {
-                                $("#invite_to_connect_count_" + campaign["id"]).text(count);
-                            });
-                            sent_email_count(campaign["id"], function (count) {
-                                $('#email_message_count_' + campaign["id"]).text(count);
-                            });
-                            sent_message_count(campaign["id"], function (count) {
-                                $('#sent_message_count_' + campaign["id"]).text(count);
-                            });
                         }
                     }
                     $("#campaign_table_body").html(html);
@@ -274,6 +253,7 @@ $(document).ready(function () {
                 } else {
                     $(".archive_campaign").html("Archive campaign");
                 }
+                $("#loader").hide();
             },
             beforeSend: function () {
                 $("#loader").show();
@@ -285,9 +265,6 @@ $(document).ready(function () {
                     '<div class="text-center text-danger" style="font-size: 25px; font-weight: bold; font-style: italic;">Not Found!</div>';
                 html += "</td></tr>";
                 $("#campaign_table_body").html(html);
-            },
-            complete: function () {
-                $("#loader").hide();
             },
         });
     }
@@ -304,75 +281,4 @@ $(document).ready(function () {
             }
         });
     }
-
-    function leads_count(campaign_id, callback) {
-        $.ajax({
-            url: leadsCountRoute.replace(":id", campaign_id),
-            type: "GET",
-            success: function (response) {
-                callback(response.count);
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-                callback(0);
-            },
-        });
-    }
-
-    function view_profile_count(campaign_id, callback) {
-        $.ajax({
-            url: viewProfileCountRoute.replace(":id", campaign_id),
-            type: "GET",
-            success: function (response) {
-                callback(response.count);
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-                callback(0);
-            },
-        });
-    }
-
-    function invite_to_connect_count(campaign_id, callback) {
-        $.ajax({
-            url: inviteToConnectCountRoute.replace(":id", campaign_id),
-            type: "GET",
-            success: function (response) {
-                callback(response.count);
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-                callback(0);
-            },
-        });
-    }
-
-    function sent_email_count(campaign_id, callback) {
-        $.ajax({
-            url: sentEmailRoute.replace(":id", campaign_id),
-            type: "GET",
-            success: function (response) {
-                callback(response.count);
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-                callback(0);
-            },
-        });
-    }
-
-    function sent_message_count(campaign_id, callback) {
-        $.ajax({
-            url: sentMessageRoute.replace(":id", campaign_id),
-            type: "GET",
-            success: function (response) {
-                callback(response.count);
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-                callback(0);
-            },
-        });
-    }
-
 });

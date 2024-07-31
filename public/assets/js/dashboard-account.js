@@ -68,6 +68,7 @@ $(document).ready(function () {
                     html += "</td></tr>";
                     $("#campaign_table_body").html(html);
                 }
+                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 var html = ``;
@@ -76,9 +77,6 @@ $(document).ready(function () {
                     '<div class="text-center text-danger" style="font-size: 25px; font-weight: bold; font-style: italic;">Not Found!</div>';
                 html += "</td></tr>";
                 $("#campaign_table_body").html(html);
-            },
-            complete: function () {
-                $("#loader").hide();
             },
         });
     }
