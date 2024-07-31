@@ -18,22 +18,29 @@ class UnipileController extends Controller
     var $x_api_key = 'Z+eeumbS.GmXz1XXr2mxTXjEsn9vepK/2xnq+HcR8bpoGSuv/l6w=';
     var $dsn = 'https://api4.unipile.com:13443/';
 
-    public function get_accounts()
+    public function list_all_accounts(Request $request)
     {
-        $client = new \GuzzleHttp\Client([
-            'verify' => false,
-        ]);
+        $all = $request->all();
         if (!isset($this->x_api_key) || !isset($this->dsn)) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/accounts?';
+        if (isset($all['cursor'])) {
+            $url .= 'cursor=' . $all['cursor'] . '&';
+        }
+        if (isset($all['limit'])) {
+            $url .= 'limit=' . $all['limit'];
+        }
         try {
-            $response = $client->request('GET', $this->dsn . 'api/v1/accounts', [
+            $response = $client->request('GET', $url, [
                 'headers' => [
                     'X-API-KEY' => $this->x_api_key,
                     'accept' => 'application/json',
                 ],
             ]);
-
             $accounts = json_decode($response->getBody(), true);
             return response()->json(['accounts' => $accounts]);
         } catch (\Exception $e) {
@@ -41,40 +48,16 @@ class UnipileController extends Controller
         }
     }
 
-    public function get_connection_count(Request $request)
-    {
-        $all = $request->all();
-        $account_id = $all['account_id'];
-        $cursor = null;
-        $requestParams = ['account_id' => $account_id];
-        $count = 0;
-        $allCursors = [];
-        $allItems = [];
-        for ($i = 0; $i > -1; $i++) {
-            $params = array_merge($requestParams, $cursor ? ['cursor' => $cursor] : []);
-            $relations = $this->get_relations(new \Illuminate\Http\Request($params));;
-            $data = $relations->getData(true)['relations'] ?? [];
-            $allCursors[] = $data['cursor'] ?? [];
-            $allItems = array_merge($data['items'] ?? [], $allItems);
-            $count += count($data['items'] ?? []);
-            $cursor = $data['cursor'] ?? null;
-            if (is_null($cursor)) {
-                break;
-            }
-        }
-        return response()->json(['count' => $count]);
-    }
-
     public function retrieve_an_account(Request $request)
     {
         $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
         $account_id = $all['account_id'];
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
-        if (!isset($account_id) || !isset($this->x_api_key) || !isset($this->dsn)) {
-            return response()->json(['error' => 'Missing required parameters'], 400);
-        }
         $url = $this->dsn . 'api/v1/accounts/' . $account_id;
         try {
             $response = $client->request('GET', $url, [
@@ -90,19 +73,84 @@ class UnipileController extends Controller
         }
     }
 
-    public function get_relations(Request $request)
+    public function delete_account(Request $request)
     {
         $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
         $account_id = $all['account_id'];
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
-        if (!isset($account_id) || !isset($this->x_api_key) || !isset($this->dsn)) {
+        $url = $this->dsn . 'api/v1/accounts/' . $account_id;
+        try {
+            $response = $client->request('DELETE', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $delete_account = json_decode($response->getBody(), true);
+            return response()->json(['account' => $delete_account]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function restart_an_account(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
-        $url = $this->dsn . 'api/v1/users/relations' . '?account_id=' . $account_id . '&limit=1000';
+        $account_id = $all['account_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/accounts/' . $account_id . '/restart';
+        try {
+            $response = $client->request('POST', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $restart_account = json_decode($response->getBody(), true);
+            return response()->json(['account' => $restart_account]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function list_all_chats(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $account_id = $all['account_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/chats?account_id=' . $account_id . '&';
         if (isset($all['cursor'])) {
-            $url .= '&cursor=' . $all['cursor'];
+            $url .= 'cursor=' . $all['cursor'] . '&';
+        }
+        if (isset($all['unread'])) {
+            $url .= 'unread=' . $all['unread'] . '&';
+        }
+        if (isset($all['before'])) {
+            $url .= 'before=' . $all['before'] . '&';
+        }
+        if (isset($all['after'])) {
+            $url .= 'after=' . $all['after'] . '&';
+        }
+        if (isset($all['limit'])) {
+            $url .= 'limit=' . $all['limit'] . '&';
+        }
+        if (isset($all['account_type'])) {
+            $url .= 'account_type=' . $all['account_type'];
         }
         try {
             $response = $client->request('GET', $url, [
@@ -111,12 +159,424 @@ class UnipileController extends Controller
                     'accept' => 'application/json',
                 ],
             ]);
-            $result = json_decode($response->getBody(), true);
-            if (!empty($result)) {
-                return response()->json(['relations' => $result]);
+            $chats = json_decode($response->getBody(), true);
+            return response()->json(['chats' => $chats]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function retrieve_a_chat(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['chat_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $chat_id = $all['chat_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/chats/' . $chat_id;
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $chats = json_decode($response->getBody(), true);
+            return response()->json(['chat' => $chats]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function list_all_messages_from_chat(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['chat_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $chat_id = $all['chat_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/chats/' . $chat_id . '/messages?';
+        if (isset($all['cursor'])) {
+            $url .= 'cursor=' . $all['cursor'] . '&';
+        }
+        if (isset($all['before'])) {
+            $url .= 'before=' . $all['before'] . '&';
+        }
+        if (isset($all['after'])) {
+            $url .= 'after=' . $all['after'] . '&';
+        }
+        if (isset($all['limit'])) {
+            $url .= 'limit=' . $all['limit'] . '&';
+        }
+        if (isset($all['sender'])) {
+            $url .= 'sender_id=' . $all['sender'];
+        }
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $messages = json_decode($response->getBody(), true);
+            return response()->json(['messages' => $messages]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function list_all_attendees_from_chat(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['chat_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $chat_id = $all['chat_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/chats/' . $chat_id . '/attendees';
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $attendees = json_decode($response->getBody(), true);
+            return response()->json(['attendees' => $attendees]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function retrieve_a_message(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['message_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $message_id = $all['message_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/messages/' . $message_id;
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $message = json_decode($response->getBody(), true);
+            return response()->json(['message' => $message]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function list_all_messages(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $account_id = $all['account_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/messages?account_id=' . $account_id . '&';
+        if (isset($all['cursor'])) {
+            $url .= 'cursor=' . $all['cursor'] . '&';
+        }
+        if (isset($all['before'])) {
+            $url .= 'before=' . $all['before'] . '&';
+        }
+        if (isset($all['after'])) {
+            $url .= 'after=' . $all['after'] . '&';
+        }
+        if (isset($all['limit'])) {
+            $url .= 'limit=' . $all['limit'] . '&';
+        }
+        if (isset($all['sender_id'])) {
+            $url .= 'sender_id=' . $all['sender_id'];
+        }
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $messages = json_decode($response->getBody(), true);
+            return response()->json(['messages' => $messages]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function list_all_attendees(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $account_id = $all['account_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/chat_attendees?account_id=' . $account_id . '&';
+        if (isset($all['cursor'])) {
+            $url .= 'cursor=' . $all['cursor'] . '&';
+        }
+        if (isset($all['limit'])) {
+            $url .= 'limit=' . $all['limit'];
+        }
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $attendees = json_decode($response->getBody(), true);
+            return response()->json(['attendees' => $attendees]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function retrieve_an_attendee(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['attendee_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $attendee_id = $all['attendee_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/chat_attendees/' . $attendee_id;
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $attendee = json_decode($response->getBody(), true);
+            return response()->json(['attendee' => $attendee]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function list_all_messages_from_attendee(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['attendee_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $attendee_id = $all['attendee_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/chat_attendees/' . $attendee_id . '/messages?';
+        if (isset($all['cursor'])) {
+            $url .= 'cursor=' . $all['cursor'] . '&';
+        }
+        if (isset($all['before'])) {
+            $url .= 'before=' . $all['before'] . '&';
+        }
+        if (isset($all['after'])) {
+            $url .= 'after=' . $all['after'] . '&';
+        }
+        if (isset($all['limit'])) {
+            $url .= 'limit=' . $all['limit'] . '&';
+        }
+        if (isset($all['account_id'])) {
+            $url .= 'account_id=' . $all['account_id'];
+        }
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $messages = json_decode($response->getBody(), true);
+            return response()->json(['messages' => $messages]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function list_all_invitaions(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $account_id = $all['account_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/users/invite/sent?account_id=' . $account_id . '&';
+        if (isset($all['cursor'])) {
+            $url .= 'cursor=' . $all['cursor'] . '&';
+        }
+        if (isset($all['limit'])) {
+            $url .= 'limit=' . $all['limit'];
+        }
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $invitaions = json_decode($response->getBody(), true);
+            return response()->json(['invitaions' => $invitaions]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function retrieve_own_profile(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $account_id = $all['account_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/users/me?account_id=' . $account_id;
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $account = json_decode($response->getBody(), true);
+            return response()->json(['account' => $account]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function list_all_relations(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $account_id = $all['account_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/users/relations' . '?account_id=' . $account_id . '&';
+        if (isset($all['cursor'])) {
+            $url .= 'cursor=' . $all['cursor'] . '&';
+        }
+        if (isset($all['limit'])) {
+            $url .= 'limit=' . $all['limit'];
+        }
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $relations = json_decode($response->getBody(), true);
+            return response()->json(['relations' => $relations]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function view_profile(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($all['profile_url']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $account_id = $all['account_id'];
+        $profile_url = $all['profile_url'];
+        $notify = 'false';
+        if (isset($all['notify'])) {
+            $notify = 'true';
+        }
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        if (isset($all['sales_navigator'])) {
+            $url = $this->dsn . 'api/v1/users/' . $profile_url . '?linkedin_api=sales_navigator&linkedin_sections=%2A&notify=' . $notify . '&account_id=' . $account_id;
+        } else {
+            if (strpos($profile_url, 'https://www.linkedin.com/company/') !== false) {
+                $profile_url = str_replace('https://www.linkedin.com/company/', $this->dsn . 'api/v1/linkedin/company/', $profile_url);
+            } else if (strpos($profile_url, 'https://www.linkedin.com/in/') !== false) {
+                $profile_url = str_replace('https://www.linkedin.com/in/', $this->dsn . 'api/v1/users/', $profile_url);
             } else {
-                return response()->json(['error' => 'No relations found'], 400);
+                $profile_url =  $this->dsn . 'api/v1/users/' . $profile_url;
             }
+            $url = $profile_url . '?linkedin_sections=%2A&notify=' . $notify . '&account_id=' . $account_id;
+        }
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $user_profile = json_decode($response->getBody(), true);
+            return response()->json(['user_profile' => $user_profile]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function invite_to_connect(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($all['identifier']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $account_id = $all['account_id'];
+        $identifier = $all['identifier'];
+        if (isset($all['message'])) {
+            $message = $all['message'];
+        } else {
+            $message = '';
+        }
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/users/invite';
+        try {
+            $response = $client->request('POST', $url, [
+                'json' => [
+                    'provider_id' => $identifier,
+                    'account_id' => $account_id,
+                    'message' => $message
+                ],
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                    'content-type' => 'application/json',
+                ],
+            ]);
+            $invitaion = json_decode($response->getBody(), true);
+            return response()->json(['invitaion' => $invitaion]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
@@ -323,31 +783,6 @@ class UnipileController extends Controller
         }
     }
 
-    public function delete_account(Request $request)
-    {
-        $all = $request->all();
-        $account_id = $all['account_id'];
-        $client = new \GuzzleHttp\Client([
-            'verify' => false,
-        ]);
-        if (!isset($account_id) || !isset($this->x_api_key) || !isset($this->dsn)) {
-            return response()->json(['error' => 'Missing required parameters'], 400);
-        }
-        $url = $this->dsn . 'api/v1/accounts/' . $account_id;
-        try {
-            $response = $client->request('DELETE', $url, [
-                'headers' => [
-                    'X-API-KEY' => $this->x_api_key,
-                    'accept' => 'application/json',
-                ],
-            ]);
-            $delete_account = json_decode($response->getBody(), true);
-            return response()->json(['account' => $delete_account]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
-    }
-
     public function handleCallback(Request $request)
     {
         Log::info('Unipile callback received', $request->all());
@@ -370,91 +805,6 @@ class UnipileController extends Controller
         } else {
             Log::error('Failed to update Account ID for user', ['email' => $email]);
             return response()->json(['status' => 'error', 'message' => 'User not found or update failed'], 404);
-        }
-    }
-
-    public function view_profile(Request $request)
-    {
-        $all = $request->all();
-        $account_id = $all['account_id'];
-        $profile_url = $all['profile_url'];
-        $notify = 'false';
-        if (isset($all['notify'])) {
-            $notify = 'true';
-        }
-        $client = new \GuzzleHttp\Client([
-            'verify' => false,
-        ]);
-        if (!isset($account_id) || !isset($profile_url) || !isset($this->x_api_key) || !isset($this->dsn)) {
-            return response()->json(['error' => 'Missing required parameters'], 400);
-        }
-        if (isset($all['sales_navigator'])) {
-            $url =  $this->dsn . 'api/v1/users/' . $profile_url . '?linkedin_api=sales_navigator&linkedin_sections=%2A&notify=' . $notify . '&account_id=' . $account_id;
-        } else {
-            if (strpos($profile_url, 'https://www.linkedin.com/company/') !== false) {
-                $profile_url = str_replace('https://www.linkedin.com/company/', $this->dsn . 'api/v1/linkedin/company/', $profile_url);
-            } else if (strpos($profile_url, 'https://www.linkedin.com/in/') !== false) {
-                $profile_url = str_replace('https://www.linkedin.com/in/', $this->dsn . 'api/v1/users/', $profile_url);
-            } else {
-                $profile_url =  $this->dsn . 'api/v1/users/' . $profile_url;
-            }
-            $url = $profile_url . '?linkedin_sections=%2A&notify=' . $notify . '&account_id=' . $account_id;
-        }
-        try {
-            $response = $client->request('GET', $url, [
-                'headers' => [
-                    'X-API-KEY' => $this->x_api_key,
-                    'accept' => 'application/json',
-                ],
-            ]);
-            $user_profile = json_decode($response->getBody(), true);
-            if ($user_profile['object'] == 'UserProfile' || $user_profile['object'] == 'CompanyProfile') {
-                return response()->json(['user_profile' => $user_profile]);
-            } else {
-                return response()->json(['error' => 'No profile found'], 400);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
-    }
-
-    public function invite_to_connect(Request $request)
-    {
-        $all = $request->all();
-        $account_id = $all['account_id'];
-        $identifier = $all['identifier'];
-        if (!isset($account_id) || !isset($identifier) || !isset($this->x_api_key) || !isset($this->dsn)) {
-            return response()->json(['error' => 'Missing required parameters'], 400);
-        }
-        if (isset($all['message'])) {
-            $message = $all['message'];
-        } else {
-            $message = '';
-        }
-        $client = new \GuzzleHttp\Client([
-            'verify' => false,
-        ]);
-        try {
-            $response = $client->request('POST', $this->dsn . 'api/v1/users/invite', [
-                'json' => [
-                    'provider_id' => $identifier,
-                    'account_id' => $account_id,
-                    'message' => $message
-                ],
-                'headers' => [
-                    'X-API-KEY' => $this->x_api_key,
-                    'accept' => 'application/json',
-                    'content-type' => 'application/json',
-                ],
-            ]);
-            $invitaion = json_decode($response->getBody(), true);
-            if ($invitaion['object'] == 'UserInvitationSent') {
-                return response()->json(['invitaion' => $invitaion]);
-            } else {
-                return response()->json(['error' => 'No profile found'], 400);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -630,5 +980,29 @@ class UnipileController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
+    }
+
+    public function get_connection_count(Request $request)
+    {
+        $all = $request->all();
+        $account_id = $all['account_id'];
+        $cursor = null;
+        $requestParams = ['account_id' => $account_id];
+        $count = 0;
+        $allCursors = [];
+        $allItems = [];
+        for ($i = 0; $i > -1; $i++) {
+            $params = array_merge($requestParams, $cursor ? ['cursor' => $cursor] : []);
+            $relations = $this->list_all_relations(new \Illuminate\Http\Request($params));;
+            $data = $relations->getData(true)['relations'] ?? [];
+            $allCursors[] = $data['cursor'] ?? [];
+            $allItems = array_merge($data['items'] ?? [], $allItems);
+            $count += count($data['items'] ?? []);
+            $cursor = $data['cursor'] ?? null;
+            if (is_null($cursor)) {
+                break;
+            }
+        }
+        return response()->json(['count' => $count]);
     }
 }

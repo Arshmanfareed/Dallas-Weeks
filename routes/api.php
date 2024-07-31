@@ -24,11 +24,25 @@ use App\Http\Controllers\UnipileController;
 Route::post('messages', [ChatController::class, 'message']);
 Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccount']);
 
-Route::get('/accounts', [UnipileController::class, 'get_accounts'])->name('get_all_accounts');
-Route::post('/retrieve_account', [UnipileController::class, 'retrieve_an_account'])->name('retrieve_an_account');
-Route::post('/relations', [UnipileController::class, 'get_relations'])->name('get_relations');
+Route::post('/accounts', [UnipileController::class, 'list_all_accounts'])->name('list_all_accounts');
+Route::post('/retrieve/account', [UnipileController::class, 'retrieve_an_account'])->name('retrieve_an_account');
+Route::post('/delete/account', [UnipileController::class, 'delete_account'])->name('delete_account');
+Route::post('/restart/account', [UnipileController::class, 'restart_an_account'])->name('restart_an_account');
+Route::post('/chats', [UnipileController::class, 'list_all_chats'])->name('list_all_chats');
+Route::post('/retrieve/chat', [UnipileController::class, 'retrieve_a_chat'])->name('retrieve_a_chat');
+Route::post('/chat/messages', [UnipileController::class, 'list_all_messages_from_chat'])->name('list_all_messages_from_chat');
+Route::post('/chat/messages/attendees', [UnipileController::class, 'list_all_attendees_from_chat'])->name('list_all_attendees_from_chat');
+Route::post('/retrieve/message', [UnipileController::class, 'retrieve_a_message'])->name('retrieve_a_message');
+Route::post('/account/messages', [UnipileController::class, 'list_all_messages'])->name('list_all_messages');
+Route::post('/account/attendees', [UnipileController::class, 'list_all_attendees'])->name('list_all_attendees');
+Route::post('/retrieve/attendee', [UnipileController::class, 'retrieve_an_attendee'])->name('retrieve_an_attendee');
+Route::post('/attendee/messages', [UnipileController::class, 'list_all_messages_from_attendee'])->name('list_all_messages_from_attendee');
+Route::post('/invitations', [UnipileController::class, 'list_all_invitaions'])->name('list_all_invitaions');
+Route::post('/retrieve/account/me', [UnipileController::class, 'retrieve_own_profile'])->name('retrieve_own_profile');
+Route::post('/relations', [UnipileController::class, 'list_all_relations'])->name('list_all_relations');
 Route::post('/view_profile', [UnipileController::class, 'view_profile'])->name('viewProfile');
 Route::post('/invite_to_connect', [UnipileController::class, 'invite_to_connect'])->name('inviteToConnect');
+
 Route::post('/message', [UnipileController::class, 'message'])->name('message');
 Route::post('/inmail_message', [UnipileController::class, 'inmail_message'])->name('inmailMessage');
 Route::post('/sendEmail', [UnipileController::class, 'email_message'])->name('email_message');
@@ -38,5 +52,4 @@ Route::post('/search/linkedin', [UnipileController::class, 'linkedin_search'])->
 Route::post('/search/post', [UnipileController::class, 'post_search'])->name('post_search');
 Route::post('/search/post/reactions', [UnipileController::class, 'reactions_post_search'])->name('reactions_post_search');
 Route::post('/search/post/comments', [UnipileController::class, 'comments_post_search'])->name('comments_post_search');
-Route::post('/delete/account', [UnipileController::class, 'delete_account'])->name('delete_account');
 Route::post('/connection/count', [UnipileController::class, 'get_connection_count'])->name('get_connection_count');

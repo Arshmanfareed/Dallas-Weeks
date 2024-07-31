@@ -80,7 +80,7 @@ Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])-
 
 /* These are for actions like campaign and leads */
 Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
-Route::get('/get_relations', [UnipileController::class, 'get_relations'])->name('getAllRelations');
+Route::get('/list_all_relations', [UnipileController::class, 'list_all_relations'])->name('getAllRelations');
 Route::get('/delete_an_account', [LinkedInController::class, 'delete_an_account'])->name('delete_an_account');
 
 /* These are for dashboard which requires authentication */
