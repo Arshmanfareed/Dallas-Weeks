@@ -131,6 +131,7 @@ $(document).ready(function () {
                 $(this).attr("value", "false");
             }
         });
+        $("#loader").show();
         $.ajax({
             url: createSchedulePath,
             method: "POST",
@@ -138,9 +139,6 @@ $(document).ready(function () {
                 "X-CSRF-TOKEN": csrfToken,
             },
             data: form.serialize(),
-            beforeSend: function () {
-                $("#loader").show();
-            },
             success: function (response) {
                 if (response.success) {
                     $("#schedule_modal").modal("hide");
@@ -190,11 +188,13 @@ $(document).ready(function () {
                         )
                     );
                 }
-                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(error);
             },
+            complete: function () {
+                $("#loader").hide();
+            }
         });
     });
     $(".search_schedule").on("input", function (e) {

@@ -1047,13 +1047,11 @@ $(document).ready(function () {
         var list_icon = $(this).find(".list-icon").html();
         var item_id = $(this).attr("id");
         var name_html = "";
+        $("#loader").show();
         $.ajax({
             url: getElementByIdRoute.replace(":element_id", item_id),
             type: "GET",
             dataType: "json",
-            beforeSend: function () {
-                $("#loader").show();
-            },
             success: function (response) {
                 if (response.success) {
                     name_html += '<div class="element_properties">';
@@ -1135,11 +1133,13 @@ $(document).ready(function () {
                 }
                 $("#properties").html(name_html);
                 $("#save").on("click", onSave);
-                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
             },
+            complete: function () {
+                $("#loader").hide();
+            }
         });
     }
 
@@ -1151,6 +1151,7 @@ $(document).ready(function () {
             "z-index": "0",
             border: "none",
         });
+        $("#loader").show();
         $.ajax({
             url: updateCampaignRoute.replace(":campaign_id", campaign_id),
             type: "POST",
@@ -1162,20 +1163,19 @@ $(document).ready(function () {
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
-            beforeSend: function () {
-                $("#loader").show();
-            },
             success: function (response) {
                 if (response.success) {
                     window.location = campaignRoute;
                 } else {
                     toastr.error(response.properties);
                 }
-                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
             },
+            complete: function () {
+                $("#loader").hide();
+            }
         });
     });
 });

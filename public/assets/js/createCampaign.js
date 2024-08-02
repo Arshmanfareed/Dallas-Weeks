@@ -233,6 +233,7 @@ $(document).ready(function () {
             var formData = new FormData();
             formData.append("campaign_url", fileInput);
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
+            $("#loader").show();
             $.ajax({
                 url: importCSVPath,
                 type: "POST",
@@ -240,9 +241,6 @@ $(document).ready(function () {
                 contentType: false,
                 processData: false,
                 headers: { "X-CSRF-TOKEN": csrfToken },
-                beforeSend: function () {
-                    $("#loader").show();
-                },
                 success: function (response) {
                     if (response.success) {
                         $("#sequance_modal")
@@ -290,7 +288,6 @@ $(document).ready(function () {
                         };
                         toastr.error(response.message);
                     }
-                    $("#loader").hide();
                 },
                 error: function (xhr, status, error) {
                     form.find("span.campaign_url").text(error);
@@ -302,6 +299,9 @@ $(document).ready(function () {
                         "background-color": "red",
                     });
                 },
+                complete: function () {
+                    $("#loader").hide();
+                }
             });
         } else {
             form.find('.connections').prop('disabled', false);

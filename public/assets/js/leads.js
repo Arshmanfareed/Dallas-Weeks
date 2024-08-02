@@ -31,14 +31,12 @@ $(document).ready(function () {
         if (search === "") {
             search = "null";
         }
+        $("#loader").show();
         $.ajax({
             url: leadsCampaignFilterPath
                 .replace(":id", campaign_id)
                 .replace(":search", search),
             type: "GET",
-            beforeSend: function () {
-                $("#loader").show();
-            },
             success: function (response) {
                 if (response.success) {
                     var leads = response.leads;
@@ -65,8 +63,21 @@ $(document).ready(function () {
                         } else {
                             html += `<div class="per discovered">Discovered</div>`;
                         }
-                        html += `</td><td>23</td>`;
-                        html += `<td>` + leads[key]["next_step"] + `</td>`;
+                        html += `</td>`;
+                        if (leads[key]['current_step'] != null) {
+                            html += `<td>`;
+                            html += leads[key]['current_step'];
+                            html += `</td>`;
+                        } else {
+                            html += `<td style='color: red; font-weight: bold'>Step 1</td>`;
+                        }
+                        if (leads[key]["next_step"] != null) {
+                            html += `<td>`;
+                            html += leads[key]['next_step'];
+                            html += `</td>`;
+                        } else {
+                            html += `<td style='color: green; font-weight: bold'>Completed</td>`;
+                        }
                         var createdAtDate = new Date(leads[key]["created_at"]);
                         var now = new Date();
                         var diffMs = now - createdAtDate;
@@ -107,11 +118,47 @@ $(document).ready(function () {
                     );
                     var linkedin_settings = response.settings.linkedin_setting;
                     linkedin_settings.forEach(element => {
-                        var field = $('#'+element['setting_slug']);
-                        if (element['value'] == 'yes') {
+                        var field = $('#' + element['setting_slug']);
+                        if (element['value'] === 'yes') {
                             field.prop('checked', true);
-                        } else if (element['value'] == 'no') {
+                        } else if (element['value'] === 'no') {
                             field.prop('checked', false);
+                        }
+                    });
+                    var global_settings = response.settings.global_setting;
+                    global_settings.forEach(element => {
+                        var field = $('#' + element['setting_slug']);
+                        if (element['value'] === 'yes') {
+                            field.prop('checked', true);
+                        } else if (element['value'] === 'no') {
+                            field.prop('checked', false);
+                        } else {
+                            var schedule = $('.' + element['setting_slug']);
+                            schedule.each(function () {
+                                if (element['value'] == $(this).val()) {
+                                    $(this).prop('checked', true);
+                                } else {
+                                    $(this).prop('checked', false);
+                                }
+                            });
+                        }
+                    });
+                    var email_settings = response.settings.email_setting;
+                    email_settings.forEach(element => {
+                        var field = $('#' + element['setting_slug']);
+                        if (element['value'] === 'yes') {
+                            field.prop('checked', true);
+                        } else if (element['value'] === 'no') {
+                            field.prop('checked', false);
+                        } else {
+                            var schedule = $('.' + element['setting_slug']);
+                            schedule.each(function () {
+                                if (element['value'] == $(this).val()) {
+                                    $(this).prop('checked', true);
+                                } else {
+                                    $(this).prop('checked', false);
+                                }
+                            });
                         }
                     });
                 } else {
@@ -137,14 +184,28 @@ $(document).ready(function () {
                         '<i class="fa-solid fa-calendar-days"></i>Created at: ' +
                         formattedDate
                     );
+                    var setting_switch = $('.setting_switch');
+                    setting_switch.each(function (index, setting) {
+                        $(setting).prop('checked', false);
+                    });
+                    var schedule = $('.schedule_id');
+                    schedule.each(function (index, setting) {
+                        if (parseInt($(setting).val()) === 1) {
+                            $(this).prop('checked', true);
+                        } else {
+                            $(this).prop('checked', false);
+                        }
+                    });
                 }
                 $(".setting_btn").on("click", setting_list);
                 $(".setting_list").hide();
-                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
             },
+            complete: function () {
+                $("#loader").hide();
+            }
         });
     }
 
@@ -162,6 +223,7 @@ $(document).ready(function () {
             $("#email_error").text("").css({
                 display: "none",
             });
+            $("#loader").show();
             $.ajax({
                 url: sendLeadsToEmail,
                 type: "POST",
@@ -170,18 +232,17 @@ $(document).ready(function () {
                     email: email,
                     campaign_id: campaign_id,
                 },
-                beforeSend: function () {
-                    $("#loader").show();
-                },
                 success: function (response) {
                     if (response.success) {
                         $("#export_modal").modal("hide");
                     }
-                    $("#loader").hide();
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
                 },
+                complete: function () {
+                    $("#loader").hide();
+                }
             });
         } else {
             form.find("#export_email").css({

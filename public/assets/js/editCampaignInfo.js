@@ -96,6 +96,7 @@ $(document).ready(function () {
                 $(this).attr("value", "false");
             }
         });
+        $("#loader").show();
         $.ajax({
             url: createSchedulePath,
             method: "POST",
@@ -103,9 +104,6 @@ $(document).ready(function () {
                 "X-CSRF-TOKEN": csrfToken,
             },
             data: form.serialize(),
-            beforeSend: function () {
-                $("#loader").show();
-            },
             success: function (response) {
                 if (response.success) {
                     $("#schedule_modal").modal("hide");
@@ -155,11 +153,13 @@ $(document).ready(function () {
                         )
                     );
                 }
-                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(error);
             },
+            complete: function () {
+                $("#loader").hide();
+            }
         });
     });
 
@@ -169,12 +169,10 @@ $(document).ready(function () {
         if (search === "") {
             search = "null";
         }
+        $("#loader").show();
         $.ajax({
             url: filterSchedulePath.replace(":search", search),
             method: "GET",
-            beforeSend: function () {
-                $("#loader").show();
-            },
             success: function (response) {
                 if (response.success) {
                     schedules = response.schedules;
@@ -239,11 +237,13 @@ $(document).ready(function () {
                         $("#schedule_list_1").html(html);
                     }
                 }
-                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(error);
             },
+            complete: function () {
+                $("#loader").hide();
+            }
         });
     });
 });

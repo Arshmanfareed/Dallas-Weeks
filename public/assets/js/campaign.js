@@ -11,12 +11,10 @@ $(document).ready(function () {
 
     $(document).on("change", ".switch", function (e) {
         var campaign_id = $(this).attr("id").replace("switch", "");
+        $("#loader").show();
         $.ajax({
             url: activateCampaignRoute.replace(":campaign_id", campaign_id),
             type: "GET",
-            beforeSend: function () {
-                $("#loader").show();
-            },
             success: function (response) {
                 if (response.success && response.active == 1) {
                     toastr.options = {
@@ -51,23 +49,23 @@ $(document).ready(function () {
                     html += "</td></tr>";
                     $("#campaign_table_body").html(html);
                 }
-                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
             },
+            complete: function () {
+                $("#loader").hide();
+            }
         });
     });
 
     $(document).on("click", ".delete_campaign", function (e) {
         if (confirm("Are you sure to delete this campaign?")) {
             var campaign_id = $(this).attr("id").replace("delete", "");
+            $("#loader").show();
             $.ajax({
                 url: deleteCampaignRoute.replace(":id", campaign_id),
                 type: "GET",
-                beforeSend: function () {
-                    $("#loader").show();
-                },
                 success: function (response) {
                     if (response.success) {
                         toastr.options = {
@@ -100,11 +98,13 @@ $(document).ready(function () {
                         html += "</td></tr>";
                         $("#campaign_table_body").html(html);
                     }
-                    $("#loader").hide();
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
                 },
+                complete: function () {
+                    $("#loader").hide();
+                }
             });
         }
     });
@@ -112,12 +112,10 @@ $(document).ready(function () {
     $(document).on("click", ".archive_campaign", function (e) {
         if (confirm("Are you sure to archive this campaign?")) {
             var campaign_id = $(this).attr("id").replace("archive", "");
+            $("#loader").show();
             $.ajax({
                 url: archiveCampaignRoute.replace(":id", campaign_id),
                 type: "GET",
-                beforeSend: function () {
-                    $("#loader").show();
-                },
                 success: function (response) {
                     if (response.success && response.archive == 1) {
                         toastr.options = {
@@ -150,11 +148,13 @@ $(document).ready(function () {
                         html += "</td></tr>";
                         $("#campaign_table_body").html(html);
                     }
-                    $("#loader").hide();
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
                 },
+                complete: function () {
+                    $("#loader").hide();
+                }
             });
         }
     });
@@ -171,6 +171,7 @@ $(document).ready(function () {
         if (search === "") {
             search = "null";
         }
+        $("#loader").show();
         $.ajax({
             url: filterCampaignRoute
                 .replace(":filter", filter)
@@ -253,10 +254,6 @@ $(document).ready(function () {
                 } else {
                     $(".archive_campaign").html("Archive campaign");
                 }
-                $("#loader").hide();
-            },
-            beforeSend: function () {
-                $("#loader").show();
             },
             error: function (xhr, status, error) {
                 var html = ``;
@@ -266,6 +263,9 @@ $(document).ready(function () {
                 html += "</td></tr>";
                 $("#campaign_table_body").html(html);
             },
+            complete: function () {
+                $("#loader").hide();
+            }
         });
     }
 

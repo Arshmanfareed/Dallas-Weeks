@@ -49,10 +49,10 @@
                                     </form>
                                     <div class="filt_opt">
                                         <select name="num" id="num">
-                                            <option value="01">10</option>
-                                            <option value="02">20</option>
-                                            <option value="03">30</option>
-                                            <option value="04">40</option>
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="30">30</option>
+                                            <option value="40">40</option>
                                         </select>
                                     </div>
                                 </div>
@@ -101,8 +101,8 @@
                                                     @foreach ($leads as $lead)
                                                     <tr>
                                                         <td>
-                                                            <div class="switch_box"><input type="checkbox" class="switch" id="{{ 'swicth' . $lead['id'] }}" {{ $lead['is_active'] == 1 ? 'checked' : '' }}><label for="{{ 's
-                                                                                                                                                                wicth' . $lead['id'] }}">Toggle</label>
+                                                            <div class="switch_box"><input type="checkbox" class="switch" id="{{ 'swicth' . $lead['id'] }}" {{ $lead['is_active'] == 1 ? 'checked' : '' }}>
+                                                                <label for="{{ 'swicth' . $lead['id'] }}">Toggle</label>
                                                             </div>
                                                         </td>
                                                         <td class="title_cont">{{ $lead['contact'] }}</td>
@@ -127,9 +127,11 @@
                                                             <div class="per replied">Disconnected</div>
                                                             @endif
                                                         </td>
-                                                        <td>23</td>
-                                                        <td>
-                                                            {{ $lead['next_step'] }}
+                                                        <td style="color: {{ $lead['current_step'] ? '' : 'red' }}; font-weight: {{ $lead['current_step'] ? '' : 'bold' }};">
+                                                            {{ $lead['current_step'] ?? 'Step 1' }}
+                                                        </td>
+                                                        <td style="color: {{ $lead['next_step'] ? '' : 'green' }}; font-weight: {{ $lead['next_step'] ? '' : 'bold' }};">
+                                                            {{ $lead['next_step'] ?? 'Completed' }}
                                                         </td>
                                                         <td>
                                                             <div class="">
@@ -176,7 +178,6 @@
                                                         <label for="linkedin-url">LinkedIn URL:</label>
                                                         <input type="url" id="linkedin-url" name="linkedin-url" placeholder="LinkedIn search URL" required="">
                                                     </div>
-                                                    <button>Save changes</button>
                                                 </div>
                                             </form>
                                             <div class="date" id="created_at">
@@ -186,110 +187,227 @@
                                         <div class="email_setting">
                                             <div class="border_box">
                                                 <h3>Email settings</h3>
-                                                <div id="accordion">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <a class="card-link" data-toggle="collapse" href="#collapseOne">
+                                                <div class="accordion" id="accordion">
+                                                    <div class="accordion-item">
+                                                        <h2 class="accordion-header" id="headingOne">
+                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                                                 Email accounts to use for this campaign
-                                                            </a>
-                                                        </div>
-                                                        <div id="collapseOne" class="collapse " data-parent="#accordion">
-                                                            <div class="card-body">
-                                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                                elit, sed do eiusmod tempor incididunt ut labore et
-                                                                dolore magna aliqua. Ut enim ad minim veniam, quis
-                                                                nostrud exercitation ullamco laboris nisi ut aliquip ex
-                                                                ea commodo consequat.
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordion">
+                                                            <div class="accordion-body">
+                                                                <strong>This is the second item's accordion body.</strong> It is
+                                                                hidden by default, until the collapse plugin adds the
+                                                                appropriate
+                                                                classes that we use to style each element. These classes control
+                                                                the
+                                                                overall appearance, as well as the showing and hiding via CSS
+                                                                transitions. You can modify any of this with custom CSS or
+                                                                overriding our default variables. It's also worth noting that
+                                                                just
+                                                                about any HTML can go within the <code>.accordion-body</code>,
+                                                                though the transition does limit overflow.
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
+                                                    <div class="accordion-item">
+                                                        <h2 class="accordion-header" id="headingTwo">
+                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                                                 Schedule email
-                                                            </a>
-                                                        </div>
-                                                        <div id="collapseTwo" class="collapse" data-parent="#accordion">
-                                                            <div class="card-body">
-                                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                                elit, sed do eiusmod tempor incididunt ut labore et
-                                                                dolore magna aliqua. Ut enim ad minim veniam, quis
-                                                                nostrud exercitation ullamco laboris nisi ut aliquip ex
-                                                                ea commodo consequat.
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordion">
+                                                            <div class="accordion-body">
+                                                                <div class="schedule-tab">
+                                                                    <button class="schedule-btn active" id="my_email_schedule_btn" data-tab="my_email_schedule">My Schedules</button>
+                                                                    <button class="schedule-btn " id="team_email_schedule_btn" data-tab="team_email_schedule">Team schedules</button>
+                                                                </div>
+                                                                <div class="active schedule-content" id="my_email_schedule">
+                                                                    @if (!empty($campaign_schedule->first()))
+                                                                    <ul class="schedule_list" id="schedule_list_1">
+                                                                        @foreach ($campaign_schedule as $schedule)
+                                                                        <li>
+                                                                            <div class="row schedule_list_item">
+                                                                                <div class="col-lg-2 schedule_item">
+                                                                                    <input type="radio" class="schedule_id email_settings_schedule_id" value="{{ $schedule['id'] }}" {{ $schedule['user_id'] == '0' ? 'checked' : '' }}>
+                                                                                </div>
+                                                                                <div class="col-lg-2 schedule_avatar">S
+                                                                                </div>
+                                                                                <div class="col-lg-2 schedule_name">
+                                                                                    <i class="fa-solid fa-circle-check" style="color: #4bcea6;"></i>
+                                                                                    <span>{{ $schedule['schedule_name'] }}</span>
+                                                                                </div>
+                                                                                <div class="col-lg-6 schedule_days">
+                                                                                    @php
+                                                                                    $schedule_days = App\Models\ScheduleDays::where(
+                                                                                    'schedule_id',
+                                                                                    $schedule['id'],
+                                                                                    )
+                                                                                    ->orderBy('id')
+                                                                                    ->get();
+                                                                                    @endphp
+                                                                                    <ul class="schedule_day_list">
+                                                                                        @foreach ($schedule_days as $day)
+                                                                                        <li class="schedule_day {{ $day['is_active'] == '1' ? 'selected_day' : '' }}">
+                                                                                            {{ ucfirst($day['schedule_day']) }}
+                                                                                        </li>
+                                                                                        @endforeach
+                                                                                        <li class="schedule_time">
+                                                                                            <button href="javascript:;" type="button" class="btn" data-bs-toggle="modal" data-bs-target="#time_modal"><i class="fa-solid fa-globe" style="color: #16adcb;"></i></button>
+                                                                                        </li>
+                                                                                    </ul>
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                    @endif
+                                                                </div>
+                                                                <div class=" schedule-content" id="team_email_schedule">Hello
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
+                                                    <div class="accordion-item">
+                                                        <h2 class="accordion-header" id="headingThree">
+                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                                                 Email tracking preference
-                                                            </a>
-                                                        </div>
-                                                        <div id="collapseThree" class="collapse" data-parent="#accordion">
-                                                            <div class="card-body">
-                                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                                elit, sed do eiusmod tempor incididunt ut labore et
-                                                                dolore magna aliqua. Ut enim ad minim veniam, quis
-                                                                nostrud exercitation ullamco laboris nisi ut aliquip ex
-                                                                ea commodo consequat.
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordion">
+                                                            <div class="accordion-body">
+                                                                <div class="linked_set d-flex justify-content-between">
+                                                                    <p> Track the number of email link clicks </p>
+                                                                    <div class="switch_box"><input type="checkbox" class="switch setting_switch" id="email_settings_track_the_number_of_email_link_clicks" disabled><label for="email_settings_track_the_number_of_email_link_clicks">Toggle</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="linked_set d-flex justify-content-between">
+                                                                    <p> Track the number of opened emails </p>
+                                                                    <div class="switch_box"><input type="checkbox" class="switch setting_switch" id="email_settings_track_the_number_of_opened_emails" disabled><label for="email_settings_track_the_number_of_opened_emails">Toggle</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="linked_set d-flex justify-content-between">
+                                                                    <p> Text only email (no HTML) <span title="Send email messages that only include text without images, graphics or formatting. If you enable this option, you won't be able to track open and link click rates.">!</span>
+                                                                    </p>
+                                                                    <div class="switch_box"><input type="checkbox" class="switch setting_switch" id="email_settings_text_only_email_no_html" disabled><label for="email_settings_text_only_email_no_html">Toggle</label>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <h3>Email settings</h3>
+                                                <h3>LinkedIn settings</h3>
                                                 <div class="email_settings">
                                                     <ul class="list-unstyled p-0">
                                                         <li class="d-flex justify-content-between align-items-center ">
                                                             <span>Discover premium LinkedIn account only</span>
-                                                            <div class="switch_box"><input type="checkbox" class="switch" id="linkedin_settings_discover_premium_linked_accounts_only"><label for="linkedin_settings_discover_premium_linked_accounts_only">Toggle</label></div>
+                                                            <div class="switch_box"><input type="checkbox" class="switch setting_switch" id="linkedin_settings_discover_premium_linked_accounts_only" disabled><label for="linkedin_settings_discover_premium_linked_accounts_only">Toggle</label></div>
                                                         </li>
                                                         <li class="d-flex justify-content-between align-items-center">
                                                             <span>Discover leads with open profile status only</span>
-                                                            <div class="switch_box"><input type="checkbox" class="switch" id="linkedin_settings_discover_leads_with_open_profile_status_only"><label for="linkedin_settings_discover_leads_with_open_profile_status_only">Toggle</label></div>
+                                                            <div class="switch_box"><input type="checkbox" class="switch setting_switch" id="linkedin_settings_discover_leads_with_open_profile_status_only" disabled><label for="linkedin_settings_discover_leads_with_open_profile_status_only">Toggle</label></div>
                                                         </li>
                                                         <li class="d-flex justify-content-between align-items-center">
                                                             <span> Collect contact information</span>
-                                                            <div class="switch_box"><input type="checkbox" class="switch" id="linkedin_settings_collect_contact_information"><label for="linkedin_settings_collect_contact_information">Toggle</label></div>
+                                                            <div class="switch_box"><input type="checkbox" class="switch setting_switch" id="linkedin_settings_collect_contact_information" disabled><label for="linkedin_settings_collect_contact_information">Toggle</label></div>
                                                         </li>
                                                         <li class="d-flex justify-content-between align-items-center">
                                                             <span>Remove leads with pending connection requests</span>
-                                                            <div class="switch_box"><input type="checkbox" class="switch" id="linkedin_settings_remove_leads_with_pending_connections"><label for="linkedin_settings_remove_leads_with_pending_connections">Toggle</label></div>
+                                                            <div class="switch_box"><input type="checkbox" class="switch setting_switch" id="linkedin_settings_remove_leads_with_pending_connections" disabled><label for="linkedin_settings_remove_leads_with_pending_connections">Toggle</label></div>
                                                         </li>
                                                     </ul>
                                                 </div>
                                                 <hr>
                                                 <h3>Global settings</h3>
-                                                <div id="accordion">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <a class="card-link" data-toggle="collapse" href="#target_opt">
+                                                <div class="accordion" id="accordion">
+                                                    <div class="accordion-item">
+                                                        <h2 class="accordion-header" id="headingOne">
+                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
                                                                 Targeting options
-                                                            </a>
-                                                        </div>
-                                                        <div id="target_opt" class="collapse " data-parent="#accordion">
-                                                            <div class="card-body">
-                                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                                elit, sed do eiusmod tempor incididunt ut labore et
-                                                                dolore magna aliqua. Ut enim ad minim veniam, quis
-                                                                nostrud exercitation ullamco laboris nisi ut aliquip ex
-                                                                ea commodo consequat.
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordion">
+                                                            <div class="accordion-body">
+                                                                <div class="linked_set d-flex justify-content-between">
+                                                                    <p> Include leads that replied to your messages
+                                                                        <span title="Include all leads you previously had a conversation with via Linkedin messages, inMails, or email">!</span>
+                                                                    </p>
+                                                                    <div class="switch_box"><input type="checkbox" class="switch setting_switch" id="global_settings_include_leads_that_replied_to_your_messages" disabled><label for="global_settings_include_leads_that_replied_to_your_messages">Toggle</label>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- <div class="linked_set d-flex justify-content-between">
+                                                            <p> Include leads also found in campaigns across your team
+                                                                seats
+                                                                <span>!</span>
+                                                            </p>
+                                                            <div class="switch_box"><input type="checkbox" class="switch setting_switch" id="global_settings_include_leads_also_found_in_campaigns_across_your_team_seats" disabled><label for="global_settings_include_leads_also_found_in_campaigns_across_your_team_seats">Toggle</label>
+                                                            </div>
+                                                        </div> -->
+                                                                <div class="linked_set d-flex justify-content-between">
+                                                                    <p> Discover new leads only <span title="Leads that exist in other campaigns in your seat will not be discovered">!</span>
+                                                                    </p>
+                                                                    <div class="switch_box"><input type="checkbox" class="switch setting_switch" id="global_settings_discover_new_leads_only" disabled><label for="global_settings_discover_new_leads_only">Toggle</label>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <a class="collapsed card-link" data-toggle="collapse" href="#schedule_cmp">
+                                                    <div class="accordion-item">
+                                                        <h2 class="accordion-header" id="headingTwo">
+                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
                                                                 Schedule campaign
-                                                            </a>
-                                                        </div>
-                                                        <div id="schedule_cmp" class="collapse" data-parent="#accordion">
-                                                            <div class="card-body">
-                                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                                elit, sed do eiusmod tempor incididunt ut labore et
-                                                                dolore magna aliqua. Ut enim ad minim veniam, quis
-                                                                nostrud exercitation ullamco laboris nisi ut aliquip ex
-                                                                ea commodo consequat.
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordion">
+                                                            <div class="accordion-body">
+                                                                <div class="schedule-tab">
+                                                                    <button class="schedule-btn active" id="my_campaign_schedule_btn" data-tab="my_campaign_schedule">My Schedules</button>
+                                                                    <button class="schedule-btn " id="team_campaign_schedule_btn" data-tab="team_campaign_schedule">Team
+                                                                        schedules</button>
+                                                                </div>
+                                                                <div class="active schedule-content" id="my_campaign_schedule">
+                                                                    @if (!empty($campaign_schedule->first()))
+                                                                    <ul class="schedule_list" id="schedule_list_2">
+                                                                        @foreach ($campaign_schedule as $schedule)
+                                                                        <li>
+                                                                            <div class="row schedule_list_item">
+                                                                                <div class="col-lg-2 schedule_item">
+                                                                                    <input type="radio" class="schedule_id global_settings_schedule_id" value="{{ $schedule['id'] }}" {{ $schedule['user_id'] == '0' ? 'checked' : '' }}>
+                                                                                </div>
+                                                                                <div class="col-lg-2 schedule_avatar">S
+                                                                                </div>
+                                                                                <div class="col-lg-2 schedule_name">
+                                                                                    <i class="fa-solid fa-circle-check" style="color: #4bcea6;"></i>
+                                                                                    <span>{{ $schedule['schedule_name'] }}</span>
+                                                                                </div>
+                                                                                <div class="col-lg-6 schedule_days">
+                                                                                    @php
+                                                                                    $schedule_days = App\Models\ScheduleDays::where(
+                                                                                    'schedule_id',
+                                                                                    $schedule['id'],)
+                                                                                    ->orderBy('id')
+                                                                                    ->get();
+                                                                                    @endphp
+                                                                                    <ul class="schedule_day_list">
+                                                                                        @foreach ($schedule_days as $day)
+                                                                                        <li class="schedule_day {{ $day['is_active'] == '1' ? 'selected_day' : '' }}">
+                                                                                            {{ ucfirst($day['schedule_day']) }}
+                                                                                        </li>
+                                                                                        @endforeach
+                                                                                        <li class="schedule_time">
+                                                                                            <button href="javascript:;" type="button" class="btn" data-bs-toggle="modal" data-bs-target="#time_modal"><i class="fa-solid fa-globe" style="color: #16adcb;"></i></button>
+                                                                                        </li>
+                                                                                    </ul>
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                    @endif
+                                                                </div>
+                                                                <div class=" schedule-content" id="team_campaign_schedule">
+                                                                    Hello</div>
                                                             </div>
                                                         </div>
                                                     </div>

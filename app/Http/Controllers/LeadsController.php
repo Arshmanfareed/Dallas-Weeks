@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Leads;
 use League\Csv\Writer;
 use App\Exports\LeadsExport;
+use App\Models\CampaignElement;
 use App\Models\LeadActions;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Mail;
@@ -20,6 +21,7 @@ use App\Models\CampaignPath;
 use App\Models\EmailSetting;
 use App\Models\GlobalSetting;
 use App\Models\LinkedinSetting;
+use App\Models\CampaignSchedule;
 use Exception;
 
 class LeadsController extends Controller
@@ -30,10 +32,47 @@ class LeadsController extends Controller
         $seat_id = session('seat_id');
         $campaigns = Campaign::where('user_id', $user_id)->where('seat_id', $seat_id)->where('is_archive', 0)->get();
         $leads = Leads::whereIn('campaign_id', $campaigns->pluck('id')->toArray())->get();
+        foreach ($leads as $lead) {
+            $leadAction = LeadActions::where('lead_id', $lead['id'])->orderBy('created_at', 'desc')->first();
+            $lead['current_step'] = null;
+            $lead['next_step'] = null;
+            if ($leadAction) {
+                $currentElementId = $leadAction->current_element_id;
+                $updatedCampaignElement = UpdatedCampaignElements::find($currentElementId);
+                if ($updatedCampaignElement) {
+                    $elementId = $updatedCampaignElement->element_id;
+                    $campaignElement = CampaignElement::find($elementId);
+                    if ($campaignElement) {
+                        $lead['current_step'] = $campaignElement->element_name;
+                    }
+                }
+                $nextElementId = $leadAction->next_true_element_id;
+                $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
+                if ($updatedCampaignElement) {
+                    $elementId = $updatedCampaignElement->element_id;
+                    $campaignElement = CampaignElement::find($elementId);
+                    if ($campaignElement) {
+                        $lead['next_step'] = $campaignElement->element_name;
+                    }
+                } else {
+                    $nextElementId = $leadAction->next_false_element_id;
+                    $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
+                    if ($updatedCampaignElement) {
+                        $elementId = $updatedCampaignElement->element_id;
+                        $campaignElement = CampaignElement::find($elementId);
+                        if ($campaignElement) {
+                            $lead['next_step'] = $campaignElement->element_name;
+                        }
+                    }
+                }
+            }
+        }
+        $schedules = CampaignSchedule::where('user_id', $user_id)->orWhere('user_id', 0)->get();
         $data = [
             'title' => 'Leads',
             'leads' => $leads,
             'campaigns' => $campaigns,
+            'campaign_schedule' => $schedules
         ];
         return view('leads', $data);
     }
@@ -48,37 +87,78 @@ class LeadsController extends Controller
         $linkedin_setting = null;
         $global_setting = null;
         if ($search != 'null' && $id != 'all') {
-            $campaign = Campaign::where('user_id', $user_id)->where('id', $id)->first();
-            $lead = Leads::where('user_id', $user_id)
-                ->where(function ($query) use ($search) {
-                    $query->where('contact', 'LIKE', '%' . $search . '%')
-                        ->orWhere('title_company', 'LIKE', '%' . $search . '%');
-                })
-                ->where('campaign_id', $campaign->id)
-                ->get();
+            $campaign = Campaign::where('user_id', $user_id)
+                ->where('seat_id', $seat_id)
+                ->where('id', $id)
+                ->where('is_archive', 0)
+                ->first();
+            $lead = Leads::where(function ($query) use ($search) {
+                $query->where('contact', 'LIKE', '%' . $search . '%')->orWhere('title_company', 'LIKE', '%' . $search . '%');
+            })->where('campaign_id', $campaign->id)->get();
             $email_setting = EmailSetting::where('campaign_id', $campaign->id)->get();
             $linkedin_setting = LinkedinSetting::where('campaign_id', $campaign->id)->get();
             $global_setting = GlobalSetting::where('campaign_id', $campaign->id)->get();
         } else if ($id != 'all') {
-            $campaign = Campaign::where('user_id', $user_id)->where('id', $id)->first();
-            $lead = Leads::where('user_id', $user_id)->where('campaign_id', $campaign->id)->get();
+            $campaign = Campaign::where('user_id', $user_id)
+                ->where('seat_id', $seat_id)
+                ->where('id', $id)
+                ->where('is_archive', 0)
+                ->first();
+            $lead = Leads::where('campaign_id', $campaign->id)->get();
             $email_setting = EmailSetting::where('campaign_id', $campaign->id)->get();
             $linkedin_setting = LinkedinSetting::where('campaign_id', $campaign->id)->get();
             $global_setting = GlobalSetting::where('campaign_id', $campaign->id)->get();
         } else if ($search != 'null') {
-            $campaign = Campaign::where('seat_id', $seat_id)->get();
-            $lead = Leads::where('user_id', $user_id)
-                ->where(function ($query) use ($search) {
-                    $query->where('contact', 'LIKE', '%' . $search . '%')
-                        ->orWhere('title_company', 'LIKE', '%' . $search . '%');
-                })
-                ->whereIn('campaign_id', $campaign->pluck('id')->toArray())
+            $campaign = Campaign::where('user_id', $user_id)
+                ->where('seat_id', $seat_id)
+                ->where('is_archive', 0)
                 ->get();
+            $lead = Leads::where(function ($query) use ($search) {
+                $query->where('contact', 'LIKE', '%' . $search . '%')->orWhere('title_company', 'LIKE', '%' . $search . '%');
+            })->whereIn('campaign_id', $campaign->pluck('id')->toArray())->get();
             $campaign = null;
         } else {
-            $campaign = Campaign::where('seat_id', $seat_id)->get();
-            $lead = Leads::where('user_id', $user_id)->whereIn('campaign_id', $campaign->pluck('id')->toArray())->get();
+            $campaign = Campaign::where('user_id', $user_id)
+                ->where('seat_id', $seat_id)
+                ->where('is_archive', 0)
+                ->get();
+            $lead = Leads::whereIn('campaign_id', $campaign->pluck('id')->toArray())->get();
             $campaign = null;
+        }
+        foreach ($lead as $item) {
+            $leadAction = LeadActions::where('lead_id', $item['id'])->orderBy('created_at', 'desc')->first();
+            $item['current_step'] = null;
+            $item['next_step'] = null;
+            if ($leadAction) {
+                $currentElementId = $leadAction->current_element_id;
+                $updatedCampaignElement = UpdatedCampaignElements::find($currentElementId);
+                if ($updatedCampaignElement) {
+                    $elementId = $updatedCampaignElement->element_id;
+                    $campaignElement = CampaignElement::find($elementId);
+                    if ($campaignElement) {
+                        $item['current_step'] = $campaignElement->element_name;
+                    }
+                }
+                $nextElementId = $leadAction->next_true_element_id;
+                $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
+                if ($updatedCampaignElement) {
+                    $elementId = $updatedCampaignElement->element_id;
+                    $campaignElement = CampaignElement::find($elementId);
+                    if ($campaignElement) {
+                        $item['next_step'] = $campaignElement->element_name;
+                    }
+                } else {
+                    $nextElementId = $leadAction->next_false_element_id;
+                    $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
+                    if ($updatedCampaignElement) {
+                        $elementId = $updatedCampaignElement->element_id;
+                        $campaignElement = CampaignElement::find($elementId);
+                        if ($campaignElement) {
+                            $item['next_step'] = $campaignElement->element_name;
+                        }
+                    }
+                }
+            }
         }
         $settings = [
             'email_setting' => $email_setting,

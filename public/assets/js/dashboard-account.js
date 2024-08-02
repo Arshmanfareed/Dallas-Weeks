@@ -30,12 +30,10 @@ $(document).ready(function () {
         if (search === "") {
             search = "null";
         }
+        $("#loader").show();
         $.ajax({
             url: filterSeatRoute.replace(":search", search),
             type: "GET",
-            beforeSend: function () {
-                $("#loader").show();
-            },
             success: function (response) {
                 if (response.success) {
                     var seats = response.seats;
@@ -68,7 +66,6 @@ $(document).ready(function () {
                     html += "</td></tr>";
                     $("#campaign_table_body").html(html);
                 }
-                $("#loader").hide();
             },
             error: function (xhr, status, error) {
                 var html = ``;
@@ -78,6 +75,9 @@ $(document).ready(function () {
                 html += "</td></tr>";
                 $("#campaign_table_body").html(html);
             },
+            complete: function () {
+                $("#loader").hide();
+            }
         });
     }
 

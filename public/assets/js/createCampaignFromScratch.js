@@ -34,6 +34,7 @@ $(document).ready(function () {
                 if (elements_data_array.hasOwnProperty(key)) {
                     var element_data = elements_data_array[key];
                     for (var prop_key in element_data) {
+                        $("#loader").show();
                         $.ajax({
                             url: getPropertyRequiredPath.replace(
                                 ":id",
@@ -41,9 +42,6 @@ $(document).ready(function () {
                             ),
                             async: false,
                             type: "GET",
-                            beforeSend: function () {
-                                $("#loader").show();
-                            },
                             success: function (response) {
                                 if (response.success) {
                                     var property = response.property;
@@ -83,11 +81,13 @@ $(document).ready(function () {
                                         }
                                     }
                                 }
-                                $("#loader").hide();
                             },
                             error: function (xhr, status, error) {
                                 console.error(xhr.responseText);
                             },
+                            complete: function () {
+                                $("#loader").hide();
+                            }
                         });
                     }
                 }
@@ -595,6 +595,7 @@ $(document).ready(function () {
                 border: "none",
             });
             if (check_elements()) {
+                $("#loader").show();
                 $.ajax({
                     url: createCampaignPath,
                     type: "POST",
@@ -611,9 +612,6 @@ $(document).ready(function () {
                             "content"
                         ),
                     },
-                    beforeSend: function () {
-                        $("#loader").show();
-                    },
                     success: function (response) {
                         if (response.success) {
                             window.location = campaignsPath;
@@ -621,11 +619,13 @@ $(document).ready(function () {
                             toastr.error(response.message);
                             console.log(response);
                         }
-                        $("#loader").hide();
                     },
                     error: function (xhr, status, error) {
                         console.error(xhr.responseText);
                     },
+                    complete: function () {
+                        $("#loader").hide();
+                    }
                 });
             }
         });
@@ -662,13 +662,11 @@ $(document).ready(function () {
         var item_id = $(this).attr("id");
         var name_html = "";
         if (elements_data_array[item_id] == null) {
+            $("#loader").show();
             $.ajax({
                 url: getCampaignElementPath.replace(":slug", item_slug),
                 type: "GET",
                 dataType: "json",
-                beforeSend: function () {
-                    $("#loader").show();
-                },
                 success: function (response) {
                     if (response.success) {
                         name_html += '<div class="element_properties">';
@@ -721,11 +719,13 @@ $(document).ready(function () {
                     }
                     $("#properties").html(name_html);
                     $(".property_input").on("input", propertyInput);
-                    $("#loader").hide();
                 },
                 error: function (xhr, status, error) {
                     console.error(xhr.responseText);
                 },
+                complete: function () {
+                    $("#loader").hide();
+                }
             });
         } else {
             name_html += '<div class="element_properties">';
@@ -1146,6 +1146,7 @@ $(document).ready(function () {
                     var element_data = elements_data_array[key];
                     for (var prop_key in element_data) {
                         var errorOccurred = false;
+                        $("#loader").show();
                         $.ajax({
                             url: getPropertyRequiredPath.replace(
                                 ":id",
@@ -1153,9 +1154,6 @@ $(document).ready(function () {
                             ),
                             async: false,
                             type: "GET",
-                            beforeSend: function () {
-                                $("#loader").show();
-                            },
                             success: function (response) {
                                 if (response.success) {
                                     var property = response.property;
@@ -1174,11 +1172,13 @@ $(document).ready(function () {
                                         errorOccurred = true;
                                     }
                                 }
-                                $("#loader").hide();
                             },
                             error: function (xhr, status, error) {
                                 console.error(xhr.responseText);
                             },
+                            complete: function () {
+                                $("#loader").hide();
+                            }
                         });
                         if (errorOccurred) {
                             return false;
