@@ -138,13 +138,17 @@ Route::middleware(['userAuth'])->group(function () {
             Route::get('/getLeadsByCampaign/{id}/{search}', [LeadsController::class, 'getLeadsByCampaign'])->name('getLeadsByCampaign');
             Route::post('/sendLeadsToEmail', [LeadsController::class, 'sendLeadsToEmail'])->name('sendLeadsToEmail');
         });
+        Route::prefix('message')->group(function () {
+            Route::get('/', [MessageController::class, 'message'])->name('dash-messages');
+            Route::get('/chat/{chat_id}', [MessageController::class, 'get_messages_chat_id'])->name('get_messages_chat_id');
+            Route::get('/chats/{cursor}', [MessageController::class, 'get_remain_message'])->name('get_remain_message');
+        });
         Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
         Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');
         Route::get('/filterSchedule/{search}', [ScheduleCampaign::class, 'filterSchedule'])->name('filterSchedule');
         Route::get('/getElements/{campaign_id}', [CampaignElementController::class, 'getElements'])->name('getElements');
         Route::post('/import_csv', [CsvController::class, 'import_csv'])->name('import_csv');
         Route::get('/report', [ReportController::class, 'report'])->name('dash-reports');
-        Route::get('/message', [MessageController::class, 'message'])->name('dash-messages');
         Route::get('/contacts', [ContactController::class, 'contact']);
         Route::get('/integration', [IntegrationController::class, 'integration'])->name('dash-integrations');
         Route::get('/feature-suggestion', [FeatureController::class, 'featuresuggestions'])->name('dash-feature-suggestions');

@@ -3068,7 +3068,7 @@ h4 {
     border-radius: 20px;
 }
 
-.conversation .mesasges ul li {
+#chat-message .not_me {
     display: flex;
     margin-bottom: 20px;
     width: 70%;
@@ -3076,13 +3076,16 @@ h4 {
     margin-right: auto;
 }
 
-.conversation .mesasges ul li:nth-child(even) {
+#chat-message .is_me {
     flex-direction: row-reverse;
     margin-left: auto;
     margin-right: 0;
+    display: flex;
+    margin-bottom: 15px;
+    width: 70%;
 }
 
-.conversation .mesasges ul li:nth-child(even) img {
+.conversation .mesasges ul .is_me img {
     margin-right: 0;
     margin-left: 20px;
 }
@@ -6547,4 +6550,12 @@ body.light-mode .lead_sec .filt_opt > .filt_opt select {
 .action_elements ul.drop-list li:nth-child(7),
 .action_elements ul.drop-list li:nth-child(8) {
     display: none;
+}
+
+.chat-tab {
+    cursor: pointer;
+}
+
+.chat-tab .d-block {
+    width: 250px;
 }
