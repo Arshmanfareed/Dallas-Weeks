@@ -71,6 +71,20 @@
                                         @else
                                         <img src="" alt="">
                                         @endif
+                                        @php
+                                        if (isset($chat['last_message']['text'])) {
+                                        $input = $chat['last_message']['text'];
+                                        if (strlen($input) > 30) {
+                                        $trimmed_text = substr($input, 0, 30);
+                                        $trimmed_text .= '...';
+                                        $chat['last_message']['text'] = $trimmed_text;
+                                        }
+                                        }
+                                        if (isset($chat['last_message']['timestamp'])) {
+                                        $date = new \DateTime($chat['last_message']['timestamp']);
+                                        $chat['last_message']['timestamp'] = $date->format('d M');
+                                        }
+                                        @endphp
                                         <div class="d-block">
                                             <strong>{{ $chat['first_name'] . ' ' . $chat['last_name'] }}</strong>
                                             <span>{{ $chat['last_message']['text'] }}</span>
@@ -169,9 +183,16 @@
                                         @foreach ($last_chat['items'] as $message)
                                         @php
                                         $text = nl2br($message['text']);
+                                        if ($message['is_sender'] == 0) {
+                                        $img_src = $receiver['profile_picture_url'];
+                                        } else if ($message['is_sender'] == 1) {
+                                        $img_src = $sender['profile_picture_url'];
+                                        } else {
+                                        $img_src = "";
+                                        }
                                         @endphp
                                         <li class="{{ $message['is_sender'] == 0 ? 'not_me' : 'is_me' }}">
-                                            <img src="" alt="">
+                                            <img src="{{ $img_src }}" alt="">
                                             <span>{!! $text !!}</span>
                                         </li>
                                         @endforeach
@@ -204,6 +225,6 @@
 </section>
 <script>
     var getMessageChatRoute = "{{ route('get_messages_chat_id', ':chat_id') }}";
-    var getRemainMessage = "{{ route('get_remain_message', ':cursor') }}";
+    var getRemainMessage = "{{ route('get_remain_chats', ':cursor') }}";
 </script>
 @endsection

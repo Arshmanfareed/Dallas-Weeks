@@ -141,7 +141,7 @@ Route::middleware(['userAuth'])->group(function () {
         Route::prefix('message')->group(function () {
             Route::get('/', [MessageController::class, 'message'])->name('dash-messages');
             Route::get('/chat/{chat_id}', [MessageController::class, 'get_messages_chat_id'])->name('get_messages_chat_id');
-            Route::get('/chats/{cursor}', [MessageController::class, 'get_remain_message'])->name('get_remain_message');
+            Route::get('/chats/{cursor}', [MessageController::class, 'get_remain_chats'])->name('get_remain_chats');
         });
         Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
         Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');

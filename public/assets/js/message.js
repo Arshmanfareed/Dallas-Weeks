@@ -26,6 +26,18 @@ $(document).ready(function () {
                                 } else {
                                     html += `<img src="" alt="">`;
                                 }
+                                if (chat['last_message'] && chat['last_message']['text']) {
+                                    let input = chat['last_message']['text'];
+                                    if (input.length > 25) {
+                                        let trimmed_text = input.substring(0, 25) + '...';
+                                        chat['last_message']['text'] = trimmed_text;
+                                    }
+                                }
+                                if (chat['last_message'] && chat['last_message']['timestamp']) {
+                                    let date = new Date(chat['last_message']['timestamp']);
+                                    let options = { day: '2-digit', month: 'short' };
+                                    chat['last_message']['timestamp'] = date.toLocaleDateString('en-GB', options);
+                                }
                                 html += `<div class="d-block"><strong>`;
                                 html += chat['first_name'] + ' ' + chat['last_name'];
                                 html += `</strong><span>`;
@@ -36,6 +48,8 @@ $(document).ready(function () {
                             $('.chat-list').append(html);
                             if (response.cursor) {
                                 $('#chat_cursor').val(response.cursor);
+                            } else {
+                                $('#chat_cursor').val('');
                             }
                         }
                     }
@@ -66,13 +80,19 @@ $(document).ready(function () {
                         html += `<li class="`;
                         html += message['is_sender'] == 0 ? 'not_me' : 'is_me';
                         html += `">`;
-                        html += `<img src="` + `" alt="">`;
+                        html += `<img src="" alt="">`;
                         html += `<span>`;
                         var text = message['text'];
                         html += text.replace(/\n/g, '<br>');
                         html += `</span></li>`;
                     });
                     $('#chat-message>ul').html(html);
+                    if (response.sender && response.sender.profile_picture_url) {
+                        $('#chat-message>ul>.is_me>img').prop('src', response.sender.profile_picture_url);
+                    }
+                    if (response.receiver && response.receiver.profile_picture_url) {
+                        $('#chat-message>ul>.not_me>img').prop('src', response.receiver.profile_picture_url);
+                    }
                 }
                 $('.chat-list').on('scroll', updateChatList);
                 $('.chat-tab').on('click', getMessages);
