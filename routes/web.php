@@ -140,6 +140,8 @@ Route::middleware(['userAuth'])->group(function () {
         });
         Route::prefix('message')->group(function () {
             Route::get('/', [MessageController::class, 'message'])->name('dash-messages');
+            Route::get('/message/latest/{chat_id}', [MessageController::class, 'get_latest_Mesage_chat_id'])->name('get_latest_Mesage_chat_id');
+            Route::get('/chat/profile/{profile_id}', [MessageController::class, 'get_chat_Profile'])->name('get_chat_Profile');
             Route::get('/chat/{chat_id}', [MessageController::class, 'get_messages_chat_id'])->name('get_messages_chat_id');
             Route::get('/chats/{cursor}', [MessageController::class, 'get_remain_chats'])->name('get_remain_chats');
         });
