@@ -99,4 +99,79 @@ class MessageController extends Controller
         ];
         return response()->json($data);
     }
+
+    public function get_chat_sender()
+    {
+        $user_id = Auth::user()->id;
+        $seat_id = session('seat_id');
+        $seat = SeatInfo::where('id', $seat_id)->where('user_id', $user_id)->first();
+        $uc = new UnipileController();
+        $request = [
+            'account_id' => $seat['account_id'],
+        ];
+        $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
+        if ($account instanceof JsonResponse) {
+            $account = $account->getData(true);
+            if (!isset($account['error'])) {
+                $request = [
+                    'account_id' => $seat['account_id'],
+                    'profile_url' => $account['account']['connection_params']['im']['id'],
+                ];
+                $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
+                $profile = $profile->getData(true);
+                if (!isset($profile['error'])) {
+                    $profile = $profile['user_profile'];
+                    $data = [
+                        'success' => true,
+                        'sender' => $profile
+                    ];
+                    return response()->json($data);
+                }
+            }
+        }
+        return response()->json(['success' => false]);
+    }
+
+    public function get_chat_receive($chat_id)
+    {
+        $user_id = Auth::user()->id;
+        $seat_id = session('seat_id');
+        $seat = SeatInfo::where('id', $seat_id)->where('user_id', $user_id)->first();
+        $uc = new UnipileController();
+        $request = [
+            'chat_id' => $chat_id,
+        ];
+        $attendee = $uc->list_all_attendees_from_chat(new \Illuminate\Http\Request($request));
+        $attendee = $attendee->getData(true);
+        if (!isset($attendee['error'])) {
+            $request = [
+                'account_id' => $seat['account_id'],
+                'profile_url' => $attendee['attendees']['items'][0]['provider_id'],
+            ];
+            $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
+            $profile = $profile->getData(true);
+            if (!isset($profile['error'])) {
+                $profile = $profile['user_profile'];
+                $data = [
+                    'success' => true,
+                    'receiver' => $profile
+                ];
+                return response()->json($data);
+            }
+        }
+        return response()->json(['success' => false]);
+    }
+
+    public function get_latest_chat()
+    {
+    }
+
+    public function send_a_message(Request $request)
+    {
+        $validated = $request->validate([
+            'message' => 'required'
+        ]);
+        $message = $request['message'];
+        return response()->json($message);
+    }
 }

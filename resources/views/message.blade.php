@@ -71,6 +71,9 @@
                                             @foreach ($chats as $chat)
                                                 <li class="d-flex chat-tab skel-chat" id="{{ $chat['id'] }}"
                                                     data-profile="{{ $chat['attendee_provider_id'] }}">
+                                                    @if ($chat['unread'] == 1)
+                                                        <span class="unread_count">{{ $chat['unread_count'] }}</span>
+                                                    @endif
                                                     <span class="chat_image skel_chat_img"></span>
                                                     <div class="d-block">
                                                         <strong class="chat_name skel_chat_name"></strong>
@@ -209,6 +212,7 @@
                                     </ul>
                                     <div class="mesasges" id="chat-message">
                                         <ul>
+                                            <input type="hidden" name="message_cursor" id="message_cursor">
                                             <li class="not_me">
                                                 <span class="skel_img"></span>
                                                 <span class="message_text skel_text"></span>
@@ -217,19 +221,25 @@
                                                 <span class="skel_img"></span>
                                                 <span class="message_text skel_text"></span>
                                             </li>
+                                            <li class="not_me"><span class="skel_img"></span>
+                                                <span class="message_text skel_text"></span>
+                                            </li>
+                                            <li class="is_me"><span class="skel_img"></span>
+                                                <span class="message_text skel_text"></span>
+                                            </li>
                                         </ul>
                                     </div>
-                                    <form action="" class="send_form">
-                                        <input type="text" placeholder="Send a message">
+                                    <form class="send_form">
+                                        <input type="text" placeholder="Send a message" name="send_a_message" class="send_a_message">
                                         <input type="button" class="send_btn" value="send">
                                     </form>
                                 </div>
                                 <div class="conversation_info col-lg-4">
                                     <div class="info">
-                                        <img src="{{ asset('assets/img/account_img.png') }}" alt="">
-                                        <h6>John doe</h6>
-                                        <span class="user_name">Lorem Ipsum</span>
-                                        <span class="user_email">johndoe@gmail.com</span>
+                                        <img class="skel_img" src="" alt="">
+                                        <h6 class="skel_head"></h6>
+                                        <span class="user_name skel_user_name"></span>
+                                        <span class="user_email skel_user_email"></span>
                                         <div class="note">
                                             <p>Note:</p>
                                             <span>Sed ut perspiciatis unde omnis iste natus error sit.</span>
@@ -247,6 +257,9 @@
         var getRemainMessage = "{{ route('get_remain_chats', ':cursor') }}";
         var getLatestMessageRoute = "{{ route('get_latest_Mesage_chat_id', ':chat_id') }}";
         var getChatProfile = "{{ route('get_chat_Profile', ':profile_id') }}";
+        var getChatSender = "{{ route('get_chat_sender') }}";
+        var getChatReceiver = "{{ route('get_chat_receive', ':chat_id') }}";
+        var sendMessage = "{{ route('send_a_message') }}";
     </script>
     <script src="{{ asset('assets/js/message.js') }}"></script>
 @endsection

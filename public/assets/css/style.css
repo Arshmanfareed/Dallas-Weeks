@@ -6897,10 +6897,25 @@ body.light-mode .lead_sec .filt_opt>.filt_opt select {
 
 .chat-tab {
     cursor: pointer;
+    position: relative;
 }
 
 .chat-tab .d-block {
     width: 250px;
+}
+
+.skel_user_name {
+    height: 25px;
+    border-radius: 10px;
+    width: 50%;
+    margin: 7px auto;
+}
+
+.skel_head {
+    height: 25px;
+    width: 70%;
+    border-radius: 10px;
+    margin: 0 auto;
 }
 
 .skel_chat_img {
@@ -6942,12 +6957,19 @@ body.light-mode .lead_sec .filt_opt>.filt_opt select {
     border-radius: 100% !important;
 }
 
+.skel_user_email {
+    background: #eee !important;
+}
+
 .skel_chat_name,
 .skel_latest_message,
 .skel_latest_message_timestamp,
 .skel_chat_img,
 .skel_text,
-.skel_img {
+.skel_img,
+.skel_head,
+.skel_user_name,
+.skel_user_email {
     background: #eee;
     background: linear-gradient(110deg, #ececec 8%, #fff 18%, #ececec 33%);
     border-radius: 5px;
@@ -6959,4 +6981,19 @@ body.light-mode .lead_sec .filt_opt>.filt_opt select {
     to {
         background-position-x: -200%;
     }
+}
+
+#chat-message > ul {
+    scroll-behavior: smooth;
+}
+
+.unread_count {
+    position: absolute;
+    top: 15px;
+    background: #f00;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    border-radius: 50%;
+    left: 40px;
 }

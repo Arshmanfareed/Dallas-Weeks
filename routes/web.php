@@ -142,8 +142,11 @@ Route::middleware(['userAuth'])->group(function () {
             Route::get('/', [MessageController::class, 'message'])->name('dash-messages');
             Route::get('/message/latest/{chat_id}', [MessageController::class, 'get_latest_Mesage_chat_id'])->name('get_latest_Mesage_chat_id');
             Route::get('/chat/profile/{profile_id}', [MessageController::class, 'get_chat_Profile'])->name('get_chat_Profile');
+            Route::get('/chat/receiver/{chat_id}', [MessageController::class, 'get_chat_receive'])->name('get_chat_receive');
+            Route::get('/chat/sender', [MessageController::class, 'get_chat_sender'])->name('get_chat_sender');
             Route::get('/chat/{chat_id}', [MessageController::class, 'get_messages_chat_id'])->name('get_messages_chat_id');
             Route::get('/chats/{cursor}', [MessageController::class, 'get_remain_chats'])->name('get_remain_chats');
+            Route::post('/send/chat', [MessageController::class, 'send_a_message'])->name('send_a_message');
         });
         Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
         Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');
