@@ -1,12 +1,37 @@
 $(document).ready(function () {
     var sender = null;
+    var chatProfile = JSON.parse(sessionStorage.getItem("chat_profile")) || {};
+    var chatLatestMessage = JSON.parse(sessionStorage.getItem("chat_latest_message")) || {};
     getSender();
-    getChatData();
+    if (chatList != null) {
+        html = ``;
+        chatList.forEach(chat => {
+            html += `<li class="d-flex chat-tab skel-chat" id="`;
+            html += chat['id'] + `" data-profile="`;
+            html += chat['attendee_provider_id'] + `">`;
+            if (chat['unread'] == 1) {
+                html += `<span class="unread_count">` + chat['unread_count'] + `</span>`;
+            }
+            html += `<span class="chat_image skel_chat_img"></span>`;
+            html += `<div class="d-block">`;
+            html += `<strong class="chat_name skel_chat_name"></strong>`;
+            html += `<span class="latest_message skel_latest_message"></span>`;
+            html += `</div><div class="date latest_message_timestamp skel_latest_message_timestamp"></div>`;
+            html += `<div class="linkedin"><a href="javascript:;"><i class="fa-brands fa-linkedin">`;
+            html += `</i></a></div></li>`;
+        });
+        $('.chat-list').html(html);
+        getChatData();
+    }
+    if (cursor != null) {
+        $('.chat_cursor').val(cursor);
+    }
     let isLoading = false;
     $('.chat-list').on('scroll', updateChatListLoader);
     $('.chat-tab').on('click', getMessages);
     $('.send_btn').on('click', function () {
         var message = $('.send_a_message').val();
+        console.log(message);
         var formData = new FormData();
         formData.append("message", message);
         console.log(formData);
@@ -20,58 +45,105 @@ $(document).ready(function () {
             getLatestMessage(chat);
             chat.removeClass('skel-chat');
         });
+        $('.chat-tab').on('click', getMessages);
     }
 
     function getProfileMessage(chat) {
-        $.ajax({
-            url: getChatProfile.replace(":profile_id", chat.data()['profile']),
-            type: "GET",
-            success: function (response) {
-                if (response.success) {
-                    var profile = response.user_profile;
-                    chat.find('.chat_name').html(profile['first_name'] + ' ' + profile['last_name']);
-                    chat.find('.chat_name').removeClass('skel_chat_name');
-                    var imgTag = $('<img>').attr('src', profile['profile_picture_url']);
-                    chat.find('.chat_image').replaceWith(imgTag);
-                } else {
-                    console.log(chat.data()['profile']);
-                    chat.remove();
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-            },
-        });
+        if (chatProfile && !chatProfile[chat.data()['profile']]) {
+            $.ajax({
+                url: getChatProfile.replace(":profile_id", chat.data()['profile']),
+                type: "GET",
+                success: function (response) {
+                    if (response.success) {
+                        var profile = response.user_profile;
+                        chat.find('.chat_name').html(profile['first_name'] + ' ' + profile['last_name']);
+                        chat.find('.chat_name').removeClass('skel_chat_name');
+                        if (profile['profile_picture_url']) {
+                            var imgTag = $('<img>').attr('src', profile['profile_picture_url']);
+                        } else {
+                            var imgTag = $('<i>').addClass('fa-solid fa-user');
+                        }
+                        chat.find('.chat_image').replaceWith(imgTag);
+                        chatProfile[chat.data()['profile']] = profile;
+                        sessionStorage.setItem(
+                            "chat_profile",
+                            JSON.stringify(chatProfile)
+                        );
+                    } else {
+                        chat.remove();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                },
+            });
+        } else {
+            var profile = chatProfile[chat.data()['profile']];
+            chat.find('.chat_name').html(profile['first_name'] + ' ' + profile['last_name']);
+            chat.find('.chat_name').removeClass('skel_chat_name');
+            if (profile['profile_picture_url']) {
+                var imgTag = $('<img>').attr('src', profile['profile_picture_url']);
+            } else {
+                var imgTag = $('<i>').addClass('fa-solid fa-user');
+            }
+            chat.find('.chat_image').replaceWith(imgTag);
+            chatProfile[chat.data()['profile']] = profile;
+        }
     }
 
     function getLatestMessage(chat) {
-        $.ajax({
-            url: getLatestMessageRoute.replace(":chat_id", chat.prop('id')),
-            type: "GET",
-            success: function (response) {
-                if (response.success) {
-                    if (response.message && response.message[0]['text']) {
-                        let input = response.message[0]['text'];
-                        if (input.length > 25) {
-                            let trimmed_text = input.substring(0, 25) + '...';
-                            response.message[0]['text'] = trimmed_text;
+        if (chatLatestMessage && !chatLatestMessage[chat.prop('id')]) {
+            $.ajax({
+                url: getLatestMessageRoute.replace(":chat_id", chat.prop('id')),
+                type: "GET",
+                success: function (response) {
+                    if (response.success) {
+                        if (response.message && response.message[0]['text']) {
+                            let input = response.message[0]['text'];
+                            if (input.length > 25) {
+                                let trimmed_text = input.substring(0, 25) + '...';
+                                response.message[0]['text'] = trimmed_text;
+                            }
                         }
+                        if (response.message && response.message[0]['timestamp']) {
+                            let date = new Date(response.message[0]['timestamp']);
+                            let options = { day: '2-digit', month: 'short' };
+                            response.message[0]['timestamp'] = date.toLocaleDateString('en-GB', options);
+                        }
+                        chat.find('.latest_message').html(response.message[0]['text']);
+                        chat.find('.latest_message').removeClass('skel_latest_message');
+                        chat.find('.latest_message_timestamp').html(response.message[0]['timestamp']);
+                        chat.find('.latest_message_timestamp').removeClass('skel_latest_message_timestamp');
+                        chatLatestMessage[chat.prop('id')] = response.message;
+                        sessionStorage.setItem(
+                            "chat_latest_message",
+                            JSON.stringify(chatLatestMessage)
+                        );
                     }
-                    if (response.message && response.message[0]['timestamp']) {
-                        let date = new Date(response.message[0]['timestamp']);
-                        let options = { day: '2-digit', month: 'short' };
-                        response.message[0]['timestamp'] = date.toLocaleDateString('en-GB', options);
-                    }
-                    chat.find('.latest_message').html(response.message[0]['text']);
-                    chat.find('.latest_message').removeClass('skel_latest_message');
-                    chat.find('.latest_message_timestamp').html(response.message[0]['timestamp']);
-                    chat.find('.latest_message_timestamp').removeClass('skel_latest_message_timestamp');
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                },
+            });
+        } else {
+            var message = chatLatestMessage[chat.prop('id')];
+            if (message && message[0]['text']) {
+                let input = message[0]['text'];
+                if (input.length > 25) {
+                    let trimmed_text = input.substring(0, 25) + '...';
+                    message[0]['text'] = trimmed_text;
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-            },
-        });
+            }
+            if (message && message[0]['timestamp']) {
+                let date = new Date(message[0]['timestamp']);
+                let options = { day: '2-digit', month: 'short' };
+                message[0]['timestamp'] = date.toLocaleDateString('en-GB', options);
+            }
+            chat.find('.latest_message').html(message[0]['text']);
+            chat.find('.latest_message').removeClass('skel_latest_message');
+            chat.find('.latest_message_timestamp').html(message[0]['timestamp']);
+            chat.find('.latest_message_timestamp').removeClass('skel_latest_message_timestamp');
+        }
     }
 
     function updateChatListLoader(e) {
@@ -87,6 +159,7 @@ $(document).ready(function () {
     }
 
     function updateChatList() {
+        console.log(cursor);
         var cursor = $('#chat_cursor').val();
         var html = ``;
         isLoading = true;
@@ -98,26 +171,37 @@ $(document).ready(function () {
                     if (response.chats.length > 0) {
                         var chats = response.chats;
                         chats.forEach(chat => {
-                            html += `<li class="d-flex chat-tab skel-chat" id="`;
-                            html += chat['id'] + `"data-profile="`;
-                            html += chat['attendee_provider_id'] + `">`;
-                            if (chat['unread'] == 1) {
-                                html += `<span class="unread_count">` + chat['unread_count'] + `</span>`;
+                            if (chat['folder'].includes('INBOX_LINKEDIN_CLASSIC')) {
+                                chatList.push(chat);
+                                html += `<li class="d-flex chat-tab skel-chat" id="`;
+                                html += chat['id'] + `" data-profile="`;
+                                html += chat['attendee_provider_id'] + `">`;
+                                if (chat['unread'] == 1) {
+                                    html += `<span class="unread_count">` + chat['unread_count'] + `</span>`;
+                                }
+                                html += `<span class="chat_image skel_chat_img"></span>`;
+                                html += `<div class="d-block">`;
+                                html += `<strong class="chat_name skel_chat_name"></strong>`;
+                                html += `<span class="latest_message skel_latest_message"></span>`;
+                                html += `</div><div class="date latest_message_timestamp skel_latest_message_timestamp"></div>`;
+                                html += `<div class="linkedin"><a href="javascript:;"><i class="fa-brands fa-linkedin">`;
+                                html += `</i></a></div></li>`;
                             }
-                            html += `<span class="chat_image skel_chat_img"></span>`;
-                            html += `<div class="d-block">`;
-                            html += `<strong class="chat_name skel_chat_name"></strong>`;
-                            html += `<span class="latest_message skel_latest_message"></span>`;
-                            html += `</div><div class="date latest_message_timestamp skel_latest_message_timestamp"></div>`;
-                            html += `<div class="linkedin"><a href="javascript:;"><i class="fa-brands fa-linkedin">`;
-                            html += `</i></a></div></li>`;
                         });
+                        sessionStorage.setItem(
+                            "chat_list",
+                            JSON.stringify(chatList)
+                        );
                         $('.chat-list').append(html);
                         if (response.cursor) {
                             $('#chat_cursor').val(response.cursor);
                         } else {
                             $('#chat_cursor').val('');
                         }
+                        sessionStorage.setItem(
+                            "cursor",
+                            JSON.stringify(cursor)
+                        );
                         getChatData();
                     } else {
                         $('#chat-loader').hide();
@@ -195,6 +279,19 @@ $(document).ready(function () {
                 console.error(error);
             },
             complete: function () {
+                if ($('#' + chat_id).data('disable')) {
+                    $('.conversation>.send_form>input').remove();
+                    $('.conversation>.send_form').css({
+                        visibility: 'hidden',
+                    });
+                } else {
+                    var html = `<input type="text" placeholder="Send a message" name="send_a_message" class="send_a_message">
+                                <input type="button" class="send_btn" value="send">`;
+                    $('.conversation>.send_form').html(html);
+                    $('.conversation>.send_form').css({
+                        visibility: 'visible',
+                    });
+                }
                 $('#chat-message').animate({ scrollTop: $('#chat-message')[0].scrollHeight }, 'slow');
                 getReceiver(chat_id);
             },
@@ -265,7 +362,29 @@ $(document).ready(function () {
         });
     }
 
-    setInterval(function () {
-        updateChatList();
-    }, 120000);
+    function getLatestChat() {
+        $.ajax({
+            url: getLatestChatRoute,
+            type: "GET",
+            success: function (response) {
+                if (response.success) {
+                    console.log('Hey');
+                } else {
+                    console.log('Hello');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            },
+        });
+    }
+
+    // setInterval(function () {
+    //     updateChatList();
+    // }, 120000);
+
+    // setInterval(function () {
+    //     console.log('Latest ChatList');
+    //     getLatestChat();
+    // }, 180000);
 });

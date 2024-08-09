@@ -68,29 +68,45 @@
                                     </div>
                                     <ul class="list-unstyled p-0 m-0 chat-list">
                                         @if (isset($chats))
+                                            @php
+                                                $chatList = [];
+                                            @endphp
                                             @foreach ($chats as $chat)
-                                                <li class="d-flex chat-tab skel-chat" id="{{ $chat['id'] }}"
-                                                    data-profile="{{ $chat['attendee_provider_id'] }}">
-                                                    @if ($chat['unread'] == 1)
-                                                        <span class="unread_count">{{ $chat['unread_count'] }}</span>
-                                                    @endif
-                                                    <span class="chat_image skel_chat_img"></span>
-                                                    <div class="d-block">
-                                                        <strong class="chat_name skel_chat_name"></strong>
-                                                        <span class="latest_message skel_latest_message"></span>
-                                                    </div>
-                                                    <div
-                                                        class="date latest_message_timestamp skel_latest_message_timestamp">
-                                                    </div>
-                                                    <div class="linkedin">
-                                                        <a href="javascript:;"><i class="fa-brands fa-linkedin"></i></a>
-                                                    </div>
-                                                </li>
+                                                @if (in_array('INBOX_LINKEDIN_CLASSIC', $chat['folder']))
+                                                    @php
+                                                        $chatList[] = $chat;
+                                                    @endphp
+                                                    <li class="d-flex chat-tab skel-chat" id="{{ $chat['id'] }}"
+                                                        data-profile="{{ $chat['attendee_provider_id'] }}">
+                                                        @if ($chat['unread'] == 1)
+                                                            <span class="unread_count">{{ $chat['unread_count'] }}</span>
+                                                        @endif
+                                                        <span class="chat_image skel_chat_img"></span>
+                                                        <div class="d-block">
+                                                            <strong class="chat_name skel_chat_name"></strong>
+                                                            <span class="latest_message skel_latest_message"></span>
+                                                        </div>
+                                                        <div
+                                                            class="date latest_message_timestamp skel_latest_message_timestamp">
+                                                        </div>
+                                                        <div class="linkedin">
+                                                            <a href="javascript:;"><i class="fa-brands fa-linkedin"></i></a>
+                                                        </div>
+                                                    </li>
+                                                @endif
                                             @endforeach
+                                            @php
+                                                $chatList = json_encode($chatList);
+                                            @endphp
                                         @endif
+                                    </ul>
+                                    @if (isset($cursor))
                                         <input type="hidden" name="chat_cursor" id="chat_cursor"
                                             value="{{ $cursor }}">
-                                    </ul>
+                                        @php
+                                            $cursor = json_encode($cursor);
+                                        @endphp
+                                    @endif
                                     <div id="chat-loader" style="display: none;">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
                                             preserveAspectRatio="xMidYMid" width="200" height="200"
@@ -230,7 +246,8 @@
                                         </ul>
                                     </div>
                                     <form class="send_form">
-                                        <input type="text" placeholder="Send a message" name="send_a_message" class="send_a_message">
+                                        <input type="text" placeholder="Send a message" name="send_a_message"
+                                            class="send_a_message">
                                         <input type="button" class="send_btn" value="send">
                                     </form>
                                 </div>
@@ -253,6 +270,14 @@
             </div>
     </section>
     <script>
+        window.addEventListener("beforeunload", function () {
+            sessionStorage.removeItem("chat_list");
+            sessionStorage.removeItem("cursor");
+            sessionStorage.removeItem("chat_profile");
+            sessionStorage.removeItem("chat_latest_message");
+        });
+        var chatList = JSON.parse(sessionStorage.getItem('chat_list')) || {!! $chatList !!};
+        var cursor = JSON.parse(sessionStorage.getItem('cursor')) || {!! $cursor !!};
         var getMessageChatRoute = "{{ route('get_messages_chat_id', ':chat_id') }}";
         var getRemainMessage = "{{ route('get_remain_chats', ':cursor') }}";
         var getLatestMessageRoute = "{{ route('get_latest_Mesage_chat_id', ':chat_id') }}";
@@ -260,6 +285,7 @@
         var getChatSender = "{{ route('get_chat_sender') }}";
         var getChatReceiver = "{{ route('get_chat_receive', ':chat_id') }}";
         var sendMessage = "{{ route('send_a_message') }}";
+        var getLatestChatRoute = "{{ route('get_latest_chat') }}";
     </script>
     <script src="{{ asset('assets/js/message.js') }}"></script>
 @endsection
