@@ -95,7 +95,8 @@ class MessageController extends Controller
         $messages['items'] = array_reverse($messages['items']);
         $data = [
             'success' => true,
-            'messages' => $messages
+            'messages' => $messages['items'],
+            'cursor' => $messages['cursor']
         ];
         return response()->json($data);
     }
@@ -164,6 +165,29 @@ class MessageController extends Controller
 
     public function get_latest_chat()
     {
+        $user_id = Auth::user()->id;
+        $seat_id = session('seat_id');
+        $seat = SeatInfo::where('id', $seat_id)->where('user_id', $user_id)->first();
+        $uc = new UnipileController();
+        $request = [
+            'account_id' => $seat['account_id'],
+        ];
+        $chats = $uc->list_all_chats(new \Illuminate\Http\Request($request));
+        $all_chats = $chats->getData(true)['chats'];
+        $final_chats = [];
+        foreach ($all_chats['items'] as $chat) {
+            if ($chat['unread_count'] > 0) {
+                $final_chats[] = $chat;
+            }
+        }
+        if (count($final_chats) > 0) {
+            $data = [
+                'success' => true,
+                'chats' => $final_chats,
+            ];
+            return response()->json($data);
+        }
+        return response()->json(['success' => false]);
     }
 
     public function send_a_message(Request $request)

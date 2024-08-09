@@ -69,28 +69,29 @@
                                     <ul class="list-unstyled p-0 m-0 chat-list">
                                         @if (isset($chats))
                                             @foreach ($chats as $chat)
-                                                <li class="d-flex chat-tab skel-chat" id="{{ $chat['id'] }}"
-                                                    data-profile="{{ $chat['attendee_provider_id'] }}">
-                                                    @if ($chat['unread'] == 1)
-                                                        <span class="unread_count">{{ $chat['unread_count'] }}</span>
-                                                    @endif
-                                                    <span class="chat_image skel_chat_img"></span>
-                                                    <div class="d-block">
-                                                        <strong class="chat_name skel_chat_name"></strong>
-                                                        <span class="latest_message skel_latest_message"></span>
-                                                    </div>
-                                                    <div
-                                                        class="date latest_message_timestamp skel_latest_message_timestamp">
-                                                    </div>
-                                                    <div class="linkedin">
-                                                        <a href="javascript:;"><i class="fa-brands fa-linkedin"></i></a>
-                                                    </div>
-                                                </li>
+                                                @if (in_array('INBOX_LINKEDIN_CLASSIC', $chat['folder']))
+                                                    <li class="d-flex chat-tab skel-chat" id="{{ $chat['id'] }}"
+                                                        data-profile="{{ $chat['attendee_provider_id'] }}">
+                                                        @if ($chat['unread'] == 1)
+                                                            <span class="unread_count">{{ $chat['unread_count'] }}</span>
+                                                        @endif
+                                                        <span class="chat_image skel_chat_img"></span>
+                                                        <div class="d-block">
+                                                            <strong class="chat_name skel_chat_name"></strong>
+                                                            <span class="latest_message skel_latest_message"></span>
+                                                        </div>
+                                                        <div
+                                                            class="date latest_message_timestamp skel_latest_message_timestamp">
+                                                        </div>
+                                                        <div class="linkedin">
+                                                            <a href="javascript:;"><i class="fa-brands fa-linkedin"></i></a>
+                                                        </div>
+                                                    </li>
+                                                @endif
                                             @endforeach
                                         @endif
-                                        <input type="hidden" name="chat_cursor" id="chat_cursor"
-                                            value="{{ $cursor }}">
                                     </ul>
+                                    <input type="hidden" name="chat_cursor" id="chat_cursor" value="{{ $cursor }}">
                                     <div id="chat-loader" style="display: none;">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
                                             preserveAspectRatio="xMidYMid" width="200" height="200"
@@ -210,9 +211,121 @@
                                                     alt=""></a>
                                         </li>
                                     </ul>
+                                    <input type="hidden" name="message_cursor" id="message_cursor">
                                     <div class="mesasges" id="chat-message">
+                                        <div id="message-loader" style="display: none;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
+                                                preserveAspectRatio="xMidYMid" width="200" height="200"
+                                                style="shape-rendering: auto; display: block; width: 100%; height: 55px;"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink">
+                                                <g>
+                                                    <g transform="rotate(0 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite" begin="-0.9166666666666666s"
+                                                                dur="1s" keyTimes="0;1" values="1;0"
+                                                                attributeName="opacity"></animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g transform="rotate(30 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite" begin="-0.8333333333333334s"
+                                                                dur="1s" keyTimes="0;1" values="1;0"
+                                                                attributeName="opacity"></animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g transform="rotate(60 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite" begin="-0.75s"
+                                                                dur="1s" keyTimes="0;1" values="1;0"
+                                                                attributeName="opacity">
+                                                            </animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g transform="rotate(90 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite" begin="-0.6666666666666666s"
+                                                                dur="1s" keyTimes="0;1" values="1;0"
+                                                                attributeName="opacity"></animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g transform="rotate(120 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite" begin="-0.5833333333333334s"
+                                                                dur="1s" keyTimes="0;1" values="1;0"
+                                                                attributeName="opacity"></animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g transform="rotate(150 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite" begin="-0.5s"
+                                                                dur="1s" keyTimes="0;1" values="1;0"
+                                                                attributeName="opacity">
+                                                            </animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g transform="rotate(180 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite" begin="-0.4166666666666667s"
+                                                                dur="1s" keyTimes="0;1" values="1;0"
+                                                                attributeName="opacity"></animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g transform="rotate(210 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite" begin="-0.3333333333333333s"
+                                                                dur="1s" keyTimes="0;1" values="1;0"
+                                                                attributeName="opacity"></animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g transform="rotate(240 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite" begin="-0.25s"
+                                                                dur="1s" keyTimes="0;1" values="1;0"
+                                                                attributeName="opacity">
+                                                            </animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g transform="rotate(270 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite"
+                                                                begin="-0.16666666666666666s" dur="1s"
+                                                                keyTimes="0;1" values="1;0" attributeName="opacity">
+                                                            </animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g transform="rotate(300 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite"
+                                                                begin="-0.08333333333333333s" dur="1s"
+                                                                keyTimes="0;1" values="1;0" attributeName="opacity">
+                                                            </animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g transform="rotate(330 50 50)">
+                                                        <rect fill="#16adcb" height="12" width="6"
+                                                            ry="6" rx="3" y="24" x="47">
+                                                            <animate repeatCount="indefinite" begin="0s"
+                                                                dur="1s" keyTimes="0;1" values="1;0"
+                                                                attributeName="opacity">
+                                                            </animate>
+                                                        </rect>
+                                                    </g>
+                                                    <g></g>
+                                                </g>
+                                            </svg>
+                                        </div>
                                         <ul>
-                                            <input type="hidden" name="message_cursor" id="message_cursor">
                                             <li class="not_me">
                                                 <span class="skel_img"></span>
                                                 <span class="message_text skel_text"></span>
@@ -230,7 +343,8 @@
                                         </ul>
                                     </div>
                                     <form class="send_form">
-                                        <input type="text" placeholder="Send a message" name="send_a_message" class="send_a_message">
+                                        <input type="text" placeholder="Send a message" name="send_a_message"
+                                            class="send_a_message">
                                         <input type="button" class="send_btn" value="send">
                                     </form>
                                 </div>
@@ -260,6 +374,7 @@
         var getChatSender = "{{ route('get_chat_sender') }}";
         var getChatReceiver = "{{ route('get_chat_receive', ':chat_id') }}";
         var sendMessage = "{{ route('send_a_message') }}";
+        var getLatestChatRoute = "{{ route('get_latest_chat') }}";
     </script>
     <script src="{{ asset('assets/js/message.js') }}"></script>
 @endsection

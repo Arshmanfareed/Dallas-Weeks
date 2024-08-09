@@ -1,5 +1,6 @@
 $(document).ready(function () {
     var sender = null;
+    var cursors = [];
     getSender();
     getChatData();
     let isLoading = false;
@@ -20,6 +21,7 @@ $(document).ready(function () {
             getLatestMessage(chat);
             chat.removeClass('skel-chat');
         });
+        $('.chat-tab').on('click', getMessages);
     }
 
     function getProfileMessage(chat) {
@@ -88,6 +90,7 @@ $(document).ready(function () {
 
     function updateChatList() {
         var cursor = $('#chat_cursor').val();
+        console.log(cursors);
         var html = ``;
         isLoading = true;
         $.ajax({
@@ -98,23 +101,28 @@ $(document).ready(function () {
                     if (response.chats.length > 0) {
                         var chats = response.chats;
                         chats.forEach(chat => {
-                            html += `<li class="d-flex chat-tab skel-chat" id="`;
-                            html += chat['id'] + `"data-profile="`;
-                            html += chat['attendee_provider_id'] + `">`;
-                            if (chat['unread'] == 1) {
-                                html += `<span class="unread_count">` + chat['unread_count'] + `</span>`;
+                            if (chat['folder'].includes('INBOX_LINKEDIN_CLASSIC')) {
+                                html += `<li class="d-flex chat-tab skel-chat" id="`;
+                                html += chat['id'] + `" data-profile="`;
+                                html += chat['attendee_provider_id'] + `">`;
+                                if (chat['unread'] == 1) {
+                                    html += `<span class="unread_count">` + chat['unread_count'] + `</span>`;
+                                }
+                                html += `<span class="chat_image skel_chat_img"></span>`;
+                                html += `<div class="d-block">`;
+                                html += `<strong class="chat_name skel_chat_name"></strong>`;
+                                html += `<span class="latest_message skel_latest_message"></span>`;
+                                html += `</div><div class="date latest_message_timestamp skel_latest_message_timestamp"></div>`;
+                                html += `<div class="linkedin"><a href="javascript:;"><i class="fa-brands fa-linkedin">`;
+                                html += `</i></a></div></li>`;
                             }
-                            html += `<span class="chat_image skel_chat_img"></span>`;
-                            html += `<div class="d-block">`;
-                            html += `<strong class="chat_name skel_chat_name"></strong>`;
-                            html += `<span class="latest_message skel_latest_message"></span>`;
-                            html += `</div><div class="date latest_message_timestamp skel_latest_message_timestamp"></div>`;
-                            html += `<div class="linkedin"><a href="javascript:;"><i class="fa-brands fa-linkedin">`;
-                            html += `</i></a></div></li>`;
                         });
                         $('.chat-list').append(html);
                         if (response.cursor) {
                             $('#chat_cursor').val(response.cursor);
+                            if (!cursors.includes(cursor)) {
+                                cursors.push(cursor);
+                            }
                         } else {
                             $('#chat_cursor').val('');
                         }
@@ -160,9 +168,10 @@ $(document).ready(function () {
             type: "GET",
             success: function (response) {
                 if (response.success) {
-                    if (response.messages.items.length > 0) {
+                    if (response.messages.length > 0) {
+                        console.log(response);
                         var html = ``;
-                        var messages = response.messages.items;
+                        var messages = response.messages;
                         messages.forEach(message => {
                             html += `<li class="`;
                             html += message['is_sender'] == 0 ? 'not_me' : 'is_me';
@@ -188,6 +197,11 @@ $(document).ready(function () {
                             }
                         });
                         $('#chat-message>ul').html(html);
+                        if (response.cursor) {
+                            $('#message_cursor').val(response.cursor);
+                        } else {
+                            $('#message_cursor').val('');
+                        }
                     }
                 }
             },
@@ -195,6 +209,19 @@ $(document).ready(function () {
                 console.error(error);
             },
             complete: function () {
+                if ($('#' + chat_id).data('disable')) {
+                    $('.conversation>.send_form>input').remove();
+                    $('.conversation>.send_form').css({
+                        visibility: 'hidden',
+                    });
+                } else {
+                    var html = `<input type="text" placeholder="Send a message" name="send_a_message" class="send_a_message">
+                                <input type="button" class="send_btn" value="send">`;
+                    $('.conversation>.send_form').html(html);
+                    $('.conversation>.send_form').css({
+                        visibility: 'visible',
+                    });
+                }
                 $('#chat-message').animate({ scrollTop: $('#chat-message')[0].scrollHeight }, 'slow');
                 getReceiver(chat_id);
             },
@@ -257,6 +284,23 @@ $(document).ready(function () {
                         user_email.removeClass('skel_user_email');
                     }
                     console.log(response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            },
+        });
+    }
+
+    function getLatestChat() {
+        $.ajax({
+            url: getLatestChatRoute,
+            type: "GET",
+            success: function (response) {
+                if (response.success) {
+                    console.log('Hey');
+                } else {
+                    console.log('Hello');
                 }
             },
             error: function (xhr, status, error) {
