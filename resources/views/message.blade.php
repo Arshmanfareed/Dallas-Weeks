@@ -205,14 +205,14 @@
                             <div class="conversation_box row border_box">
                                 <div class="conversation col-lg-8">
                                     <ul class=" msg_setting d-flex justify-content-end p-0 list-unstyled">
-                                        <li><a href="javascript:;"><i class="fa-solid fa-user"></i></a></li>
+                                        <li class="user_profile"><a href="javascript:;"><i class="fa-solid fa-user"></i></a></li>
                                         <li><a href="javascript:;"><i class="fa-solid fa-tag"></i></a></li>
                                         <li><a href="javascript:;"><img src="{{ asset('assets/img/settings.svg') }}"
                                                     alt=""></a>
                                         </li>
                                     </ul>
                                     <input type="hidden" name="message_cursor" id="message_cursor">
-                                    <div class="mesasges" id="chat-message">
+                                    <div class="mesasges" id="chat-message" data-chat="">
                                         <div id="message-loader" style="display: none;">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
                                                 preserveAspectRatio="xMidYMid" width="200" height="200"
@@ -354,10 +354,7 @@
                                         <h6 class="skel_head"></h6>
                                         <span class="user_name skel_user_name"></span>
                                         <span class="user_email skel_user_email"></span>
-                                        <div class="note">
-                                            <p>Note:</p>
-                                            <span>Sed ut perspiciatis unde omnis iste natus error sit.</span>
-                                        </div>
+                                        <div class="note skel_text"></div>
                                     </div>
                                 </div>
                             </div>
@@ -368,6 +365,7 @@
     </section>
     <script>
         var getMessageChatRoute = "{{ route('get_messages_chat_id', ':chat_id') }}";
+        var getMessageChatCursorRoute = "{{ route('get_messages_chat_id_cursor', ['chat_id' => ':chat_id', 'cursor' => ':cursor']) }}";
         var getRemainMessage = "{{ route('get_remain_chats', ':cursor') }}";
         var getLatestMessageRoute = "{{ route('get_latest_Mesage_chat_id', ':chat_id') }}";
         var getChatProfile = "{{ route('get_chat_Profile', ':profile_id') }}";

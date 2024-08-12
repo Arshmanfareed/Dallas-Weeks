@@ -146,6 +146,7 @@ Route::middleware(['userAuth'])->group(function () {
             Route::get('/chat/receiver/{chat_id}', [MessageController::class, 'get_chat_receive'])->name('get_chat_receive');
             Route::get('/chat/sender', [MessageController::class, 'get_chat_sender'])->name('get_chat_sender');
             Route::get('/chat/{chat_id}', [MessageController::class, 'get_messages_chat_id'])->name('get_messages_chat_id');
+            Route::get('/chat/{chat_id}/{cursor}', [MessageController::class, 'get_messages_chat_id_cursor'])->name('get_messages_chat_id_cursor');
             Route::get('/chats/{cursor}', [MessageController::class, 'get_remain_chats'])->name('get_remain_chats');
             Route::post('/send/chat', [MessageController::class, 'send_a_message'])->name('send_a_message');
         });

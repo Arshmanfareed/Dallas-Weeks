@@ -256,6 +256,33 @@ class UnipileController extends Controller
         }
     }
 
+    public function change_status_chat(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['chat_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $chat_id = $all['chat_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/chats/' . $chat_id;
+        try {
+            $response = $client->request('PATCH', $url, [
+                'body' => '{"action":"setReadStatus","value":true}',
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                    'content-type' => 'application/json',
+                ],
+            ]);
+            $status = json_decode($response->getBody(), true);
+            return response()->json(['status' => $status]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
     public function retrieve_a_message(Request $request)
     {
         $all = $request->all();

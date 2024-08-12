@@ -17,7 +17,7 @@ class MessageController extends Controller
         $uc = new UnipileController();
         $request = [
             'account_id' => $seat['account_id'],
-            'limit' => 10,
+            'limit' => 15,
         ];
         $chats = $uc->list_all_chats(new \Illuminate\Http\Request($request));
         $all_chats = $chats->getData(true)['chats'];
@@ -71,7 +71,7 @@ class MessageController extends Controller
         $request = [
             'account_id' => $seat['account_id'],
             'cursor' => $cursor,
-            'limit' => 10,
+            'limit' => 15,
         ];
         $chats = $uc->list_all_chats(new \Illuminate\Http\Request($request));
         $all_chats = $chats->getData(true)['chats'];
@@ -88,11 +88,38 @@ class MessageController extends Controller
         $uc = new UnipileController();
         $request = [
             'chat_id' => $chat_id,
-            'limit' => 25
+            'limit' => 15
         ];
         $messages = $uc->list_all_messages_from_chat(new \Illuminate\Http\Request($request));
         $messages = $messages->getData(true)['messages'];
         $messages['items'] = array_reverse($messages['items']);
+        $request = [
+            'chat_id' => $chat_id
+        ];
+        $uc->change_status_chat(new \Illuminate\Http\Request($request));
+        $data = [
+            'success' => true,
+            'messages' => $messages['items'],
+            'cursor' => $messages['cursor']
+        ];
+        return response()->json($data);
+    }
+
+    public function get_messages_chat_id_cursor($chat_id, $cursor)
+    {
+        $uc = new UnipileController();
+        $request = [
+            'chat_id' => $chat_id,
+            'limit' => 15,
+            'cursor' => $cursor
+        ];
+        $messages = $uc->list_all_messages_from_chat(new \Illuminate\Http\Request($request));
+        $messages = $messages->getData(true)['messages'];
+        $messages['items'] = array_reverse($messages['items']);
+        $request = [
+            'chat_id' => $chat_id
+        ];
+        $uc->change_status_chat(new \Illuminate\Http\Request($request));
         $data = [
             'success' => true,
             'messages' => $messages['items'],
@@ -171,6 +198,7 @@ class MessageController extends Controller
         $uc = new UnipileController();
         $request = [
             'account_id' => $seat['account_id'],
+            'limit' => 15
         ];
         $chats = $uc->list_all_chats(new \Illuminate\Http\Request($request));
         $all_chats = $chats->getData(true)['chats'];

@@ -3339,6 +3339,10 @@ h4 {
     color: #fff;
 }
 
+body.light-mode .conversation_box .conversation_info h6 {
+    color: #000;
+}
+
 .conversation_box .conversation_info span {
     display: block;
     color: #707070;
@@ -3360,7 +3364,7 @@ h4 {
 .conversation_box .conversation_info .note {
     text-align: left;
     padding: 20px 26px;
-    background: lab(5.81 -0.11 -2.87 / 0.6);
+    /* background: lab(5.81 -0.11 -2.87 / 0.6); */
     border-radius: 20px;
 }
 
@@ -4175,6 +4179,7 @@ header nav.navbar .right_nav ul .acc i {
     padding: 20px;
     width: 75%;
     display: none;
+    z-index: 999;
 }
 
 .messages_box {
@@ -5642,7 +5647,7 @@ body.light-mode .conversation_box .conversation_info span.user_email {
 }
 
 body.light-mode .conversation_box .conversation_info .note {
-    background: #fff;
+    /* background: #fff; */
 }
 
 body.light-mode .conversation_box .conversation_info .note span {
@@ -5816,7 +5821,7 @@ body.light-mode .msg_filter_cont,
     color: #fff !important;
 }
 
-body.light-mode .conversation .mesasges ul li span {
+body.light-mode .conversation .mesasges ul li .message_text {
     background: #f1ecec;
 }
 
@@ -6949,7 +6954,6 @@ body.light-mode .lead_sec .filt_opt>.filt_opt select {
 }
 
 .skel_img {
-    background: unset;
     width: 52px;
     height: 52px;
     margin-left: 14px;
@@ -6957,8 +6961,20 @@ body.light-mode .lead_sec .filt_opt>.filt_opt select {
     border-radius: 100% !important;
 }
 
-.skel_user_email {
-    background: #eee !important;
+body.light-mode .skel_chat_name,
+body.light-mode .skel_latest_message,
+body.light-mode .skel_latest_message_timestamp,
+body.light-mode .skel_chat_img,
+body.light-mode .skel_text,
+body.light-mode .skel_img,
+body.light-mode .skel_head,
+body.light-mode .skel_user_name,
+body.light-mode .skel_user_email {
+    background: unset;
+    background: linear-gradient(110deg, #ececec 8%, #fff 18%, #ececec 33%);
+    border-radius: 5px;
+    background-size: 200% 100%;
+    animation: 2s shine linear infinite;
 }
 
 .skel_chat_name,
@@ -6970,14 +6986,17 @@ body.light-mode .lead_sec .filt_opt>.filt_opt select {
 .skel_head,
 .skel_user_name,
 .skel_user_email {
-    background: #eee;
-    background: linear-gradient(110deg, #ececec 8%, #fff 18%, #ececec 33%);
+    background: unset;
+    background: linear-gradient(110deg, #ccc 8%, #fff 18%, #ccc 33%);
     border-radius: 5px;
     background-size: 200% 100%;
     animation: 2s shine linear infinite;
 }
 
 @keyframes shine {
+    from {
+        background-position-x: 0%;
+    }
     to {
         background-position-x: -200%;
     }
