@@ -70,9 +70,11 @@ class MessageController extends Controller
         $uc = new UnipileController();
         $request = [
             'account_id' => $seat['account_id'],
-            'cursor' => $cursor,
             'limit' => 15,
         ];
+        if ($cursor != 'emp') {
+            $request['cursor'] = $cursor;
+        }
         $chats = $uc->list_all_chats(new \Illuminate\Http\Request($request));
         $all_chats = $chats->getData(true)['chats'];
         $data = [
@@ -212,6 +214,43 @@ class MessageController extends Controller
             $data = [
                 'success' => true,
                 'chats' => $final_chats,
+            ];
+            return response()->json($data);
+        }
+        return response()->json(['success' => false]);
+    }
+
+    public function message_search(Request $request)
+    {
+        $all = $request->all();
+        $user_id = Auth::user()->id;
+        $seat_id = session('seat_id');
+        $seat = SeatInfo::where('id', $seat_id)->where('user_id', $user_id)->first();
+        $keywords = $all['keywords'];
+        $uc = new UnipileController();
+        $request = [
+            'account_id' => $seat['account_id'],
+            'keywords' => $keywords
+        ];
+        $messages = $uc->messages_search(new \Illuminate\Http\Request($request));
+        $chats = $messages->getData(true)['searches'];
+        if (count($chats) > 0) {
+            $all_chats = [];
+            foreach ($chats as $chat) {
+                $provider_id = str_replace('urn:li:fsd_profile:', '', $chat['targetEntityViewModel']['entity']['profile']['entityUrn']);
+                $request = [
+                    'account_id' => $seat['account_id'],
+                    'attendee_id' => $provider_id
+                ];
+                $messages = $uc->list_1_to_1_chats_from_attendee(new \Illuminate\Http\Request($request));
+                $messages = $messages->getData(true);
+                if (!isset($messages['error'])) {
+                    $all_chats[] = $messages['chats']['items'][0];
+                }
+            }
+            $data = [
+                'success' => true,
+                'chats' => $all_chats,
             ];
             return response()->json($data);
         }

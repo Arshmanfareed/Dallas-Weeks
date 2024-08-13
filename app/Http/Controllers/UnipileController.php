@@ -404,6 +404,46 @@ class UnipileController extends Controller
         }
     }
 
+    public function list_1_to_1_chats_from_attendee(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['attendee_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $attendee_id = $all['attendee_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $url = $this->dsn . 'api/v1/chat_attendees/' . $attendee_id . '/chats?';
+        if (isset($all['cursor'])) {
+            $url .= 'cursor=' . $all['cursor'] . '&';
+        }
+        if (isset($all['before'])) {
+            $url .= 'before=' . $all['before'] . '&';
+        }
+        if (isset($all['after'])) {
+            $url .= 'after=' . $all['after'] . '&';
+        }
+        if (isset($all['limit'])) {
+            $url .= 'limit=' . $all['limit'] . '&';
+        }
+        if (isset($all['account_id'])) {
+            $url .= 'account_id=' . $all['account_id'];
+        }
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $chats = json_decode($response->getBody(), true);
+            return response()->json(['chats' => $chats]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
     public function list_all_messages_from_attendee(Request $request)
     {
         $all = $request->all();
@@ -612,6 +652,9 @@ class UnipileController extends Controller
     public function sales_navigator_search(Request $request)
     {
         $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
         $query = $all['query'];
         $account_id = $all['account_id'];
         $count = 80;
@@ -625,9 +668,6 @@ class UnipileController extends Controller
         $client = new Client([
             'verify' => false,
         ]);
-        if (!isset($account_id) || !isset($this->x_api_key) || !isset($this->dsn)) {
-            return response()->json(['error' => 'Missing required parameters'], 400);
-        }
         try {
             $response = $client->request('POST', $this->dsn . 'api/v1/linkedin', [
                 'json' => [
@@ -675,6 +715,9 @@ class UnipileController extends Controller
     public function linkedin_search(Request $request)
     {
         $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
         $query = $all['query'];
         $account_id = $all['account_id'];
         $start = 0;
@@ -698,9 +741,6 @@ class UnipileController extends Controller
         $client = new Client([
             'verify' => false,
         ]);
-        if (!isset($account_id) || !isset($this->x_api_key) || !isset($this->dsn)) {
-            return response()->json(['error' => 'Missing required parameters'], 400);
-        }
         try {
             $response = $client->request('POST', $this->dsn . 'api/v1/linkedin', [
                 'json' => [
@@ -729,11 +769,11 @@ class UnipileController extends Controller
     public function post_search(Request $request)
     {
         $all = $request->all();
-        $account_id = $all['account_id'];
-        $identifier = $all['identifier'];
-        if (!isset($account_id) || !isset($identifier) || !isset($this->x_api_key) || !isset($this->dsn)) {
+        if (!isset($all['account_id']) || !isset($all['identifier']) || !isset($this->x_api_key) || !isset($this->dsn)) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
+        $account_id = $all['account_id'];
+        $identifier = $all['identifier'];
         $client = new Client([
             'verify' => false,
         ]);
@@ -755,11 +795,11 @@ class UnipileController extends Controller
     public function reactions_post_search(Request $request)
     {
         $all = $request->all();
-        $account_id = $all['account_id'];
-        $identifier = $all['identifier'];
-        if (!isset($account_id) || !isset($identifier) || !isset($this->x_api_key) || !isset($this->dsn)) {
+        if (!isset($all['account_id']) || !isset($all['identifier']) || !isset($this->x_api_key) || !isset($this->dsn)) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
+        $account_id = $all['account_id'];
+        $identifier = $all['identifier'];
         $client = new Client([
             'verify' => false,
         ]);
@@ -784,11 +824,11 @@ class UnipileController extends Controller
     public function comments_post_search(Request $request)
     {
         $all = $request->all();
-        $account_id = $all['account_id'];
-        $identifier = $all['identifier'];
-        if (!isset($account_id) || !isset($identifier) || !isset($this->x_api_key) || !isset($this->dsn)) {
+        if (!isset($all['account_id']) || !isset($all['identifier']) || !isset($this->x_api_key) || !isset($this->dsn)) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
+        $account_id = $all['account_id'];
+        $identifier = $all['identifier'];
         $client = new Client([
             'verify' => false,
         ]);
@@ -805,6 +845,42 @@ class UnipileController extends Controller
             ]);
             $result = json_decode($response->getBody(), true);
             return response()->json(['reactions' => $result]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function messages_search(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $account_id = $all['account_id'];
+        $keywords = $all['keywords'];
+        $client = new Client([
+            'verify' => false,
+        ]);
+        try {
+            $response = $client->request('POST', $this->dsn . 'api/v1/linkedin', [
+                'json' => [
+                    'query_params' => [
+                        'variables' => '(keyword:' . $keywords . ',types:List(CONNECTIONS))',
+                        'queryId' => 'voyagerMessagingDashMessagingTypeahead.47f3aa32ab0b43221f99db7c350a2cc3'
+                    ],
+                    'account_id' => $account_id,
+                    'method' => 'GET',
+                    'request_url' => 'https://www.linkedin.com/voyager/api/graphql',
+                    'encoding' => false
+                ],
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                    'content-type' => 'application/json'
+                ],
+            ]);
+            $result = json_decode($response->getBody(), true);
+            return response()->json(['searches' => $result['data']['data']['messagingDashMessagingTypeaheadByTypeaheadKeyword']['elements']]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
@@ -838,11 +914,11 @@ class UnipileController extends Controller
     public function message(Request $request)
     {
         $all = $request->all();
-        $account_id = $all['account_id'];
-        $identifier = $all['identifier'];
-        if (!isset($account_id) || !isset($identifier) || !isset($this->x_api_key) || !isset($this->dsn)) {
+        if (!isset($all['account_id']) || !isset($all['identifier']) || !isset($this->x_api_key) || !isset($this->dsn)) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
+        $account_id = $all['account_id'];
+        $identifier = $all['identifier'];
         if (isset($all['message'])) {
             $message = $all['message'];
         } else {
@@ -882,15 +958,15 @@ class UnipileController extends Controller
     public function inmail_message(Request $request)
     {
         $all = $request->all();
+        if (!isset($all['account_id']) || !isset($all['identifier']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
         if (isset($all['message'])) {
             $message = $all['message'];
         } else {
             $message = '';
-        }
-        if (!isset($account_id) || !isset($identifier) || !isset($this->x_api_key) || !isset($this->dsn)) {
-            return response()->json(['error' => 'Missing required parameters'], 400);
         }
         $client = new \GuzzleHttp\Client([
             'verify' => false,
@@ -942,11 +1018,11 @@ class UnipileController extends Controller
     public function email_message(Request $request)
     {
         $all = $request->all();
-        $account_id = $all['account_id'];
-        $email = $all['email'];
-        if (!isset($account_id) || !isset($email) || !isset($this->x_api_key) || !isset($this->dsn)) {
+        if (!isset($all['account_id']) || !isset($all['email']) || !isset($this->x_api_key) || !isset($this->dsn)) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
+        $account_id = $all['account_id'];
+        $email = $all['email'];
         if (isset($all['subject'])) {
             $subject = $all['subject'];
         } else {
@@ -972,14 +1048,14 @@ class UnipileController extends Controller
     public function follow(Request $request)
     {
         $all = $request->all();
+        if (!isset($all['account_id']) || !isset($all['identifier']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
         $account_id = $all['account_id'];
         $identifier = $all['identifier'];
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
-        if (!isset($account_id) || !isset($identifier) || !isset($this->x_api_key) || !isset($this->dsn)) {
-            return response()->json(['error' => 'Missing required parameters'], 400);
-        }
         $request_url = "https://www.linkedin.com/voyager/api/feed/dash/followingStates/urn:li:fsd_followingState:urn:li:fsd_profile:" . $identifier;
         try {
             $response = $client->request('POST', $this->dsn . 'api/v1/linkedin', [

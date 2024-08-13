@@ -33,7 +33,7 @@
                                 <div class="border_box">
                                     <div class="filter d-flex">
                                         <form action="/search" method="get" class="search-form">
-                                            <input type="text" name="q" placeholder="Search Accounts here...">
+                                            <input type="text" name="q" id="search_message" placeholder="Search Accounts here...">
                                             <button type="submit">
                                                 <i class="fa fa-search"></i>
                                             </button>
@@ -69,7 +69,7 @@
                                     <ul class="list-unstyled p-0 m-0 chat-list">
                                         @if (isset($chats))
                                             @foreach ($chats as $chat)
-                                                @if (in_array('INBOX_LINKEDIN_CLASSIC', $chat['folder']))
+                                                @if (in_array('INBOX_LINKEDIN_CLASSIC', $chat['folder']) && $chat['archived'] == 0)
                                                     <li class="d-flex chat-tab skel-chat" id="{{ $chat['id'] }}"
                                                         data-profile="{{ $chat['attendee_provider_id'] }}">
                                                         @if ($chat['unread'] == 1)
@@ -343,9 +343,8 @@
                                         </ul>
                                     </div>
                                     <form class="send_form">
-                                        <input type="text" placeholder="Send a message" name="send_a_message"
-                                            class="send_a_message">
-                                        <input type="button" class="send_btn" value="send">
+                                        <input type="text" placeholder="Send a message" name="sendMessage" class="sendMessage" id="sendMessage">
+                                        <input type="button" class="send_btn" id="send_btn" value="send">
                                     </form>
                                 </div>
                                 <div class="conversation_info col-lg-4">
@@ -371,8 +370,9 @@
         var getChatProfile = "{{ route('get_chat_Profile', ':profile_id') }}";
         var getChatSender = "{{ route('get_chat_sender') }}";
         var getChatReceiver = "{{ route('get_chat_receive', ':chat_id') }}";
-        var sendMessage = "{{ route('send_a_message') }}";
+        var sendMessageRoute = "{{ route('send_a_message') }}";
         var getLatestChatRoute = "{{ route('get_latest_chat') }}";
+        var messageSearch = "{{ route('message_search') }}";
     </script>
     <script src="{{ asset('assets/js/message.js') }}"></script>
 @endsection

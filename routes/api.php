@@ -36,6 +36,7 @@ Route::post('/retrieve/message', [UnipileController::class, 'retrieve_a_message'
 Route::post('/account/messages', [UnipileController::class, 'list_all_messages'])->name('list_all_messages');
 Route::post('/account/attendees', [UnipileController::class, 'list_all_attendees'])->name('list_all_attendees');
 Route::post('/retrieve/attendee', [UnipileController::class, 'retrieve_an_attendee'])->name('retrieve_an_attendee');
+Route::post('/retrieve/attendee/1by1', [UnipileController::class, 'list_1_to_1_chats_from_attendee'])->name('list_1_to_1_chats_from_attendee');
 Route::post('/attendee/messages', [UnipileController::class, 'list_all_messages_from_attendee'])->name('list_all_messages_from_attendee');
 Route::post('/invitations', [UnipileController::class, 'list_all_invitaions'])->name('list_all_invitaions');
 Route::post('/retrieve/account/me', [UnipileController::class, 'retrieve_own_profile'])->name('retrieve_own_profile');
@@ -52,4 +53,5 @@ Route::post('/search/linkedin', [UnipileController::class, 'linkedin_search'])->
 Route::post('/search/post', [UnipileController::class, 'post_search'])->name('post_search');
 Route::post('/search/post/reactions', [UnipileController::class, 'reactions_post_search'])->name('reactions_post_search');
 Route::post('/search/post/comments', [UnipileController::class, 'comments_post_search'])->name('comments_post_search');
+Route::post('/search/messages', [UnipileController::class, 'messages_search'])->name('messages_search');
 Route::post('/connection/count', [UnipileController::class, 'get_connection_count'])->name('get_connection_count');
