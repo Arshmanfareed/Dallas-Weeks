@@ -7016,3 +7016,23 @@ body.light-mode .skel_user_email {
     border-radius: 50%;
     left: 40px;
 }
+
+.sendMessage {
+    width: 100%;
+    min-height: 100px;
+    background-color: unset;
+    resize: none;
+    overflow: hidden;
+    box-sizing: border-box;
+    border: none;
+    padding: 20px;
+    margin: auto 0;
+    color: #fff;
+}
+
+u {
+    text-decoration: none;
+    padding: 7px;
+    font-size: xxx-large;
+    color: #16adcb;
+}

@@ -231,6 +231,45 @@ class UnipileController extends Controller
         }
     }
 
+    public function send_a_message_in_a_chat(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['chat_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $chat_id = $all['chat_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        if (isset($all['message'])) {
+            $message = [
+                'name' => 'text',
+                'contents' => $all['message']
+            ];
+        } else {
+            $message = [
+                'name' => 'text',
+                'contents' => ''
+            ];
+        }
+        $url = $this->dsn . 'api/v1/chats/' . $chat_id . '/messages';
+        try {
+            $response = $client->request('POST', $url, [
+                'multipart' => [
+                    $message
+                ],
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $message = json_decode($response->getBody(), true);
+            return response()->json(['message' => $message]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
     public function list_all_attendees_from_chat(Request $request)
     {
         $all = $request->all();

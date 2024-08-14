@@ -141,7 +141,7 @@ Route::middleware(['userAuth'])->group(function () {
         Route::prefix('message')->group(function () {
             Route::get('/', [MessageController::class, 'message'])->name('dash-messages');
             Route::get('/message/latest/{chat_id}', [MessageController::class, 'get_latest_Mesage_chat_id'])->name('get_latest_Mesage_chat_id');
-            Route::get('/chat/latest', [MessageController::class, 'get_latest_chat'])->name('get_latest_chat');
+            Route::get('/chat/latest/{chat_id}/{count}', [MessageController::class, 'get_latest_message_in_chat'])->name('get_latest_message_in_chat');
             Route::get('/chat/profile/{profile_id}', [MessageController::class, 'get_chat_Profile'])->name('get_chat_Profile');
             Route::get('/chat/receiver/{chat_id}', [MessageController::class, 'get_chat_receive'])->name('get_chat_receive');
             Route::get('/chat/sender', [MessageController::class, 'get_chat_sender'])->name('get_chat_sender');

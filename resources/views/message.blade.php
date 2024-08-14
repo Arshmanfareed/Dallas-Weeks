@@ -33,7 +33,8 @@
                                 <div class="border_box">
                                     <div class="filter d-flex">
                                         <form action="/search" method="get" class="search-form">
-                                            <input type="text" name="q" id="search_message" placeholder="Search Accounts here...">
+                                            <input type="text" name="q" id="search_message"
+                                                placeholder="Search Accounts here...">
                                             <button type="submit">
                                                 <i class="fa fa-search"></i>
                                             </button>
@@ -205,7 +206,8 @@
                             <div class="conversation_box row border_box">
                                 <div class="conversation col-lg-8">
                                     <ul class=" msg_setting d-flex justify-content-end p-0 list-unstyled">
-                                        <li class="user_profile"><a href="javascript:;"><i class="fa-solid fa-user"></i></a></li>
+                                        <li class="user_profile"><a href="javascript:;"><i
+                                                    class="fa-solid fa-user"></i></a></li>
                                         <li><a href="javascript:;"><i class="fa-solid fa-tag"></i></a></li>
                                         <li><a href="javascript:;"><img src="{{ asset('assets/img/settings.svg') }}"
                                                     alt=""></a>
@@ -343,7 +345,7 @@
                                         </ul>
                                     </div>
                                     <form class="send_form">
-                                        <input type="text" placeholder="Send a message" name="sendMessage" class="sendMessage" id="sendMessage">
+                                        <textarea placeholder="Send a message" name="sendMessage" class="sendMessage" id="sendMessage"></textarea>
                                         <input type="button" class="send_btn" id="send_btn" value="send">
                                     </form>
                                 </div>
@@ -364,14 +366,16 @@
     </section>
     <script>
         var getMessageChatRoute = "{{ route('get_messages_chat_id', ':chat_id') }}";
-        var getMessageChatCursorRoute = "{{ route('get_messages_chat_id_cursor', ['chat_id' => ':chat_id', 'cursor' => ':cursor']) }}";
+        var getMessageChatCursorRoute =
+            "{{ route('get_messages_chat_id_cursor', ['chat_id' => ':chat_id', 'cursor' => ':cursor']) }}";
         var getRemainMessage = "{{ route('get_remain_chats', ':cursor') }}";
         var getLatestMessageRoute = "{{ route('get_latest_Mesage_chat_id', ':chat_id') }}";
         var getChatProfile = "{{ route('get_chat_Profile', ':profile_id') }}";
         var getChatSender = "{{ route('get_chat_sender') }}";
         var getChatReceiver = "{{ route('get_chat_receive', ':chat_id') }}";
         var sendMessageRoute = "{{ route('send_a_message') }}";
-        var getLatestChatRoute = "{{ route('get_latest_chat') }}";
+        var getLatestMessageInChatRoute =
+            "{{ route('get_latest_message_in_chat', ['chat_id' => ':chat_id', 'count' => ':count']) }}";
         var messageSearch = "{{ route('message_search') }}";
     </script>
     <script src="{{ asset('assets/js/message.js') }}"></script>
