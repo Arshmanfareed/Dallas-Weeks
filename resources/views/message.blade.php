@@ -369,6 +369,8 @@
         var getMessageChatCursorRoute =
             "{{ route('get_messages_chat_id_cursor', ['chat_id' => ':chat_id', 'cursor' => ':cursor']) }}";
         var getRemainMessage = "{{ route('get_remain_chats', ':cursor') }}";
+        var getProfileAndLatestMessageRoute =
+            "{{ route('get_profile_and_latest_message', ['profile_id' => ':profile_id', 'chat_id' => ':chat_id']) }}";
         var getLatestMessageRoute = "{{ route('get_latest_Mesage_chat_id', ':chat_id') }}";
         var getChatProfile = "{{ route('get_chat_Profile', ':profile_id') }}";
         var getChatSender = "{{ route('get_chat_sender') }}";
@@ -377,6 +379,7 @@
         var getLatestMessageInChatRoute =
             "{{ route('get_latest_message_in_chat', ['chat_id' => ':chat_id', 'count' => ':count']) }}";
         var messageSearch = "{{ route('message_search') }}";
+        var unreadMessage = "{{ route('unread_message') }}"
     </script>
     <script src="{{ asset('assets/js/message.js') }}"></script>
 @endsection

@@ -166,6 +166,51 @@ class UnipileController extends Controller
         }
     }
 
+    public function start_a_new_chat(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($all['attendee_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $account_id = $all['account_id'];
+        $attendee_id = $all['attendee_id'];
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        if (isset($all['message'])) {
+            $message = $all['message'];
+        } else {
+            $message = '';
+        }
+        $url = $this->dsn . 'api/v1/chats';
+        try {
+            $response = $client->request('POST', $url, [
+                'multipart' => [
+                    [
+                        'name' => 'attendees_ids',
+                        'contents' => $attendee_id
+                    ],
+                    [
+                        'name' => 'account_id',
+                        'contents' => $account_id
+                    ],
+                    [
+                        'name' => 'text',
+                        'contents' => $message
+                    ]
+                ],
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                ],
+            ]);
+            $chat = json_decode($response->getBody(), true);
+            return response()->json(['chat' => $chat]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
     public function retrieve_a_chat(Request $request)
     {
         $all = $request->all();
@@ -242,21 +287,18 @@ class UnipileController extends Controller
             'verify' => false,
         ]);
         if (isset($all['message'])) {
-            $message = [
-                'name' => 'text',
-                'contents' => $all['message']
-            ];
+            $message = $all['message'];
         } else {
-            $message = [
-                'name' => 'text',
-                'contents' => ''
-            ];
+            $message = '';
         }
         $url = $this->dsn . 'api/v1/chats/' . $chat_id . '/messages';
         try {
             $response = $client->request('POST', $url, [
                 'multipart' => [
-                    $message
+                    [
+                        'name' => 'text',
+                        'contents' => $message
+                    ]
                 ],
                 'headers' => [
                     'X-API-KEY' => $this->x_api_key,

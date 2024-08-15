@@ -3271,7 +3271,7 @@ h4 {
 
 .conversation .send_form {
     position: relative;
-    height: 64px;
+    max-height: 120px;
     width: 100%;
     border-radius: 30px;
     background-color: #000 !important;
@@ -6997,12 +6997,13 @@ body.light-mode .skel_user_email {
     from {
         background-position-x: 0%;
     }
+
     to {
         background-position-x: -200%;
     }
 }
 
-#chat-message > ul {
+#chat-message>ul {
     scroll-behavior: smooth;
 }
 
@@ -7019,7 +7020,7 @@ body.light-mode .skel_user_email {
 
 .sendMessage {
     width: 100%;
-    min-height: 100px;
+    min-height: 120px;
     background-color: unset;
     resize: none;
     overflow: hidden;
@@ -7028,6 +7029,13 @@ body.light-mode .skel_user_email {
     padding: 20px;
     margin: auto 0;
     color: #fff;
+    height: 100%;
+    overflow-y: scroll;
+    margin-right: 15px;
+}
+
+.sendMessage::-webkit-scrollbar {
+    width: 0px;
 }
 
 u {

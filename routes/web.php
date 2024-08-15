@@ -140,7 +140,8 @@ Route::middleware(['userAuth'])->group(function () {
         });
         Route::prefix('message')->group(function () {
             Route::get('/', [MessageController::class, 'message'])->name('dash-messages');
-            Route::get('/message/latest/{chat_id}', [MessageController::class, 'get_latest_Mesage_chat_id'])->name('get_latest_Mesage_chat_id');
+            Route::get('/chat/profile/{profile_id}/{chat_id}', [MessageController::class, 'get_profile_and_latest_message'])->name('get_profile_and_latest_message');
+            Route::get('/latest/{chat_id}', [MessageController::class, 'get_latest_Mesage_chat_id'])->name('get_latest_Mesage_chat_id');
             Route::get('/chat/latest/{chat_id}/{count}', [MessageController::class, 'get_latest_message_in_chat'])->name('get_latest_message_in_chat');
             Route::get('/chat/profile/{profile_id}', [MessageController::class, 'get_chat_Profile'])->name('get_chat_Profile');
             Route::get('/chat/receiver/{chat_id}', [MessageController::class, 'get_chat_receive'])->name('get_chat_receive');
@@ -150,6 +151,7 @@ Route::middleware(['userAuth'])->group(function () {
             Route::get('/chats/{cursor}', [MessageController::class, 'get_remain_chats'])->name('get_remain_chats');
             Route::post('/send/chat', [MessageController::class, 'send_a_message'])->name('send_a_message');
             Route::post('/search', [MessageController::class, 'message_search'])->name('message_search');
+            Route::get('/unread', [MessageController::class, 'unread_message'])->name('unread_message');
         });
         Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
         Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');
