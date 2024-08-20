@@ -7066,7 +7066,7 @@ u {
     content: '\f15b';
     font-family: 'Font Awesome 5 Free';
     margin-right: 10px;
-    COLOR: #16adcb;
+    color: #16adcb;
     font-weight: 900;
 }
 
@@ -7074,6 +7074,30 @@ u {
     content: "\f019";
     font-family: 'Font Awesome 5 Free';
     margin-left: 10px;
-    COLOR: #16adcb;
+    color: #16adcb;
     font-weight: 900;
+}
+
+.custom-file-label:before {
+    content: "\f0c6";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: #16adcb;
+    cursor: pointer;
+    font-size: 24px;
+    background-color: #1c1e22;
+    padding: 60px 25px;
+    border-radius: 15px;
+}
+
+.custom-file-label {
+    cursor: pointer;
+    display: inline-block;
+}
+
+.conversation .send_form input.send_btn {
+    position: absolute;
+    padding: 60px 25px;
+    background-color: #1c1e22 !important;
+    border-radius: 0px;
 }

@@ -830,23 +830,24 @@ function getLatestMessageInChat() {
                 const $chatList = $chatMessage.find('>ul');
                 $('#' + chatId).find('.unread_count').remove();
                 const $messageHtml = response.messages.map(message => {
-                    const isSenderClass = message.is_sender == 0 ? 'not_me' : 'is_me';
-                    let messageContent = `<div class="message_content">`;
-                    if (message.deleted == 0) {
-                        if (message.text) {
-                            const text = message.text.replace(/\n/g, '<br>');
-                            messageContent += `<span class="message_text">${text}</span>`;
-                        }
-                        if (message.attachments) {
-                            message.attachments.forEach(attachment => {
-                                messageContent += `<span class="attach_file" id="${attachment.id}">${attachment.file_name}<a href="${attachment.url}" download></a></span>`;
-                            });
-                        }
-                        if (!message.text && !message.attachments) {
-                            messageContent += `<span class="message_text"></span>`;
-                        }
-                    } else {
-                        messageContent += `
+                    if ($('#' + message.id).length == 0) {
+                        const isSenderClass = message.is_sender == 0 ? 'not_me' : 'is_me';
+                        let messageContent = `<div class="message_content">`;
+                        if (message.deleted == 0) {
+                            if (message.text) {
+                                const text = message.text.replace(/\n/g, '<br>');
+                                messageContent += `<span class="message_text">${text}</span>`;
+                            }
+                            if (message.attachments) {
+                                message.attachments.forEach(attachment => {
+                                    messageContent += `<span class="attach_file" id="${attachment.id}">${attachment.file_name}<a href="${attachment.url}" download></a></span>`;
+                                });
+                            }
+                            if (!message.text && !message.attachments) {
+                                messageContent += `<span class="message_text"></span>`;
+                            }
+                        } else {
+                            messageContent += `
                         <span class="message_text" style="
                             padding: 2px 10px; 
                             height: fit-content;
@@ -856,11 +857,12 @@ function getLatestMessageInChat() {
                             box-shadow: inset 4px 4px 4px #8c8c8c, inset -4px -4px 4px #8c8c8c, 4px 4px 4px #414141;">
                             This message has been deleted.
                         </span>`;
+                        }
+                        messageContent += `</div>`;
+                        return `<li class="${isSenderClass}" id="${message.id}"><span class="skel_img"></span>${messageContent}</li>`;
                     }
-                    messageContent += `</div>`;
-                    return `<li class="${isSenderClass}" id="${message.id}"><span class="skel_img"></span>${messageContent}</li>`;
                 }).join('');
-                $chatList.html($messageHtml);
+                $chatList.append($messageHtml);
                 if (sender) {
                     const $isMeElements = $('.is_me');
                     const profilePictureUrl = sender.profile_picture_url;

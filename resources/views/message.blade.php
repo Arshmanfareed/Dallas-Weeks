@@ -345,6 +345,8 @@
                                         </ul>
                                     </div>
                                     <form class="send_form">
+                                        <input type="file" name="attachment" id="attachment" style="display: none;">
+                                        <label for="attachment" class="custom-file-label"></label>
                                         <textarea placeholder="Send a message" name="sendMessage" class="sendMessage" id="sendMessage"></textarea>
                                         <input type="button" class="send_btn" id="send_btn" value="send">
                                     </form>

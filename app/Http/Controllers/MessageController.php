@@ -232,10 +232,14 @@ class MessageController extends Controller
         $chat = $uc->retrieve_a_chat(new \Illuminate\Http\Request($request));
         $chat = $chat->getData(true);
         if (!isset($chat['error'])) {
+            $date = new DateTime();
+            $current_date = new DateTime();
+            $date->modify('-1 minutes');
             $chat = $chat['chat'];
             $request = [
                 'chat_id' => $chat_id,
-                'limit' => $count + $chat['unread_count']
+                'after' => $date->format('Y-m-d\TH:i:s.v\Z'),
+                'before' => $current_date->format('Y-m-d\TH:i:s.v\Z')
             ];
             $messages = $uc->list_all_messages_from_chat(new \Illuminate\Http\Request($request));
             $messages = $messages->getData(true);
