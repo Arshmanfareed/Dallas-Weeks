@@ -133,24 +133,24 @@ class UnipileController extends Controller
         $client = new \GuzzleHttp\Client([
             'verify' => false,
         ]);
-        $url = $this->dsn . 'api/v1/chats?account_id=' . $account_id . '&';
+        $url = $this->dsn . 'api/v1/chats?account_id=' . $account_id;
         if (isset($all['cursor'])) {
-            $url .= 'cursor=' . $all['cursor'] . '&';
+            $url .= '&' . 'cursor=' . $all['cursor'];
         }
         if (isset($all['unread'])) {
-            $url .= 'unread=' . $all['unread'] . '&';
+            $url .= '&' . 'unread=' . 'true';
         }
         if (isset($all['before'])) {
-            $url .= 'before=' . $all['before'] . '&';
+            $url .= '&' . 'before=' . $all['before'];
         }
         if (isset($all['after'])) {
-            $url .= 'after=' . $all['after'] . '&';
+            $url .= '&' . 'after=' . $all['after'];
         }
         if (isset($all['limit'])) {
-            $url .= 'limit=' . $all['limit'] . '&';
+            $url .= '&' . 'limit=' . $all['limit'];
         }
         if (isset($all['account_type'])) {
-            $url .= 'account_type=' . $all['account_type'];
+            $url .= '&' . 'account_type=' . $all['account_type'];
         }
         try {
             $response = $client->request('GET', $url, [

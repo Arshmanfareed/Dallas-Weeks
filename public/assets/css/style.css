@@ -3366,6 +3366,8 @@ body.light-mode .conversation_box .conversation_info h6 {
     padding: 20px 26px;
     /* background: lab(5.81 -0.11 -2.87 / 0.6); */
     border-radius: 20px;
+    width: 350px;
+    height: 150px;
 }
 
 .conversation_box .conversation_info .note p {
@@ -7043,4 +7045,35 @@ u {
     padding: 7px;
     font-size: xxx-large;
     color: #16adcb;
+}
+
+#chat-message li span.message_text {
+    display: block !important;
+}
+
+#chat-message li span.attach_file {
+    display: block;
+    position: relative;
+    background: #1c1e22;
+}
+
+.conversation .mesasges ul li span {
+    margin-bottom: 10px;
+    position: relative;
+}
+
+#chat-message li span.attach_file:before {
+    content: '\f15b';
+    font-family: 'Font Awesome 5 Free';
+    margin-right: 10px;
+    COLOR: #16adcb;
+    font-weight: 900;
+}
+
+#chat-message li span.attach_file a:before {
+    content: "\f019";
+    font-family: 'Font Awesome 5 Free';
+    margin-left: 10px;
+    COLOR: #16adcb;
+    font-weight: 900;
 }

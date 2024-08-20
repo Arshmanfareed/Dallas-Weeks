@@ -355,7 +355,7 @@
                                         <h6 class="skel_head"></h6>
                                         <span class="user_name skel_user_name"></span>
                                         <span class="user_email skel_user_email"></span>
-                                        <div class="note skel_text"></div>
+                                        <div class="note"></div>
                                     </div>
                                 </div>
                             </div>

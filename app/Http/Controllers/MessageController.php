@@ -233,27 +233,25 @@ class MessageController extends Controller
         $chat = $chat->getData(true);
         if (!isset($chat['error'])) {
             $chat = $chat['chat'];
-            if ($chat['unread'] != 0 && $chat['unread_count'] > 0) {
+            $request = [
+                'chat_id' => $chat_id,
+                'limit' => $count + $chat['unread_count']
+            ];
+            $messages = $uc->list_all_messages_from_chat(new \Illuminate\Http\Request($request));
+            $messages = $messages->getData(true);
+            if (!isset($messages['error'])) {
+                $messages = $messages['messages'];
+                $messages['items'] = array_reverse($messages['items']);
                 $request = [
-                    'chat_id' => $chat_id,
-                    'limit' => $count + $chat['unread_count']
+                    'chat_id' => $chat_id
                 ];
-                $messages = $uc->list_all_messages_from_chat(new \Illuminate\Http\Request($request));
-                $messages = $messages->getData(true);
-                if (!isset($messages['error'])) {
-                    $messages = $messages['messages'];
-                    $messages['items'] = array_reverse($messages['items']);
-                    $request = [
-                        'chat_id' => $chat_id
-                    ];
-                    $uc->change_status_chat(new \Illuminate\Http\Request($request));
-                    $data = [
-                        'success' => true,
-                        'messages' => $messages['items'],
-                        'cursor' => $messages['cursor']
-                    ];
-                    return response()->json($data);
-                }
+                $uc->change_status_chat(new \Illuminate\Http\Request($request));
+                $data = [
+                    'success' => true,
+                    'messages' => $messages['items'],
+                    'cursor' => $messages['cursor']
+                ];
+                return response()->json($data);
             }
         }
         return response()->json(['success' => false]);
@@ -359,23 +357,30 @@ class MessageController extends Controller
         $seat = SeatInfo::where('id', $seat_id)->where('user_id', $user_id)->first();
         $uc = new UnipileController();
         $date = new DateTime();
-        $date->modify('-30 seconds');
-        return response()->json(['time' => $date->format('Y-m-d H:i:s')]);
+        $current_date = new DateTime();
+        $date->modify('-1 minutes');
         $request = [
             'account_id' => $seat['account_id'],
             'unread' => true,
-            'after' => $date->format('Y-m-d H:i:s')
+            'after' => $date->format('Y-m-d\TH:i:s.v\Z'),
+            'before' => $current_date->format('Y-m-d\TH:i:s.v\Z')
         ];
         $chats = $uc->list_all_chats(new \Illuminate\Http\Request($request));
-        $all_chats = $chats->getData(true)['chats'];
-        $data = [
-            'title' => 'Message',
-            'chats' => $all_chats['items'],
-            'cursor' => $all_chats['cursor'],
-        ];
-        return view('message', $data);
+        $all_chats = $chats->getData(true);
         if (!isset($all_chats['error'])) {
             $all_chats = $all_chats['chats'];
+            $all_chats['items'] = array_reverse($all_chats['items']);
+            foreach ($all_chats['items'] as &$item) {
+                $item['messages'] = [];
+                $request = [
+                    'chat_id' => $item['id'],
+                    'limit' => 1
+                ];
+                $messages = $uc->list_all_messages_from_chat(new \Illuminate\Http\Request($request));
+                $messages = $messages->getData(true)['messages'];
+                $messages['items'] = array_reverse($messages['items']);
+                $item['messages'] = $messages['items'];
+            }
             $data = [
                 'success' => true,
                 'chats' => $all_chats['items'],
