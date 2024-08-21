@@ -967,6 +967,39 @@ class UnipileController extends Controller
         }
     }
 
+    public function lead_list_search(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($all['search_url']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $client = new Client([
+            'verify' => false,
+        ]);
+        $account_id = $all['account_id'];
+        $url = $this->dsn . 'api/v1/linkedin/search?account_id=' . $account_id;
+        if (isset($all['cursor']) && !is_null($all['cursor'])) {
+            $url .= '&cursor=' . $all['cursor'];
+        }
+        $search_url = $all['search_url'];
+        try {
+            $response = $client->request('POST', $url, [
+                'json' => [
+                    'url' => $search_url
+                ],
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                    'content-type' => 'application/json'
+                ],
+            ]);
+            $result = json_decode($response->getBody(), true);
+            return response()->json(['accounts' => $result]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
     public function handleCallback(Request $request)
     {
         Log::info('Unipile callback received', $request->all());

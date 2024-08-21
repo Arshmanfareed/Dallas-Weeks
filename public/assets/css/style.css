@@ -3217,7 +3217,7 @@ h4 {
 .messages_box .border_box ul {
     height: 70vh;
     overflow: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding-right: 20px !important;
 }
 
@@ -3382,7 +3382,7 @@ body.light-mode .conversation_box .conversation_info h6 {
 .conversation .mesasges {
     height: 70vh;
     overflow: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding-right: 10px;
     padding-bottom: 20px;
 }
@@ -7100,4 +7100,40 @@ u {
     padding: 60px 25px;
     background-color: #1c1e22 !important;
     border-radius: 0px;
+}
+
+.unread_label {
+    width: fit-content;
+    background-color: #16adcb;
+    padding: 7px 19px;
+    border-radius: 17px;
+    box-shadow: 2px 2px 5px #000;
+    text-align: center;
+    margin: 7px auto 17px;
+    cursor: pointer;
+    display: none;
+    position: absolute;
+    bottom: 150px;
+    left: calc(50% - 80px);
+}
+
+.seat_table_row .seat_table_data .seat_img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.messages_box .border_box {
+    height: 100%;
+    margin: 0;
+}
+
+.conversation_box.row.border_box {
+    margin: 0;
+    height: 100%;
+}
+
+.conversation_info .info {
+    overflow: auto;
 }

@@ -334,7 +334,7 @@ class LeadsController extends Controller
                         if (!isset($user_profile['error'])) {
                             $user_profile = $user_profile['user_profile'];
                             $should_discover_lead_with_open_profile = $lsc->get_value_of_setting($campaign->id, 'linkedin_settings_discover_leads_with_open_profile_status_only');
-                            if (($should_discover_lead_with_open_profile && isset($user_profile['can_send_inmail']) && $user_profile['is_premium']) || !$should_discover_lead_with_open_profile) {
+                            if (($should_discover_lead_with_open_profile && $user_profile['is_open_profile']) || !$should_discover_lead_with_open_profile) {
                                 $should_only_premium = $lsc->get_value_of_setting($campaign->id, 'linkedin_settings_discover_premium_linked_accounts_only');
                                 if (($should_only_premium && $user_profile['is_premium']) || !$should_only_premium) {
                                     $lead = new Leads();

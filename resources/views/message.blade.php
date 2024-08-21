@@ -70,9 +70,19 @@
                                     <ul class="list-unstyled p-0 m-0 chat-list">
                                         @if (isset($chats))
                                             @foreach ($chats as $chat)
+                                                @php
+                                                    $disable_chat = 'false';
+                                                    if (
+                                                        $chat['read_only'] ||
+                                                        in_array('reply', $chat['disabledFeatures'])
+                                                    ) {
+                                                        $disable_chat = 'true';
+                                                    }
+                                                @endphp
                                                 @if (in_array('INBOX_LINKEDIN_CLASSIC', $chat['folder']) && $chat['archived'] == 0)
                                                     <li class="d-flex chat-tab skel-chat" id="{{ $chat['id'] }}"
-                                                        data-profile="{{ $chat['attendee_provider_id'] }}">
+                                                        data-profile="{{ $chat['attendee_provider_id'] }}"
+                                                        data-disable="{{ $disable_chat }}">
                                                         @if ($chat['unread'] == 1)
                                                             <span class="unread_count">{{ $chat['unread_count'] }}</span>
                                                         @endif
@@ -344,11 +354,11 @@
                                             </li>
                                         </ul>
                                     </div>
+                                    <div class="unread_label" bis_skin_checked="1">
+                                        <i class="fa-solid fa-arrow-down"></i>
+                                        Unread
+                                    </div>
                                     <form class="send_form">
-                                        <input type="file" name="attachment" id="attachment" style="display: none;">
-                                        <label for="attachment" class="custom-file-label"></label>
-                                        <textarea placeholder="Send a message" name="sendMessage" class="sendMessage" id="sendMessage"></textarea>
-                                        <input type="button" class="send_btn" id="send_btn" value="send">
                                     </form>
                                 </div>
                                 <div class="conversation_info col-lg-4">

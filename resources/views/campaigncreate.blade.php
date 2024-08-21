@@ -134,7 +134,8 @@
                                                                 3rd-degree
                                                             </option>
                                                             <option value="o"
-                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>All degrees
+                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>All
+                                                                degrees
                                                             </option>
                                                         </select>
                                                     </div>
@@ -184,7 +185,8 @@
                                                                 3rd-degree
                                                             </option>
                                                             <option value="o"
-                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>All degrees
+                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>All
+                                                                degrees
                                                             </option>
                                                         </select>
                                                     </div>
@@ -240,7 +242,8 @@
                                                     <div class="col-lg-6 col-sm-12">
                                                         <label for="campaign_url">Import URL:</label>
                                                         <div class="import_field">
-                                                            <input type="hidden" id="campaign_url_hidden" name="campaign_url_hidden">
+                                                            <input type="hidden" id="campaign_url_hidden"
+                                                                name="campaign_url_hidden">
                                                             <input type="file" id="campaign_url"
                                                                 class="file-input__input" class="campaign_url"
                                                                 name="campaign_url" placeholder="LinkedIn search URL"
@@ -306,7 +309,8 @@
                                                                 3rd-degree
                                                             </option>
                                                             <option value="o"
-                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>All degrees
+                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>All
+                                                                degrees
                                                             </option>
                                                         </select>
                                                     </div>
@@ -320,7 +324,7 @@
                                                 <div class="row">
                                                     <input type="hidden" id="campaign_type" name="campaign_type"
                                                         value="leads_list" required>
-                                                    <div class="col-lg-4 col-sm-12">
+                                                    <div class="col-lg-6 col-sm-12">
                                                         <label for="campaign_name">Campaign Name:</label>
                                                         <input type="text" id="campaign_name" class="campaign_name"
                                                             name="campaign_name"
@@ -330,7 +334,7 @@
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
-                                                    <div class="col-lg-4 col-sm-12">
+                                                    <div class="col-lg-6 col-sm-12">
                                                         <label for="campaign_url">Leads list :</label>
                                                         <input type="url" id="campaign_url" class="campaign_url"
                                                             name="campaign_url" placeholder="LinkedIn search URL"
@@ -338,27 +342,6 @@
                                                         @error('campaign_url')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                    </div>
-                                                    <div class="col-lg-4 col-sm-12">
-                                                        <label for="connections">Connections:</label>
-                                                        <select id="connections" name="connections" class="connections">
-                                                            <option value="1"
-                                                                {{ old('connections') == '1' ? 'selected' : '' }}
-                                                                {{ old('connections') == '' ? 'selected' : '' }}>
-                                                                1st-degree
-                                                            </option>
-                                                            <option value="2"
-                                                                {{ old('connections') == '2' ? 'selected' : '' }}>
-                                                                2nd-degree
-                                                            </option>
-                                                            <option value="3"
-                                                                {{ old('connections') == '3' ? 'selected' : '' }}>
-                                                                3rd-degree
-                                                            </option>
-                                                            <option value="o"
-                                                                {{ old('connections') == 'o' ? 'selected' : '' }}>All degrees
-                                                            </option>
-                                                        </select>
                                                     </div>
                                                 </div>
                                             </form>

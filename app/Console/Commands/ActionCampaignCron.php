@@ -85,6 +85,8 @@ class ActionCampaignCron extends Command
                     $remain_distribution_limit = $this->addLinkedinLeads($campaign, $lead_distribution_limit + $remain_distribution_limit, 0, 0);
                 } else if ($campaign['campaign_type'] == 'post_engagement') {
                     $remain_distribution_limit = $this->addPostLeads($campaign, $lead_distribution_limit + $remain_distribution_limit, 0, 0);
+                } else if ($campaign['campaign_type'] == 'leads_list') {
+                    $remain_distribution_limit = $this->addLeadList($campaign, $lead_distribution_limit + $remain_distribution_limit, 0);
                 }
                 if ($remain_distribution_limit > 0) {
                     $campaignsToRemove[] = $index;
@@ -447,6 +449,65 @@ class ActionCampaignCron extends Command
         } else {
             if ($i < $lead_distribution_limit) {
                 file_put_contents($logFilePath, 'Failed to insert data because No url keyward found in post URL at: ' . now() . PHP_EOL, FILE_APPEND);
+            } else {
+                file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
+            }
+        }
+        return $lead_distribution_limit - $i;
+    }
+
+    private function addLeadList($campaign, $lead_distribution_limit, $i, $cursor = null)
+    {
+        $logFilePath = storage_path('logs/campaign_action.log');
+        $seat = SeatInfo::where('id', $campaign->seat_id)->first();
+        $account_id = $seat['account_id'];
+        $url = $campaign['campaign_url'];
+        $request = [
+            'account_id' => $account_id,
+            'search_url' => $url,
+            'cursor' => $cursor
+        ];
+        $uc = new UnipileController();
+        $lead_list_search = $uc->lead_list_search(new \Illuminate\Http\Request($request));
+        $searches = $lead_list_search->getData(true)['accounts']['items'];
+        $cursor = $lead_list_search->getData(true)['accounts']['cursor'];
+        if (count($searches) > 0) {
+            foreach ($searches as $search) {
+                $request = [
+                    'account_id' => $account_id,
+                    'profile_url' => $search['public_profile_url'],
+                ];
+                $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
+                if ($profile instanceof JsonResponse) {
+                    $profile = $profile->getData(true);
+                    if (!isset($profile['error'])) {
+                        $profile = $profile['user_profile'];
+                        if (strpos($profile['public_identifier'], 'https://www.linkedin.com/in/') !== false) {
+                            $url = $profile['public_identifier'];
+                        } else {
+                            $url = 'https://www.linkedin.com/in/' . $profile['public_identifier'];
+                        }
+                        $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
+                        if (empty($lead) && $i < $lead_distribution_limit) {
+                            $lc = new LeadsController();
+                            if ($lc->applySettings($campaign, $url)) {
+                                $i++;
+                                file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
+                            }
+                        } else if (!empty($lead)) {
+                            file_put_contents($logFilePath, 'Failed to insert data because Lead already existed at: ' . now() . PHP_EOL, FILE_APPEND);
+                        }
+                    }
+                }
+            }
+            if ($i < $lead_distribution_limit && !is_null($cursor)) {
+                return $this->addLeadList($campaign, $lead_distribution_limit, $i, $cursor);
+            } else {
+                file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
+            }
+        } else {
+            if ($i < $lead_distribution_limit) {
+                file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
             } else {
                 file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
             }

@@ -67,7 +67,8 @@ $(document).ready(function () {
         }
         if (
             active_form.attr("id") != "campaign_form_4" &&
-            active_form.attr("id") != "campaign_form_3"
+            active_form.attr("id") != "campaign_form_3" &&
+            active_form.attr("id") != "campaign_form_6"
         ) {
             active_form
                 .find("#connections")
@@ -219,7 +220,8 @@ $(document).ready(function () {
         }
         if (
             new_form.attr("id") != "campaign_form_4" &&
-            new_form.attr("id") != "campaign_form_3"
+            new_form.attr("id") != "campaign_form_3" &&
+            new_form.attr("id") != "campaign_form_6"
         ) {
             new_form.find("#connections").val(campaign_details["connections"]);
         }

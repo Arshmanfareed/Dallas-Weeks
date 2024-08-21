@@ -54,10 +54,10 @@ class CampaignElementController extends Controller
             $img_path = $data['img_url'];
             $oneMinuteAgo = Carbon::now()->subMinute();
             $existing_campaign = Campaign::where('campaign_name', $settings['campaign_name'])
-                                         ->where('user_id', $user_id)
-                                         ->where('seat_id', $seat_id)
-                                         ->where('created_at', '>=', $oneMinuteAgo)
-                                         ->first();
+                ->where('user_id', $user_id)
+                ->where('seat_id', $seat_id)
+                ->where('created_at', '>=', $oneMinuteAgo)
+                ->first();
             if ($existing_campaign) {
                 $request->session()->flash('success', 'Campaign successfully saved!');
                 return response()->json(['success' => true]);
@@ -66,7 +66,7 @@ class CampaignElementController extends Controller
                 'campaign_name' => $settings['campaign_name'],
                 'campaign_type' => $settings['campaign_type'],
                 'campaign_url' => $settings['campaign_url'],
-                'campaign_connection' => ($settings['campaign_type'] != 'import' && $settings['campaign_type'] != 'recruiter') ? $settings['connections'] : 'o',
+                'campaign_connection' => ($settings['campaign_type'] != 'import' && $settings['campaign_type'] != 'recruiter' && $settings['campaign_type'] != 'leads_list') ? $settings['connections'] : 'o',
                 'user_id' => $user_id,
                 'seat_id' => $seat_id,
                 'modified_date' => now()->format('Y-m-d'),

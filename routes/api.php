@@ -54,4 +54,5 @@ Route::post('/search/post', [UnipileController::class, 'post_search'])->name('po
 Route::post('/search/post/reactions', [UnipileController::class, 'reactions_post_search'])->name('reactions_post_search');
 Route::post('/search/post/comments', [UnipileController::class, 'comments_post_search'])->name('comments_post_search');
 Route::post('/search/messages', [UnipileController::class, 'messages_search'])->name('messages_search');
+Route::post('/search/sales_navigator/lead_list', [UnipileController::class, 'lead_list_search'])->name('lead_list_search');
 Route::post('/connection/count', [UnipileController::class, 'get_connection_count'])->name('get_connection_count');

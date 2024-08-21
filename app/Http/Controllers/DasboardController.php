@@ -22,18 +22,14 @@ class DasboardController extends Controller
                 $request = [
                     'account_id' => $seat['account_id'],
                 ];
-                $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
-                if ($account instanceof JsonResponse) {
-                    $account = $account->getData(true);
-                    if (!isset($account['error'])) {
-                        $seat['connected'] = true;
-                    } else {
-                        $account = array();
-                        $seat['connected'] = false;
-                    }
+                $account = $uc->retrieve_own_profile(new \Illuminate\Http\Request($request));
+                if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
+                    $seat['connected'] = true;
+                    $seat['account'] = $account->getData(true)['account'];
+                } else {
+                    $seat['connected'] = false;
                 }
             } else {
-                $account = array();
                 $seat['connected'] = false;
             }
         }

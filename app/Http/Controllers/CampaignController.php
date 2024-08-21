@@ -75,6 +75,8 @@ class CampaignController extends Controller
                     return redirect()->back()->withErrors(['campaign_url' => 'Invalid URL for LinkedIn search']);
                 } else if ($all['campaign_type'] == 'sales_navigator' && strpos($all['campaign_url'], 'https://www.linkedin.com/sales/search/people') === false) {
                     return redirect()->back()->withErrors(['campaign_url' => 'Invalid URL for Sales Navigator search']);
+                } else if ($all['campaign_type'] == 'leads_list' && strpos($all['campaign_url'], 'https://www.linkedin.com/sales/lists/people') === false) {
+                    return redirect()->back()->withErrors(['campaign_url' => 'Invalid URL for Lead List search']);
                 } else if ($all['campaign_type'] == 'post_engagement') {
                     preg_match('/activity-([0-9]+)/', $all['campaign_url'], $matches);
                     if (strpos($all['campaign_url'], 'https://www.linkedin.com/posts') === false) {

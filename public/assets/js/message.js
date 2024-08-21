@@ -13,14 +13,25 @@ let isMessageLoading = false;
 $(document).ready(function () {
     $('.chat-tab').on('click', getMessages);
     $('.chat-list').on('scroll', updateChatListLoader);
-    $('.mesasges').on('scroll', updateMessageLoader);
     $('#search_message').on('input', debounce(search_message, 300));
     $('#send_btn').on('click', sendMessage);
+    $('.unread_label').on('click', function () {
+        const $chatMessage = $('#chat-message');
+        $chatMessage.animate({ scrollTop: $chatMessage[0].scrollHeight }, 'slow');
+        $(this).hide();
+    });
+    $('.mesasges').on('scroll', function () {
+        const $chatMessage = $(this);
+        if ($chatMessage[0].scrollTop + $chatMessage[0].clientHeight >= $chatMessage[0].scrollHeight) {
+            $('.unread_label').hide();
+        }
+        updateMessageLoader($(this));
+    });
     getSender();
     intervalId = setInterval(function () {
         const isAnyAjaxInProgress = (getMessageAjax || getReceiverAjax || updateChatListAjax.length > 0 || getChatAjax || getLatestMessageInChatAjax || getUnreadMessageAjax);
         if (!isAnyAjaxInProgress) getLatestMessageInChat();
-    }, 30000);
+    }, 6000);
     unreadInterval = setInterval(function () {
         const isAnyAjaxInProgress = (getMessageAjax || getReceiverAjax || updateChatListAjax.length > 0 || getChatAjax || getLatestMessageInChatAjax || getUnreadMessageAjax);
         if (!isAnyAjaxInProgress) getUnreadMessage();
@@ -46,9 +57,9 @@ $(window).on('beforeunload', function () {
     if (getUnreadMessageAjax) getUnreadMessageAjax.abort();
     $('.chat-tab').off('click', getMessages);
     $('.chat-list').off('scroll', updateChatListLoader);
-    $('.mesasges').off('scroll', updateMessageLoader);
     $('#search_message').off('input', debounce(search_message, 300));
     $('#send_btn').off('click', sendMessage);
+    $('.mesasges').off('scroll');
 });
 
 function getSender() {
@@ -166,6 +177,7 @@ function getMessages() {
     const chat_id = $(this).attr("id");
     const $chatMessage = $('#chat-message');
     const $conversationInfo = $('.conversation_info .info');
+    const $send_form = $('.send_form');
     $('.selected').removeClass('selected');
     $(this).addClass('selected');
     if (getMessageAjax) {
@@ -184,6 +196,15 @@ function getMessages() {
         'SECOND_DEGREE': '2nd',
         'THIRD_DEGREE': '3rd'
     };
+    if ($(this).attr("data-disable") != 'true') {
+        $send_form.html(`
+            <input type="file" name="attachment" id="attachment" style="display: none;">
+            <label for="attachment" class="custom-file-label"></label>
+            <textarea placeholder="Send a message" name="sendMessage" class="sendMessage" id="sendMessage"></textarea>
+            <input type="button" class="send_btn" id="send_btn" value="send">`);
+    } else {
+        $send_form.html(``);
+    }
     if (chat_id != '') {
         $chatMessage.find('ul').html(`
             <li class="not_me"><span class="skel_img"></span><span class="message_text skel_text"></span></li>
@@ -478,9 +499,14 @@ function updateChatList() {
         success: function (response) {
             if (response.success && response.chats.length > 0) {
                 html = response.chats.reduce((acc, chat) => {
+                    let disableChat = 'false';
+                    if (chat.read_only || (Array.isArray(chat.disabledFeatures) && chat.disabledFeatures.includes('reply'))) {
+                        disableChat = 'true';
+                    }
                     if (chat.folder.includes('INBOX_LINKEDIN_CLASSIC') && chat.archived === 0) {
                         acc += `
-                            <li class="d-flex chat-tab skel-chat" id="${chat.id}" data-profile="${chat.attendee_provider_id}">
+                            <li class="d-flex chat-tab skel-chat" id="${chat.id}" data-profile="${chat.attendee_provider_id}"
+                                data-disable="${disableChat}">
                                 ${chat.unread === 1 ? `<span class="unread_count">${chat.unread_count}</span>` : ''}
                                 <span class="chat_image skel_chat_img"></span>
                                 <div class="d-block">
@@ -521,15 +547,13 @@ function updateChatList() {
     updateChatListAjax.push(ajaxRequest);
 }
 
-function updateMessageLoader(e) {
-    e.preventDefault();
+function updateMessageLoader($chatMessage) {
     if (isMessageLoading) return;
     const $messageCursor = $('#message_cursor');
-    const $chatMessage = $('#chat-message');
     const $messageLoader = $('#message-loader');
     const cursor = $messageCursor.val();
     const chat_id = $chatMessage.attr('data-chat');
-    if (cursor !== '' && $(this).scrollTop() <= 2) {
+    if (cursor !== '' && $(this).scrollTop() <= 10) {
         isMessageLoading = true;
         $messageLoader.show();
         $.ajax({
@@ -647,7 +671,7 @@ function sendMessage(e) {
                             </span>`;
                     }
                     messageContent += `</div>`;
-                    const $messageHtml = `<li class="${isSenderClass}" id="${message.id}"><span class="skel_img"></span>${messageContent}</li>`;
+                    const $messageHtml = `<li class="${isSenderClass}" id="${messageData.id}"><span class="skel_img"></span>${messageContent}</li>`;
                     $('#' + messageData.chat_id + ' .unread_count').remove();
                     $('#chat-message>ul').append($messageHtml);
                     if (sender) {
@@ -831,6 +855,7 @@ function getLatestMessageInChat() {
                 $('#' + chatId).find('.unread_count').remove();
                 const $messageHtml = response.messages.map(message => {
                     if ($('#' + message.id).length == 0) {
+                        $('.unread_label').show();
                         const isSenderClass = message.is_sender == 0 ? 'not_me' : 'is_me';
                         let messageContent = `<div class="message_content">`;
                         if (message.deleted == 0) {
