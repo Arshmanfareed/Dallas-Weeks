@@ -81,18 +81,11 @@
         }
     </style>
     <script src="{{ asset('assets/js/dashboard-account.js') }}"></script>
-    @if (!empty($user->token))
-        {!! '<p>Connected.</p>' !!}
-    @endif
     <section class="dashboard">
         <div class="container-fluid">
-            @if ($errors->any())
+            @if ($errors->has('error'))
                 <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                    {{ $errors->first('error') }}
                 </div>
             @endif
             @if (Session::has('success'))
@@ -135,36 +128,37 @@
                                         <table class="data_table w-100">
                                             <tbody id="campaign_table_body">
                                                 @foreach ($seats as $seat)
-                                                    <tr id="{{ 'table_row_' . $seat->id }}" class="seat_table_row">
-                                                        @if (isset($seat->account) && $seat['account']['profile_picture_url'] != '')
+                                                    <tr id="{{ 'table_row_' . $seat['id'] }}" class="seat_table_row">
+                                                        @if (isset($seat['account_profile']) && $seat['account_profile']['profile_picture_url'] != '')
                                                             <td width="10%" class="seat_table_data"><img class="seat_img"
-                                                                    src="{{ $seat['account']['profile_picture_url'] }}"
-                                                                    alt="">
-                                                            @else
+                                                                    src="{{ $seat['account_profile']['profile_picture_url'] }}"
+                                                                    alt=""></td>
+                                                        @else
                                                             <td width="10%" class="seat_table_data"><img class="seat_img"
                                                                     src="{{ asset('assets/img/acc.png') }}" alt="">
+                                                            </td>
                                                         @endif
+                                                        <td width="50%" class="text-left seat_table_data">
+                                                            {{ $seat['username'] }}
                                                         </td>
-                                                        <td width="55%" class="text-left seat_table_data">
-                                                            {{ $seat->username }}
-                                                        </td>
-                                                        <td width="25%">
-                                                            @if ($seat->connected)
-                                                                <div class="per discovered">Connected</div>
+                                                        <td width="15%" class="connection_status">
+                                                            @if ($seat['connected'])
+                                                                <div class="connected"><span></span>Connected</div>
                                                             @else
-                                                                <div class="per connected_not_replied">Disconnected</div>
+                                                                <div class="disconnected"><span></span>Disconnected</div>
+                                                            @endif
+                                                        </td>
+                                                        <td width="15%" class="activeness_status">
+                                                            @if ($seat['active'])
+                                                                <div class="active"><span></span>Active</div>
+                                                            @else
+                                                                <div class="not_active"><span></span>In Active</div>
                                                             @endif
                                                         </td>
                                                         <td width="10%">
                                                             <a href="javascript:;" type="button"
                                                                 class="setting setting_btn"><i
                                                                     class="fa-solid fa-gear"></i></a>
-                                                            <!-- <ul class="setting_list text-left" style="display: none">
-                                                                            <li><a href="{{ route('campaignDetails', ['campaign_id' => $seat->id]) }}">Check
-                                                                                    campaign details</a></li>
-                                                                            <li><a href="{{ route('editCampaign', ['campaign_id' => $seat->id]) }}">Edit
-                                                                                    campaign</a></li>
-                                                                        </ul> -->
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -190,7 +184,6 @@
         </div>
     </section>
 
-    <!-- basic modal -->
     <div class="modal fade step_form_popup" id="addaccount" tabindex="-1" role="dialog" aria-labelledby="addaccount"
         aria-hidden="true">
         <div class="modal-dialog" style="border-radius: 45px">
@@ -202,19 +195,16 @@
                     </button>
                 </div>
                 <div class="modal-body text-center">
-                    <!-- Add Account Popup -->
                     <form role="form" action="{{ route('stripe.post') }}" method="post" data-cc-on-file="false"
                         data-stripe-publishable-key="pk_test_51KQb3pC6mJiJ0AUpeAjoS786h11qy1jW92S6gWsGD4NpK4JGOuKplhC2I0vHFgEWwRy7T9NwHDZPiILuzQPynCdK007sgX6ox6"
                         method="post" class="form step_form require-validation" id="payment-form">
                         @csrf
-                        <!-- Progress Bar -->
-                        <div class="progress-bar">
+                        <div class="progress-bar" id="progress-bar">
                             <div class="progress" id="progress"></div>
                             <div class="progress-step active" data-title="Add account"></div>
                             <div class="progress-step" data-title="Company "></div>
                             <div class="progress-step" data-title="Payment"></div>
                         </div>
-                        <!-- Steps -->
                         <div class="form-step active">
                             <h3>Personal Informations</h3>
                             <div class="form_row row">
@@ -293,24 +283,14 @@
                                             type='text'>
                                     </div>
                                 </div>
-                                <!-- <div class='form-row'>
-                                                        <div class='col-md-12 error form-group hide'>
-                                                            <div class='alert-danger alert'>Please correct the errors and try again.</div>
-                                                        </div>
-                                                    </div>  -->
                             </div>
-                            <!-- <div class="add-experience">
-                                                        <a class="add-exp-btn"> + Add Experience</a>
-                                                    </div> -->
                             <div class="btn-group">
                                 <a class="btn btn-prev">Previous</a>
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Pay Now</button>
-                                <!-- <input type="submit" value="Complete" name="complete" class="btn btn-complete"> -->
                             </div>
                         </div>
                     </form>
                 </div>
-                <!-- <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary">Save changes</button>                                                                                                                                                                                                                                           </div> -->
             </div>
         </div>
     </div>
@@ -390,7 +370,6 @@
         </div>
     </div>
 
-    <!-- <a href="javascript:;" id="linkedin-auth-btn">Authenticate with LinkedIn</a> -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
         var dashboardRoute = "{{ route('acc_dash') }}";
@@ -398,74 +377,5 @@
         var deleteSeatRoute = "{{ route('deleteSeat', [':seat_id']) }}";
         var updateNameRoute = "{{ route('updateName', [':seat_id', ':seat_name']) }}";
         var filterSeatRoute = "{{ route('filterSeat', [':search']) }}";
-        jQuery(document).ready(function() {
-            // Attach a click event to the LinkedIn authentication button
-            jQuery('#linkedin-auth-btn').click(function(e) {
-                e.preventDefault();
-                // Perform the AJAX request to the LinkedIn authentication route
-                jQuery.ajax({
-                    type: 'GET',
-                    url: '/auth/linkedin/redirect', // Change this URL to your actual route
-                    success: function(response) {
-                        // Handle the success response if needed
-                        console.log(response);
-                        // After successful authentication, you can redirect to the callback route
-                        window.location.href = '/auth/linkedin/callback';
-                    },
-                    error: function(error) {
-                        // Handle the error response if needed
-                        console.error(error);
-                    }
-                });
-            });
-        });
     </script>
-
-    <script>
-        $('.btn-next').on('click', function(e) {
-            var progress_step = $('.progress-step.active');
-            var form_step = $('.form-step.active');
-            $(form_step).removeClass('active');
-            $(progress_step).removeClass('active');
-            $(form_step).next('.form-step').addClass('active');
-            $(progress_step).next('.progress-step').addClass('active');
-            $('#progress').css({
-                'width': $('.progress-step.active').position().left + 170,
-            });
-        });
-        $('.btn-prev').on('click', function(e) {
-            var progress_step = $('.progress-step.active');
-            var form_step = $('.form-step.active');
-            $(form_step).removeClass('active');
-            $(progress_step).removeClass('active');
-            $(form_step).prev('.form-step').addClass('active');
-            $(progress_step).prev('.progress-step').addClass('active');
-            console.log($('.progress-step.active').position().left);
-            console.log($('.progress-step.active').next('.progress-step').position().left);
-            $('#progress').css({
-                'width': $('.progress-step.active').position().left + 170,
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            $('#payment-form').on('submit', function(event) {
-                event.preventDefault();
-                var formData = $(this).serialize();
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ route('stripe.post') }}",
-                    data: formData,
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    },
-                });
-            });
-        });
-    </script>
-
 @endsection

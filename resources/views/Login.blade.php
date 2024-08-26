@@ -10,6 +10,11 @@
                             <h2>Welcome back to Networked</h2>
                             <h6>Log In to your account</h6>
                         </div>
+                        @if ($errors->has('error'))
+                            <div class="alert alert-danger">
+                                {{ $errors->first('error') }}
+                            </div>
+                        @endif
                         <form action="" class="login_form" method="POST">
                             <div>
                                 <label for="email">Email address</label>
@@ -68,9 +73,9 @@
                         </form>
                     </div>
                     <!-- <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                  </div> -->
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                      </div> -->
                 </div>
             </div>
         </div>

@@ -6,64 +6,93 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Campaign;
 use App\Models\SeatInfo;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
 class MaindashboardController extends Controller
 {
     function maindasboard(Request $request)
     {
-        if (isset($request->all()['seat_id'])) {
-            $seat_id = $request->all()['seat_id'];
-            session(['seat_id' => $request->all()['seat_id']]);
-        } elseif (session()->has('seat_id')) {
-            $seat_id = session('seat_id');
-        } else {
-            return redirect(route('dashobardz'));
-        }
-        $user_id = Auth::user()->id;
-        $seat = SeatInfo::where('id', $seat_id)->first();
-        if ($seat['account_id'] !== NULL) {
-            $request = [
-                'account_id' => $seat['account_id'],
-            ];
-            $uc = new UnipileController();
-            $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
-            if ($account instanceof JsonResponse) {
-                $account = $account->getData(true);
-                if (!isset($account['error'])) {
-                    $seat['connected'] = true;
-                } else {
-                    $account = array();
-                    $seat['connected'] = false;
-                }
+        try {
+            if ($request->has('seat_id')) {
+                $seat_id = $request->input('seat_id');
+                session(['seat_id' => $seat_id]);
+            } elseif (session()->has('seat_id')) {
+                $seat_id = session('seat_id');
             } else {
-                $account = array();
-                $seat['connected'] = false;
+                throw new Exception('Seat Not Found');
             }
-            if ($seat['connected']) {
-                $lc = new LeadsController();
-                $campaigns = Campaign::where('seat_id', $seat_id)->orderBy('is_active', 'desc')->get();
-                foreach ($campaigns as $campaign) {
-                    $campaign['lead_count'] = $lc->getLeadsCountByCampaign($user_id, $campaign->id);
-                }
-                $campaigns = $campaigns->sort(function ($a, $b) {
-                    if ($a['is_active'] === $b['is_active']) {
-                        return $b['lead_count'] <=> $a['lead_count'];
+            $user_id = Auth::user()->id;
+            $seat = SeatInfo::where('id', $seat_id)->first();
+            if (!is_null($seat)) {
+                $seat['active'] = false;
+                $seat['connected'] = false;
+                if (!empty($seat['account_id'])) {
+                    $uc = new UnipileController();
+                    $request = ['account_id' => $seat['account_id']];
+                    $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
+                    if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
+                        $seat['active'] = true;
+                        $seat['account'] = $account->getData(true)['account'];
+                        session(['account' => $seat['account']]);
                     }
-                    return $b['is_active'] <=> $a['is_active'];
-                });
-                $data = [
-                    'title' => 'Account Dashboard',
-                    'campaigns' => $campaigns,
-                ];
-                return view('main-dashboard', $data);
-            } else {
+                    $account = $uc->retrieve_own_profile(new \Illuminate\Http\Request($request));
+                    if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
+                        $account = $account->getData(true)['account'];
+                        $profile_url = 'https://www.linkedin.com/in/' . $account['provider_id'];
+                        $request = [
+                            'account_id' => $seat['account_id'],
+                            'profile_url' => $profile_url
+                        ];
+                        $account = $uc->view_profile(new \Illuminate\Http\Request($request));
+                        if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
+                            $seat['account_profile'] = $account->getData(true)['user_profile'];
+                            session(['account_profile' => $seat['account_profile']]);
+                        }
+                        $seat['connected'] = true;
+                    }
+                }
+                if ($seat['connected'] && $seat['active']) {
+                    $lc = new LeadsController();
+                    $campaigns = Campaign::where('seat_id', $seat_id)->orderBy('is_active', 'desc')->limit(10)->get();
+                    foreach ($campaigns as $campaign) {
+                        $campaign['lead_count'] = $lc->getLeadsCountByCampaign($user_id, $campaign->id);
+                    }
+                    $request = [
+                        'account_id' => $seat['account_id'],
+                        'limit' => 10,
+                    ];
+                    $chats = $uc->list_all_chats(new \Illuminate\Http\Request($request));
+                    if ($chats instanceof JsonResponse && !isset($chats->getData(true)['error'])) {
+                        $chats = $chats->getData(true)['chats']['items'];
+                    } else {
+                        $chats = array();
+                    }
+                    $request = [
+                        'account_id' => $seat['account_id'],
+                        'limit' => 3,
+                    ];
+                    $relations = $uc->list_all_relations(new \Illuminate\Http\Request($request));
+                    if ($relations instanceof JsonResponse && !isset($relations->getData(true)['error'])) {
+                        $relations = $relations->getData(true)['relations']['items'];
+                    } else {
+                        $relations = array();
+                    }
+                    $data = [
+                        'title' => 'Account Dashboard',
+                        'campaigns' => $campaigns,
+                        'seat' => $seat,
+                        'chats' => $chats,
+                        'relations' => $relations
+                    ];
+                    return view('main-dashboard', $data);
+                }
                 session(['add_account' => true]);
                 return redirect(route('dash-settings'));
             }
-        } else {
-            session(['add_account' => true]);
-            return redirect(route('dash-settings'));
+            throw new Exception('Seat Not Found');
+        } catch (Exception $e) {
+            return redirect(route('dashobardz'))->withErrors(['error' => $e->getMessage()]);
         }
     }
 }

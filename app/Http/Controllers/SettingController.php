@@ -6,16 +6,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PhysicalPayment;
 use App\Models\SeatInfo;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
 class SettingController extends Controller
 {
     function settingrolespermission()
     {
-        $data = [
-            'title' => 'Setting'
-        ];
-        return view('setting', $data);
+        try {
+            $data = [
+                'title' => 'Setting'
+            ];
+            return view('setting', $data);
+        } catch (Exception $e) {
+            return redirect('login')->withErrors(['error' => $e->getMessage()]);
+        }
     }
 
     function setting()

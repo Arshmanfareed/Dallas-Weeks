@@ -23,20 +23,10 @@ class LinkedinAccountMiddleware
         }
         $seat_id = session('seat_id');
         $seat = SeatInfo::find($seat_id);
-        if (is_null($seat) || is_null($seat->account_id)) {
-            session(['add_account' => true]);
-            return redirect(route('dash-settings'));
+        if (is_null($seat)) {
+            return redirect(route('dashobardz'));
         }
-        $request = new \Illuminate\Http\Request(['account_id' => $seat->account_id]);
-        $uc = new \App\Http\Controllers\UnipileController();
-        $accountResponse = $uc->retrieve_an_account($request);
-        if ($accountResponse instanceof JsonResponse) {
-            $account = $accountResponse->getData(true);
-            $seat->connected = !isset($account['error']);
-        } else {
-            $seat->connected = false;
-        }
-        if (!$seat->connected) {
+        if (is_null($seat->account_id) && (!session()->has('account_profile') || !session()->has('account'))) {
             session(['add_account' => true]);
             return redirect(route('dash-settings'));
         }

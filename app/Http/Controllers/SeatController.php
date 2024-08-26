@@ -18,97 +18,114 @@ use App\Models\CampaignPath;
 use App\Models\UpdatedCampaignElements;
 use App\Models\CampaignActions;
 use App\Models\PhysicalPayment;
+use Exception;
+use PhysicalPayment as GlobalPhysicalPayment;
 
 class SeatController extends Controller
 {
     public function get_seat_by_id($seat_id)
     {
-        $user_id = Auth::user()->id;
-        $seat = SeatInfo::where('user_id', $user_id)->where('id', $seat_id)->first();
-        return response()->json(['success' => true, 'seat' => $seat]);
+        try {
+            $user_id = Auth::user()->id;
+            $seat = SeatInfo::where('user_id', $user_id)->where('id', $seat_id)->first();
+            if (!is_null($seat)) {
+                return response()->json(['success' => true, 'seat' => $seat]);
+            }
+            throw new Exception('Seat Not Found');
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'errors' => $e->getMessage()], 404);
+        }
     }
 
     public function delete_seat($seat_id)
     {
-        $user_id = Auth::user()->id;
-        $seat = SeatInfo::where('user_id', $user_id)->where('id', $seat_id)->first();
-        if ($seat['account_id'] !== NULL) {
-            $request = [
-                'account_id' => $seat['account_id'],
-            ];
-            $uc = new UnipileController();
-            $account = $uc->delete_account(new \Illuminate\Http\Request($request));
-            if ($account instanceof JsonResponse) {
-                $campaigns = Campaign::where('seat_id', $seat->id)->get();
-                PhysicalPayment::where('product_id', $seat->id)->delete();
-                foreach ($campaigns as $campaign) {
-                    LinkedinSetting::where('campaign_id', $campaign->id)->delete();
-                    LeadActions::where('campaign_id', $campaign->id)->delete();
-                    Leads::where('campaign_id', $campaign->id)->delete();
-                    ImportedLeads::where('campaign_id', $campaign->id)->delete();
-                    GlobalSetting::where('campaign_id', $campaign->id)->delete();
-                    EmailSetting::where('campaign_id', $campaign->id)->delete();
-                    UpdatedCampaignProperties::where('campaign_id', $campaign->id)->delete();
-                    CampaignPath::where('campaign_id', $campaign->id)->delete();
-                    UpdatedCampaignElements::where('campaign_id', $campaign->id)->delete();
-                    CampaignActions::where('campaign_id', $campaign->id)->delete();
+        try {
+            $user_id = Auth::user()->id;
+            $seat = SeatInfo::where('user_id', $user_id)->where('id', $seat_id)->first();
+            if (!is_null($seat)) {
+                if (!empty($seat['account_id'])) {
+                    $request = ['account_id' => $seat['account_id']];
+                    $uc = new UnipileController();
+                    $account = $uc->delete_account(new \Illuminate\Http\Request($request));
+                    if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
+                        $campaigns = Campaign::where('seat_id', $seat->id)->get();
+                        $campaign_ids = $campaigns->pluck('id')->toArray();
+                        PhysicalPayment::where('product_id', $seat->id)->delete();
+                        LinkedinSetting::whereIn('campaign_id', $campaign_ids)->delete();
+                        LeadActions::whereIn('campaign_id', $campaign_ids)->delete();
+                        Leads::whereIn('campaign_id', $campaign_ids)->delete();
+                        ImportedLeads::whereIn('campaign_id', $campaign_ids)->delete();
+                        GlobalSetting::whereIn('campaign_id', $campaign_ids)->delete();
+                        EmailSetting::whereIn('campaign_id', $campaign_ids)->delete();
+                        UpdatedCampaignProperties::whereIn('campaign_id', $campaign_ids)->delete();
+                        CampaignPath::whereIn('campaign_id', $campaign_ids)->delete();
+                        UpdatedCampaignElements::whereIn('campaign_id', $campaign_ids)->delete();
+                        CampaignActions::whereIn('campaign_id', $campaign_ids)->delete();
+                        Campaign::whereIn('id', $campaign_ids)->delete();
+                    } else {
+                        throw new Exception('Seat Deletion failed');
+                    }
                 }
-                Campaign::where('seat_id', $seat_id)->delete();
                 $seat->delete();
-                return response()->json(['success' => true]);
-            } else {
-                return response()->json(['success' => false]);
+                return response()->json(['success' => true, 'seat' => $seat_id]);
             }
-        } else {
-            $seat->delete();
-            return response()->json(['success' => true]);
+            throw new Exception('Seat Not Found');
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'errors' => $e->getMessage()], 404);
         }
     }
 
     public function update_name($seat_id, $seat_name)
     {
-        $user_id = Auth::user()->id;
-        $seat = SeatInfo::where('user_id', $user_id)->where('id', $seat_id)->first();
-        $seat->username = $seat_name;
-        $seat->save();
-        return response()->json(['success' => true]);
+        try {
+            $user_id = Auth::user()->id;
+            $seat = SeatInfo::where('user_id', $user_id)->where('id', $seat_id)->first();
+            if (!is_null($seat)) {
+                $seat->username = $seat_name;
+                if ($seat->save()) {
+                    return response()->json(['success' => true, 'seat' => $seat]);
+                }
+                throw new Exception('Seat Updation Failed');
+            }
+            throw new Exception('Seat Not Found');
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'errors' => $e->getMessage()], 404);
+        }
     }
 
     public function filterSeat($search)
     {
-        $user_id = Auth::user()->id;
-        if ($user_id) {
-            $seats = SeatInfo::where('user_id', $user_id);
-            if ($search != 'null') {
-                $seats = $seats->where('username', 'LIKE', '%' . $search . '%');
-            }
-            $seats = $seats->get();
+        try {
+            $user_id = Auth::user()->id;
+            $seats = SeatInfo::where('user_id', $user_id)
+                ->when($search !== 'null', function ($query) use ($search) {
+                    return $query->where('username', 'LIKE', '%' . $search . '%');
+                })
+                ->get();
+            $uc = new UnipileController();
             foreach ($seats as $seat) {
-                if ($seat['account_id'] !== NULL) {
-                    $request = [
-                        'account_id' => $seat['account_id'],
-                    ];
-                    $uc = new UnipileController();
+                $seat['connected'] = false;
+                $seat['active'] = false;
+                if (!empty($seat['account_id'])) {
+                    $request = ['account_id' => $seat['account_id']];
                     $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
-                    if ($account instanceof JsonResponse) {
-                        $account = $account->getData(true);
-                        if (!isset($account['error'])) {
-                            $seat->connected = true;
-                        } else {
-                            $seat->connected = false;
-                        }
-                    } else {
-                        $seat->connected = false;
+                    if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
+                        $seat['active'] = true;
+                        $seat['account'] = $account->getData(true)['account'];
                     }
-                } else {
-                    $seat->connected = false;
+                    $account = $uc->retrieve_own_profile(new \Illuminate\Http\Request($request));
+                    if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
+                        $seat['connected'] = true;
+                        $seat['account_profile'] = $account->getData(true)['account'];
+                    }
                 }
             }
-            if (count($seats) != 0) {
+            if (count($seats) > 0) {
                 return response()->json(['success' => true, 'seats' => $seats]);
-            } else {
-                return response()->json(['success' => false, 'seats' => 'Seat not Found']);
             }
+            throw new Exception('Seats Not Found');
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'errors' => $e->getMessage()], 404);
         }
     }
 

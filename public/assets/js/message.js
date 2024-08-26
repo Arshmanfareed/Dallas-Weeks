@@ -15,6 +15,19 @@ $(document).ready(function () {
     $('.chat-list').on('scroll', updateChatListLoader);
     $('#search_message').on('input', debounce(search_message, 300));
     $('#send_btn').on('click', sendMessage);
+    $('.user_profile').on('click', function () {
+        if ($('.conversation_info').hasClass('col-lg-4')) {
+            $('.conversation_info').css('display', 'none');
+            $('.conversation_info').removeClass('col-lg-4');
+            $('.conversation').removeClass('col-lg-8');
+            $('.conversation').addClass('col-lg-12');
+        } else {
+            $('.conversation_info').css('display', 'block');
+            $('.conversation_info').addClass('col-lg-4');
+            $('.conversation').removeClass('col-lg-12');
+            $('.conversation').addClass('col-lg-8');
+        }
+    });
     $('.unread_label').on('click', function () {
         const $chatMessage = $('#chat-message');
         $chatMessage.animate({ scrollTop: $chatMessage[0].scrollHeight }, 'slow');
@@ -22,10 +35,11 @@ $(document).ready(function () {
     });
     $('.mesasges').on('scroll', function () {
         const $chatMessage = $(this);
-        if ($chatMessage[0].scrollTop + $chatMessage[0].clientHeight >= $chatMessage[0].scrollHeight) {
+        if ($chatMessage[0].scrollTop + $chatMessage[0].clientHeight >= $chatMessage[0].scrollHeight - 10) {
             $('.unread_label').hide();
+        } else if ($chatMessage[0].scrollTop <= 10) {
+            updateMessageLoader($chatMessage);
         }
-        updateMessageLoader($(this));
     });
     getSender();
     intervalId = setInterval(function () {
@@ -94,13 +108,21 @@ function getReceiver(chat_id) {
     };
     const updateMessages = (selector, profilePictureUrl) => {
         $(selector).each(function () {
-            $(this).find('.skel_img').replaceWith($('<img>').attr('src', profilePictureUrl));
+            if (profilePictureUrl) {
+                $(this).find('.skel_img').replaceWith($('<img>').attr('src', profilePictureUrl));
+            } else {
+                $(this).find('.skel_img').replaceWith($('<img>').attr('src', "/assets/img/acc.png"));
+            }
         });
     };
     const updateConversationInfo = (receiver) => {
         const connection = connectionDegrees[receiver.network_distance] || '';
         const fullName = `${receiver.first_name} ${receiver.last_name}<u>.</u>${connection}`;
-        $conversationInfo.find('.skel_img').attr('src', receiver.profile_picture_url).removeClass('skel_img');
+        if (receiver.profile_picture_url) {
+            $conversationInfo.find('.skel_img').attr('src', receiver.profile_picture_url).removeClass('skel_img');
+        } else {
+            $conversationInfo.find('.skel_img').attr('src', "/assets/img/acc.png").removeClass('skel_img');
+        }
         $conversationInfo.find('.skel_head').html(fullName).removeClass('skel_head');
         $conversationInfo.find('.skel_user_name').html(receiver.headline).removeClass('skel_user_name');
         const email = receiver.contact_info?.emails?.[0];
@@ -113,6 +135,12 @@ function getReceiver(chat_id) {
         } else {
             $userEmailContainer.remove();
         }
+        if (receiver.summary) {
+            const text = receiver.summary.replace(/\n/g, '<br>');
+            $conversationInfo.find('.note').html(text).removeClass('skel_text');
+        } else {
+            $conversationInfo.find('.note').removeClass('skel_text');
+        }
     };
     if (sender) {
         updateMessages('.is_me', sender.profile_picture_url);
@@ -122,7 +150,7 @@ function getReceiver(chat_id) {
         <h6 class="skel_head"></h6>
         <span class="user_name skel_user_name"></span>
         <span class="user_email skel_user_email"></span>
-        <div class="note"></div>
+        <div class="note skel_text"></div>
     `);
     if (receivers[chat_id]) {
         receiver = receivers[chat_id];
@@ -170,7 +198,7 @@ function getChatData() {
             }
         }
     });
-    $chats.on('click', getMessages);
+    $('.chat-tab').on('click', getMessages);
 }
 
 function getMessages() {
@@ -221,13 +249,17 @@ function getMessages() {
                     <h6 class="skel_head"></h6>
                     <span class="user_name skel_user_name"></span>
                     <span class="user_email skel_user_email"></span>
-                    <div class="note"></div>
+                    <div class="note skel_text"></div>
                 `);
                 if (receivers[chat_id]) {
                     receiver = receivers[chat_id];
                     const connection = connectionDegrees[receiver.network_distance] || '';
                     const fullName = `${receiver.first_name} ${receiver.last_name}<u>.</u>${connection}`;
-                    $conversationInfo.find('.skel_img').attr('src', receiver.profile_picture_url).removeClass('skel_img');
+                    if (receiver.profile_picture_url) {
+                        $conversationInfo.find('.skel_img').attr('src', receiver.profile_picture_url).removeClass('skel_img');
+                    } else {
+                        $conversationInfo.find('.skel_img').attr('src', "/assets/img/acc.png").removeClass('skel_img');
+                    }
                     $conversationInfo.find('.skel_head').html(fullName).removeClass('skel_head');
                     $conversationInfo.find('.skel_user_name').html(receiver.headline).removeClass('skel_user_name');
                     const email = receiver.contact_info?.emails?.[0];
@@ -239,6 +271,12 @@ function getMessages() {
                         $userEmailContainer.html(`<a href="${website}" target="_blank">${website}</a>`).removeClass('skel_user_email');
                     } else {
                         $userEmailContainer.remove();
+                    }
+                    if (receiver.summary) {
+                        const text = receiver.summary.replace(/\n/g, '<br>');
+                        $conversationInfo.find('.note').html(text).removeClass('skel_text');
+                    } else {
+                        $conversationInfo.find('.note').removeClass('skel_text');
                     }
                 }
             },
@@ -298,14 +336,18 @@ function getMessages() {
             <h6 class="skel_head"></h6>
             <span class="user_name skel_user_name"></span>
             <span class="user_email skel_user_email"></span>
-            <div class="note"></div>
+            <div class="note skel_text"></div>
         `);
         const profile_id = $(this).attr('data-profile');
         if (receivers[profile_id]) {
             receiver = receivers[profile_id];
             const connection = connectionDegrees[receiver.network_distance] || '';
             const fullName = `${receiver.first_name} ${receiver.last_name}<u>.</u>${connection}`;
-            $conversationInfo.find('.skel_img').attr('src', receiver.profile_picture_url).removeClass('skel_img');
+            if (receiver.profile_picture_url) {
+                $conversationInfo.find('.skel_img').attr('src', receiver.profile_picture_url).removeClass('skel_img');
+            } else {
+                $conversationInfo.find('.skel_img').attr('src', "/assets/img/acc.png").removeClass('skel_img');
+            }
             $conversationInfo.find('.skel_head').html(fullName).removeClass('skel_head');
             $conversationInfo.find('.skel_user_name').html(receiver.headline).removeClass('skel_user_name');
             const email = receiver.contact_info?.emails?.[0];
@@ -318,8 +360,54 @@ function getMessages() {
             } else {
                 $userEmailContainer.remove();
             }
+            if (receiver.summary) {
+                const text = receiver.summary.replace(/\n/g, '<br>');
+                $conversationInfo.find('.note').html(text).removeClass('skel_text');
+            } else {
+                $conversationInfo.find('.note').removeClass('skel_text');
+            }
+        } else {
+            $.ajax({
+                url: getProfileByIdRoute.replace(':profile_id', profile_id),
+                type: "GET",
+                success: function (response) {
+                    receiver = response.user_profile;
+                    const connection = connectionDegrees[receiver.network_distance] || '';
+                    const fullName = `${receiver.first_name} ${receiver.last_name}<u>.</u>${connection}`;
+                    if (receiver.profile_picture_url) {
+                        $conversationInfo.find('.skel_img').attr('src', receiver.profile_picture_url).removeClass('skel_img');
+                    } else {
+                        $conversationInfo.find('.skel_img').attr('src', "/assets/img/acc.png").removeClass('skel_img');
+                    }
+                    $conversationInfo.find('.skel_head').html(fullName).removeClass('skel_head');
+                    $conversationInfo.find('.skel_user_name').html(receiver.headline).removeClass('skel_user_name');
+                    const email = receiver.contact_info?.emails?.[0];
+                    const website = receiver.websites?.[0];
+                    const $userEmailContainer = $conversationInfo.find('.skel_user_email');
+                    if (email) {
+                        $userEmailContainer.html(`<a href="mailto:${email}">${email}</a>`).removeClass('skel_user_email');
+                    } else if (website) {
+                        $userEmailContainer.html(`<a href="${website}" target="_blank">${website}</a>`).removeClass('skel_user_email');
+                    } else {
+                        $userEmailContainer.remove();
+                    }
+                    if (receiver.summary) {
+                        const text = receiver.summary.replace(/\n/g, '<br>');
+                        $conversationInfo.find('.note').html(text).removeClass('skel_text');
+                    } else {
+                        $conversationInfo.find('.note').removeClass('skel_text');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                },
+                complete: function () {
+                    getChatData();
+                }
+            });
         }
     }
+    $('#send_btn').on('click', sendMessage);
 }
 
 function getProfileAndLatestMessage($chat) {
@@ -336,7 +424,11 @@ function getProfileAndLatestMessage($chat) {
                 const $latestMessage = $chat.find('.latest_message');
                 const $latestMessageTimestamp = $chat.find('.latest_message_timestamp');
                 $chatName.text(`${profile.first_name} ${profile.last_name}`).removeClass('skel_chat_name');
-                $chatImage.replaceWith($('<img>').attr('src', profile.profile_picture_url));
+                if (profile.profile_picture_url) {
+                    $chatImage.replaceWith($('<img>').attr('src', profile.profile_picture_url));
+                } else {
+                    $chatImage.replaceWith($('<img>').attr('src', "/assets/img/acc.png"));
+                }
                 receivers[chat_id] = profile;
                 if (response.message?.length) {
                     const latestMessage = response.message[0];
@@ -392,7 +484,11 @@ function getProfileMessage($chat) {
             if (response.success) {
                 const profile = response.user_profile;
                 $chatName.text(`${profile.first_name} ${profile.last_name}`).removeClass('skel_chat_name');
-                $chatImage.replaceWith($('<img>').attr('src', profile.profile_picture_url));
+                if (profile.profile_picture_url) {
+                    $chatImage.replaceWith($('<img>').attr('src', profile.profile_picture_url));
+                } else {
+                    $chatImage.replaceWith($('<img>').attr('src', "/assets/img/acc.png"));
+                }
                 receivers[chat_id] = profile;
             } else {
                 $chat.remove();
@@ -465,10 +561,7 @@ function updateChatListLoader(e) {
         return;
     }
     const $this = $(this);
-    const contentHeight = $this.prop('scrollHeight');
-    const visibleHeight = $this.height();
-    const scrollTop = $this.scrollTop();
-    if (scrollTop + visibleHeight >= contentHeight - 1) {
+    if ($this[0].scrollTop + $this[0].clientHeight >= $this[0].scrollHeight - 10) {
         $('#chat-loader').show();
         updateChatList();
     }
@@ -479,7 +572,6 @@ function updateChatList() {
     const $chatList = $('.chat-list');
     const $chatLoader = $('#chat-loader');
     const $chatCursor = $('#chat_cursor');
-    if (isLoading) return;
     isLoading = true;
     let html = '';
     if (cursor === 'emp') {
@@ -490,8 +582,6 @@ function updateChatList() {
             alignItems: 'center',
             justifyContent: 'center'
         }).show();
-    } else {
-        $chatLoader.hide();
     }
     const ajaxRequest = $.ajax({
         url: getRemainMessage.replace(":cursor", cursor),
@@ -540,6 +630,7 @@ function updateChatList() {
             console.error(error);
         },
         complete: function () {
+            $('.chat-tab').on('click', getMessages);
             $chatLoader.hide();
             isLoading = false;
         }
@@ -553,7 +644,7 @@ function updateMessageLoader($chatMessage) {
     const $messageLoader = $('#message-loader');
     const cursor = $messageCursor.val();
     const chat_id = $chatMessage.attr('data-chat');
-    if (cursor !== '' && $(this).scrollTop() <= 10) {
+    if (cursor !== '' && $chatMessage[0].scrollTop <= 10) {
         isMessageLoading = true;
         $messageLoader.show();
         $.ajax({
@@ -604,10 +695,18 @@ function updateMessageLoader($chatMessage) {
                 isMessageLoading = false;
                 if (receiver) {
                     $('.is_me .skel_img').each(function () {
-                        $(this).replaceWith($('<img>').attr('src', sender.profile_picture_url)).removeClass('skel_img');
+                        if (sender.profile_picture_url) {
+                            $(this).replaceWith($('<img>').attr('src', sender.profile_picture_url)).removeClass('skel_img');
+                        } else {
+                            $(this).replaceWith($('<img>').attr('src', "/assets/img/acc.png")).removeClass('skel_img');
+                        }
                     });
                     $('.not_me .skel_img').each(function () {
-                        $(this).replaceWith($('<img>').attr('src', receiver.profile_picture_url)).removeClass('skel_img');
+                        if (receiver.profile_picture_url) {
+                            $(this).replaceWith($('<img>').attr('src', receiver.profile_picture_url)).removeClass('skel_img');
+                        } else {
+                            $(this).replaceWith($('<img>').attr('src', "/assets/img/acc.png")).removeClass('skel_img');
+                        }
                     });
                 } else {
                     getReceiver(chat_id);
@@ -676,7 +775,11 @@ function sendMessage(e) {
                     $('#chat-message>ul').append($messageHtml);
                     if (sender) {
                         $('.is_me .skel_img').each(function () {
-                            $(this).replaceWith($('<img>').attr('src', sender.profile_picture_url)).removeClass('skel_img');
+                            if (sender.profile_picture_url) {
+                                $(this).replaceWith($('<img>').attr('src', sender.profile_picture_url)).removeClass('skel_img');
+                            } else {
+                                $(this).replaceWith($('<img>').attr('src', "/assets/img/acc.png")).removeClass('skel_img');
+                            }
                         });
                     }
                     const latestMessage = response.message;
@@ -810,11 +913,11 @@ function search_message() {
             console.error('Error during search:', error);
         },
         complete: function () {
+            $('.chat-tab').on('click', getMessages);
             getChatAjax = null;
             $('#chat-loader').hide();
         }
     });
-    $('.chat-tab').on('click', getMessages);
 }
 
 function getLatestMessageInChat() {
@@ -891,7 +994,12 @@ function getLatestMessageInChat() {
                 if (sender) {
                     const $isMeElements = $('.is_me');
                     const profilePictureUrl = sender.profile_picture_url;
-                    const imgTag = $('<img>').attr('src', profilePictureUrl);
+                    var imgTag = ``;
+                    if (profilePictureUrl) {
+                        imgTag = $('<img>').attr('src', profilePictureUrl);
+                    } else {
+                        imgTag = $('<img>').attr('src', "/assets/img/acc.png");
+                    }
                     $isMeElements.each(function () {
                         const $skelImg = $(this).find('.skel_img');
                         $skelImg.replaceWith(imgTag.clone().removeClass('skel_img'));
@@ -900,7 +1008,12 @@ function getLatestMessageInChat() {
                 if (receiver) {
                     const $notMeElements = $('.not_me');
                     const profilePictureUrl = receiver.profile_picture_url;
-                    const imgTag = $('<img>').attr('src', profilePictureUrl);
+                    var imgTag = ``;
+                    if (profilePictureUrl) {
+                        imgTag = $('<img>').attr('src', profilePictureUrl);
+                    } else {
+                        imgTag = $('<img>').attr('src', "/assets/img/acc.png");
+                    }
                     $notMeElements.each(function () {
                         const $skelImg = $(this).find('.skel_img');
                         $skelImg.replaceWith(imgTag.clone());
@@ -991,6 +1104,7 @@ function getUnreadMessage() {
             console.error(error);
         },
         complete: function () {
+            $('.chat-tab').on('click', getMessages);
             getUnreadMessageAjax = null;
         }
     });

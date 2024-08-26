@@ -329,74 +329,69 @@ class LeadsController extends Controller
                         'profile_url' => $url,
                     ];
                     $user_profile = $uc->view_profile(new \Illuminate\Http\Request($profile));
-                    if ($user_profile instanceof JsonResponse) {
-                        $user_profile = $user_profile->getData(true);
-                        if (!isset($user_profile['error'])) {
-                            $user_profile = $user_profile['user_profile'];
-                            $should_discover_lead_with_open_profile = $lsc->get_value_of_setting($campaign->id, 'linkedin_settings_discover_leads_with_open_profile_status_only');
-                            if (($should_discover_lead_with_open_profile && $user_profile['is_open_profile']) || !$should_discover_lead_with_open_profile) {
-                                $should_only_premium = $lsc->get_value_of_setting($campaign->id, 'linkedin_settings_discover_premium_linked_accounts_only');
-                                if (($should_only_premium && $user_profile['is_premium']) || !$should_only_premium) {
-                                    $lead = new Leads();
-                                    $lead->is_active = 1;
-                                    $lead->contact = '';
-                                    $lead->title_company = '';
-                                    $lead->send_connections = 'discovered';
-                                    $lead->next_step = '';
-                                    $lead->executed_time = date('H:i:s');
-                                    $lead->campaign_id = $campaign->id;
-                                    $lead->user_id = $campaign->user_id;
-                                    $lead->created_at = now();
-                                    $lead->updated_at = now();
-                                    $lead->profileUrl = $url;
-                                    if (isset($user_profile['first_name']) && isset($user_profile['last_name'])) {
-                                        $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
-                                        $name = ucwords($name);
-                                        $lead->title_company = $name;
+                    if ($user_profile instanceof JsonResponse && !isset($user_profile->getData(true)['error'])) {
+                        $user_profile = $user_profile->getData(true)['user_profile'];
+                        $should_discover_lead_with_open_profile = $lsc->get_value_of_setting($campaign->id, 'linkedin_settings_discover_leads_with_open_profile_status_only');
+                        if (($should_discover_lead_with_open_profile && isset($user_profile['is_open_profile']) && $user_profile['is_open_profile']) || !$should_discover_lead_with_open_profile) {
+                            $should_only_premium = $lsc->get_value_of_setting($campaign->id, 'linkedin_settings_discover_premium_linked_accounts_only');
+                            if (($should_only_premium && isset($user_profile['is_premium']) && $user_profile['is_premium']) || !$should_only_premium) {
+                                $lead = new Leads();
+                                $lead->is_active = 1;
+                                $lead->contact = '';
+                                $lead->title_company = '';
+                                $lead->send_connections = 'discovered';
+                                $lead->next_step = '';
+                                $lead->executed_time = date('H:i:s');
+                                $lead->campaign_id = $campaign->id;
+                                $lead->user_id = $campaign->user_id;
+                                $lead->created_at = now();
+                                $lead->updated_at = now();
+                                $lead->profileUrl = $url;
+                                if (isset($user_profile['first_name']) && isset($user_profile['last_name'])) {
+                                    $name = $user_profile['first_name'] . ' ' . $user_profile['last_name'];
+                                    $name = ucwords($name);
+                                    $lead->title_company = $name;
+                                }
+                                if (isset($user_profile['name'])) {
+                                    $name = $user_profile['name'];
+                                    $lead->title_company = $name;
+                                }
+                                if ($lsc->get_value_of_setting($campaign->id, 'linkedin_settings_collect_contact_information')) {
+                                    if (isset($user_profile['contact_info']['phones'][0])) {
+                                        $contact = $user_profile['contact_info']['phones'][0];
+                                        $lead->contact = $contact;
                                     }
-                                    if (isset($user_profile['name'])) {
-                                        $name = $user_profile['name'];
-                                        $lead->title_company = $name;
+                                    if (isset($user_profile['contact_info']['emails'][0])) {
+                                        $email = $user_profile['contact_info']['emails'][0];
+                                        $lead->email = $email;
                                     }
-                                    if ($lsc->get_value_of_setting($campaign->id, 'linkedin_settings_collect_contact_information')) {
-                                        if (isset($user_profile['contact_info']['phones'][0])) {
-                                            $contact = $user_profile['contact_info']['phones'][0];
-                                            $lead->contact = $contact;
-                                        }
-                                        if (isset($user_profile['contact_info']['emails'][0])) {
-                                            $email = $user_profile['contact_info']['emails'][0];
-                                            $lead->email = $email;
-                                        }
-                                        if (isset($user_profile['adresses'][0])) {
-                                            $address = $user_profile['adresses'][0];
-                                            $lead->address = $address;
-                                        }
-                                        if (isset($user_profile['websites'][0])) {
-                                            $website = $user_profile['websites'][0];
-                                            $lead->website = $website;
-                                        }
+                                    if (isset($user_profile['adresses'][0])) {
+                                        $address = $user_profile['adresses'][0];
+                                        $lead->address = $address;
                                     }
-                                    $lead->save();
-                                    if (isset($lead->id)) {
-                                        $lead_action = new LeadActions();
-                                        $campaign_path = CampaignPath::where('campaign_id', $campaign->id)->orderBy('id')->first();
-                                        $lead_action->current_element_id = 'step_1';
-                                        $lead_action->next_true_element_id = $campaign_path->current_element_id;
-                                        $lead_action->campaign_id = $campaign->id;
-                                        $lead_action->next_false_element_id = '';
-                                        $lead_action->created_at = now();
-                                        $lead_action->updated_at = now();
-                                        $lead_action->status = 'inprogress';
-                                        $lead_action->lead_id = $lead->id;
-                                        $lead_action->ending_time = now();
-                                        $lead_action->save();
-                                        if (isset($lead_action->id)) {
-                                            return true;
-                                        } else {
-                                            $lead->delete();
-                                            return false;
-                                        }
+                                    if (isset($user_profile['websites'][0])) {
+                                        $website = $user_profile['websites'][0];
+                                        $lead->website = $website;
+                                    }
+                                }
+                                $lead->save();
+                                if (isset($lead->id)) {
+                                    $lead_action = new LeadActions();
+                                    $campaign_path = CampaignPath::where('campaign_id', $campaign->id)->orderBy('id')->first();
+                                    $lead_action->current_element_id = 'step_1';
+                                    $lead_action->next_true_element_id = $campaign_path->current_element_id;
+                                    $lead_action->campaign_id = $campaign->id;
+                                    $lead_action->next_false_element_id = '';
+                                    $lead_action->created_at = now();
+                                    $lead_action->updated_at = now();
+                                    $lead_action->status = 'inprogress';
+                                    $lead_action->lead_id = $lead->id;
+                                    $lead_action->ending_time = now();
+                                    $lead_action->save();
+                                    if (isset($lead_action->id)) {
+                                        return true;
                                     } else {
+                                        $lead->delete();
                                         return false;
                                     }
                                 } else {

@@ -93,6 +93,29 @@ class MessageController extends Controller
         return response()->json($data);
     }
 
+    public function profile_by_id($profile_id)
+    {
+        $user_id = Auth::user()->id;
+        $seat_id = session('seat_id');
+        $seat = SeatInfo::where('id', $seat_id)->where('user_id', $user_id)->first();
+        $data = [];
+        $uc = new UnipileController();
+        $request = [
+            'account_id' => $seat['account_id'],
+            'profile_url' => $profile_id,
+        ];
+        $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
+        $profile = $profile->getData(true);
+        if (isset($profile['error'])) {
+            return response()->json(['success' => false]);
+        }
+        $data = [
+            'success' => true,
+            'user_profile' => $profile['user_profile']
+        ];
+        return response()->json($data);
+    }
+
     public function get_remain_chats($cursor)
     {
         $user_id = Auth::user()->id;
@@ -285,7 +308,7 @@ class MessageController extends Controller
                 ];
                 $messages = $uc->list_1_to_1_chats_from_attendee(new \Illuminate\Http\Request($request));
                 $messages = $messages->getData(true);
-                if (!isset($messages['error'])) {
+                if (!isset($messages['error']) && isset($messages['chats']['items'][0])) {
                     $all_chats[] = $messages['chats']['items'][0];
                 } else {
                     $all_chats[]['provider'] = $provider_id;

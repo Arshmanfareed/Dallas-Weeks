@@ -114,7 +114,7 @@ session()->forget('edit_campaign_details');
                     <div class="col-lg-4">
                         <div class="border_box dashboard_box">
                             <div class="count_div">
-                                <strong>1092</strong>
+                                <strong>{{ session()->has('account_profile') ? session('account_profile')['connections_count'] : 0 }}</strong>
                                 <div class="cont">
                                     <span>Total connections</span>
                                     <div class="gray_back d-flex">

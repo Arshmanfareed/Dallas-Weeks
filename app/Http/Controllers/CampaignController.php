@@ -20,12 +20,13 @@ use App\Models\ImportedLeads;
 use App\Models\LeadActions;
 use App\Models\Leads;
 use App\Models\CampaignActions;
+use Exception;
 
 class CampaignController extends Controller
 {
     function campaign()
     {
-        if (Auth::check()) {
+        try {
             $lc = new LeadsController();
             $user_id = Auth::user()->id;
             $seat_id = session('seat_id');
@@ -43,8 +44,8 @@ class CampaignController extends Controller
                 'campaigns' => $campaigns,
             ];
             return view('campaign', $data);
-        } else {
-            return redirect(url('/'));
+        } catch (Exception $e) {
+            return redirect(route('dashobardz'))->withErrors(['error' => $e->getMessage()]);
         }
     }
 

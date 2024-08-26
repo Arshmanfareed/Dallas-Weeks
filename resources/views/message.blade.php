@@ -10,7 +10,7 @@
                     <div class="row">
                         <div class="col-lg-12 lead_sec justify-content-between d-flex">
                             <h3>Messages</h3>
-                            <div class="filt_opt d-flex">
+                            {{-- <div class="filt_opt d-flex">
                                 <div class="filt_opt">
                                     <select name="Channels" id="Channels">
                                         <option value="01">All Channels</option>
@@ -24,7 +24,7 @@
                                         data-bs-target="#export_modal"><img class="img-fluid"
                                             src="{{ asset('assets/img/sync.svg') }}" alt=""></a>Sync
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="row">
@@ -214,7 +214,7 @@
                         </div>
                         <div class="col-lg-8">
                             <div class="conversation_box row border_box">
-                                <div class="conversation col-lg-8">
+                                <div class="conversation col-lg-12">
                                     <ul class=" msg_setting d-flex justify-content-end p-0 list-unstyled">
                                         <li class="user_profile"><a href="javascript:;"><i
                                                     class="fa-solid fa-user"></i></a></li>
@@ -361,13 +361,13 @@
                                     <form class="send_form">
                                     </form>
                                 </div>
-                                <div class="conversation_info col-lg-4">
+                                <div class="conversation_info" style="display: none">
                                     <div class="info">
                                         <img class="skel_img" src="" alt="">
                                         <h6 class="skel_head"></h6>
                                         <span class="user_name skel_user_name"></span>
                                         <span class="user_email skel_user_email"></span>
-                                        <div class="note"></div>
+                                        <div class="note skel_text"></div>
                                     </div>
                                 </div>
                             </div>
@@ -375,6 +375,7 @@
                     </div>
                 </div>
             </div>
+            <div id="imageContainer"></div>
     </section>
     <script>
         var getMessageChatRoute = "{{ route('get_messages_chat_id', ':chat_id') }}";
@@ -391,7 +392,8 @@
         var getLatestMessageInChatRoute =
             "{{ route('get_latest_message_in_chat', ['chat_id' => ':chat_id', 'count' => ':count']) }}";
         var messageSearch = "{{ route('message_search') }}";
-        var unreadMessage = "{{ route('unread_message') }}"
+        var unreadMessage = "{{ route('unread_message') }}";
+        var getProfileByIdRoute = "{{ route('profile_by_id', ':profile_id') }}";
     </script>
     <script src="{{ asset('assets/js/message.js') }}"></script>
 @endsection

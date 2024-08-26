@@ -429,6 +429,35 @@ class UnipileController extends Controller
         }
     }
 
+    public function retrieve_an_attachment_from_a_message(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['message_id']) || !isset($all['attachment_id']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        $message_id = $all['message_id'];
+        $attachment_id = $all['attachment_id'];
+        $url = $this->dsn . 'api/v1/messages/' . $message_id . '/attachments' . '/' . $attachment_id;
+        try {
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'Accept' => '*/*',
+                ],
+            ]);
+            $contentType = $all['mimetype'] ?? 'application/octet-stream';
+            $filename =  $all['file_name'] ?? 'attachment';
+            return response($response->getBody(), $response->getStatusCode())
+                ->header('Content-Type', $contentType)
+                ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
     public function list_all_attendees(Request $request)
     {
         $all = $request->all();

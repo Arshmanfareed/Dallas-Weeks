@@ -104,7 +104,7 @@ class LinkedInController extends Controller
     {
         $seat_id = session('seat_id');
         $seat = SeatInfo::find($seat_id);
-        if ($seat['account_id'] !== NULL) {
+        if (!empty($seat['account_id'])) {
             $request = [
                 'account_id' => $seat['account_id'],
             ];

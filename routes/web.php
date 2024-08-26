@@ -80,7 +80,6 @@ Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])-
 
 /* These are for actions like campaign and leads */
 Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
-Route::get('/list_all_relations', [UnipileController::class, 'list_all_relations'])->name('getAllRelations');
 Route::get('/delete_an_account', [LinkedInController::class, 'delete_an_account'])->name('delete_an_account');
 
 /* These are for dashboard which requires authentication */
@@ -152,6 +151,7 @@ Route::middleware(['userAuth'])->group(function () {
             Route::post('/send/chat', [MessageController::class, 'send_a_message'])->name('send_a_message');
             Route::post('/search', [MessageController::class, 'message_search'])->name('message_search');
             Route::get('/unread', [MessageController::class, 'unread_message'])->name('unread_message');
+            Route::get('/profile/{profile_id}', [MessageController::class, 'profile_by_id'])->name('profile_by_id');
         });
         Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
         Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');
