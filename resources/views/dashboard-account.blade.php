@@ -103,8 +103,7 @@
                                 @php
                                     $user = auth()->user();
                                 @endphp
-                                <img src="{{ asset('assets/img/account_img.png') }}"
-                                    alt=""><span>{{ $user->name }}</span>
+                                <img src="{{ asset('assets/img/acc.png') }}" style="background-color: #000;" alt=""><span>{{ $user->name }}</span>
                             </div>
                             <div class="form_add d-flex">
                                 <form action="/search" method="get" class="search-form">

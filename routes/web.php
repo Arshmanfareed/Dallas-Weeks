@@ -77,6 +77,7 @@ Route::get('/login', [LoginController::class, 'login']);
 Route::get('/register', [RegisterController::class, 'register']);
 Route::post('/register-user', [RegisterController::class, 'registerUser'])->name('register-user');
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
+Route::post('/add_email_account', [LinkedInController::class, 'addEmailToAccount'])->name('addEmailAccount');
 
 /* These are for actions like campaign and leads */
 Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
@@ -152,6 +153,7 @@ Route::middleware(['userAuth'])->group(function () {
             Route::post('/search', [MessageController::class, 'message_search'])->name('message_search');
             Route::get('/unread', [MessageController::class, 'unread_message'])->name('unread_message');
             Route::get('/profile/{profile_id}', [MessageController::class, 'profile_by_id'])->name('profile_by_id');
+            Route::post('/retrieve/message/attachment', [UnipileController::class, 'retrieve_an_attachment_from_a_message'])->name('retrieve_an_attachment_from_a_message');
         });
         Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign');
         Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule');

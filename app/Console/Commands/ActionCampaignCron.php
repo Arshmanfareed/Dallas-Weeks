@@ -58,7 +58,7 @@ class ActionCampaignCron extends Command
                     ->where('is_active', 1)
                     ->where('is_archive', 0)
                     ->get();
-                $this->campaign_working($campaigns, 5);
+                $this->campaign_working($campaigns);
             }
         } catch (\Exception $e) {
             file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);

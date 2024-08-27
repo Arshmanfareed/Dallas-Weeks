@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddAccountIdToSeatInfo extends Migration
+class CreateSeatEmailTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,12 @@ class AddAccountIdToSeatInfo extends Migration
      */
     public function up()
     {
-        Schema::table('seat_info', function (Blueprint $table) {
-            $table->string('account_id')->nullable(true);
+        Schema::create('seat_email', function (Blueprint $table) {
+            $table->id();
+            $table->string('user_id');
+            $table->string('seat_id');
+            $table->string('email_id');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +29,6 @@ class AddAccountIdToSeatInfo extends Migration
      */
     public function down()
     {
-        Schema::table('seat_info', function (Blueprint $table) {
-            $table->dropColumn('account_id');
-        });
+        Schema::dropIfExists('seat_email');
     }
 }

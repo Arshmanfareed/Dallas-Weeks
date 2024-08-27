@@ -1032,24 +1032,37 @@ class UnipileController extends Controller
     public function handleCallback(Request $request)
     {
         Log::info('Unipile callback received', $request->all());
-
         $accountId = $request->input('account_id');
         $status = $request->input('status');
-        $email = $request->input('name');
-
+        $name = $request->input('name');
         Log::info('Account ID:', ['account_id' => $accountId]);
         Log::info('Status:', ['status' => $status]);
-        Log::info('Email:', ['email' => $email]);
-
-        $update = DB::table('seat_info')
-            ->where('id', $email)
-            ->update(['account_id' => $accountId]);
-
+        Log::info('Type:', ['type' => $name]);
+        if (strpos($name, 'linkedin') !== false) {
+            $seat = str_replace('linkedin', '', $name);
+            $update = DB::table('seat_info')
+                ->where('id', $seat)
+                ->update(['account_id' => $accountId]);
+        } else if (strpos($name, 'email') !== false) {
+            $seat = str_replace('email', '', $name);
+            $seat = DB::table('seat_info')
+                ->where('id', $seat)
+                ->first();
+            $update = DB::table('seat_email')
+                ->insert([
+                    'user_id' => $seat->user_id,
+                    'seat_id' => $seat->id,
+                    'email_id' => $accountId,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            $update = true;
+        }
         if ($update) {
-            Log::info('Account ID updated successfully for user', ['email' => $email, 'account_id' => $accountId]);
+            Log::info('Account ID updated successfully for user', ['seat' => $seat, 'account_id' => $accountId]);
             return response()->json(['status' => 'success']);
         } else {
-            Log::error('Failed to update Account ID for user', ['email' => $email]);
+            Log::error('Failed to update Account ID for user', ['seat' => $seat]);
             return response()->json(['status' => 'error', 'message' => 'User not found or update failed'], 404);
         }
     }

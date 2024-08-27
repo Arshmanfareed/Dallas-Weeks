@@ -41,7 +41,9 @@ function getProfileAndLatestMessage($chat) {
                 $chat.find('.skel_profile a').eq(0).attr('href', 'https://www.linkedin.com/in/' + profile.provider_id);
                 const $chatName = $chat.find('.skel_profile .skel_profile_name');
                 const $chatImage = $chat.find('.skel_profile .skel_profile_img');
-                $chatName.text(`${profile.first_name} ${profile.last_name}`).removeClass('skel_profile_name');
+                const fullName = `${profile.first_name} ${profile.last_name}`;
+                const trimmedName = fullName.length > 20 ? fullName.substring(0, 20) + '...' : fullName;
+                $chatName.text(trimmedName).removeClass('skel_profile_name');
                 if (profile.profile_picture_url) {
                     $chatImage.replaceWith($('<img>').attr('src', profile.profile_picture_url));
                 }

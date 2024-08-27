@@ -1,29 +1,30 @@
 @extends('partials/dashboard_header')
 @section('content')
-<style>
-    .alert.alert-danger.alert-dismissible {
-    background: #870000;
-    border: none;
-    border-radius: 30px;
-    padding: 20px;
-    text-align: center;
-    color: #fff;
-}
-.alert.alert-danger.alert-dismissible .close {
-    height: 50px;
-    width: 50px;
-    opacity: 1;
-    font-weight: 400;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #fff;
-    border-radius: 100%;
-    position: absolute;
-    top: 5px;
-    right: 10px;
-}
-</style>
+    <style>
+        .alert.alert-danger.alert-dismissible {
+            background: #870000;
+            border: none;
+            border-radius: 30px;
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .alert.alert-danger.alert-dismissible .close {
+            height: 50px;
+            width: 50px;
+            opacity: 1;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+            border-radius: 100%;
+            position: absolute;
+            top: 5px;
+            right: 10px;
+        }
+    </style>
     <section class="main_dashboard blacklist  campaign_sec lead_sec setting_sec">
         <div class="container_fluid">
             <div class="row">
@@ -77,7 +78,8 @@
                                     <div class="tab-pane setting_pane active" id="LinkedIn" role="tabpanel">
                                         <ul class="nav nav-tabs" role="tablist">
                                             <li class="nav-item">
-                                                <a class="nav-link linkedin_setting {{ session()->has('add_account') ? '' : 'active' }}" data-bs-target="Global" data-toggle="tab" href="javascript;"
+                                                <a class="nav-link linkedin_setting {{ session()->has('add_account') ? '' : 'active' }}"
+                                                    data-bs-target="Global" data-toggle="tab" href="javascript;"
                                                     role="tab">Global limits for
                                                     campaigns</a>
                                             </li>
@@ -86,7 +88,8 @@
                                                     data-toggle="tab" href="javascript;" role="tab">Account health</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link linkedin_setting {{ session()->has('add_account') ? 'active' : '' }}" data-bs-target="integrations" data-toggle="tab" href="javascript;"
+                                                <a class="nav-link linkedin_setting {{ session()->has('add_account') ? 'active' : '' }}"
+                                                    data-bs-target="integrations" data-toggle="tab" href="javascript;"
                                                     role="tab">LinkedIn
                                                     integrations</a>
                                             </li>
@@ -177,24 +180,34 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="tab-pane linkedin_pane integrations_tab {{ session()->has('add_account') ? 'active' : '' }}" id="integrations" role="tabpanel">
+                                            <div class="tab-pane linkedin_pane integrations_tab {{ session()->has('add_account') ? 'active' : '' }}"
+                                                id="integrations" role="tabpanel">
                                                 <h4>Connect your LinkedIn account</h4>
-                                                @if ($data['paymentStatus'] == 'success' && !empty($data['account']) && !empty($data['account']['account']) && $seatData['connected'])
+                                                @if (
+                                                    $data['paymentStatus'] == 'success' &&
+                                                        !empty($data['account']) &&
+                                                        !empty($data['account']['account']) &&
+                                                        $seatData['connected']
+                                                )
                                                     <div class="grey_box d-flex align-items-center">
                                                         <div class="linked">
                                                             <div class="cont">
                                                                 <i class="fa-brands fa-linkedin"></i>
                                                                 <div class="head_cont">
                                                                     <span class="head">LinkedIn</span>
-                                                                    <span>Connected account: {{ $data['account']['account']['name'] }}</span>
+                                                                    @php
+                                                                        $account_profile = session('account_profile');
+                                                                    @endphp
+                                                                    <span>Connected account:
+                                                                        {{ $account_profile['first_name'] . ' ' . $account_profile['last_name'] }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         @if ($seatData['connected'])
                                                             <div class="con">Status: Connected</div>
                                                             <div class="add_btn">
-                                                                <a href="javascript:;" class="disconnect_account" type="button"><img
-                                                                        class="img-fluid"
+                                                                <a href="javascript:;" class="disconnect_account"
+                                                                    type="button"><img class="img-fluid"
                                                                         src="{{ asset('assets/img/disconnect.png') }}"
                                                                         alt=""></a>Disconnect
                                                             </div>
@@ -227,7 +240,8 @@
                                                     <!--</div>-->
                                                 @else
                                                     <input type="hidden" id="user_email" value="{{ $data['seat_id'] }}">
-                                                    <button id="submit-btn" type="button" class="theme_btn mb-3">Connect Linked in</button>
+                                                    <button id="submit-btn" type="button" class="theme_btn mb-3">Connect
+                                                        Linked in</button>
                                                 @endif
                                             </div>
                                         </div>
@@ -307,7 +321,7 @@
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <div class="border_box">
-                                            <div class="email_box_img">
+                                            <div class="email_box_img add_an_email" data-provider="GOOGLE">
                                                 <img src="{{ asset('assets/img/gmail.png') }}" alt="">
                                                 <span>Gmail</span>
                                             </div>
@@ -315,7 +329,7 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="border_box">
-                                            <div class="email_box_img">
+                                            <div class="email_box_img add_an_email" data-provider="OUTLOOK">
                                                 <img src="{{ asset('assets/img/outlook.png') }}" alt="">
                                                 <span>Outlook</span>
                                             </div>
@@ -323,7 +337,7 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="border_box">
-                                            <div class="email_box_img">
+                                            <div class="email_box_img" data-provider="smtp">
                                                 <img src="{{ asset('assets/img/web-browser.png') }}" alt="">
                                                 <span>Custom SMTP server</span>
                                             </div>
@@ -340,6 +354,7 @@
     {{ session()->forget('add_account') }}
     {{ session()->forget('delete_account') }}
     <script>
+        var addAccountAjax = null;
         $(document).ready(function() {
             $('#submit-btn').on('click', function() {
                 $.ajax({
@@ -352,35 +367,56 @@
                         'email': $('#user_email').val()
                     },
                     success: function(response) {
-                        console.log(response);
-
                         if (response.status === 'success' && response.data && response.data
                             .url) {
-                            console.log(response.data);
-                            console.log(response.data.url);
                             window.open(response.data.url, '_blank');
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
-            });
-            $('.disconnect_account').on('click', function() {
-               $.ajax({
-                    url: '/delete_an_account',
-                    type: 'GET',
-                    success: function(response) {
-                        if (response.success) {
-                            window.location.reload();
-                        } else {
-                            console.log(response);
                         }
                     },
                     error: function(error) {
                         console.error(error);
                     }
-               });
+                });
+            });
+
+            $('.disconnect_account').on('click', function() {
+                $.ajax({
+                    url: '/delete_an_account',
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.reload();
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+            });
+
+            $('.add_an_email').on('click', function(e) {
+                if (addAccountAjax) return;
+                const $this = $(this);
+                addAccountAjax = $.ajax({
+                    url: '/add_email_account',
+                    type: 'POST',
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                    data: {
+                        'provider': $this.attr('data-provider')
+                    },
+                    success: function(response) {
+                        if (response.success && response.data && response.data.url) {
+                            window.open(response.data.url, '_blank');
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    },
+                    complete: function() {
+                        addAccountAjax = null;
+                    }
+                });
             });
         });
     </script>

@@ -44,7 +44,7 @@ Route::post('/relations', [UnipileController::class, 'list_all_relations'])->nam
 Route::post('/view_profile', [UnipileController::class, 'view_profile'])->name('viewProfile');
 Route::post('/invite_to_connect', [UnipileController::class, 'invite_to_connect'])->name('inviteToConnect');
 Route::post('/message', [UnipileController::class, 'message'])->name('message');
-Route::post('/retrieve/message/attachment', [UnipileController::class, 'retrieve_an_attachment_from_a_message'])->name('retrieve_an_attachment_from_a_message');
+Route::post('/retrieve/message/attachment', [UnipileController::class, 'retrieve_an_attachment_from_a_message'])->name('retrieveAnAttachmentFromMessage');
 Route::post('/inmail_message', [UnipileController::class, 'inmail_message'])->name('inmailMessage');
 Route::post('/sendEmail', [UnipileController::class, 'email_message'])->name('email_message');
 Route::post('/follow', [UnipileController::class, 'follow'])->name('follow');

@@ -394,6 +394,7 @@
         var messageSearch = "{{ route('message_search') }}";
         var unreadMessage = "{{ route('unread_message') }}";
         var getProfileByIdRoute = "{{ route('profile_by_id', ':profile_id') }}";
+        var getAnAttachmentFromMessage = "{{ route('retrieve_an_attachment_from_a_message') }}";
     </script>
     <script src="{{ asset('assets/js/message.js') }}"></script>
 @endsection

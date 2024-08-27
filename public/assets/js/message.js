@@ -293,7 +293,11 @@ function getMessages() {
                             }
                             if (message.attachments) {
                                 message.attachments.forEach(attachment => {
-                                    messageContent += `<span class="attach_file" id="${attachment.id}">${attachment.file_name}<a href="${attachment.url}" download></a></span>`;
+                                    if (attachment.type == "img") {
+                                        messageContent += `<img style={width:"${attachment.size.width}"; height:"${attachment.size.height}";} id="${attachment.id}" data-mimeType="${attachment.type}" data-fileName="" class="attach_img dummy_attach_img" src="${attachment.url}">`;
+                                    } else {
+                                        messageContent += `<span class="attach_file" id="${attachment.id}">${attachment.file_name}<a href="${attachment.url}" download></a></span>`;
+                                    }
                                 });
                             }
                             if (!message.text && !message.attachments) {
@@ -327,6 +331,7 @@ function getMessages() {
                 getMessageAjax = null;
                 $chatMessage.attr('data-chat', chat_id);
                 $chatMessage.animate({ scrollTop: $chatMessage[0].scrollHeight }, 'slow');
+                getImages();
             },
         });
     } else {
@@ -662,7 +667,11 @@ function updateMessageLoader($chatMessage) {
                             }
                             if (message.attachments) {
                                 message.attachments.forEach(attachment => {
-                                    messageContent += `<span class="attach_file" id="${attachment.id}">${attachment.file_name}<a href="${attachment.url}" download></a></span>`;
+                                    if (attachment.type == "img") {
+                                        messageContent += `<img style={width:"${attachment.size.width}"; height:"${attachment.size.height}";} id="${attachment.id}" data-mimeType="${attachment.type}" data-fileName="" class="attach_img dummy_attach_img" src="${attachment.url}">`;
+                                    } else {
+                                        messageContent += `<span class="attach_file" id="${attachment.id}">${attachment.file_name}<a href="${attachment.url}" download></a></span>`;
+                                    }
                                 });
                             }
                             if (!message.text && !message.attachments) {
@@ -712,6 +721,7 @@ function updateMessageLoader($chatMessage) {
                     getReceiver(chat_id);
                 }
                 $chatMessage.animate({ scrollTop: $chatMessage[0].scrollHeight }, 'slow');
+                getImages();
             }
         });
     } else {
@@ -968,7 +978,11 @@ function getLatestMessageInChat() {
                             }
                             if (message.attachments) {
                                 message.attachments.forEach(attachment => {
-                                    messageContent += `<span class="attach_file" id="${attachment.id}">${attachment.file_name}<a href="${attachment.url}" download></a></span>`;
+                                    if (attachment.type == "img") {
+                                        messageContent += `<img style="width:${attachment.size.width}px; height:${attachment.size.height}px;" id="${attachment.id}" data-mimeType="${attachment.type}" data-fileName="" class="attach_img dummy_attach_img" src="${attachment.url}">`;
+                                    } else {
+                                        messageContent += `<span class="attach_file" id="${attachment.id}">${attachment.file_name}<a href="${attachment.url}" download></a></span>`;
+                                    }
                                 });
                             }
                             if (!message.text && !message.attachments) {
@@ -1032,6 +1046,7 @@ function getLatestMessageInChat() {
         },
         complete: function () {
             getLatestMessageInChatAjax = null;
+            getImages();
         }
     });
 }
@@ -1107,5 +1122,42 @@ function getUnreadMessage() {
             $('.chat-tab').on('click', getMessages);
             getUnreadMessageAjax = null;
         }
+    });
+}
+
+function getImages() {
+    const images = $('.dummy_attach_img');
+    images.each(function (index, image) {
+        var $image = $(image);
+        var attachment_id = $image.prop('id');
+        var message_id = $image.closest('li').prop('id');
+        var mimetype = $image.attr('data-mimeType');
+        var file_name = $(this).attr('data-fileName');
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        var formData = new FormData();
+        formData.append('message_id', message_id);
+        formData.append('attachment_id', attachment_id);
+        formData.append('mimetype', mimetype);
+        formData.append('file_name', file_name);
+        $.ajax({
+            url: getAnAttachmentFromMessage,
+            type: "POST",
+            data: formData,
+            headers: { "X-CSRF-TOKEN": csrfToken },
+            processData: false,
+            contentType: false,
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data) {
+                const url = window.URL.createObjectURL(data);
+                $image.attr('src', url);
+                $image.attr('alt', 'Attachment');
+                $image.removeClass('dummy_attach_img');
+            },
+            error: function (error, xhr, status) {
+                console.error(error);
+            }
+        });
     });
 }

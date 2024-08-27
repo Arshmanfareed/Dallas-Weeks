@@ -24,13 +24,11 @@ class LoginController extends Controller
       'password' => 'required',
     ]);
 
-    if (auth()->attempt($request->only('email', 'password'))) {
-      $user = auth()->user();
-      // $user_id = $user->id;
-
+    if (Auth::attempt($request->only('email', 'password'))) {
+      $user = Auth::user();
       return response()->json(['success' => true, 'message' => 'User Authenticated Successfully.']);
     } else {
-      return response()->json(['success' => false, 'error' => 'Invalid Password.'], 401);
+      return response()->json(['success' => false, 'error' => 'Invalid Username or Password.']);
     }
   }
 

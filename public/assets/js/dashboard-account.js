@@ -104,7 +104,7 @@ function filter_search(e) {
         type: "GET",
         beforeSend: function () {
             let html = ``;
-            for (let index = 0; index < 2; index++) {
+            for (let index = 0; index < 5; index++) {
                 html += `
                     <tr id="table_row_${index}" class="seat_table_row skel_table_row">
                         <td width="10%" class="seat_table_data">
@@ -188,7 +188,7 @@ function setting_list(e) {
                 $('#seat_input_name').val(username);
                 $('#seat_name').html(username);
                 $('#delete_seat').attr('id', 'delete_seat_' + seat.id);
-                $('#update_seat_name').attr('id', 'update_seat_name_' + seat.id);
+                $('.update_seat_name').attr('id', 'update_seat_name_' + seat.id);
                 $('#update_seat').modal('show');
             }
         },

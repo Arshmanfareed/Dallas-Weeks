@@ -46,8 +46,7 @@
                     </div>
                     <div class="col-lg-7 col-sm-12">
                         <div class="login_img">
-                            <a href="{{ URL('/') }}"><img src="{{ asset('assets/img/login-picture.png') }}"
-                                    alt=""></a>
+                            <img src="{{ asset('assets/img/login-picture.png') }}" alt="">
                         </div>
                     </div>
                 </div>
@@ -73,30 +72,34 @@
                         </form>
                     </div>
                     <!-- <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                      </div> -->
+                                                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                            <button type="button" class="btn btn-primary">Save changes</button>
+                                                                                                          </div> -->
                 </div>
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
         <script>
+            var credentialAjax = null;
             $(document).ready(function() {
-                $('#password').on('keyup', function() {
+                $('#password').on('input', credential_check);
+                $('#email').on('input', credential_check);
 
-
+                function credential_check() {
+                    if (credentialAjax) {
+                        credentialAjax.abort();
+                        credentialAjax = null;
+                    }
                     var email = $('#email').val();
-                    var password = $(this).val();
-
+                    var password = $('#password').val();
                     if (password.trim() === '') {
                         $('#passwordError').html('Password is required.');
                         return;
                     } else {
                         $('#passwordError').text('');
                     }
-
-                    $.ajax({
+                    credentialAjax = $.ajax({
                         type: 'POST',
                         url: '{{ route('checkCredentials') }}',
                         data: {
@@ -105,7 +108,7 @@
                             'password': password
                         },
                         success: function(response, textStatus, xhr) {
-                            if (xhr.status === 200) {
+                            if (response.success) {
                                 // Success response
                                 $('#passwordError').text('');
                                 $('#successMessage').html(response.message);
@@ -114,23 +117,14 @@
                                 // Error response with status code 200 (this might be an unexpected case)
                                 $('#passwordError').html(response.error);
                                 $('#successMessage').text('');
+                                $('.login_btn').hide();
                             }
                         },
-                        error: function(xhr, textStatus, errorThrown) {
-                            // AJAX request failed
-                            if (xhr.status === 401) {
-                                // Unauthorized (invalid password) response
-                                $('#passwordError').html("Invalid Email Or Password.");
-                            } else {
-                                // Other errors
-                                console.error("Error:", xhr.responseText);
-                                $('#passwordError').text(
-                                    'An error occurred while processing the request.');
-                            }
-                            $('#successMessage').text('');
+                        error: function(xhr, textStatus, error) {
+                            console.error(error);
                         },
                     });
-                });
+                }
             });
         </script>
 
