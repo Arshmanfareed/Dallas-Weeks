@@ -133,7 +133,7 @@
                             <li><a href="javascript:;" target="_blank"><i class="fa-brands fa-twitter"></i></a></li>
                         </ul>
                         <div class="btn btn-blue">
-                            <a href="/login">Log in</a>
+                            <a href="{{ route('login') }}">Log in</a>
                         </div>
                     </div>
                 </div>

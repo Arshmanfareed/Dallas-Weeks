@@ -102,7 +102,7 @@
                                         More Campaigns<i class="fa-solid fa-arrow-right"></i>
                                     </a>
                                 @else
-                                    <div class="campaign_list" style="display: block">
+                                    <div class="campaign_list" style="display: block; cursor: auto;">
                                         <div class="text-center text-danger"
                                             style="font-size: 22px; font-weight: bold; font-style: italic;">
                                             Campaign Not Found!
@@ -146,10 +146,10 @@
                                         More Messages<i class="fa-solid fa-arrow-right"></i>
                                     </a>
                                 @else
-                                    <div class="campaign_list" style="display: block">
+                                <div class="campaign_list" style="display: block; cursor: auto;">
                                         <div class="text-center text-danger"
                                             style="font-size: 22px; font-weight: bold; font-style: italic;">
-                                            Campaign Not Found!
+                                            Message Not Found!
                                         </div>
                                     </div>
                                 @endif

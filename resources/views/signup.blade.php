@@ -69,13 +69,12 @@
                             </div>
                         </form>
                         <div class="regist">
-                            Already have an account? <a href="{{ URL('/login') }}">Login</a>
+                            Already have an account? <a href="{{ route('login') }}">Login</a>
                         </div>
                     </div>
                     <div class="col-lg-7 col-sm-12">
                         <div class="login_img">
-                            <a href="{{ URL('/') }}"><img src="{{ asset('assets/img/register-picture.png') }}"
-                                    alt=""></a>
+                            <img src="{{ asset('assets/img/register-picture.png') }}" alt="">
                         </div>
                     </div>
                 </div>

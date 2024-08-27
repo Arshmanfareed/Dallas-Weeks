@@ -195,11 +195,11 @@
                                                                 <i class="fa-brands fa-linkedin"></i>
                                                                 <div class="head_cont">
                                                                     <span class="head">LinkedIn</span>
-                                                                    @php
+                                                                    {{-- @php
                                                                         $account_profile = session('account_profile');
                                                                     @endphp
                                                                     <span>Connected account:
-                                                                        {{ $account_profile['first_name'] . ' ' . $account_profile['last_name'] }}</span>
+                                                                        {{ $account_profile['first_name'] . ' ' . $account_profile['last_name'] }}</span> --}}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -358,7 +358,7 @@
         $(document).ready(function() {
             $('#submit-btn').on('click', function() {
                 $.ajax({
-                    url: '/api/create-link-account',
+                    url: '/create-link-account',
                     type: 'POST',
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
@@ -369,7 +369,7 @@
                     success: function(response) {
                         if (response.status === 'success' && response.data && response.data
                             .url) {
-                            window.open(response.data.url, '_blank');
+                            window.location = response.data.url;
                         }
                     },
                     error: function(error) {
@@ -407,7 +407,7 @@
                     },
                     success: function(response) {
                         if (response.success && response.data && response.data.url) {
-                            window.open(response.data.url, '_blank');
+                            window.location = response.data.url;
                         }
                     },
                     error: function(error) {

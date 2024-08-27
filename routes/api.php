@@ -22,7 +22,6 @@ use App\Http\Controllers\UnipileController;
 // });
 
 Route::post('messages', [ChatController::class, 'message']);
-Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccount']);
 
 Route::post('/accounts', [UnipileController::class, 'list_all_accounts'])->name('list_all_accounts');
 Route::post('/retrieve/account', [UnipileController::class, 'retrieve_an_account'])->name('retrieve_an_account');

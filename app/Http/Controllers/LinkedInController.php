@@ -18,16 +18,17 @@ class LinkedInController extends Controller
         $all = $request->all();
         $email = $all['email'];
         $provider[] = "LINKEDIN";
-        $client = new \GuzzleHttp\Client([
-            'verify' => false,
-        ]);
+        $expirationTime = (new \DateTime())->modify('+15 minutes')->format('Y-m-d\TH:i:s.v\Z');
         try {
+            $client = new \GuzzleHttp\Client([
+                'verify' => false,
+            ]);
             $response = $client->request('POST', $this->dsn . 'api/v1/hosted/accounts/link', [
                 'json' => [
                     'type' => 'create',
                     'providers' => $provider,
                     'api_url' => $this->dsn,
-                    'expiresOn' => '2024-12-22T12:00:00.701Z',
+                    'expiresOn' => $expirationTime,
                     'success_redirect_url' => 'https://networked.staging.designinternal.com/setting',
                     'failure_redirect_url' => 'https://networked.staging.designinternal.com/setting',
                     'notify_url' => 'https://networked.staging.designinternal.com/unipile-callback',
@@ -39,22 +40,13 @@ class LinkedInController extends Controller
                     'content-type' => 'application/json',
                 ],
             ]);
-            return response()->json([
+            $data = [
                 'status' => 'success',
                 'data' => json_decode($response->getBody()->getContents(), true)
-            ]);
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $response = $e->getResponse();
-            $responseBodyAsString = $response->getBody()->getContents();
-            return response()->json([
-                'status' => 'error',
-                'message' => $responseBodyAsString
-            ], $response->getStatusCode());
+            ];
+            return response()->json($data);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -114,10 +106,11 @@ class LinkedInController extends Controller
                     'content-type' => 'application/json',
                 ],
             ]);
-            return response()->json([
+            $data = [
                 'success' => true,
                 'data' => json_decode($response->getBody()->getContents(), true)
-            ]);
+            ];
+            return response()->json($data);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }

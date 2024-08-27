@@ -103,7 +103,8 @@
                                 @php
                                     $user = auth()->user();
                                 @endphp
-                                <img src="{{ asset('assets/img/acc.png') }}" style="background-color: #000;" alt=""><span>{{ $user->name }}</span>
+                                <img src="{{ asset('assets/img/acc.png') }}" style="background-color: #000;"
+                                    alt=""><span>{{ $user->name }}</span>
                             </div>
                             <div class="form_add d-flex">
                                 <form action="/search" method="get" class="search-form">
@@ -195,7 +196,7 @@
                 </div>
                 <div class="modal-body text-center">
                     <form role="form" action="{{ route('stripe.post') }}" method="post" data-cc-on-file="false"
-                        data-stripe-publishable-key="pk_test_51KQb3pC6mJiJ0AUpeAjoS786h11qy1jW92S6gWsGD4NpK4JGOuKplhC2I0vHFgEWwRy7T9NwHDZPiILuzQPynCdK007sgX6ox6"
+                        data-stripe-publishable-key="pk_test_51PbR9cGIhEK4X1bD1csgji86ypCOKzUAWbqzIpVj8TYK1h8yakYAZQeKHkE6fS3qySFp9noqGNRpyps5B1BhAznS00TObcS9Ze"
                         method="post" class="form step_form require-validation" id="payment-form">
                         @csrf
                         <div class="progress-bar" id="progress-bar">

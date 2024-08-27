@@ -3,27 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
   function login()
   {
-    $data = [
-      'title' => 'Login Page'
-    ];
-
+    $data = ['title' => 'Login Page'];
     return view('Login', $data);
   }
 
   public function checkCredentials(Request $request)
   {
-    $this->validate($request, [
+    $validator = Validator::make($request->all(), [
       'email' => 'required|email',
       'password' => 'required',
     ]);
-
+    if ($validator->fails()) {
+      $firstError = $validator->errors()->first();
+      return response()->json(['success' => false, 'error' => $firstError]);
+    }
     if (Auth::attempt($request->only('email', 'password'))) {
       $user = Auth::user();
       return response()->json(['success' => true, 'message' => 'User Authenticated Successfully.']);

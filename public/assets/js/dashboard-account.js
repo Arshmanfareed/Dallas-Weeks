@@ -187,7 +187,7 @@ function setting_list(e) {
                 var username = seat.username.charAt(0).toUpperCase() + seat.username.slice(1);
                 $('#seat_input_name').val(username);
                 $('#seat_name').html(username);
-                $('#delete_seat').attr('id', 'delete_seat_' + seat.id);
+                $('.delete_seat').attr('id', 'delete_seat_' + seat.id);
                 $('.update_seat_name').attr('id', 'update_seat_name_' + seat.id);
                 $('#update_seat').modal('show');
             }

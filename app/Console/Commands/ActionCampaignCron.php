@@ -61,7 +61,7 @@ class ActionCampaignCron extends Command
                 $this->campaign_working($campaigns);
             }
         } catch (\Exception $e) {
-            file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
         }
     }
 
@@ -107,18 +107,18 @@ class ActionCampaignCron extends Command
                 file_put_contents($logFilePath, 'Failed to insert data because No campaign found at: ' . now() . PHP_EOL, FILE_APPEND);
             }
         } catch (\Exception $e) {
-            file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
         }
     }
 
     private function addImportLeads($campaign, $lead_distribution_limit)
     {
+        $i = 0;
         try {
             $logFilePath = storage_path('logs/campaign_action.log');
             $imported_lead = ImportedLeads::where('user_id', $campaign['user_id'])->where('campaign_id', $campaign['id'])->first();
             $csvController = new CsvController();
             $csvData = $csvController->importedLeadToArray($imported_lead['file_path']);
-            $i = 0;
             $have_url = false;
             if ($csvData !== NULL) {
                 foreach ($csvData as $key => $value) {
@@ -157,7 +157,7 @@ class ActionCampaignCron extends Command
                 file_put_contents($logFilePath, 'Failed to insert data because No data in csv file at: ' . now() . PHP_EOL, FILE_APPEND);
             }
         } catch (\Exception $e) {
-            file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
         }
         return $lead_distribution_limit - $i;
     }
@@ -242,7 +242,7 @@ class ActionCampaignCron extends Command
                 file_put_contents($logFilePath, 'Failed to insert data because ' . $sales_navigator_search->getData(true)['error'] . ' at: ' . now() . PHP_EOL, FILE_APPEND);
             }
         } catch (Exception $e) {
-            file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
         }
         return $lead_distribution_limit - $i;
     }
@@ -348,7 +348,7 @@ class ActionCampaignCron extends Command
                 file_put_contents($logFilePath, 'Failed to insert data because ' . $linkedin_search->getData(true)['error'] . ' at: ' . now() . PHP_EOL, FILE_APPEND);
             }
         } catch (Exception $e) {
-            file_put_contents($logFilePath, 'Failed to insert data because No campaign found at: ' . now() . PHP_EOL, FILE_APPEND);
+            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
         }
         return $lead_distribution_limit - $i;
     }
@@ -485,7 +485,7 @@ class ActionCampaignCron extends Command
                 }
             }
         } catch (Exception $e) {
-            file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
         }
         return $lead_distribution_limit - $i;
     }
@@ -551,7 +551,7 @@ class ActionCampaignCron extends Command
                 }
             }
         } catch (Exception $e) {
-            file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
         }
         return $lead_distribution_limit - $i;
     }

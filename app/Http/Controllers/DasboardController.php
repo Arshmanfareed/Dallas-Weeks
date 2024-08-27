@@ -14,6 +14,8 @@ class DasboardController extends Controller
     {
         try {
             session()->forget('seat_id');
+            session()->forget('account');
+            session()->forget('account_profile');
             $user_id = Auth::user()->id;
             $paymentStatus = PhysicalPayment::where('user_id', $user_id)->value('physical_payment_status');
             $seats = SeatInfo::where('user_id', $user_id)->get();

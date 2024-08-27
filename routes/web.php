@@ -23,7 +23,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\PropertiesController;
 use App\Http\Controllers\ScheduleCampaign;
-use App\Http\Controllers\SocialController;
 use App\Http\Controllers\UnipileController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\SeatController;
@@ -40,44 +39,23 @@ use App\Http\Controllers\TestController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+/* This below is only for testing */
 
-
-Route::get('/auth/linkedin/redirect', function () {
-    return Socialite::driver('linkedin-openid')->redirect();
-});
-
-Route::get('/auth/linkedin/callback', function () {
-    $user = Socialite::driver('linkedin-openid')->stateless()->user();
-    // echo $user->token;
-
-    $data = [
-        'title' => 'Setting'
-    ];
-
-    return view('dashboard-account', compact('data', 'user'));
-
-    // return redirect('/dashboard');
-});
-
-// Route::get('linkedin/login', [SocialController::class, 'provider'])->name('linked.login');
-// Route::get('linkedin/callback', [SocialController::class, 'providerCallback'])->name('linked.user');
-
-/* These are home pages views which does not require any authentication */
 Route::get('/test_route', [TestController::class, 'base']);
+
+/* These are home pages url which does not require any authentication */
 Route::get('/', [HomeController::class, 'home']);
 Route::get('/about', [HomeController::class, 'about']);
 Route::get('/pricing', [HomeController::class, 'pricing']);
 Route::get('/faq', [HomeController::class, 'faq']);
 
-/* These are login and signup views which does not require any authentication */
-Route::get('/login', [LoginController::class, 'login']);
-Route::get('/register', [RegisterController::class, 'register']);
-Route::post('/register-user', [RegisterController::class, 'registerUser'])->name('register-user');
+/* These are login and signup url which does not require any authentication */
+Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
+Route::get('/register', [RegisterController::class, 'register'])->name('register');
+Route::post('/register-user', [RegisterController::class, 'registerUser'])->name('register-user');
 Route::post('/add_email_account', [LinkedInController::class, 'addEmailToAccount'])->name('addEmailAccount');
+Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccount'])->name('createLinkAccount');
 
 /* These are for actions like campaign and leads */
 Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);

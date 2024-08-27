@@ -4,7 +4,9 @@ $(document).ready(function () {
     $('.switch').prop('disabled', true);
     $('.campaign_list').on('click', function (e) {
         const id = $(this).prop('id').replace('campaign_list_', '');
-        window.location.href = filterCampaignRoute.replace(':campaign_id', id);
+        if (id) {
+            window.location.href = filterCampaignRoute.replace(':campaign_id', id);
+        }
     });
     getChatData();
 });

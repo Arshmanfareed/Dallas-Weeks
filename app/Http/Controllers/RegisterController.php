@@ -11,9 +11,7 @@ class RegisterController extends Controller
 {
     function register()
     {
-        $date = [
-            'title' => 'Register Page'
-        ];
+        $date = ['title' => 'Register Page'];
         return view('signup', $date);
     }
 
@@ -24,23 +22,15 @@ class RegisterController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
         ]);
-
         if ($validator->fails()) {
-            // If validation fails, return to the signup page with errors
             return back()->withErrors($validator)->withInput();
         }
-
-
-        // Hash the password before storing it in the database
         $data = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
         ];
-
-        // Create a new user record
         $user = User::create($data);
-
         return back()->with(['success' => 'User registered successfully', 'data' => $user]);
     }
 }

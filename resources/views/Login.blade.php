@@ -41,7 +41,7 @@
                             </div>
                         </form>
                         <div class="regist">
-                            Don't have an account? <a href="{{ URL('/register') }}">Register</a>
+                            Don't have an account? <a href="{{ route('register') }}">Register</a>
                         </div>
                     </div>
                     <div class="col-lg-7 col-sm-12">
@@ -72,9 +72,9 @@
                         </form>
                     </div>
                     <!-- <div class="modal-footer">
-                                                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                            <button type="button" class="btn btn-primary">Save changes</button>
-                                                                                                          </div> -->
+                                                                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                            <button type="button" class="btn btn-primary">Save changes</button>
+                                                                                                                          </div> -->
                 </div>
             </div>
         </div>
@@ -109,18 +109,18 @@
                         },
                         success: function(response, textStatus, xhr) {
                             if (response.success) {
-                                // Success response
                                 $('#passwordError').text('');
                                 $('#successMessage').html(response.message);
                                 $('.login_btn').show();
                             } else {
-                                // Error response with status code 200 (this might be an unexpected case)
                                 $('#passwordError').html(response.error);
                                 $('#successMessage').text('');
                                 $('.login_btn').hide();
                             }
                         },
                         error: function(xhr, textStatus, error) {
+                            $('#passwordError').html('An unexpected error occurred.');
+                            $('.login_btn').hide();
                             console.error(error);
                         },
                     });
