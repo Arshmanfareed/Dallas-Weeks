@@ -7295,3 +7295,19 @@ li.skel_profile {
 .conversation_box .conversation_info span.user_email a {
     font-size: 16px;
 }
+
+.email_status .connected {
+    background-color: #263a38;
+    padding: 9px 13px;
+    border-radius: 20px;
+    color: #4c9e87;
+    width: fit-content;
+}
+
+.email_status .disconnected {
+    padding: 9px 23px;
+    border-radius: 20px;
+    color: #c85c5d;
+    border: 1px solid;
+    width: fit-content;
+}

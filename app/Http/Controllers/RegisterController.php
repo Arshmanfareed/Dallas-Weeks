@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    function register()
+    public function register()
     {
-        $date = ['title' => 'Register Page'];
-        return view('signup', $date);
+        $data = ['title' => 'Register Page'];
+        return view('signup', $data);
     }
 
     function registerUser(Request $request)

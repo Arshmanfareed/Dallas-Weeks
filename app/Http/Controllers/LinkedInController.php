@@ -15,11 +15,11 @@ class LinkedInController extends Controller
 
     public function createLinkAccount(Request $request)
     {
-        $all = $request->all();
-        $email = $all['email'];
-        $provider[] = "LINKEDIN";
-        $expirationTime = (new \DateTime())->modify('+15 minutes')->format('Y-m-d\TH:i:s.v\Z');
         try {
+            $all = $request->all();
+            $email = $all['email'];
+            $provider[] = "LINKEDIN";
+            $expirationTime = (new \DateTime())->modify('+15 minutes')->format('Y-m-d\TH:i:s.v\Z');
             $client = new \GuzzleHttp\Client([
                 'verify' => false,
             ]);
@@ -29,7 +29,7 @@ class LinkedInController extends Controller
                     'providers' => $provider,
                     'api_url' => $this->dsn,
                     'expiresOn' => $expirationTime,
-                    'success_redirect_url' => 'https://networked.staging.designinternal.com/setting',
+                    'success_redirect_url' => 'https://networked.staging.designinternal.com/accdashboard',
                     'failure_redirect_url' => 'https://networked.staging.designinternal.com/setting',
                     'notify_url' => 'https://networked.staging.designinternal.com/unipile-callback',
                     'name' => 'linkedin' . $email,
@@ -46,46 +46,43 @@ class LinkedInController extends Controller
             ];
             return response()->json($data);
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            return response()->json(['status' => 'error', 'message' => $e], 500);
         }
     }
 
     public function delete_an_account()
     {
-        $seat_id = session('seat_id');
-        $seat = SeatInfo::find($seat_id);
-        if (!empty($seat['account_id'])) {
-            $request = [
-                'account_id' => $seat['account_id'],
-            ];
+        try {
+            $seat = SeatInfo::find(session('seat_id'));
+            if (!$seat || empty($seat->account_id)) {
+                session(['add_account' => true]);
+                return redirect()->route('dash-settings');
+            }
             $uc = new UnipileController();
+            $request = ['account_id' => $seat['account_id']];
             $account = $uc->delete_account(new \Illuminate\Http\Request($request));
             if ($account instanceof JsonResponse) {
                 $account = $account->getData(true);
-                if (!isset($account['error'])) {
-                    $seat['account_id'] = null;
-                    $seat->save();
-                    session(['delete_account' => true]);
-                    return response()->json(['success' => true]);
-                } else {
+                if (isset($account['error'])) {
                     return response()->json(['success' => false, 'error' => $account['error']]);
                 }
-            } else {
-                return response()->json(['success' => false]);
+                $seat->update(['account_id' => null]);
+                session(['delete_account' => true]);
+                return response()->json(['success' => true]);
             }
-        } else {
-            session(['add_account' => true]);
-            return redirect(route('dash-settings'));
+            return response()->json(['success' => false]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e]);
         }
     }
 
     public function addEmailToAccount(Request $request)
     {
-        $all = $request->all();
-        $seat = session('seat_id');
-        $provider[] = $all['provider'];
-        $expirationTime = (new \DateTime())->modify('+15 minutes')->format('Y-m-d\TH:i:s.v\Z');
         try {
+            $all = $request->all();
+            $seat = session('seat_id');
+            $provider[] = $all['provider'];
+            $expirationTime = (new \DateTime())->modify('+15 minutes')->format('Y-m-d\TH:i:s.v\Z');
             $client = new \GuzzleHttp\Client([
                 'verify' => false,
             ]);
@@ -95,7 +92,7 @@ class LinkedInController extends Controller
                     'providers' => $provider,
                     'api_url' => $this->dsn,
                     'expiresOn' => $expirationTime,
-                    'success_redirect_url' => 'https://networked.staging.designinternal.com/setting',
+                    'success_redirect_url' => 'https://networked.staging.designinternal.com/accdashboard',
                     'failure_redirect_url' => 'https://networked.staging.designinternal.com/setting',
                     'notify_url' => 'https://networked.staging.designinternal.com/unipile-callback',
                     'name' => 'email' . $seat,
@@ -112,7 +109,7 @@ class LinkedInController extends Controller
             ];
             return response()->json($data);
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            return response()->json(['status' => 'error', 'message' => $e], 500);
         }
     }
 }

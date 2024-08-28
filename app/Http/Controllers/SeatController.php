@@ -19,7 +19,7 @@ use App\Models\UpdatedCampaignElements;
 use App\Models\CampaignActions;
 use App\Models\PhysicalPayment;
 use Exception;
-use PhysicalPayment as GlobalPhysicalPayment;
+use Illuminate\Support\Facades\Log;
 
 class SeatController extends Controller
 {
@@ -33,6 +33,7 @@ class SeatController extends Controller
             }
             throw new Exception('Seat Not Found');
         } catch (Exception $e) {
+            Log::info($e);
             return response()->json(['success' => false, 'errors' => $e->getMessage()], 404);
         }
     }
@@ -71,6 +72,7 @@ class SeatController extends Controller
             }
             throw new Exception('Seat Not Found');
         } catch (Exception $e) {
+            Log::info($e);
             return response()->json(['success' => false, 'errors' => $e->getMessage()], 404);
         }
     }
@@ -89,6 +91,7 @@ class SeatController extends Controller
             }
             throw new Exception('Seat Not Found');
         } catch (Exception $e) {
+            Log::info($e);
             return response()->json(['success' => false, 'errors' => $e->getMessage()], 404);
         }
     }
@@ -125,6 +128,7 @@ class SeatController extends Controller
             }
             throw new Exception('Seats Not Found');
         } catch (Exception $e) {
+            Log::info($e);
             return response()->json(['success' => false, 'errors' => $e->getMessage()], 404);
         }
     }

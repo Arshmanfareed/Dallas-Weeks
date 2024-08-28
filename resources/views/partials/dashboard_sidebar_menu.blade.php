@@ -32,13 +32,9 @@
     @endphp
     <div class="logout">
         @if ($user)
-            <a href="{{ route('logout-user') }}"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <a href="{{ route('dashobardz') }}">
                 <img src="{{ asset('assets/img/logout.svg') }}" alt="">
             </a>
         @endif
-        <form id="logout-form" action="{{ route('logout-user') }}" method="POST" style="display: none;">
-            @csrf
-        </form>
     </div>
 </div>

@@ -49,7 +49,6 @@ function deleteSeat(e) {
     });
 }
 
-//Need to be fixed
 function paymentForm(event) {
     event.preventDefault();
     var formData = $(this).serialize();

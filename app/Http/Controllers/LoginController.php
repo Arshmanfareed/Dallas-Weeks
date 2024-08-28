@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
-  function login()
+  public function login()
   {
     $data = ['title' => 'Login Page'];
     return view('Login', $data);
@@ -21,11 +21,9 @@ class LoginController extends Controller
       'password' => 'required',
     ]);
     if ($validator->fails()) {
-      $firstError = $validator->errors()->first();
-      return response()->json(['success' => false, 'error' => $firstError]);
+      return response()->json(['success' => false, 'error' => $validator->errors()->first()]);
     }
     if (Auth::attempt($request->only('email', 'password'))) {
-      $user = Auth::user();
       return response()->json(['success' => true, 'message' => 'User Authenticated Successfully.']);
     } else {
       return response()->json(['success' => false, 'error' => 'Invalid Username or Password.']);

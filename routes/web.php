@@ -53,7 +53,7 @@ Route::get('/faq', [HomeController::class, 'faq']);
 Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials');
 Route::get('/register', [RegisterController::class, 'register'])->name('register');
-Route::post('/register-user', [RegisterController::class, 'registerUser'])->name('register-user');
+Route::post('/register-user', [RegisterController::class, 'registerUser'])->name('register-user'); // Need to work on it
 Route::post('/add_email_account', [LinkedInController::class, 'addEmailToAccount'])->name('addEmailAccount');
 Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccount'])->name('createLinkAccount');
 
@@ -81,13 +81,12 @@ Route::middleware(['userAuth'])->group(function () {
     });
     Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']);
     Route::post('/logout', [LoginController::class, 'logoutUser'])->name('logout-user');
-    // Route::get('/rolesandpermission',[RolespermissionController::class,'rolespermission']);
+    
+    /* This dashboard uses to update seat_id in session */
+    Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash'); // Need to work on it
 
     /* This setting might not requires account connectivity */
-    Route::get('/setting', [SettingController::class, 'setting'])->name('dash-settings');
-
-    /* This dashboard uses to update seat_id in session */
-    Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash');
+    Route::get('/setting', [SettingController::class, 'setting'])->name('dash-settings'); // Need to work on it
 
     /* These are for dashboard which requires account connectivity */
     Route::middleware(['linkedinAccount'])->group(function () {

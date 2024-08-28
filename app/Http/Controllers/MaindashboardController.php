@@ -8,22 +8,21 @@ use App\Models\Campaign;
 use App\Models\SeatInfo;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class MaindashboardController extends Controller
 {
     function maindasboard(Request $request)
     {
         try {
-            if ($request->has('seat_id')) {
-                $seat_id = $request->input('seat_id');
+            $seat_id = $request->input('seat_id', session('seat_id'));
+            if ($seat_id) {
                 session(['seat_id' => $seat_id]);
-            } elseif (session()->has('seat_id')) {
-                $seat_id = session('seat_id');
             } else {
                 throw new Exception('Seat Not Found');
             }
             $user_id = Auth::user()->id;
-            $seat = SeatInfo::where('id', $seat_id)->first();
+            $seat = SeatInfo::where('id', $seat_id)->where('user_id', $user_id)->first();
             if (!is_null($seat)) {
                 $seat['active'] = false;
                 $seat['connected'] = false;
@@ -92,6 +91,7 @@ class MaindashboardController extends Controller
             }
             throw new Exception('Seat Not Found');
         } catch (Exception $e) {
+            Log::info($e);
             return redirect(route('dashobardz'))->withErrors(['error' => $e->getMessage()]);
         }
     }

@@ -182,28 +182,24 @@
                                             </div>
                                             <div class="tab-pane linkedin_pane integrations_tab {{ session()->has('add_account') ? 'active' : '' }}"
                                                 id="integrations" role="tabpanel">
-                                                <h4>Connect your LinkedIn account</h4>
-                                                @if (
-                                                    $data['paymentStatus'] == 'success' &&
-                                                        !empty($data['account']) &&
-                                                        !empty($data['account']['account']) &&
-                                                        $seatData['connected']
-                                                )
+                                                @if (session()->has('account') && session()->has('account_profile'))
+                                                    @php
+                                                        $account = session('account');
+                                                        $account_profile = session('account_profile');
+                                                    @endphp
+                                                    <h4>Connected LinkedIn account</h4>
                                                     <div class="grey_box d-flex align-items-center">
                                                         <div class="linked">
                                                             <div class="cont">
                                                                 <i class="fa-brands fa-linkedin"></i>
                                                                 <div class="head_cont">
                                                                     <span class="head">LinkedIn</span>
-                                                                    {{-- @php
-                                                                        $account_profile = session('account_profile');
-                                                                    @endphp
                                                                     <span>Connected account:
-                                                                        {{ $account_profile['first_name'] . ' ' . $account_profile['last_name'] }}</span> --}}
+                                                                        {{ $account['connection_params']['im']['username'] }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        @if ($seatData['connected'])
+                                                        @if ($account['sources'][0]['status'] == 'OK')
                                                             <div class="con">Status: Connected</div>
                                                             <div class="add_btn">
                                                                 <a href="javascript:;" class="disconnect_account"
@@ -215,31 +211,34 @@
                                                             <div class="con">Status: Not Connected</div>
                                                         @endif
                                                     </div>
-                                                    <!--<div class="grey_box d-flex align-items-center">-->
-                                                    <!--    <h6>Change your LinkedIn subscription</h6>-->
-                                                    <!--    <div class="radio-buttons">-->
-                                                    <!--        <label for="premium">-->
-                                                    <!--            <input type="radio" name="linkedinSubscription"-->
-                                                    <!--                id="premium" value="premium">-->
-                                                    <!--            <span></span>-->
-                                                    <!--            LinkedIn Premium-->
-                                                    <!--        </label>-->
-                                                    <!--        <label for="salesNavigator">-->
-                                                    <!--            <input type="radio" name="linkedinSubscription"-->
-                                                    <!--                id="salesNavigator" value="salesNavigator">-->
-                                                    <!--            Sales Navigator-->
-                                                    <!--            <span></span>-->
-                                                    <!--        </label>-->
-                                                    <!--        <label for="recruiter">-->
-                                                    <!--            <input type="radio" name="linkedinSubscription"-->
-                                                    <!--                id="recruiter" value="recruiter">-->
-                                                    <!--            LinkedIn Recruiter-->
-                                                    <!--            <span></span>-->
-                                                    <!--        </label>-->
-                                                    <!--    </div>-->
-                                                    <!--</div>-->
+                                                    <div class="grey_box d-flex align-items-center">
+                                                        <h6>Change your LinkedIn subscription</h6>
+                                                        <div class="radio-buttons">
+                                                            <label for="premium">
+                                                                <input type="radio" name="linkedinSubscription"
+                                                                    id="premium" value="premium"
+                                                                    {{ $account_profile['is_premium'] || in_array('premium', $account['connection_params']['im']['premiumFeatures']) ? 'checked' : '' }}>
+                                                                <span></span>
+                                                                LinkedIn Premium
+                                                            </label>
+                                                            <label for="salesNavigator">
+                                                                <input type="radio" name="linkedinSubscription"
+                                                                    id="salesNavigator" value="salesNavigator"
+                                                                    {{ in_array('sales_navigator', $account['connection_params']['im']['premiumFeatures']) ? 'checked' : '' }}>
+                                                                Sales Navigator
+                                                                <span></span>
+                                                            </label>
+                                                            <label for="recruiter">
+                                                                <input type="radio" name="linkedinSubscription"
+                                                                    id="recruiter" value="recruiter">
+                                                                LinkedIn Recruiter
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                 @else
-                                                    <input type="hidden" id="user_email" value="{{ $data['seat_id'] }}">
+                                                    <h4>Connect your LinkedIn account</h4>
+                                                    <input type="hidden" id="user_email" value="{{ $seat_id }}">
                                                     <button id="submit-btn" type="button" class="theme_btn mb-3">Connect
                                                         Linked in</button>
                                                 @endif
@@ -281,19 +280,42 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-
+                                                @if ($emails->isNotEmpty())
+                                                    @foreach ($emails as $email)
+                                                        <tr>
+                                                            <td width="20%">
+                                                                {{ $email['profile']['aliases'][0]['display_name'] != ''
+                                                                    ? $email['profile']['aliases'][0]['display_name']
+                                                                    : $email['profile']['aliases'][0]['email'] }}
+                                                            </td>
+                                                            <td width="20%">
+                                                                {{ $email['profile']['aliases'][0]['email'] }}
+                                                            </td>
+                                                            <td width="20%"></td>
+                                                            <td width="20%"></td>
+                                                            <td class="email_status" width="20%">
+                                                                {!! $email['account']['sources'][0]['status'] == 'OK'
+                                                                    ? '<div class="connected">Connected</div>'
+                                                                    : '<div class="disconnected">Disconnected</div>' !!}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
                                             </tbody>
                                         </table>
-                                        <div class="grey_box">
-                                            <div class="add_cont">
-                                                <p>No email account. Start by connecting your first email account.</p>
-                                                <div class="add">
-                                                    <a href="javascript:;" type="button" data-bs-toggle="modal"
-                                                        data-bs-target="#add_email"><i
-                                                            class="fa-solid fa-plus"></i></a>Add email account
+                                        @if (!$emails->isNotEmpty())
+                                            <div class="grey_box">
+                                                <div class="add_cont">
+                                                    <p>No email account. Start by connecting your first email
+                                                        account.</p>
+                                                    <div class="add">
+                                                        <a href="javascript:;" type="button" data-bs-toggle="modal"
+                                                            data-bs-target="#add_email"><i
+                                                                class="fa-solid fa-plus"></i></a>Add email account
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

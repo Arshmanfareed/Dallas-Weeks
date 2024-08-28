@@ -97,7 +97,7 @@
     </script>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-dark justify-content-between dashboard_header">
-            <a class="navbar-brand" href="{{ route('dashobardz') }}"><img
+            <a class="navbar-brand" href="{{ route('acc_dash') }}"><img
                     style="width: 65px; background-color: #fff; margin-right: 7px; border-radius: 10px; padding: 6px;"
                     src="{{ asset('assets/images/logo.png') }}">Networked</a>
 

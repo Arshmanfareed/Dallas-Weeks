@@ -6,6 +6,7 @@ use App\Models\Blacklist;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BlacklistController extends Controller
 {
@@ -20,6 +21,7 @@ class BlacklistController extends Controller
             ];
             return view('blacklist', $data);
         } catch (Exception $e) {
+            Log::info($e);
             return redirect('login')->withErrors(['error' => $e->getMessage()]);
         }
     }

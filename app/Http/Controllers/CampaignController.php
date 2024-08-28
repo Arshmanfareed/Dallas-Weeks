@@ -21,6 +21,7 @@ use App\Models\LeadActions;
 use App\Models\Leads;
 use App\Models\CampaignActions;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class CampaignController extends Controller
 {
@@ -45,6 +46,7 @@ class CampaignController extends Controller
             ];
             return view('campaign', $data);
         } catch (Exception $e) {
+            Log::info($e);
             return redirect(route('dashobardz'))->withErrors(['error' => $e->getMessage()]);
         }
     }

@@ -7,15 +7,14 @@ use App\Models\PhysicalPayment;
 use App\Models\SeatInfo;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class DasboardController extends Controller
 {
     function dashboard()
     {
         try {
-            session()->forget('seat_id');
-            session()->forget('account');
-            session()->forget('account_profile');
+            session()->forget(['seat_id', 'account', 'account_profile']);
             $user_id = Auth::user()->id;
             $paymentStatus = PhysicalPayment::where('user_id', $user_id)->value('physical_payment_status');
             $seats = SeatInfo::where('user_id', $user_id)->get();
@@ -44,6 +43,7 @@ class DasboardController extends Controller
             ];
             return view('dashboard-account', $data);
         } catch (Exception $e) {
+            Log::info($e);
             return redirect('login')->withErrors(['error' => $e->getMessage()]);
         }
     }
