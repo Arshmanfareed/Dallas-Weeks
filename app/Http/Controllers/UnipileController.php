@@ -1189,11 +1189,15 @@ class UnipileController extends Controller
         } else {
             $messageContent = '';
         }
+        $html = 'text/plain';
+        if (isset($all['html']) && $all['html']) {
+            $html = 'text/html';
+        }
         try {
-            Mail::send([], [], function ($mail) use ($email, $subject, $messageContent) {
+            Mail::send([], [], function ($mail) use ($email, $subject, $messageContent, $html) {
                 $mail->to($email)
                     ->subject($subject)
-                    ->setBody($messageContent, 'text/html');
+                    ->setBody($messageContent, $html);
             });
             return response()->json(['success' => true, 'message' => 'Email sent successfully']);
         } catch (\Exception $e) {
@@ -1241,27 +1245,76 @@ class UnipileController extends Controller
         }
     }
 
-    public function get_connection_count(Request $request)
+    public function send_an_email(Request $request)
     {
         $all = $request->all();
-        $account_id = $all['account_id'];
-        $cursor = null;
-        $requestParams = ['account_id' => $account_id];
-        $count = 0;
-        $allCursors = [];
-        $allItems = [];
-        for ($i = 0; $i > -1; $i++) {
-            $params = array_merge($requestParams, $cursor ? ['cursor' => $cursor] : []);
-            $relations = $this->list_all_relations(new \Illuminate\Http\Request($params));;
-            $data = $relations->getData(true)['relations'] ?? [];
-            $allCursors[] = $data['cursor'] ?? [];
-            $allItems = array_merge($data['items'] ?? [], $allItems);
-            $count += count($data['items'] ?? []);
-            $cursor = $data['cursor'] ?? null;
-            if (is_null($cursor)) {
-                break;
-            }
+        if (!isset($all['account_id']) || !isset($all['email']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
         }
-        return response()->json(['count' => $count]);
+        $account_id = $all['account_id'];
+        $email = $all['email'];
+        if (isset($all['subject'])) {
+            $subject = $all['subject'];
+        } else {
+            $subject = '';
+        }
+        if (isset($all['message'])) {
+            $messageContent = $all['message'];
+        } else {
+            $messageContent = '';
+        }
+        $html = 'text/plain';
+        if (isset($all['html']) && $all['html']) {
+            $html = 'text/html';
+        }
+        $trackOptions = [];
+        if ((isset($all['track']) && $all['track']) || (isset($all['link']) && $all['link'])) {
+            $trackOptions = [
+                'name' => 'tracking_options',
+                'contents' => json_encode([
+                    'opens' => $all['track'],
+                    'links' => $all['link'],
+                    'label' => 'tracking'
+                ])
+            ];
+        }
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+        ]);
+        try {
+            $response = $client->request('POST', $this->dsn . 'api/v1/emails', [
+                'multipart' => [
+                    [
+                        'name' => 'account_id',
+                        'contents' => $account_id
+                    ],
+                    [
+                        'name' => 'subject',
+                        'contents' => $subject
+                    ],
+                    [
+                        'name' => 'body',
+                        'contents' => $messageContent
+                    ],
+                    [
+                        'name' => 'to',
+                        'contents' => json_encode([
+                            [
+                                'display_name' => '',
+                                'identifier' => $email
+                            ]
+                        ])
+                    ],
+                    $trackOptions
+                ],
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'Accept' => 'application/json',
+                ],
+            ]);
+            return response()->json(['message' => json_decode($response->getBody(), true)]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

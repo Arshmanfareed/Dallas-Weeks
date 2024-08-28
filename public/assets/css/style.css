@@ -7311,3 +7311,16 @@ li.skel_profile {
     border: 1px solid;
     width: fit-content;
 }
+
+.email_list li::marker {
+    content: '';
+}
+
+.email_list .email_id {
+    width: 25px;
+    height: 25px;
+}
+
+.email_list .email_list_item{
+    align-items: baseline;
+}

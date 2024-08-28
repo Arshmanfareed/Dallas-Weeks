@@ -21,6 +21,7 @@ use App\Models\LeadActions;
 use App\Models\Leads;
 use App\Models\CampaignActions;
 use Exception;
+use App\Models\SeatEmail;
 use Illuminate\Support\Facades\Log;
 
 class CampaignController extends Controller
@@ -67,13 +68,33 @@ class CampaignController extends Controller
     {
         if (Auth::check()) {
             $user_id = Auth::user()->id;
+            $seat_id = session('seat_id');
             $validated = $request->validate([
                 'campaign_name' => 'required|string|max:255',
                 'campaign_url' => 'required'
             ]);
             if ($validated) {
-                $schedules = CampaignSchedule::where('user_id', $user_id)->orWhere('user_id', 0)->get();
                 $all = $request->except('_token');
+                $uc = new UnipileController();
+                $schedules = CampaignSchedule::where('user_id', $user_id)->orWhere('user_id', 0)->get();
+                $emails = SeatEmail::where('user_id', $user_id)->where('seat_id', $seat_id)->get();
+                foreach ($emails as $email) {
+                    $request = ['account_id' => $email['email_id']];
+                    $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
+                    if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
+                        $account = $account->getData(true);
+                        $email['account'] = $account['account'];
+                    } else {
+                        unset($email);
+                    }
+                    $account = $uc->retrieve_own_profile(new \Illuminate\Http\Request($request));
+                    if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
+                        $account = $account->getData(true);
+                        $email['profile'] = $account['account'];
+                    } else {
+                        unset($email);
+                    }
+                }
                 if ($all['campaign_type'] == 'linkedin' && strpos($all['campaign_url'], 'https://www.linkedin.com/search/results/people') === false) {
                     return redirect()->back()->withErrors(['campaign_url' => 'Invalid URL for LinkedIn search']);
                 } else if ($all['campaign_type'] == 'sales_navigator' && strpos($all['campaign_url'], 'https://www.linkedin.com/sales/search/people') === false) {
@@ -95,7 +116,8 @@ class CampaignController extends Controller
                 $data = [
                     'title' => 'Create Campaign Info',
                     'campaign_details' => $campaign_details,
-                    'campaign_schedule' => $schedules
+                    'campaign_schedule' => $schedules,
+                    'emails' => $emails
                 ];
                 return view('createcampaigninfo', $data);
             }

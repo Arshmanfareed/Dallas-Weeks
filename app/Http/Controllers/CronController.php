@@ -9,8 +9,12 @@ use App\Models\UpdatedCampaignElements;
 use App\Models\UpdatedCampaignProperties;
 use App\Models\CampaignElement;
 use App\Models\ElementProperties;
+use App\Models\EmailSetting;
+use App\Models\SeatEmail;
 use Illuminate\Support\Facades\Mail;
 use Exception;
+use Illuminate\Support\Facades\Log;
+use PharIo\Manifest\Email;
 
 class CronController extends Controller
 {
@@ -294,6 +298,27 @@ class CronController extends Controller
                             'account_id' => $account_id,
                             'email' => $user_profile['contact_info']['emails'][0],
                         ];
+                        $email_settings_text_only_email_no_html = EmailSetting::where('campaign_id', $action->campaign_id)
+                            ->where('setting_slug', 'email_settings_text_only_email_no_html')->value('value');
+                        if ($email_settings_text_only_email_no_html == 'yes') {
+                            $email_message['html'] = true;
+                        } else {
+                            $email_message['html'] = false;
+                        }
+                        $email_settings_track_the_number_of_email_link_clicks = EmailSetting::where('campaign_id', $action->campaign_id)
+                            ->where('setting_slug', 'email_settings_track_the_number_of_email_link_clicks')->value('value');
+                        if ($email_settings_track_the_number_of_email_link_clicks == 'yes') {
+                            $email_message['link'] = true;
+                        } else {
+                            $email_message['link'] = false;
+                        }
+                        $email_settings_track_the_number_of_opened_emails = EmailSetting::where('campaign_id', $action->campaign_id)
+                            ->where('setting_slug', 'email_settings_track_the_number_of_opened_emails')->value('value');
+                        if ($email_settings_track_the_number_of_opened_emails == 'yes') {
+                            $email_message['track'] = true;
+                        } else {
+                            $email_message['track'] = false;
+                        }
                         if (isset($element) && isset($campaign_element)) {
                             $campaign_property = UpdatedCampaignProperties::where('element_id', $campaign_element->id)->get();
                             foreach ($campaign_property as $cp) {
@@ -305,16 +330,33 @@ class CronController extends Controller
                                     $email_message['subject'] = $cp->value;
                                 }
                             }
-                            $email_message = $uc->email_message(new \Illuminate\Http\Request($email_message));
-                            if ($email_message instanceof JsonResponse) {
-                                $email_message = $email_message->getData(true);
-                                if (!isset($email_message['error'])) {
-                                    return true;
+                            $email_settings_email_id = EmailSetting::where('campaign_id', $action->campaign_id)
+                                ->where('setting_slug', 'email_settings_email_id')->first();
+                            if (!empty($email_settings_email_id)) {
+                                $email_message['account_id'] = SeatEmail::find($email_settings_email_id['value'])->value('email_id');
+                                $email_message = $uc->send_an_email(new \Illuminate\Http\Request($email_message));
+                                if ($email_message instanceof JsonResponse) {
+                                    $email_message = $email_message->getData(true);
+                                    if (!isset($email_message['error'])) {
+                                        return true;
+                                    } else {
+                                        throw new Exception($email_message['error']);
+                                    }
                                 } else {
-                                    throw new Exception($email_message['error']);
+                                    throw new Exception('Email Message is not instance of');
                                 }
                             } else {
-                                throw new Exception('Email Message is not instance of');
+                                $email_message = $uc->email_message(new \Illuminate\Http\Request($email_message));
+                                if ($email_message instanceof JsonResponse) {
+                                    $email_message = $email_message->getData(true);
+                                    if (!isset($email_message['error'])) {
+                                        return true;
+                                    } else {
+                                        throw new Exception($email_message['error']);
+                                    }
+                                } else {
+                                    throw new Exception('Email Message is not instance of');
+                                }
                             }
                         } else {
                             if (!isset($element)) {
@@ -351,6 +393,7 @@ class CronController extends Controller
             if ($user_profile instanceof JsonResponse) {
                 $user_profile = $user_profile->getData(true);
                 if (!isset($user_profile['error'])) {
+                    $user_profile = $user_profile['user_profile'];
                     if ($user_profile['is_relationship'] == true) {
                         return 'true';
                     } else {
