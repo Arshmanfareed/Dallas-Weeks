@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SeatEmail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\SeatInfo;
@@ -76,6 +77,30 @@ class LinkedInController extends Controller
         }
     }
 
+    public function delete_an_email_account($seat_email)
+    {
+        try {
+            $email = SeatEmail::find($seat_email);
+            if (!$email || empty($email->email_id)) {
+                return response()->json(['success' => false, 'error' => 'Seat Email not found']);
+            }
+            $uc = new UnipileController();
+            $request = ['account_id' => $email['email_id']];
+            $account = $uc->delete_account(new \Illuminate\Http\Request($request));
+            if ($account instanceof JsonResponse) {
+                $account = $account->getData(true);
+                if (isset($account['error'])) {
+                    return response()->json(['success' => false, 'error' => $account['error']]);
+                }
+                $email->delete();
+                return response()->json(['success' => true]);
+            }
+            return response()->json(['success' => false]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e]);
+        }
+    }
+
     public function addEmailToAccount(Request $request)
     {
         try {
@@ -92,7 +117,7 @@ class LinkedInController extends Controller
                     'providers' => $provider,
                     'api_url' => $this->dsn,
                     'expiresOn' => $expirationTime,
-                    'success_redirect_url' => 'https://networked.staging.designinternal.com/accdashboard',
+                    'success_redirect_url' => 'https://networked.staging.designinternal.com/setting',
                     'failure_redirect_url' => 'https://networked.staging.designinternal.com/setting',
                     'notify_url' => 'https://networked.staging.designinternal.com/unipile-callback',
                     'name' => 'email' . $seat,

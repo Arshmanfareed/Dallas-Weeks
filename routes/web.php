@@ -60,6 +60,7 @@ Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccou
 /* These are for actions like campaign and leads */
 Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']);
 Route::get('/delete_an_account', [LinkedInController::class, 'delete_an_account'])->name('delete_an_account');
+Route::get('/delete_an_email_account/{seat_email}', [LinkedInController::class, 'delete_an_email_account'])->name('delete_an_email_account');
 
 /* These are for dashboard which requires authentication */
 Route::middleware(['userAuth'])->group(function () {

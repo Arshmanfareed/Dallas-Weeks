@@ -78,21 +78,23 @@ class CampaignController extends Controller
                 $uc = new UnipileController();
                 $schedules = CampaignSchedule::where('user_id', $user_id)->orWhere('user_id', 0)->get();
                 $emails = SeatEmail::where('user_id', $user_id)->where('seat_id', $seat_id)->get();
-                foreach ($emails as $email) {
+                foreach ($emails as $key => $email) {
                     $request = ['account_id' => $email['email_id']];
                     $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
                     if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
                         $account = $account->getData(true);
                         $email['account'] = $account['account'];
                     } else {
-                        unset($email);
+                        unset($emails[$key]);
+                        continue;
                     }
                     $account = $uc->retrieve_own_profile(new \Illuminate\Http\Request($request));
                     if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
                         $account = $account->getData(true);
                         $email['profile'] = $account['account'];
                     } else {
-                        unset($email);
+                        unset($emails[$key]);
+                        continue;
                     }
                 }
                 if ($all['campaign_type'] == 'linkedin' && strpos($all['campaign_url'], 'https://www.linkedin.com/search/results/people') === false) {

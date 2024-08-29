@@ -281,22 +281,60 @@
                                             </thead>
                                             <tbody>
                                                 @if ($emails->isNotEmpty())
+                                                    @php
+                                                        $logos = [
+                                                            'OUTLOOK' => '/assets/img/outlook.png',
+                                                            'GMAIL' => '/assets/img/gmail.png',
+                                                        ];
+                                                    @endphp
                                                     @foreach ($emails as $email)
-                                                        <tr>
+                                                        <tr class="table_rows" id="{{ 'table_row_' . $email['id'] }}">
                                                             <td width="20%">
-                                                                {{ $email['profile']['aliases'][0]['display_name'] != ''
-                                                                    ? $email['profile']['aliases'][0]['display_name']
-                                                                    : $email['profile']['aliases'][0]['email'] }}
+                                                                @php
+                                                                    $name =
+                                                                        $email['profile']['aliases'][0][
+                                                                            'display_name'
+                                                                        ] ??
+                                                                        ($email['profile']['display_name'] ??
+                                                                            $email['account']['name']);
+                                                                @endphp
+                                                                {{ $name }}
                                                             </td>
                                                             <td width="20%">
-                                                                {{ $email['profile']['aliases'][0]['email'] }}
+                                                                <img src="{{ asset($logos[$email['profile']['provider']]) }}"
+                                                                    style="width: 25px; height: 25px; margin-right: 7px;"
+                                                                    alt="">
+                                                                @php
+                                                                    $user_email =
+                                                                        $email['profile']['email'] ??
+                                                                        $email['account']['name'];
+                                                                @endphp
+                                                                {{ $user_email }}
                                                             </td>
                                                             <td width="20%"></td>
                                                             <td width="20%"></td>
                                                             <td class="email_status" width="20%">
-                                                                {!! $email['account']['sources'][0]['status'] == 'OK'
-                                                                    ? '<div class="connected">Connected</div>'
-                                                                    : '<div class="disconnected">Disconnected</div>' !!}
+                                                                @php
+                                                                    $status =
+                                                                        $email['account']['sources'][0]['status'] ??
+                                                                        'Disconnected';
+                                                                @endphp
+                                                                <span style="margin-right: 20px;"
+                                                                    class="{{ $status == 'OK' ? 'connected' : 'disconnected' }}">
+                                                                    {{ $status == 'OK' ? 'Connected' : 'Disconnected' }}
+                                                                </span>
+                                                                <span class="email_menu_btn"
+                                                                    style="width: 20px; display: 
+                                                                    inline-block; text-align: center;">
+                                                                    <i class="fa-solid fa-ellipsis-vertical"
+                                                                        style="color: #ffffff;"></i>
+                                                                </span>
+                                                                <ul class="setting_list"
+                                                                    style="display: none; width: max-content;">
+                                                                    <li><a class="delete_an_email"
+                                                                            id="{{ $email['id'] }}">Delete an account</a>
+                                                                    </li>
+                                                                </ul>
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -377,7 +415,53 @@
     {{ session()->forget('delete_account') }}
     <script>
         var addAccountAjax = null;
+        var deleteEmailRoute = "{{ route('delete_an_email_account', ':seat_email') }}";
         $(document).ready(function() {
+            $(document).on("click", function(e) {
+                if (!$(e.target).closest(".setting").length) {
+                    $(".setting_list").hide();
+                }
+            });
+
+            $('.delete_an_email').on('click', function() {
+                var id = $(this).attr('id');
+                $.ajax({
+                    url: deleteEmailRoute.replace(':seat_email', id),
+                    type: "GET",
+                    success: function(response) {
+                        if (response.success) {
+                            $('#table_row_' + id).remove();
+                            if ($('.table_rows').length <= 0) {
+                                $('#email_setting').append(`
+                                    <div class="grey_box">
+                                        <div class="add_cont">
+                                            <p>No email account. Start by connecting your first email
+                                                account.</p>
+                                            <div class="add">
+                                                <a href="javascript:;" type="button" data-bs-toggle="modal"
+                                                    data-bs-target="#add_email"><i
+                                                        class="fa-solid fa-plus"></i></a>Add email account
+                                            </div>
+                                        </div>
+                                    </div>
+                                `);
+                            }
+                        } else {
+                            console.log(response);
+                        }
+                    },
+                    error: function(status, xhr, error) {
+                        console.error(error);
+                    }
+                });
+            });
+
+            $('.email_menu_btn').on('click', function(e) {
+                e.stopPropagation();
+                $(".setting_list").not($(this).siblings('.setting_list')).hide();
+                $(this).siblings('.setting_list').toggle();
+            });
+
             $('#submit-btn').on('click', function() {
                 $.ajax({
                     url: '/create-link-account',

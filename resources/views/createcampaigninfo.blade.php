@@ -62,6 +62,12 @@
                                                         aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
                                                             @if ($emails->isNotEmpty())
+                                                                @php
+                                                                    $logos = [
+                                                                        'OUTLOOK' => '/assets/img/outlook.png',
+                                                                        'GMAIL' => '/assets/img/gmail.png'
+                                                                    ];
+                                                                @endphp
                                                                 <ul class="email_list">
                                                                     @foreach ($emails as $email)
                                                                         <li>
@@ -74,19 +80,30 @@
                                                                                         {{ $loop->first ? 'checked' : '' }}>
                                                                                 </div>
                                                                                 <div class="col-lg-3 schedule_name">
-                                                                                    <i class="fa-solid fa-circle-check"
-                                                                                        style="color: #4bcea6;"></i>
-                                                                                    <span>{{ $email['profile']['aliases'][0]['display_name'] != ''
-                                                                                        ? $email['profile']['aliases'][0]['display_name']
-                                                                                        : $email['profile']['aliases'][0]['email'] }}</span>
+                                                                                    @php
+                                                                                        $name = isset($email['profile']['aliases'][0]['display_name']) && $email['profile']['aliases'][0]['display_name'] !== ''
+                                                                                                ? $email['profile']['aliases'][0]['display_name']
+                                                                                                : (isset($email['profile']['display_name']) && $email['profile']['display_name'] !== ''
+                                                                                                    ? $email['profile']['display_name']
+                                                                                                    : ($email['profile']['email'] ?? $email['account']['name'])
+                                                                                                );
+                                                                                    @endphp
+                                                                                    <span>{{ $name }}</span>
                                                                                 </div>
                                                                                 <div class="col-lg-5">
-                                                                                    {{ $email['profile']['aliases'][0]['email'] }}
+                                                                                    <img src="{{ asset($logos[$email['profile']['provider']]) }}" style="width: 25px; height: 25px; margin-right: 7px;" alt="">
+                                                                                    @php
+                                                                                        $user_email = $email['profile']['email'] ?? $email['account']['name'];
+                                                                                    @endphp
+                                                                                    {{ $user_email }}
                                                                                 </div>
+                                                                                @php
+                                                                                    $status = $email['account']['sources'][0]['status'] ?? 'Disconnected';
+                                                                                @endphp
                                                                                 <div class="col-lg-3 email_status">
-                                                                                    {!! $email['account']['sources'][0]['status'] == 'OK'
-                                                                                        ? '<div class="connected">Connected</div>'
-                                                                                        : '<div class="disconnected">Disconnected</div>' !!}
+                                                                                    <div class="{{ $status == 'OK' ? 'connected' : 'disconnected' }}">
+                                                                                        {{ $status == 'OK' ? 'Connected' : 'Disconnected' }}
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </li>
@@ -143,8 +160,6 @@
                                                                                     <div class="col-lg-1 schedule_avatar">S
                                                                                     </div>
                                                                                     <div class="col-lg-3 schedule_name">
-                                                                                        <i class="fa-solid fa-circle-check"
-                                                                                            style="color: #4bcea6;"></i>
                                                                                         <span>{{ $schedule['schedule_name'] }}</span>
                                                                                     </div>
                                                                                     <div class="col-lg-6 schedule_days">
@@ -385,8 +400,6 @@
                                                                                     <div class="col-lg-1 schedule_avatar">S
                                                                                     </div>
                                                                                     <div class="col-lg-3 schedule_name">
-                                                                                        <i class="fa-solid fa-circle-check"
-                                                                                            style="color: #4bcea6;"></i>
                                                                                         <span>{{ $schedule['schedule_name'] }}</span>
                                                                                     </div>
                                                                                     <div class="col-lg-6 schedule_days">
