@@ -20,7 +20,14 @@ class RegisterController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed',
+            'password' => [
+                'required',
+                'min:8',
+                'regex:/^(?=.*[!@#$%^&*(),.?":{}|<>]).*$/',
+                'confirmed'
+            ],
+        ], [
+            'password.regex' => 'The password must include at least one special character.',
         ]);
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
