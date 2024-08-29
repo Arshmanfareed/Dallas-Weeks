@@ -333,7 +333,8 @@ class CronController extends Controller
                             $email_settings_email_id = EmailSetting::where('campaign_id', $action->campaign_id)
                                 ->where('setting_slug', 'email_settings_email_id')->first();
                             if (!empty($email_settings_email_id)) {
-                                $email_message['account_id'] = SeatEmail::find($email_settings_email_id['value'])->value('email_id');
+                                $emailFrom = SeatEmail::where('id', $email_settings_email_id['value'])->first();
+                                $email_message['account_id'] = $emailFrom['email_id'];
                                 $email_message = $uc->send_an_email(new \Illuminate\Http\Request($email_message));
                                 if ($email_message instanceof JsonResponse) {
                                     $email_message = $email_message->getData(true);

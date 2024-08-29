@@ -1248,28 +1248,43 @@ class UnipileController extends Controller
     public function send_an_email(Request $request)
     {
         $all = $request->all();
+    
         if (!isset($all['account_id']) || !isset($all['email']) || !isset($this->x_api_key) || !isset($this->dsn)) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
+    
         $account_id = $all['account_id'];
         $email = $all['email'];
-        if (isset($all['subject'])) {
-            $subject = $all['subject'];
-        } else {
-            $subject = '';
-        }
-        if (isset($all['message'])) {
-            $messageContent = $all['message'];
-        } else {
-            $messageContent = '';
-        }
-        $html = 'text/plain';
-        if (isset($all['html']) && $all['html']) {
-            $html = 'text/html';
-        }
-        $trackOptions = [];
+        $subject = $all['subject'] ?? '';
+        $messageContent = $all['message'] ?? '';
+        $html = isset($all['html']) && $all['html'] ? 'text/html' : 'text/plain';
+    
+        $multipart = [
+            [
+                'name' => 'account_id',
+                'contents' => $account_id
+            ],
+            [
+                'name' => 'subject',
+                'contents' => $subject
+            ],
+            [
+                'name' => 'body',
+                'contents' => $messageContent
+            ],
+            [
+                'name' => 'to',
+                'contents' => json_encode([
+                    [
+                        'display_name' => '',
+                        'identifier' => $email
+                    ]
+                ])
+            ]
+        ];
+    
         if ((isset($all['track']) && $all['track']) || (isset($all['link']) && $all['link'])) {
-            $trackOptions = [
+            $multipart[] = [
                 'name' => 'tracking_options',
                 'contents' => json_encode([
                     'opens' => $all['track'],
@@ -1278,40 +1293,18 @@ class UnipileController extends Controller
                 ])
             ];
         }
-        $client = new \GuzzleHttp\Client([
-            'verify' => false,
-        ]);
+    
+        $client = new \GuzzleHttp\Client(['verify' => false]);
+    
         try {
             $response = $client->request('POST', $this->dsn . 'api/v1/emails', [
-                'multipart' => [
-                    [
-                        'name' => 'account_id',
-                        'contents' => $account_id
-                    ],
-                    [
-                        'name' => 'subject',
-                        'contents' => $subject
-                    ],
-                    [
-                        'name' => 'body',
-                        'contents' => $messageContent
-                    ],
-                    [
-                        'name' => 'to',
-                        'contents' => json_encode([
-                            [
-                                'display_name' => '',
-                                'identifier' => $email
-                            ]
-                        ])
-                    ],
-                    $trackOptions
-                ],
+                'multipart' => $multipart,
                 'headers' => [
                     'X-API-KEY' => $this->x_api_key,
                     'Accept' => 'application/json',
                 ],
             ]);
+    
             return response()->json(['message' => json_decode($response->getBody(), true)]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

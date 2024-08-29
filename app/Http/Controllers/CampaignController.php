@@ -226,7 +226,7 @@ class CampaignController extends Controller
         if (Auth::check()) {
             $lc = new LeadsController();
             $user_id = Auth::user()->id;
-            $campaigns = Campaign::where('user_id', $user_id);
+            $campaigns = Campaign::where('user_id', $user_id)->where('seat_id', session('seat_id'));
             if ($search != 'null') {
                 $campaigns = $campaigns->where('campaign_name', 'LIKE', '%' . $search . '%');
             }

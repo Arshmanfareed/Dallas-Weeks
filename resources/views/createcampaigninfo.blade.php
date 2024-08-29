@@ -198,6 +198,18 @@
                                                                             </li>
                                                                         @endforeach
                                                                     </ul>
+                                                                @else
+                                                                    <div class="grey_box">
+                                                                        <div class="add_cont">
+                                                                            <p>No email account. Start by connecting your first email
+                                                                                account.</p>
+                                                                            <div class="add">
+                                                                                <a href="javascript:;" type="button" data-bs-toggle="modal"
+                                                                                    data-bs-target="#add_email"><i
+                                                                                        class="fa-solid fa-plus"></i></a>Add email account
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 @endif
                                                             </div>
                                                             <div class=" schedule-content" id="team_email_schedule">Hello
