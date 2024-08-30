@@ -1,14 +1,14 @@
 var searchAjax = null;
 
 $(document).ready(function () {
-    $(".setting_btn").on("click", setting_list);
+    $(document).on('click', '.setting_btn', setting_list);
     $("#search_seat").on("input", filter_search);
-    $('.update_seat_name').on('click', update_seat_name);
+    $(document).on('click', '.update_seat_name', update_seat_name);
     $('.btn-prev').on('click', btn_prev);
     $('.btn-next').on('click', btn_next);
     $('#payment-form').on('submit', paymentForm);
-    $('.delete_seat').on('click', deleteSeat);
-    $(".seat_table_data").on("click", toSeat);
+    $(document).on('click', '.delete_seat', deleteSeat);
+    $(document).on('click', '.seat_table_data', toSeat);
 });
 
 function toSeat(e) {
@@ -154,6 +154,7 @@ function filter_search(e) {
                         </td>
                     </tr>
                 `).join('');
+                $(".seat_table_data").on("click", toSeat);
                 $("#campaign_table_body").html(html);
                 $(".setting_btn").on("click", setting_list);
             }

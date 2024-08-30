@@ -65,7 +65,7 @@
                                                                 @php
                                                                     $logos = [
                                                                         'OUTLOOK' => '/assets/img/outlook.png',
-                                                                        'GMAIL' => '/assets/img/gmail.png'
+                                                                        'GMAIL' => '/assets/img/gmail.png',
                                                                     ];
                                                                 @endphp
                                                                 <ul class="email_list">
@@ -81,27 +81,60 @@
                                                                                 </div>
                                                                                 <div class="col-lg-3 schedule_name">
                                                                                     @php
-                                                                                        $name = isset($email['profile']['aliases'][0]['display_name']) && $email['profile']['aliases'][0]['display_name'] !== ''
-                                                                                                ? $email['profile']['aliases'][0]['display_name']
-                                                                                                : (isset($email['profile']['display_name']) && $email['profile']['display_name'] !== ''
-                                                                                                    ? $email['profile']['display_name']
-                                                                                                    : ($email['profile']['email'] ?? $email['account']['name'])
-                                                                                                );
+                                                                                        $name =
+                                                                                            isset(
+                                                                                                $email['profile'][
+                                                                                                    'aliases'
+                                                                                                ][0]['display_name'],
+                                                                                            ) &&
+                                                                                            $email['profile'][
+                                                                                                'aliases'
+                                                                                            ][0]['display_name'] !== ''
+                                                                                                ? $email['profile'][
+                                                                                                    'aliases'
+                                                                                                ][0]['display_name']
+                                                                                                : (isset(
+                                                                                                    $email['profile'][
+                                                                                                        'display_name'
+                                                                                                    ],
+                                                                                                ) &&
+                                                                                                $email['profile'][
+                                                                                                    'display_name'
+                                                                                                ] !== ''
+                                                                                                    ? $email['profile'][
+                                                                                                        'display_name'
+                                                                                                    ]
+                                                                                                    : $email['profile'][
+                                                                                                            'email'
+                                                                                                        ] ??
+                                                                                                        $email[
+                                                                                                            'account'
+                                                                                                        ]['name']);
                                                                                     @endphp
                                                                                     <span>{{ $name }}</span>
                                                                                 </div>
                                                                                 <div class="col-lg-5">
-                                                                                    <img src="{{ asset($logos[$email['profile']['provider']]) }}" style="width: 25px; height: 25px; margin-right: 7px;" alt="">
+                                                                                    <img src="{{ asset($logos[$email['profile']['provider']]) }}"
+                                                                                        style="width: 25px; height: 25px; margin-right: 7px;"
+                                                                                        alt="">
                                                                                     @php
-                                                                                        $user_email = $email['profile']['email'] ?? $email['account']['name'];
+                                                                                        $user_email =
+                                                                                            $email['profile'][
+                                                                                                'email'
+                                                                                            ] ??
+                                                                                            $email['account']['name'];
                                                                                     @endphp
                                                                                     {{ $user_email }}
                                                                                 </div>
                                                                                 @php
-                                                                                    $status = $email['account']['sources'][0]['status'] ?? 'Disconnected';
+                                                                                    $status =
+                                                                                        $email['account']['sources'][0][
+                                                                                            'status'
+                                                                                        ] ?? 'Disconnected';
                                                                                 @endphp
                                                                                 <div class="col-lg-3 email_status">
-                                                                                    <div class="{{ $status == 'OK' ? 'connected' : 'disconnected' }}">
+                                                                                    <div
+                                                                                        class="{{ $status == 'OK' ? 'connected' : 'disconnected' }}">
                                                                                         {{ $status == 'OK' ? 'Connected' : 'Disconnected' }}
                                                                                     </div>
                                                                                 </div>
@@ -109,6 +142,23 @@
                                                                         </li>
                                                                     @endforeach
                                                                 </ul>
+                                                            @else
+                                                                <div class="email_setting">
+                                                                    <div class="grey_box">
+                                                                        <div class="add_cont">
+                                                                            <p>No email account. Start by connecting your
+                                                                                first
+                                                                                email
+                                                                                account.</p>
+                                                                            <div class="add">
+                                                                                <a href="{{ route('dash-settings') }}"
+                                                                                    type="button">
+                                                                                    <i class="fa-solid fa-plus"></i>
+                                                                                </a> Add email account
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             @endif
                                                         </div>
                                                     </div>
@@ -198,18 +248,6 @@
                                                                             </li>
                                                                         @endforeach
                                                                     </ul>
-                                                                @else
-                                                                    <div class="grey_box">
-                                                                        <div class="add_cont">
-                                                                            <p>No email account. Start by connecting your first email
-                                                                                account.</p>
-                                                                            <div class="add">
-                                                                                <a href="javascript:;" type="button" data-bs-toggle="modal"
-                                                                                    data-bs-target="#add_email"><i
-                                                                                        class="fa-solid fa-plus"></i></a>Add email account
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
                                                                 @endif
                                                             </div>
                                                             <div class=" schedule-content" id="team_email_schedule">Hello
@@ -341,13 +379,13 @@
                                                                 </div>
                                                             </div>
                                                             <!-- <div class="linked_set d-flex justify-content-between">
-                                                                            <p> Include leads also found in campaigns across your team
-                                                                                seats
-                                                                                <span>!</span>
-                                                                            </p>
-                                                                            <div class="switch_box"><input type="checkbox" name="global_settings_include_leads_also_found_in_campaigns_across_your_team_seats" class="linkedin_setting_switch" id="include_leads_also_found_in_campaigns_across_your_team_seats"><label for="include_leads_also_found_in_campaigns_across_your_team_seats">Toggle</label>
-                                                                            </div>
-                                                                        </div> -->
+                                                                                        <p> Include leads also found in campaigns across your team
+                                                                                            seats
+                                                                                            <span>!</span>
+                                                                                        </p>
+                                                                                        <div class="switch_box"><input type="checkbox" name="global_settings_include_leads_also_found_in_campaigns_across_your_team_seats" class="linkedin_setting_switch" id="include_leads_also_found_in_campaigns_across_your_team_seats"><label for="include_leads_also_found_in_campaigns_across_your_team_seats">Toggle</label>
+                                                                                        </div>
+                                                                                    </div> -->
                                                             <div class="linked_set d-flex justify-content-between">
                                                                 <p> Discover new leads only <span
                                                                         title="Leads that exist in other campaigns in your seat will not be discovered">!</span>
@@ -612,41 +650,41 @@
         </div>
     </div>
     <!-- <div class="modal fade create_time_modal" id="time_modal" tabindex="-1" aria-labelledby="time_modal"
-                        aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="time_modal">Schedule Timing</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
-                                        class="fa-solid fa-xmark"></i></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="col-lg-6 schedule_days">
-                                            @php
-                                                $schedule_days = App\Models\ScheduleDays::where(
-                                                    'schedule_id',
-                                                    $schedule['id'],
-                                                )->get();
-                                            @endphp
-                                            <ul class="schedule_day_list">
-                                                @foreach ($schedule_days as $day)
+                                    aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="time_modal">Schedule Timing</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
+                                                    class="fa-solid fa-xmark"></i></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="col-lg-6 schedule_days">
+                                                        @php
+                                                            $schedule_days = App\Models\ScheduleDays::where(
+                                                                'schedule_id',
+                                                                $schedule['id'],
+                                                            )->get();
+                                                        @endphp
+                                                        <ul class="schedule_day_list">
+                                                            @foreach ($schedule_days as $day)
     <li class="schedule_day {{ $day['is_active'] == '1' ? 'selected_day' : '' }}">
-                                                        {{ ucfirst($day['schedule_day']) }}
-                                                    </li>
+                                                                    {{ ucfirst($day['schedule_day']) }}
+                                                                </li>
     @endforeach
-                                                <li class="schedule_time">
-                                                    <a href=""><i class="fa-solid fa-globe" style="color: #16adcb;"></i></a>
-                                                </li>
-                                            </ul>
+                                                            <li class="schedule_time">
+                                                                <a href=""><i class="fa-solid fa-globe" style="color: #16adcb;"></i></a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
+                            </div> -->
     <script>
         var campaign_details = {!! $campaign_details_json !!};
         var csrfToken = "{{ csrf_token() }}";

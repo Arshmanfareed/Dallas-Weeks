@@ -272,11 +272,9 @@
                                         <table class="data_table w-100">
                                             <thead>
                                                 <tr>
-                                                    <th width="20%">Name</th>
-                                                    <th width="20%">Email</th>
-                                                    <th width="20%">Daily limits</th>
-                                                    <th width="20%">Email delay</th>
-                                                    <th width="20%">Status</th>
+                                                    <th width="30%" style="text-align: center">Name</th>
+                                                    <th width="30%" style="text-align: center">Email</th>
+                                                    <th width="30%" style="text-align: center">Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -289,18 +287,31 @@
                                                     @endphp
                                                     @foreach ($emails as $email)
                                                         <tr class="table_rows" id="{{ 'table_row_' . $email['id'] }}">
-                                                            <td width="20%">
+                                                            <td width="30%" style="text-align: center">
                                                                 @php
                                                                     $name =
+                                                                        isset(
+                                                                            $email['profile']['aliases'][0][
+                                                                                'display_name'
+                                                                            ],
+                                                                        ) &&
                                                                         $email['profile']['aliases'][0][
                                                                             'display_name'
-                                                                        ] ??
-                                                                        ($email['profile']['display_name'] ??
-                                                                            $email['account']['name']);
+                                                                        ] !== ''
+                                                                            ? $email['profile']['aliases'][0][
+                                                                                'display_name'
+                                                                            ]
+                                                                            : (isset(
+                                                                                $email['profile']['display_name'],
+                                                                            ) &&
+                                                                            $email['profile']['display_name'] !== ''
+                                                                                ? $email['profile']['display_name']
+                                                                                : $email['profile']['email'] ??
+                                                                                    $email['account']['name']);
                                                                 @endphp
                                                                 {{ $name }}
                                                             </td>
-                                                            <td width="20%">
+                                                            <td width="30%" style="text-align: center">
                                                                 <img src="{{ asset($logos[$email['profile']['provider']]) }}"
                                                                     style="width: 25px; height: 25px; margin-right: 7px;"
                                                                     alt="">
@@ -311,9 +322,8 @@
                                                                 @endphp
                                                                 {{ $user_email }}
                                                             </td>
-                                                            <td width="20%"></td>
-                                                            <td width="20%"></td>
-                                                            <td class="email_status" width="20%">
+                                                            <td class="email_status" width="30%"
+                                                                style="text-align: center; position: relative; z-index: 1;">
                                                                 @php
                                                                     $status =
                                                                         $email['account']['sources'][0]['status'] ??
@@ -330,7 +340,7 @@
                                                                         style="color: #ffffff;"></i>
                                                                 </span>
                                                                 <ul class="setting_list"
-                                                                    style="display: none; width: max-content;">
+                                                                    style="display: none; z-index: 2147483647; right: -5%; width: max-content;">
                                                                     <li><a class="delete_an_email"
                                                                             id="{{ $email['id'] }}">Delete an account</a>
                                                                     </li>
