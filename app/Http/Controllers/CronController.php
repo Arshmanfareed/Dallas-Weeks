@@ -33,7 +33,11 @@ class CronController extends Controller
             if ($user_profile instanceof JsonResponse) {
                 $user_profile = $user_profile->getData(true);
                 if (!isset($user_profile['error'])) {
+<<<<<<< HEAD
                     $action['response'] = $user_profile['user_profile'];
+=======
+                    $action['response'] = $user_profile;
+>>>>>>> origin/merge-branch
                     $action->save();
                     return true;
                 } else {
@@ -79,7 +83,11 @@ class CronController extends Controller
                             if ($invite_to_connect instanceof JsonResponse) {
                                 $invite_to_connect = $invite_to_connect->getData(true);
                                 if (!isset($invite_to_connect['error'])) {
+<<<<<<< HEAD
                                     $action['response'] = $invite_to_connect['invitaion'];
+=======
+                                    $action['response'] = $invite_to_connect;
+>>>>>>> origin/merge-branch
                                     $action->save();
                                     return true;
                                 } else {
@@ -141,7 +149,11 @@ class CronController extends Controller
                             if ($message instanceof JsonResponse) {
                                 $message = $message->getData(true);
                                 if (!isset($message['error'])) {
+<<<<<<< HEAD
                                     $action['response'] = $message['message'];
+=======
+                                    $action['response'] = $message;
+>>>>>>> origin/merge-branch
                                     $action->save();
                                     return true;
                                 } else {
@@ -207,7 +219,11 @@ class CronController extends Controller
                             if ($inmail_message instanceof JsonResponse) {
                                 $inmail_message = $inmail_message->getData(true);
                                 if (!isset($inmail_message['error'])) {
+<<<<<<< HEAD
                                     $action['response'] = $inmail_message['inmail_message'];
+=======
+                                    $action['response'] = $inmail_message;
+>>>>>>> origin/merge-branch
                                     $action->save();
                                     return true;
                                 } else {
@@ -265,7 +281,11 @@ class CronController extends Controller
                         if ($follow_user instanceof JsonResponse) {
                             $follow_user = $follow_user->getData(true);
                             if (!isset($follow_user['error'])) {
+<<<<<<< HEAD
                                 $action['response'] = $follow_user['follow'];
+=======
+                                $action['response'] = $follow_user;
+>>>>>>> origin/merge-branch
                                 $action->save();
                                 return true;
                             } else {
@@ -349,7 +369,11 @@ class CronController extends Controller
                                 if ($email_message instanceof JsonResponse) {
                                     $email_message = $email_message->getData(true);
                                     if (!isset($email_message['error'])) {
+<<<<<<< HEAD
                                         $action['response'] = $email_message['message'];
+=======
+                                        $action['response'] = $email_message;
+>>>>>>> origin/merge-branch
                                         $action->save();
                                         return true;
                                     } else {
