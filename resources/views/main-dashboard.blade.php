@@ -134,7 +134,7 @@
                                                 <img src="{{ asset('assets/img/acc.png') }}" alt="" class="skel_profile_img">
                                                 <a href="" class="skel_profile_name"></a>
                                             </li>
-                                            <li>
+                                            <li class="col-lg-6">
                                                 <p class="skel_message"></p>
                                             </li>
                                             <li>

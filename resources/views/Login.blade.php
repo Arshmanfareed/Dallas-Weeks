@@ -72,9 +72,9 @@
                         </form>
                     </div>
                     <!-- <div class="modal-footer">
-                                                                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                            <button type="button" class="btn btn-primary">Save changes</button>
-                                                                                                                          </div> -->
+                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                                                                                                                                  </div> -->
                 </div>
             </div>
         </div>
@@ -93,12 +93,6 @@
                     }
                     var email = $('#email').val();
                     var password = $('#password').val();
-                    if (password.trim() === '') {
-                        $('#passwordError').html('Password is required.');
-                        return;
-                    } else {
-                        $('#passwordError').text('');
-                    }
                     credentialAjax = $.ajax({
                         type: 'POST',
                         url: '{{ route('checkCredentials') }}',
@@ -107,21 +101,23 @@
                             'email': email,
                             'password': password
                         },
+                        beforeSend: function() {
+                            $('#passwordError').html('');
+                            $('#successMessage').html('');
+                        },
                         success: function(response, textStatus, xhr) {
                             if (response.success) {
-                                $('#passwordError').text('');
                                 $('#successMessage').html(response.message);
                                 $('.login_btn').show();
                             } else {
                                 $('#passwordError').html(response.error);
-                                $('#successMessage').text('');
                                 $('.login_btn').hide();
                             }
                         },
                         error: function(xhr, textStatus, error) {
                             $('#passwordError').html('An unexpected error occurred.');
+                            $('#successMessage').html('');
                             $('.login_btn').hide();
-                            console.error(error);
                         },
                     });
                 }

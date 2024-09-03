@@ -54,7 +54,7 @@ function getProfileAndLatestMessage($chat) {
                     const $latestMessage = $chat.find('.skel_message');
                     const latestMessage = response.message[0];
                     if (latestMessage.text) {
-                        const trimmedText = latestMessage.text.length > 25 ? `${latestMessage.text.substring(0, 25)}...` : latestMessage.text;
+                        const trimmedText = latestMessage.text.length > 35 ? `${latestMessage.text.substring(0, 35)}...` : latestMessage.text;
                         $latestMessage.html(trimmedText);
                     } else if (latestMessage.attachments?.length) {
                         const attachment = latestMessage.attachments[0];

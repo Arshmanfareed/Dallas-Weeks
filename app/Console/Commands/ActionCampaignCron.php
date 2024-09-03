@@ -29,6 +29,7 @@ class ActionCampaignCron extends Command
      * @var string
      */
     protected $description = 'Command for campaign actions';
+    protected $logFilePath;
 
     /**
      * Create a new command instance.
@@ -47,210 +48,85 @@ class ActionCampaignCron extends Command
      */
     public function handle()
     {
-        $logFilePath = storage_path('logs/campaign_action.log');
-        file_put_contents($logFilePath, 'Campaign action started succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
+        $this->logFilePath = storage_path('logs/campaign_action.log');
+        file_put_contents($this->logFilePath, 'Action started succesfully at ' . now() . PHP_EOL, FILE_APPEND);
+        file_put_contents($this->logFilePath, '{' . PHP_EOL, FILE_APPEND);
         try {
             $sc = new SeatController();
             $final_accounts = $sc->get_final_accounts();
             foreach ($final_accounts as $final_account) {
                 $seats = SeatInfo::whereIn('account_id', $final_account)->get();
-                $campaigns = Campaign::whereIn('seat_id', $seats->pluck('id')->toArray())
-                    ->where('is_active', 1)
-                    ->where('is_archive', 0)
-                    ->get();
-                $this->campaign_working($campaigns);
-            }
-        } catch (\Exception $e) {
-            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
-        }
-    }
-
-    private function campaign_working($campaigns, $remain_distribution_limit = 80)
-    {
-        try {
-            $logFilePath = storage_path('logs/campaign_action.log');
-            if (count($campaigns) > 0) {
-                if ($remain_distribution_limit < count($campaigns)) {
-                    $final_campaigns = [];
-                    for ($i = 0; $i < $remain_distribution_limit; $i++) {
-                        $final_campaigns[$i] = $campaigns[$i];
-                    }
-                    $campaigns = $final_campaigns;
-                }
-                $lead_distribution_limit = floor($remain_distribution_limit / count($campaigns));
-                $remain_distribution_limit = 0;
-                $campaignsToRemove = [];
-                foreach ($campaigns as $index => $campaign) {
-                    if ($campaign['campaign_type'] == 'import') {
-                        $remain_distribution_limit = $this->addImportLeads($campaign, $lead_distribution_limit + $remain_distribution_limit);
-                    } else if ($campaign['campaign_type'] == 'linkedin') {
-                        $remain_distribution_limit = $this->addLinkedinLeads($campaign, $lead_distribution_limit + $remain_distribution_limit, 0, 0);
-                    } else if ($campaign['campaign_type'] == 'post_engagement') {
-                        $remain_distribution_limit = $this->addPostLeads($campaign, $lead_distribution_limit + $remain_distribution_limit, 0, 0);
-                    } else if ($campaign['campaign_type'] == 'leads_list') {
-                        $remain_distribution_limit = $this->addLeadList($campaign, $lead_distribution_limit + $remain_distribution_limit, 0);
-                    } else if ($campaign['campaign_type'] == 'sales_navigator') {
-                        $remain_distribution_limit = $this->addSalesLeads($campaign, $lead_distribution_limit + $remain_distribution_limit, 0, 0);
-                    }
-                    if ($remain_distribution_limit > 0) {
-                        $campaignsToRemove[] = $index;
-                    }
-                }
-                foreach ($campaignsToRemove as $index) {
-                    unset($campaigns[$index]);
-                }
-                if (count($campaigns) > 0 && $remain_distribution_limit > 0) {
-                    file_put_contents($logFilePath, 'Rewind campaigns at: ' . now() . PHP_EOL, FILE_APPEND);
-                    $this->campaign_working($campaigns, $remain_distribution_limit);
-                }
-            } else {
-                file_put_contents($logFilePath, 'Failed to insert data because No campaign found at: ' . now() . PHP_EOL, FILE_APPEND);
-            }
-        } catch (\Exception $e) {
-            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
-        }
-    }
-
-    private function addImportLeads($campaign, $lead_distribution_limit)
-    {
-        $i = 0;
-        try {
-            $logFilePath = storage_path('logs/campaign_action.log');
-            $imported_lead = ImportedLeads::where('user_id', $campaign['user_id'])->where('campaign_id', $campaign['id'])->first();
-            $csvController = new CsvController();
-            $csvData = $csvController->importedLeadToArray($imported_lead['file_path']);
-            $have_url = false;
-            if ($csvData !== NULL) {
-                foreach ($csvData as $key => $value) {
-                    if (str_contains(strtolower($key), 'url')) {
-                        $have_url = true;
-                        foreach ($value as $url) {
-                            try {
-                                if ($i >= $lead_distribution_limit) {
-                                    break 2;
-                                }
-                                $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
-                                if (empty($lead) && $i < $lead_distribution_limit) {
-                                    $lc = new LeadsController();
-                                    if ($lc->applySettings($campaign, $url)) {
-                                        $i++;
-                                        file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
-                                    }
-                                } else if (!empty($lead)) {
-                                    file_put_contents($logFilePath, 'Failed to insert data because Lead already existed at: ' . now() . PHP_EOL, FILE_APPEND);
-                                }
-                            } catch (\Exception $e) {
-                                file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
-                            }
-                        }
-                    }
-                }
-                if (!$have_url) {
-                    file_put_contents($logFilePath, 'Failed to insert data because No URL column found at: ' . now() . PHP_EOL, FILE_APPEND);
-                }
-                if ($i < $lead_distribution_limit) {
-                    file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
+                $seat_ids = $seats->pluck('id')->toArray();
+                $campaigns = Campaign::whereIn('seat_id', $seat_ids)->where('is_active', 1)->where('is_archive', 0)->get();
+                if ($campaigns->isNotEmpty()) {
+                    $this->campaign_working($campaigns);
                 } else {
-                    file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
+                    $fileContent = '    No campaigns found for seats # (' . implode(', ', $seats->pluck('id')->toArray()) . ')' . PHP_EOL;
+                    file_put_contents($this->logFilePath, $fileContent, FILE_APPEND);
                 }
-            } else {
-                file_put_contents($logFilePath, 'Failed to insert data because No data in csv file at: ' . now() . PHP_EOL, FILE_APPEND);
-            }
-        } catch (\Exception $e) {
-            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
-        }
-        return $lead_distribution_limit - $i;
-    }
-
-    private function addSalesLeads($campaign, $lead_distribution_limit, $i, $j)
-    {
-        try {
-            $logFilePath = storage_path('logs/campaign_action.log');
-            $seat = SeatInfo::where('id', $campaign->seat_id)->first();
-            $account_id = $seat['account_id'];
-            $uc = new UnipileController();
-            $query = '';
-            $url = $campaign['campaign_url'];
-            $parsed_url = parse_url($url);
-            $query_string = isset($parsed_url['query']) ? $parsed_url['query'] : '';
-            parse_str($query_string, $params);
-            $query = isset($params['query']) ? $params['query'] : null;
-            $request = [
-                'account_id' => $account_id,
-                'query' => $query,
-                'count' => 80,
-                'start' => $j
-            ];
-            $sales_navigator_search = $uc->sales_navigator_search(new \Illuminate\Http\Request($request));
-            if ($sales_navigator_search instanceof JsonResponse && !isset($sales_navigator_search->getData(true)['error'])) {
-                $searches = $sales_navigator_search->getData(true)['accounts'];
-                if (count($searches) > 0) {
-                    foreach ($searches as $search) {
-                        try {
-                            if ($i >= $lead_distribution_limit) {
-                                break;
-                            }
-                            $profileUrl = str_replace('urn:li:fs_salesProfile:(', '', $search['entityUrn']);
-                            $index = strpos($profileUrl, ',');
-                            if ($index !== false) {
-                                $profileUrl = substr($profileUrl, 0, $index);
-                            }
-                            $request = [
-                                'account_id' => $account_id,
-                                'profile_url' => $profileUrl,
-                                'sales_navigator' => true,
-                            ];
-                            $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
-                            if ($profile instanceof JsonResponse) {
-                                $profile = $profile->getData(true);
-                                if (!isset($profile['error'])) {
-                                    $profile = $profile['user_profile'];
-                                    $url = $profile['public_profile_url'];
-                                    $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
-                                    if (empty($lead) && $i < $lead_distribution_limit) {
-                                        $lc = new LeadsController();
-                                        if ($lc->applySettings($campaign, $url)) {
-                                            $i++;
-                                            file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
-                                        }
-                                    } else if (!empty($lead)) {
-                                        file_put_contents($logFilePath, 'Failed to insert data because Lead already existed at: ' . now() . PHP_EOL, FILE_APPEND);
-                                    }
-                                } else {
-                                    file_put_contents($logFilePath, 'Failed to insert data because ' . json_encode($profile['error']) . ' at: ' . now() . PHP_EOL, FILE_APPEND);
-                                }
-                            } else {
-                                file_put_contents($logFilePath, 'Failed to insert data because User Profile is not instance of JsonResponse at: ' . now() . PHP_EOL, FILE_APPEND);
-                            }
-                        } catch (\Exception $e) {
-                            file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
-                        }
-                    }
-                    if ($i < $lead_distribution_limit) {
-                        return $this->addSalesLeads($campaign, $lead_distribution_limit, $i, count($searches) + $j);
-                    } else {
-                        file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
-                    }
-                } else {
-                    if ($i < $lead_distribution_limit) {
-                        file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
-                    } else {
-                        file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
-                    }
-                }
-            } else {
-                file_put_contents($logFilePath, 'Failed to insert data because ' . $sales_navigator_search->getData(true)['error'] . ' at: ' . now() . PHP_EOL, FILE_APPEND);
             }
         } catch (Exception $e) {
-            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
+            file_put_contents($this->logFilePath, $e . PHP_EOL, FILE_APPEND);
         }
-        return $lead_distribution_limit - $i;
+        file_put_contents($this->logFilePath, '}' . PHP_EOL, FILE_APPEND);
     }
 
-    private function addLinkedinLeads($campaign, $lead_distribution_limit, $i, $j)
+    private function campaign_working($campaigns, $remain_distribution_limit = 80, $campaignFunctionCount = 0)
     {
+        file_put_contents($this->logFilePath, ' Working on campaigns ' . ++$campaignFunctionCount . ' times started succesfully at ' . now() . PHP_EOL, FILE_APPEND);
+        file_put_contents($this->logFilePath, ' {' . PHP_EOL, FILE_APPEND);
         try {
-            $logFilePath = storage_path('logs/campaign_action.log');
+            if ($remain_distribution_limit < count($campaigns)) {
+                $campaigns = array_slice($campaigns, 0, $remain_distribution_limit);
+            }
+            $lead_distribution_limit = $remain_distribution_limit > 0 ? floor($remain_distribution_limit / count($campaigns)) : 0;
+            $remain_distribution_limit = 0;
+            $campaignsToRemove = [];
+            foreach ($campaigns as $index => $campaign) {
+                switch ($campaign['campaign_type']) {
+                    case 'linkedin':
+                        $remain_distribution_limit = $this->linkedinLeads($campaign, ($remain_distribution_limit + $lead_distribution_limit));
+                        break;
+                    case 'sales_navigator':
+                        $remain_distribution_limit = $this->salesLeads($campaign, ($remain_distribution_limit + $lead_distribution_limit));
+                        break;
+                        //TODO: Recruiter Option
+                    case 'import':
+                        $remain_distribution_limit = $this->importLeads($campaign, ($remain_distribution_limit + $lead_distribution_limit));
+                        break;
+                    case 'post_engagement':
+                        $remain_distribution_limit = $this->postLeads($campaign, ($remain_distribution_limit + $lead_distribution_limit));
+                        break;
+                    case 'leads_list':
+                        $remain_distribution_limit = $this->leadList($campaign, ($remain_distribution_limit + $lead_distribution_limit));
+                        break;
+                    default:
+                        file_put_contents($this->logFilePath, '     Unknown campaign type ' . $campaign['campaign_type'] . ' of campaign # ' . $campaign['id'] . PHP_EOL, FILE_APPEND);
+                        break;
+                }
+                if ($remain_distribution_limit > 0) {
+                    $campaignsToRemove[] = $index;
+                }
+            }
+            foreach ($campaignsToRemove as $index) {
+                unset($campaigns[$index]);
+            }
+            if ($campaigns->isNotEmpty() && $remain_distribution_limit > 0) {
+                file_put_contents($this->logFilePath, ' }' . PHP_EOL, FILE_APPEND);
+                $this->campaign_working($campaigns, $remain_distribution_limit, $campaignFunctionCount);
+            } else {
+                file_put_contents($this->logFilePath, ' }' . PHP_EOL, FILE_APPEND);
+            }
+        } catch (\Exception $e) {
+            file_put_contents($this->logFilePath, $e . PHP_EOL, FILE_APPEND);
+        }
+    }
+
+    private function linkedinLeads($campaign, $lead_distribution_limit, $leadCount = 0, $searchedLeadCount = 0)
+    {
+        file_put_contents($this->logFilePath, '     Searching Linkedin Leads started succesfully at ' . now() . PHP_EOL, FILE_APPEND);
+        file_put_contents($this->logFilePath, '     {' . PHP_EOL, FILE_APPEND);
+        try {
             $seat = SeatInfo::where('id', $campaign->seat_id)->first();
             $account_id = $seat['account_id'];
             $query = '';
@@ -274,11 +150,11 @@ class ActionCampaignCron extends Command
             $request = [
                 'account_id' => $account_id,
                 'query' => $query,
-                'start' => $j
+                'start' => $searchedLeadCount
             ];
             $uc = new UnipileController();
             $linkedin_search = $uc->linkedin_search(new \Illuminate\Http\Request($request));
-            if ($linkedin_search instanceof JsonResponse && !isset($linkedin_search->getData(true)['error'])) {
+            if (!isset($linkedin_search->getData(true)['error'])) {
                 $searches = $linkedin_search->getData(true)['accounts'];
                 if (count($searches) > 0) {
                     foreach ($searches as $search) {
@@ -288,7 +164,7 @@ class ActionCampaignCron extends Command
                                 $result = $item['item']['entityResult'];
                                 $k++;
                                 try {
-                                    if ($i >= $lead_distribution_limit) {
+                                    if ($leadCount >= $lead_distribution_limit) {
                                         break;
                                     }
                                     $profileUrl = str_replace('urn:li:fsd_entityResultViewModel:(urn:li:fsd_profile:', '', $result['entityUrn']);
@@ -301,62 +177,191 @@ class ActionCampaignCron extends Command
                                         'profile_url' => $profileUrl,
                                     ];
                                     $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
-                                    if ($profile instanceof JsonResponse) {
-                                        $profile = $profile->getData(true);
-                                        if (!isset($profile['error'])) {
-                                            $profile = $profile['user_profile'];
-                                            if (strpos($profile['public_identifier'], 'https://www.linkedin.com/in/') !== false) {
-                                                $url = $profile['public_identifier'];
-                                            } else {
-                                                $url = 'https://www.linkedin.com/in/' . $profile['public_identifier'];
-                                            }
-                                            $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
-                                            if (empty($lead) && $i < $lead_distribution_limit) {
-                                                $lc = new LeadsController();
-                                                if ($lc->applySettings($campaign, $url)) {
-                                                    $i++;
-                                                    file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                            } else if (!empty($lead)) {
-                                                file_put_contents($logFilePath, 'Failed to insert data because Lead already existed at: ' . now() . PHP_EOL, FILE_APPEND);
-                                            }
+                                    if (!isset($profile->getData(true)['error'])) {
+                                        $profile = $profile->getData(true)['user_profile'];
+                                        if (strpos($profile['public_identifier'], 'https://www.linkedin.com/in/') !== false) {
+                                            $url = $profile['public_identifier'];
                                         } else {
-                                            file_put_contents($logFilePath, 'Failed to insert data because ' . json_encode($profile['error']) . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                            $url = 'https://www.linkedin.com/in/' . $profile['public_identifier'];
+                                        }
+                                        $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
+                                        if (empty($lead) && $leadCount < $lead_distribution_limit) {
+                                            $lc = new LeadsController();
+                                            if ($lc->applySettings($campaign, $url)) {
+                                                $leadCount++;
+                                                file_put_contents($this->logFilePath, '         "' . $url . '" Lead inserted succesfully' . PHP_EOL, FILE_APPEND);
+                                            }
+                                        } else if (!empty($lead)) {
+                                            file_put_contents($this->logFilePath, '         "' . $url . '" Lead already existed' . PHP_EOL, FILE_APPEND);
                                         }
                                     } else {
-                                        file_put_contents($logFilePath, 'Failed to insert data because User Profile is not instance of JsonResponse at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        file_put_contents($this->logFilePath, json_encode($profile->getData(true)['error']) . PHP_EOL, FILE_APPEND);
                                     }
                                 } catch (\Exception $e) {
-                                    file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                    file_put_contents($this->logFilePath, $e . PHP_EOL, FILE_APPEND);
                                 }
                             }
                         }
                     }
-                    if ($i < $lead_distribution_limit) {
-                        return $this->addLinkedinLeads($campaign, $lead_distribution_limit, $i, $k + $j);
+                    if ($leadCount < $lead_distribution_limit) {
+                        file_put_contents($this->logFilePath, '     }' . PHP_EOL, FILE_APPEND);
+                        return $this->linkedinLeads($campaign, $lead_distribution_limit, $leadCount, ($k + $searchedLeadCount));
                     } else {
-                        file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
+                        file_put_contents($this->logFilePath, '         Limitation reached' . PHP_EOL, FILE_APPEND);
                     }
+                } else if ($leadCount < $lead_distribution_limit) {
+                    file_put_contents($this->logFilePath, '         No more searches found' . PHP_EOL, FILE_APPEND);
                 } else {
-                    if ($i < $lead_distribution_limit) {
-                        file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
-                    } else {
-                        file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
-                    }
+                    file_put_contents($this->logFilePath, '         Limitation reached' . PHP_EOL, FILE_APPEND);
                 }
             } else {
-                file_put_contents($logFilePath, 'Failed to insert data because ' . $linkedin_search->getData(true)['error'] . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                file_put_contents($this->logFilePath, json_encode($linkedin_search->getData(true)['error']) . PHP_EOL, FILE_APPEND);
             }
         } catch (Exception $e) {
-            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
+            file_put_contents($this->logFilePath, $e . PHP_EOL, FILE_APPEND);
         }
-        return $lead_distribution_limit - $i;
+        file_put_contents($this->logFilePath, '     }' . PHP_EOL, FILE_APPEND);
+        return $lead_distribution_limit - $leadCount;
     }
 
-    private function addPostLeads($campaign, $lead_distribution_limit, $i, $j, $cursor = null, $is_comment = false, $post_search = null)
+    private function salesLeads($campaign, $lead_distribution_limit, $leadCount = 0, $searchedLeadCount = 0)
     {
+        file_put_contents($this->logFilePath, '     Searching Sales Leads started succesfully at ' . now() . PHP_EOL, FILE_APPEND);
+        file_put_contents($this->logFilePath, '     {' . PHP_EOL, FILE_APPEND);
         try {
-            $logFilePath = storage_path('logs/campaign_action.log');
+            $seat = SeatInfo::where('id', $campaign['seat_id'])->first();
+            $account_id = $seat['account_id'];
+            $uc = new UnipileController();
+            $query = '';
+            $url = $campaign['campaign_url'];
+            $parsed_url = parse_url($url);
+            $query_string = isset($parsed_url['query']) ? $parsed_url['query'] : '';
+            parse_str($query_string, $params);
+            $query = isset($params['query']) ? $params['query'] : null;
+            $request = [
+                'account_id' => $account_id,
+                'query' => $query,
+                'count' => 80,
+                'start' => $searchedLeadCount
+            ];
+            $sales_navigator_search = $uc->sales_navigator_search(new \Illuminate\Http\Request($request));
+            if (!isset($sales_navigator_search->getData(true)['error'])) {
+                $searches = $sales_navigator_search->getData(true)['accounts'];
+                if (count($searches) > 0) {
+                    foreach ($searches as $search) {
+                        try {
+                            if ($leadCount >= $lead_distribution_limit) {
+                                break;
+                            }
+                            $profileUrl = str_replace('urn:li:fs_salesProfile:(', '', $search['entityUrn']);
+                            $index = strpos($profileUrl, ',');
+                            if ($index !== false) {
+                                $profileUrl = substr($profileUrl, 0, $index);
+                            }
+                            $request = [
+                                'account_id' => $account_id,
+                                'profile_url' => $profileUrl,
+                                'sales_navigator' => true,
+                            ];
+                            $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
+                            if (!isset($profile->getData(true)['error'])) {
+                                $profile = $profile->getData(true)['user_profile'];
+                                $url = $profile['public_profile_url'];
+                                $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
+                                if (empty($lead) && $leadCount < $lead_distribution_limit) {
+                                    $lc = new LeadsController();
+                                    if ($lc->applySettings($campaign, $url)) {
+                                        $leadCount++;
+                                        file_put_contents($this->logFilePath, '         "' . $url . '" Lead inserted succesfully' . PHP_EOL, FILE_APPEND);
+                                    }
+                                } else if (!empty($lead)) {
+                                    file_put_contents($this->logFilePath, '         "' . $url . '" Lead already existed' . PHP_EOL, FILE_APPEND);
+                                }
+                            } else {
+                                file_put_contents($this->logFilePath, json_encode($profile->getData(true)['error']) . PHP_EOL, FILE_APPEND);
+                            }
+                        } catch (\Exception $e) {
+                            file_put_contents($this->logFilePath, $e . PHP_EOL, FILE_APPEND);
+                        }
+                    }
+                    if ($leadCount < $lead_distribution_limit) {
+                        file_put_contents($this->logFilePath, '     }' . PHP_EOL, FILE_APPEND);
+                        return $this->salesLeads($campaign, $lead_distribution_limit, $leadCount, (count($searches) + $searchedLeadCount));
+                    } else {
+                        file_put_contents($this->logFilePath, '         Limitation reached' . PHP_EOL, FILE_APPEND);
+                    }
+                } else if ($leadCount < $lead_distribution_limit) {
+                    file_put_contents($this->logFilePath, '         No more searches found' . PHP_EOL, FILE_APPEND);
+                } else {
+                    file_put_contents($this->logFilePath, '         Limitation reached' . PHP_EOL, FILE_APPEND);
+                }
+            } else {
+                file_put_contents($this->logFilePath, json_encode($sales_navigator_search->getData(true)['error']) . PHP_EOL, FILE_APPEND);
+            }
+        } catch (Exception $e) {
+            file_put_contents($this->logFilePath, $e . PHP_EOL, FILE_APPEND);
+        }
+        file_put_contents($this->logFilePath, '     }' . PHP_EOL, FILE_APPEND);
+        return $lead_distribution_limit - $leadCount;
+    }
+
+    private function importLeads($campaign, $lead_distribution_limit, $leadCount = 0)
+    {
+        file_put_contents($this->logFilePath, '     Searching Import Leads started succesfully at ' . now() . PHP_EOL, FILE_APPEND);
+        file_put_contents($this->logFilePath, '     {' . PHP_EOL, FILE_APPEND);
+        try {
+            $imported_lead = ImportedLeads::where('user_id', $campaign['user_id'])->where('campaign_id', $campaign['id'])->first();
+            $csvController = new CsvController();
+            $csvData = $csvController->importedLeadToArray($imported_lead['file_path']);
+            $have_url = false;
+            if ($csvData !== NULL) {
+                foreach ($csvData as $key => $value) {
+                    if (str_contains(strtolower($key), 'url')) {
+                        $have_url = true;
+                        foreach ($value as $url) {
+                            try {
+                                if ($leadCount >= $lead_distribution_limit) {
+                                    break 2;
+                                }
+                                $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
+                                if (empty($lead) && $leadCount < $lead_distribution_limit) {
+                                    $lc = new LeadsController();
+                                    if ($lc->applySettings($campaign, $url)) {
+                                        $leadCount++;
+                                        file_put_contents($this->logFilePath, '         "' . $url . '" Lead inserted succesfully' . PHP_EOL, FILE_APPEND);
+                                    }
+                                } else if (!empty($lead)) {
+                                    file_put_contents($this->logFilePath, '         "' . $url . '" Lead already existed' . PHP_EOL, FILE_APPEND);
+                                }
+                            } catch (\Exception $e) {
+                                file_put_contents($this->logFilePath, $e . PHP_EOL, FILE_APPEND);
+                            }
+                        }
+                    }
+                }
+                if (!$have_url) {
+                    file_put_contents($this->logFilePath, '         No URL column found' . PHP_EOL, FILE_APPEND);
+                }
+                if ($leadCount < $lead_distribution_limit) {
+                    file_put_contents($this->logFilePath, '         No more searches found' . PHP_EOL, FILE_APPEND);
+                } else {
+                    file_put_contents($this->logFilePath, '         Limitation reached' . PHP_EOL, FILE_APPEND);
+                }
+            } else {
+                file_put_contents($this->logFilePath, '         No data in csv file' . PHP_EOL, FILE_APPEND);
+            }
+        } catch (Exception $e) {
+            file_put_contents($this->logFilePath, $e . PHP_EOL, FILE_APPEND);
+        }
+        file_put_contents($this->logFilePath, '     }' . PHP_EOL, FILE_APPEND);
+        return $lead_distribution_limit - $leadCount;
+    }
+
+    private function postLeads($campaign, $lead_distribution_limit, $leadCount = 0, $searchedLeadCount = 0, $cursor = null, $is_comment = false)
+    {
+        file_put_contents($this->logFilePath, '     Searching Post Leads started succesfully at ' . now() . PHP_EOL, FILE_APPEND);
+        file_put_contents($this->logFilePath, '     {' . PHP_EOL, FILE_APPEND);
+        try {
             $seat = SeatInfo::where('id', $campaign->seat_id)->first();
             $account_id = $seat['account_id'];
             $matches = array();
@@ -394,7 +399,7 @@ class ActionCampaignCron extends Command
                     if (count($reactions) > 0) {
                         foreach ($reactions as $reaction) {
                             try {
-                                if ($i >= $lead_distribution_limit) {
+                                if ($leadCount >= $lead_distribution_limit) {
                                     break;
                                 }
                                 if ($is_comment) {
@@ -407,93 +412,89 @@ class ActionCampaignCron extends Command
                                     'profile_url' => $author['id'],
                                 ];
                                 $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
-                                if ($profile instanceof JsonResponse) {
-                                    $profile = $profile->getData(true);
-                                    if (!isset($profile['error'])) {
-                                        $profile = $profile['user_profile'];
-                                        $conn = true;
-                                        $connection_map = [
-                                            1 => ['DISTANCE_1', 'FIRST_DEGREE'],
-                                            2 => ['DISTANCE_2', 'SECOND_DEGREE'],
-                                            3 => ['DISTANCE_3', 'THIRD_DEGREE']
-                                        ];
-                                        if (
-                                            isset($connection_map[$campaign['campaign_connection']]) &&
-                                            !in_array($author['network_distance'], $connection_map[$campaign['campaign_connection']])
-                                        ) {
-                                            $conn = false;
-                                        }
-                                        if ($conn) {
-                                            if (strpos($profile['public_identifier'], 'https://www.linkedin.com/in/') !== false) {
-                                                $url = $profile['public_identifier'];
-                                            } else {
-                                                $url = 'https://www.linkedin.com/in/' . $profile['public_identifier'];
-                                            }
-                                            $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
-                                            if (empty($lead) && $i < $lead_distribution_limit) {
-                                                $lc = new LeadsController();
-                                                if ($lc->applySettings($campaign, $url)) {
-                                                    $i++;
-                                                    file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
-                                                }
-                                            } else if (!empty($lead)) {
-                                                file_put_contents($logFilePath, 'Failed to insert data because Lead already existed at: ' . now() . PHP_EOL, FILE_APPEND);
-                                            }
+                                if (!isset($profile->getData(true)['error'])) {
+                                    $profile = $profile->getData(true)['user_profile'];
+                                    $conn = true;
+                                    $connection_map = [
+                                        1 => ['DISTANCE_1', 'FIRST_DEGREE'],
+                                        2 => ['DISTANCE_2', 'SECOND_DEGREE'],
+                                        3 => ['DISTANCE_3', 'THIRD_DEGREE']
+                                    ];
+                                    if (
+                                        isset($connection_map[$campaign['campaign_connection']]) &&
+                                        !in_array($author['network_distance'], $connection_map[$campaign['campaign_connection']])
+                                    ) {
+                                        $conn = false;
+                                    }
+                                    if ($conn) {
+                                        if (strpos($profile['public_identifier'], 'https://www.linkedin.com/in/') !== false) {
+                                            $url = $profile['public_identifier'];
                                         } else {
-                                            file_put_contents($logFilePath, 'Failed to insert data because connection is not ' . $campaign['campaign_connection'] . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                            $url = 'https://www.linkedin.com/in/' . $profile['public_identifier'];
+                                        }
+                                        $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
+                                        if (empty($lead) && $leadCount < $lead_distribution_limit) {
+                                            $lc = new LeadsController();
+                                            if ($lc->applySettings($campaign, $url)) {
+                                                $leadCount++;
+                                                file_put_contents($this->logFilePath, '         "' . $url . '" Lead inserted succesfully' . PHP_EOL, FILE_APPEND);
+                                            }
+                                        } else if (!empty($lead)) {
+                                            file_put_contents($this->logFilePath, '         "' . $url . '" Lead already existed' . PHP_EOL, FILE_APPEND);
                                         }
                                     } else {
-                                        file_put_contents($logFilePath, 'Failed to insert data because ' . json_encode($profile['error']) . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                        file_put_contents($this->logFilePath, '         "' . $url . '" Connection is not ' . $campaign['campaign_connection'] . PHP_EOL, FILE_APPEND);
                                     }
                                 } else {
-                                    file_put_contents($logFilePath, 'Failed to insert data because User Profile is not instance of JsonResponse at: ' . now() . PHP_EOL, FILE_APPEND);
+                                    file_put_contents($this->logFilePath, json_encode($profile->getData(true)['error']) . PHP_EOL, FILE_APPEND);
                                 }
                             } catch (\Exception $e) {
-                                file_put_contents($logFilePath, 'Failed to insert data because ' . $e->getMessage() . ' at: ' . now() . PHP_EOL, FILE_APPEND);
+                                file_put_contents($this->logFilePath, $e . PHP_EOL, FILE_APPEND);
                             }
                         }
                     }
-                    if ($i < $lead_distribution_limit) {
+                    if ($leadCount < $lead_distribution_limit) {
                         if (isset($paging['cursor'])) {
                             if (!$is_comment) {
-                                return $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, $paging['cursor'], false, $post_search);
+                                file_put_contents($this->logFilePath, '     }' . PHP_EOL, FILE_APPEND);
+                                return $this->postLeads($campaign, $lead_distribution_limit, $leadCount, (count($reactions) + $searchedLeadCount), $paging['cursor'], false, $post_search);
                             } else if ($is_comment) {
-                                return $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, $paging['cursor'], true, $post_search);
+                                file_put_contents($this->logFilePath, '     }' . PHP_EOL, FILE_APPEND);
+                                return $this->postLeads($campaign, $lead_distribution_limit, $leadCount, (count($reactions) + $searchedLeadCount), $paging['cursor'], true, $post_search);
                             }
                         } else if (!isset($paging['cursor'])) {
                             if (!$is_comment) {
-                                return $this->addPostLeads($campaign, $lead_distribution_limit, $i, count($reactions) + $j, null, true, $post_search);
+                                file_put_contents($this->logFilePath, '     }' . PHP_EOL, FILE_APPEND);
+                                return $this->postLeads($campaign, $lead_distribution_limit, $leadCount, (count($reactions) + $searchedLeadCount), null, true, $post_search);
                             }
                         } else {
-                            file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
+                            file_put_contents($this->logFilePath, '         No more searches found' . PHP_EOL, FILE_APPEND);
                         }
                     } else {
-                        file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
+                        file_put_contents($this->logFilePath, '         Limitation reached' . PHP_EOL, FILE_APPEND);
                     }
+                } else if ($leadCount < $lead_distribution_limit) {
+                    file_put_contents($this->logFilePath, '         No more searches found' . PHP_EOL, FILE_APPEND);
                 } else {
-                    if ($i < $lead_distribution_limit) {
-                        file_put_contents($logFilePath, 'Failed to insert data because No post found at: ' . now() . PHP_EOL, FILE_APPEND);
-                    } else {
-                        file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
-                    }
+                    file_put_contents($this->logFilePath, '         Limitation reached' . PHP_EOL, FILE_APPEND);
                 }
+            } else if ($leadCount < $lead_distribution_limit) {
+                file_put_contents($this->logFilePath, '         No more searches found' . PHP_EOL, FILE_APPEND);
             } else {
-                if ($i < $lead_distribution_limit) {
-                    file_put_contents($logFilePath, 'Failed to insert data because No url keyward found in post URL at: ' . now() . PHP_EOL, FILE_APPEND);
-                } else {
-                    file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
-                }
+                file_put_contents($this->logFilePath, '         Limitation reached' . PHP_EOL, FILE_APPEND);
             }
         } catch (Exception $e) {
-            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
+            file_put_contents($this->logFilePath, $e . PHP_EOL, FILE_APPEND);
         }
-        return $lead_distribution_limit - $i;
+        file_put_contents($this->logFilePath, '     }' . PHP_EOL, FILE_APPEND);
+        return $lead_distribution_limit - $leadCount;
     }
 
-    private function addLeadList($campaign, $lead_distribution_limit, $i, $cursor = null)
+    private function leadList($campaign, $lead_distribution_limit, $leadCount = 0, $cursor = null)
     {
+        file_put_contents($this->logFilePath, '     Searching Post Leads started succesfully at ' . now() . PHP_EOL, FILE_APPEND);
+        file_put_contents($this->logFilePath, '     {' . PHP_EOL, FILE_APPEND);
         try {
-            $logFilePath = storage_path('logs/campaign_action.log');
             $seat = SeatInfo::where('id', $campaign->seat_id)->first();
             $account_id = $seat['account_id'];
             $url = $campaign['campaign_url'];
@@ -508,7 +509,7 @@ class ActionCampaignCron extends Command
             $cursor = $lead_list_search->getData(true)['accounts']['cursor'];
             if (count($searches) > 0) {
                 foreach ($searches as $search) {
-                    if ($i >= $lead_distribution_limit) {
+                    if ($leadCount >= $lead_distribution_limit) {
                         break;
                     }
                     $request = [
@@ -516,43 +517,40 @@ class ActionCampaignCron extends Command
                         'profile_url' => $search['public_profile_url'],
                     ];
                     $profile = $uc->view_profile(new \Illuminate\Http\Request($request));
-                    if ($profile instanceof JsonResponse) {
-                        $profile = $profile->getData(true);
-                        if (!isset($profile['error'])) {
-                            $profile = $profile['user_profile'];
-                            if (strpos($profile['public_identifier'], 'https://www.linkedin.com/in/') !== false) {
-                                $url = $profile['public_identifier'];
-                            } else {
-                                $url = 'https://www.linkedin.com/in/' . $profile['public_identifier'];
+                    if (!isset($profile->getData(true)['error'])) {
+                        $profile = $profile->getData(true)['user_profile'];
+                        if (strpos($profile['public_identifier'], 'https://www.linkedin.com/in/') !== false) {
+                            $url = $profile['public_identifier'];
+                        } else {
+                            $url = 'https://www.linkedin.com/in/' . $profile['public_identifier'];
+                        }
+                        $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
+                        if (empty($lead) && $leadCount < $lead_distribution_limit) {
+                            $lc = new LeadsController();
+                            if ($lc->applySettings($campaign, $url)) {
+                                $leadCount++;
+                                file_put_contents($this->logFilePath, '         "' . $url . '" Lead inserted succesfully' . PHP_EOL, FILE_APPEND);
                             }
-                            $lead = Leads::where('campaign_id', $campaign['id'])->where('profileUrl', $url)->first();
-                            if (empty($lead) && $i < $lead_distribution_limit) {
-                                $lc = new LeadsController();
-                                if ($lc->applySettings($campaign, $url)) {
-                                    $i++;
-                                    file_put_contents($logFilePath, 'Lead inserted succesfully at: ' . now() . PHP_EOL, FILE_APPEND);
-                                }
-                            } else if (!empty($lead)) {
-                                file_put_contents($logFilePath, 'Failed to insert data because Lead already existed at: ' . now() . PHP_EOL, FILE_APPEND);
-                            }
+                        } else if (!empty($lead)) {
+                            file_put_contents($this->logFilePath, '         "' . $url . '" Lead already existed' . PHP_EOL, FILE_APPEND);
                         }
                     }
                 }
-                if ($i < $lead_distribution_limit && !is_null($cursor)) {
-                    return $this->addLeadList($campaign, $lead_distribution_limit, $i, $cursor);
+                if ($leadCount < $lead_distribution_limit && !is_null($cursor)) {
+                    file_put_contents($this->logFilePath, '     }' . PHP_EOL, FILE_APPEND);
+                    return $this->addLeadList($campaign, $lead_distribution_limit, $leadCount, $cursor);
                 } else {
-                    file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
+                    file_put_contents($this->logFilePath, '         Limitation reached' . PHP_EOL, FILE_APPEND);
                 }
+            } else if ($leadCount < $lead_distribution_limit) {
+                file_put_contents($this->logFilePath, '         No more searches found' . PHP_EOL, FILE_APPEND);
             } else {
-                if ($i < $lead_distribution_limit) {
-                    file_put_contents($logFilePath, 'Failed to insert data because No more searches found at: ' . now() . PHP_EOL, FILE_APPEND);
-                } else {
-                    file_put_contents($logFilePath, 'Failed to insert data because limitation reached at: ' . now() . PHP_EOL, FILE_APPEND);
-                }
+                file_put_contents($this->logFilePath, '         Limitation reached' . PHP_EOL, FILE_APPEND);
             }
         } catch (Exception $e) {
-            file_put_contents($logFilePath, $e . PHP_EOL, FILE_APPEND);
+            file_put_contents($this->logFilePath, $e . PHP_EOL, FILE_APPEND);
         }
-        return $lead_distribution_limit - $i;
+        file_put_contents($this->logFilePath, '     }' . PHP_EOL, FILE_APPEND);
+        return $lead_distribution_limit - $leadCount;
     }
 }

@@ -33,6 +33,8 @@ class CronController extends Controller
             if ($user_profile instanceof JsonResponse) {
                 $user_profile = $user_profile->getData(true);
                 if (!isset($user_profile['error'])) {
+                    $action['response'] = $user_profile;
+                    $action->save();
                     return true;
                 } else {
                     throw new Exception($user_profile['error']);
@@ -77,6 +79,8 @@ class CronController extends Controller
                             if ($invite_to_connect instanceof JsonResponse) {
                                 $invite_to_connect = $invite_to_connect->getData(true);
                                 if (!isset($invite_to_connect['error'])) {
+                                    $action['response'] = $invite_to_connect;
+                                    $action->save();
                                     return true;
                                 } else {
                                     throw new Exception($invite_to_connect['error']);
@@ -137,6 +141,8 @@ class CronController extends Controller
                             if ($message instanceof JsonResponse) {
                                 $message = $message->getData(true);
                                 if (!isset($message['error'])) {
+                                    $action['response'] = $message;
+                                    $action->save();
                                     return true;
                                 } else {
                                     throw new Exception($message['error']);
@@ -201,6 +207,8 @@ class CronController extends Controller
                             if ($inmail_message instanceof JsonResponse) {
                                 $inmail_message = $inmail_message->getData(true);
                                 if (!isset($inmail_message['error'])) {
+                                    $action['response'] = $inmail_message;
+                                    $action->save();
                                     return true;
                                 } else {
                                     throw new Exception($inmail_message['error']);
@@ -257,6 +265,8 @@ class CronController extends Controller
                         if ($follow_user instanceof JsonResponse) {
                             $follow_user = $follow_user->getData(true);
                             if (!isset($follow_user['error'])) {
+                                $action['response'] = $follow_user;
+                                $action->save();
                                 return true;
                             } else {
                                 throw new Exception($follow_user['error']);
@@ -339,6 +349,8 @@ class CronController extends Controller
                                 if ($email_message instanceof JsonResponse) {
                                     $email_message = $email_message->getData(true);
                                     if (!isset($email_message['error'])) {
+                                        $action['response'] = $email_message;
+                                        $action->save();
                                         return true;
                                     } else {
                                         throw new Exception($email_message['error']);
@@ -351,6 +363,8 @@ class CronController extends Controller
                                 if ($email_message instanceof JsonResponse) {
                                     $email_message = $email_message->getData(true);
                                     if (!isset($email_message['error'])) {
+                                        $action['response'] = $email_message;
+                                        $action->save();
                                         return true;
                                     } else {
                                         throw new Exception($email_message['error']);
