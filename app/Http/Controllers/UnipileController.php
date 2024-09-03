@@ -802,7 +802,36 @@ class UnipileController extends Controller
             $result = json_decode($response->getBody(), true);
             return response()->json(['accounts' => $result['data']['elements']]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e], 400);
+        }
+    }
+
+    public function sales_navigator_search_by_url(Request $request)
+    {
+        $all = $request->all();
+        if (!isset($all['account_id']) || !isset($all['url']) || !isset($this->x_api_key) || !isset($this->dsn)) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+        $client = new Client([
+            'verify' => false,
+        ]);
+        $url = $all['url'];
+        $account_id = $all['account_id'];
+        try {
+            $response = $client->request('POST', $this->dsn . 'api/v1/linkedin/search?account_id=' . $account_id, [
+                'json' => [
+                    'url' => $url,
+                ],
+                'headers' => [
+                    'X-API-KEY' => $this->x_api_key,
+                    'accept' => 'application/json',
+                    'content-type' => 'application/json'
+                ],
+            ]);
+            $result = json_decode($response->getBody(), true);
+            return response()->json(['accounts' => $result['data']['elements']]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e], 400);
         }
     }
 
@@ -1248,17 +1277,17 @@ class UnipileController extends Controller
     public function send_an_email(Request $request)
     {
         $all = $request->all();
-    
+
         if (!isset($all['account_id']) || !isset($all['email']) || !isset($this->x_api_key) || !isset($this->dsn)) {
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
-    
+
         $account_id = $all['account_id'];
         $email = $all['email'];
         $subject = $all['subject'] ?? '';
         $messageContent = $all['message'] ?? '';
         $html = isset($all['html']) && $all['html'] ? 'text/html' : 'text/plain';
-    
+
         $multipart = [
             [
                 'name' => 'account_id',
@@ -1282,7 +1311,7 @@ class UnipileController extends Controller
                 ])
             ]
         ];
-    
+
         if ((isset($all['track']) && $all['track']) || (isset($all['link']) && $all['link'])) {
             $multipart[] = [
                 'name' => 'tracking_options',
@@ -1293,9 +1322,9 @@ class UnipileController extends Controller
                 ])
             ];
         }
-    
+
         $client = new \GuzzleHttp\Client(['verify' => false]);
-    
+
         try {
             $response = $client->request('POST', $this->dsn . 'api/v1/emails', [
                 'multipart' => $multipart,
@@ -1304,7 +1333,7 @@ class UnipileController extends Controller
                     'Accept' => 'application/json',
                 ],
             ]);
-    
+
             return response()->json(['message' => json_decode($response->getBody(), true)]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
