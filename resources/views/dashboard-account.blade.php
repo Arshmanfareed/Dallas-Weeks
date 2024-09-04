@@ -100,11 +100,8 @@
                     <div class="dashboard_cont">
                         <div class="row_filter d-flex align-items-center justify-content-between">
                             <div class="account d-flex align-items-center">
-                                @php
-                                    $user = auth()->user();
-                                @endphp
                                 <img src="{{ asset('assets/img/acc.png') }}" style="background-color: #000;"
-                                    alt=""><span>{{ $user->name }}</span>
+                                    alt=""><span>{{ $team['team_name'] }}</span>
                             </div>
                             <div class="form_add d-flex">
                                 <form action="/search" method="get" class="search-form">
@@ -122,7 +119,7 @@
                         </div>
                         <hr>
                         <div class="row_table">
-                            @if (!empty($seats->first()))
+                            @if ($seats->isNotEmpty())
                                 <div class="add_account_div" style="width: 100%">
                                     <div class="campaign_list">
                                         <table class="data_table w-100">
@@ -183,7 +180,6 @@
             </div>
         </div>
     </section>
-
     <div class="modal fade step_form_popup" id="addaccount" tabindex="-1" role="dialog" aria-labelledby="addaccount"
         aria-hidden="true">
         <div class="modal-dialog" style="border-radius: 45px">
@@ -369,7 +365,6 @@
             </div>
         </div>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
         var dashboardRoute = "{{ route('acc_dash') }}";

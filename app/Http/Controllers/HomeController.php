@@ -6,25 +6,39 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    private $data = ['title' => 'Networked'];
-
     public function home()
     {
-        return view('home', $this->data);
+        /* Set the title for the home page */
+        $data = ['title' => 'Networked'];
+
+        /* Render the 'home' view with the provided data */
+        return view('home', $data);
     }
 
     public function about()
     {
-        return view('about', $this->data);
+        /* Set the title for the about page */
+        $data = ['title' => 'Networked'];
+
+        /* Render the 'about' view with the provided data */
+        return view('about', $data);
     }
 
     public function pricing()
     {
-        return view('pricing', $this->data);
+        /* Set the title for the pricing page */
+        $data = ['title' => 'Networked'];
+
+        /* Render the 'pricing' view with the provided data */
+        return view('pricing', $data);
     }
 
     public function faq()
     {
-        return view('faq', $this->data);
+        /* Define the data to be passed to the FAQ view */
+        $data = ['title' => 'Networked'];
+
+        /* Render the 'faq' view with the title data */
+        return view('faq', $data);
     }
 }

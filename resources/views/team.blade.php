@@ -68,9 +68,9 @@
                                                     id="" data-bs-toggle="modal"
                                                     data-bs-target="#invite_team_modal"><i class="fa-solid fa-gear"></i></a>
                                                 <!--  <ul class="setting_list">
-                                                    <li><a href="javascript:;">Edit</a></li>
-                                                    <li><a href="javascript:;">Delete</a></li>
-                                                </ul> -->
+                                                        <li><a href="javascript:;">Edit</a></li>
+                                                        <li><a href="javascript:;">Delete</a></li>
+                                                    </ul> -->
                                             </td>
                                         </tr>
                                     @endfor

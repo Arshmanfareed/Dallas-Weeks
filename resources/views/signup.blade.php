@@ -125,13 +125,6 @@
                             </div>
                         @endif
 
-                        @if (session('success'))
-                            <div class="alert alert-success text-center">
-                                <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                                {{ session('success') }}
-                            </div>
-                        @endif
-
                         <form action="{{ route('register-user') }}" class="login_form" method="POST">
                             @csrf
                             <div>
@@ -141,13 +134,18 @@
                             </div>
                             <div>
                                 <label for="username_email">Email address</label>
-                                <input type="email" id="username_email" name="email" placeholder="Enter your email"
-                                    value="{{ old('email') }}" required>
+                                <input type="email" id="username_email" name="email"
+                                    placeholder="Enter your email address" value="{{ old('email') }}" required>
+                            </div>
+                            <div>
+                                <label for="company">Company/Team Name</label>
+                                <input type="text" id="company" name="company"
+                                    placeholder="Enter your company/team name" value="{{ old('company') }}" required>
                             </div>
                             <div>
                                 <label for="username_phone">Phone number (Optional)</label>
                                 <input type="tel" id="username_phone" name="username_phone"
-                                    value="{{ old('username_phone') }}">
+                                    placeholder="Enter phone number" value="{{ old('username_phone') }}">
                             </div>
                             <div class="pass">
                                 <div class="row">
@@ -159,13 +157,13 @@
                                     <div class="col-6">
                                         <label for="confirm_password">Confirm password</label>
                                         <input type="password" id="confirm_password" name="password_confirmation"
-                                            placeholder="Enter your password" required>
+                                            placeholder="Confirm password" required>
                                     </div>
                                 </div>
                             </div>
                             <div class="checkbox">
                                 <input type="checkbox" id="termsCheckbox" name="termsCheckbox"
-                                    {{ old('termsCheckbox') ? 'checked' : '' }}>
+                                    {{ old('termsCheckbox') ? 'checked' : '' }} required>
                                 <label for="termsCheckbox">I agree with the <a href="terms_and_conditions.html"
                                         target="_blank">Terms and Conditions</a></label>
                             </div>
