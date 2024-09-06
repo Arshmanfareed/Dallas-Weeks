@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Session;
 use Stripe;
 use App\Models\PhysicalPayment;
 use App\Models\SeatInfo;
+use App\Models\Teams;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-
+use Exception;
 
 class StripePaymentController extends Controller
 {
@@ -108,8 +110,7 @@ class StripePaymentController extends Controller
                 $balance_transaction = $response['balance_transaction'];
                 $currency = $response['currency'];
                 $date = now();
-
-                
+                $team = Teams::find($user->team_id);
 
                 $seat_user_id = $user->id;
                 $seat_username = $request->username;
@@ -137,6 +138,7 @@ class StripePaymentController extends Controller
                     'twitter' => $twitter,
                     'github' => $github,
                     'status' => '0',
+                    'team_id' => $team->id,
                 ]);
 
                 // Insert transaction data into the database using Eloquent

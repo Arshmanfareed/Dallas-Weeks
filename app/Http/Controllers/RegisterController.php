@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\WelcomeMail;
+use App\Models\AssignedSeats;
 use App\Models\Roles;
-use App\Models\TeamMember;
 use App\Models\Teams;
 use App\Models\User;
 use Exception;
@@ -11,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
@@ -27,7 +30,7 @@ class RegisterController extends Controller
     {
         /* Validate request data */
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:users',
+            'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => [
                 'required',
@@ -68,31 +71,39 @@ class RegisterController extends Controller
             $user = User::create([
                 'name' => $request->input('name'),
                 'email' => $request->input('email'),
-                'password' => bcrypt($request->input('password')),
+                'password' => Hash::make($request->input('password')),
                 'team_id' => $team->id
             ]);
 
-            /* Create team member */
-            TeamMember::create([
+            /* Create new Assigned Seats */
+            AssignedSeats::create([
                 'user_id' => $user->id,
                 'role_id' => $role->id,
-                'team_id' => $team->id
+                'seat_id' => 0,
             ]);
 
             /* Commit the transaction */
             DB::commit();
 
+            /* Sending a welcome email */
+            Mail::to($user->email)->send(new WelcomeMail($user));
+
             /* Redirect back with success message */
             return redirect()->route('login')->with('success', 'User registered successfully');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             /* Rollback the transaction if something fails */
             DB::rollBack();
 
             /* Log the exception message for debugging */
-            Log::error($e->getMessage());
+            Log::error($e);
 
             /* Redirect back with error message */
             return redirect()->back()->withErrors(['error' => 'Something went wrong'])->withInput();
         }
+    }
+
+    public function verifyAnEmail($email)
+    {
+        dd($email);
     }
 }

@@ -50,10 +50,11 @@ Route::get('/pricing', [HomeController::class, 'pricing']); //Done
 Route::get('/faq', [HomeController::class, 'faq']); //Done
 
 /* These are login and signup url which does not require any authentication */
-Route::get('/login', [LoginController::class, 'login'])->name('login'); //Done
-Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials'); //Done
 Route::get('/register', [RegisterController::class, 'register'])->name('register'); //Done
 Route::post('/register-user', [RegisterController::class, 'registerUser'])->name('register-user'); //Done
+Route::get('/verify_an_Email/{email}', [RegisterController::class, 'verifyAnEmail'])->name('verify_an_Email'); //Need to check
+Route::get('/login', [LoginController::class, 'login'])->name('login'); //Done
+Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials'); //Done
 Route::post('/add_email_account', [LinkedInController::class, 'addEmailToAccount'])->name('addEmailAccount'); //Need to check
 Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccount'])->name('createLinkAccount'); //Need to check
 
@@ -65,7 +66,7 @@ Route::get('/delete_an_email_account/{seat_email}', [LinkedInController::class, 
 /* These are for dashboard which requires authentication */
 Route::middleware(['userAuth'])->group(function () {
     /* These are for dashboard which does not require seat_id in session */
-    Route::get('/dashboard', [DasboardController::class, 'dashboard'])->name('dashobardz'); //Need to check
+    Route::get('/dashboard', [DasboardController::class, 'dashboard'])->name('dashobardz'); //Done
     Route::get('/blacklist', [BlacklistController::class, 'blacklist']); //Need to check
     Route::get('/team', [TeamController::class, 'team']); //Need to check
     Route::get('/invoice', [InvoiceController::class, 'invoice']); //Need to check

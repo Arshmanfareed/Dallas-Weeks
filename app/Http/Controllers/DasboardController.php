@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AssignedSeats;
+use App\Models\Permissions;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PhysicalPayment;
+use App\Models\Role_Permission;
+use App\Models\Roles;
 use App\Models\SeatInfo;
-use App\Models\TeamMember;
 use App\Models\Teams;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -13,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 
 class DasboardController extends Controller
 {
-    function dashboard()
+    public function dashboard()
     {
         try {
             /* Clear specific session data related to the user's seat and account */
@@ -22,46 +25,46 @@ class DasboardController extends Controller
             /* Retrieve the currently authenticated user */
             $user = Auth::user();
 
-            /* Fetch the team member record for the current user */
-            $team_member = TeamMember::where('user_id', $user['id'])->first();
-
-            /* Handle case where the user is not found in the team member table */
-            if (!$team_member) {
-                return redirect('login')->withErrors(['error' => 'Something went wrong']);
-            }
-
             /* Retrieve the team associated with the team member */
-            $team = Teams::find($team_member['team_id']);
+            $team = Teams::find($user->team_id);
 
-            /* Get all seats associated with the user */
-            $seats = SeatInfo::where('user_id', $user['id'])->get();
-            // $uc = new UnipileController();
+            /* Get all seats associated with the user's team */
+            $seats = SeatInfo::where('team_id', $team->id)->get();
+            $uc = new UnipileController();
 
-            // /* Initialize seat data processing */
-            // foreach ($seats as $seat) {
-            //     /* Default values for seat connection and activity status */
-            //     $seat['connected'] = false;
-            //     $seat['active'] = false;
+            /* Process seats */
+            $seats = $seats->map(function ($seat) use ($user, $uc) {
+                /* Default values for seat connection and activity status */
+                $seat['connected'] = false;
+                $seat['active'] = false;
 
-            //     /* If seat has an associated account ID, retrieve related account information */
-            //     if (!empty($seat['account_id'])) {
-            //         $request = ['account_id' => $seat['account_id']];
+                /* Retrieve Assigned seats */
+                $assignedSeat = AssignedSeats::where('seat_id', [0, $seat['id']])->where('user_id', $user['id'])->first();
 
-            //         /* Retrieve account details */
-            //         $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
-            //         if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
-            //             $seat['active'] = true;
-            //             $seat['account'] = $account->getData(true)['account'];
-            //         }
+                /* Check that if seat is assigned or not */
+                if (!empty($assignedSeat)) {
+                    /* If seat has an associated account ID, retrieve related account information */
+                    if (!empty($seat['account_id'])) {
+                        $request = ['account_id' => $seat['account_id']];
 
-            //         /* Retrieve profile details for the account */
-            //         $account = $uc->retrieve_own_profile(new \Illuminate\Http\Request($request));
-            //         if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
-            //             $seat['connected'] = true;
-            //             $seat['account_profile'] = $account->getData(true)['account'];
-            //         }
-            //     }
-            // }
+                        /* Retrieve account details */
+                        $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($request));
+                        if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
+                            $seat['active'] = true;
+                            $seat['account'] = $account->getData(true)['account'];
+                        }
+
+                        /* Retrieve profile details for the account */
+                        $account = $uc->retrieve_own_profile(new \Illuminate\Http\Request($request));
+                        if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
+                            $seat['connected'] = true;
+                            $seat['account_profile'] = $account->getData(true)['account'];
+                        }
+                    }
+                    return $seat;
+                }
+                return null;
+            })->filter();
 
             /* Prepare data for the view */
             $data = [
@@ -74,7 +77,7 @@ class DasboardController extends Controller
             return view('dashboard-account', $data);
         } catch (Exception $e) {
             /* Log the exception message for debugging */
-            Log::error($e->getMessage());
+            Log::error($e);
 
             /* Redirect to login with error message */
             return redirect('login')->withErrors(['error' => 'Retry Login again']);

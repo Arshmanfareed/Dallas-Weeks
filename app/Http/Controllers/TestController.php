@@ -28,5 +28,7 @@ class TestController extends Controller
 {
     public function base()
     {
+        $user = ['email' => 'abc'];
+        return redirect()->route('verify_an_Email', [$user['email']]);
     }
 }
