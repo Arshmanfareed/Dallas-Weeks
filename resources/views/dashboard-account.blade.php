@@ -80,7 +80,9 @@
             margin-top: 30px;
         }
     </style>
-    <script src="{{ asset('assets/js/dashboard-account.js') }}"></script>
+    @if (!empty(auth()->user()->email_verified_at))
+        <script src="{{ asset('assets/js/dashboard-account.js') }}"></script>
+    @endif
     <section class="dashboard">
         <div class="container-fluid">
             @if ($errors->has('error'))
@@ -110,11 +112,22 @@
                                         <i class="fa fa-search"></i>
                                     </button>
                                 </form>
-                                <div class="add_btn">
-                                    <a href="javascript:;" type="button" data-bs-toggle="modal"
-                                        data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>Add account
-                                </div>
-
+                                @if ($is_owner)
+                                    <div class="add_btn"
+                                        style="opacity:{{ empty(auth()->user()->email_verified_at) ? 0.7 : 1 }}">
+                                        @if (empty(auth()->user()->email_verified_at))
+                                            <span style="cursor: pointer;"
+                                                title="To add new seats, you need to verify your email address first."><a
+                                                    href="javascript:;" type="button"><i
+                                                        class="fa-solid fa-plus"></i></a>Add
+                                                account</span>
+                                        @else
+                                            <span style="cursor: pointer;" data-bs-toggle="modal"
+                                                data-bs-target="#addaccount"><a href="javascript:;" type="button"><i
+                                                        class="fa-solid fa-plus"></i></a>Add account</span>
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
                         </div>
                         <hr>
@@ -125,7 +138,9 @@
                                         <table class="data_table w-100">
                                             <tbody id="campaign_table_body">
                                                 @foreach ($seats as $seat)
-                                                    <tr id="{{ 'table_row_' . $seat['id'] }}" class="seat_table_row">
+                                                    <tr title="{{ empty(auth()->user()->email_verified_at) ? 'Verify your email first to view seat' : '' }}"
+                                                        style="opacity:{{ empty(auth()->user()->email_verified_at) ? 0.7 : 1 }}"
+                                                        id="{{ 'table_row_' . $seat['id'] }}" class="seat_table_row">
                                                         @if (isset($seat['account_profile']) && $seat['account_profile']['profile_picture_url'] != '')
                                                             <td width="10%" class="seat_table_data"><img class="seat_img"
                                                                     src="{{ $seat['account_profile']['profile_picture_url'] }}"
@@ -164,15 +179,24 @@
                                     </div>
                                 </div>
                             @else
-                                <div class="add_account_div">
-                                    <img src="{{ asset('assets/img/empty.png') }}" alt="">
-                                    <p class="text-center">You don't hanve any account yet. Start by adding your first
-                                        account.</p>
-                                    <div class="add_btn">
-                                        <a href="javascript:;" type="button" data-bs-toggle="modal"
-                                            data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>
+                                @if ($is_owner)
+                                    <div class="add_account_div"
+                                        style="opacity:{{ empty(auth()->user()->email_verified_at) ? 0.7 : 1 }}">
+                                        <img src="{{ asset('assets/img/empty.png') }}" alt="">
+                                        <p class="text-center">You don't have any account yet. Start by adding your first
+                                            account.</p>
+                                        <div class="add_btn">
+                                            @if (empty(auth()->user()->email_verified_at))
+                                                <a href="javascript:;" type="button"
+                                                    title="To add new seats, you need to verify your email address first."><i
+                                                        class="fa-solid fa-plus"></i></a>
+                                            @else
+                                                <a href="javascript:;" type="button" data-bs-toggle="modal"
+                                                    data-bs-target="#addaccount"><i class="fa-solid fa-plus"></i></a>
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -182,7 +206,7 @@
     </section>
     <div class="modal fade step_form_popup" id="addaccount" tabindex="-1" role="dialog" aria-labelledby="addaccount"
         aria-hidden="true">
-        <div class="modal-dialog" style="border-radius: 45px">
+        <div class="modal-dialog" style="border-radius: 45px;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="text-center">Add Account</h4>
@@ -292,85 +316,20 @@
     </div>
     <div class="modal fade step_form_popup" id="update_seat" tabindex="-1" role="dialog"
         aria-labelledby="update_seat" aria-hidden="true">
-        <div class="modal-dialog" style="border-radius: 45px">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="text-center">Your subscription is <span id="active_subs">Active</span></h4>
-                    <button type="button" class="close mt-1" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-                    </button>
-                </div>
-                <div class="modal-body text-center">
-                    <div class="accordion" id="accordionExample">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingOne">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i> Change
-                                    seat name
-                                </button>
-                            </h2>
-                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                                data-bs-parent="#accordionExample">
-                                <div class="form-group">
-                                    <label for="seat_name">Seat Name: </label>
-                                    <input type="text" id="seat_input_name" name="seat_name">
-                                </div>
-                                <button id="update_seat_name" type="button" class="update_seat_name theme_btn mb-3"
-                                    style="background-color: #16adcb" ;>Save Changes</button>
-                            </div>
-                        </div>
-                        <div class="accordion-item d-none">
-                            <h2 class="accordion-header" id="headingTwo">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i> Change
-                                    seat time zone
-                                </button>
-                            </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                                data-bs-parent="#accordionExample">
-                            </div>
-                        </div>
-                        <div class="accordion-item d-none">
-                            <h2 class="accordion-header" id="headingThree">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i> Cancel
-                                    subscription
-                                </button>
-                            </h2>
-                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
-                                data-bs-parent="#accordionExample">
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingFour">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="headingFour">
-                                    <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i> Delete
-                                    seat
-                                </button>
-                            </h2>
-                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingThree"
-                                data-bs-parent="#accordionExample">
-                                Are you sure you want to delete <span id="seat_name"
-                                    style="color: #16adcb; font-weight: 600;"></span> seat?
-                                <button id="delete_seat" type="button" class="theme_btn mb-3 delete_seat">Delete
-                                    seat</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="modal-dialog" style="border-radius: 45px;width: 35%;">
+            <div class="modal-content"></div>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    @if (!empty(auth()->user()->email_verified_at))
+        <script>
+            var getSeatRoute = "{{ route('getSeatById', [':seat_id']) }}";
+            var deleteSeatRoute = "{{ route('deleteSeat', [':seat_id']) }}";
+            var updateNameRoute = "{{ route('updateName', [':seat_id', ':seat_name']) }}";
+        </script>
+    @endif
     <script>
         var dashboardRoute = "{{ route('acc_dash') }}";
-        var getSeatRoute = "{{ route('getSeatById', [':seat_id']) }}";
-        var deleteSeatRoute = "{{ route('deleteSeat', [':seat_id']) }}";
-        var updateNameRoute = "{{ route('updateName', [':seat_id', ':seat_name']) }}";
         var filterSeatRoute = "{{ route('filterSeat', [':search']) }}";
     </script>
 @endsection

@@ -38,10 +38,33 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
     @endif
 </head>
+<style>
+    .custom_link {
+        color: #3b475d;
+        font-size: 14px;
+        width: 100% !important;
+        display: block;
+    }
+
+    .custom_link:hover {
+        color: #3b475ddd !important;
+    }
+</style>
 
 <body>
     @if (request()->is('login', 'register'))
     @else
+        @if (empty(auth()->user()->email_verified_at))
+            <div style="margin: 0;border-radius: 0%;padding: 7px;"
+                class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+                <a href="{{ route('resend_an_email') }}" class="custom_link">
+                    <strong><i style="color: #ecb25d" class="fa-solid fa-triangle-exclamation"></i></strong> Please
+                    confirm
+                    your email. Check your
+                    inbox and your spam folder. No email? Click here to Resend confirmation email
+                </a>
+            </div>
+        @endif
         <header>
             <nav class="navbar navbar-expand-lg navbar-light bg-dark justify-content-between">
                 <a class="navbar-brand" href="{{ route('dashobardz') }}">

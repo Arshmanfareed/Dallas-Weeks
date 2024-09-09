@@ -104,7 +104,7 @@
                         <form action="" class="login_form" method="POST">
                             <div>
                                 <label for="email">Email address</label>
-                                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                                <input value="{{ session('email') }}" type="email" id="email" name="email" placeholder="Enter your email" required>
                             </div>
                             <div class="pass">
                                 <label for="password">Password:</label>
@@ -158,9 +158,9 @@
                         </form>
                     </div>
                     <!-- <div class="modal-footer">
-                                                                                                                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                            <button type="button" class="btn btn-primary">Save changes</button>
-                                                                                                                                                                          </div> -->
+                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                                                                                                                                                                  </div> -->
                 </div>
             </div>
         </div>

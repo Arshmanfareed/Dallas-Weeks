@@ -2,9 +2,11 @@
 
 namespace App\Mail;
 
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Swift_Image;
 
 class WelcomeMail extends Mailable
 {
@@ -33,6 +35,10 @@ class WelcomeMail extends Mailable
             ->subject('Please Verify Your Email Address')
             ->with([
                 'user' => $this->user,
+            ])
+            ->attach(public_path('assets/images/logo.png'), [
+                'as' => 'logo.png',
+                'mime' => 'image/png',
             ]);
     }
 }

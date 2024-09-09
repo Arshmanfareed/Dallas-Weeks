@@ -1,4 +1,5 @@
 var searchAjax = null;
+var deleteAjax = null;
 
 $(document).ready(function () {
     $(document).on('click', '.setting_btn', setting_list);
@@ -33,20 +34,60 @@ function toSeat(e) {
 }
 
 function deleteSeat(e) {
+    e.preventDefault();
     var id = $(this).attr('id').replace('delete_seat_', '');
-    $.ajax({
-        url: deleteSeatRoute.replace(':seat_id', id),
-        type: "GET",
-        success: function (response) {
-            if (response.success) {
-                $('#update_seat').modal('hide');
-                $('#table_row_' + response.seat).remove();
+
+    var toastrOptions = {
+        closeButton: true,
+        debug: false,
+        newestOnTop: false,
+        progressBar: true,
+        positionClass: "toast-top-right",
+        preventDuplicates: false,
+        onclick: null,
+        showDuration: "300",
+        hideDuration: "1000",
+        timeOut: "5000",
+        extendedTimeOut: "1000",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut",
+    };
+
+    if (!deleteAjax) {
+        deleteAjax = $.ajax({
+            url: deleteSeatRoute.replace(':seat_id', id),
+            type: "GET",
+            success: function (response) {
+                if (response.success) {
+                    $('#update_seat').modal('hide');
+                    $('#table_row_' + response.seat).remove();
+                    if ($('.seat_table_row').length == 0) {
+                        $('#campaign_table_body').html(
+                            `<tr>
+                                <td colspan="8">
+                                    <div class="text-center text-danger" style="font-size: 25px; font-weight: bold; font-style: italic;">
+                                        Not Found!
+                                    </div>
+                                </td>
+                            </tr>`
+                        );
+                    }
+                    toastr.options = toastrOptions;
+                    toastr.success('Seat deleted successfully.');
+                }
+            },
+            error: function (xhr, status, error) {
+                toastr.options = toastrOptions;
+                toastr.error(xhr.responseJSON.errors);
+            },
+            complete: function () {
+                deleteAjax = null;
             }
-        },
-        error: function (xhr, status, error) {
-            console.error(error);
-        }
-    });
+        });
+        deleteAjax = null;
+    }
 }
 
 function paymentForm(event) {
@@ -184,6 +225,120 @@ function setting_list(e) {
         success: function (response) {
             if (response.success) {
                 var seat = response.seat;
+                var html = `<div class="modal-header">
+                                <h4 class="text-center">
+                                    Your subscription is 
+                                    <span id="active_subs">Active</span>
+                                </h4>
+                                <button type="button" class="close mt-1" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+                                </button>
+                            </div>`;
+                html += `<div class="modal-body text-center">
+                            <div class="accordion" id="accordionExample">`;
+                if (response.allow_manage_settings) {
+                    html += `<div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i>
+                                        Change seat name
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                    <div class="form-group">
+                                        <label for="seat_name">Seat Name: </label>
+                                        <input type="text" id="seat_input_name" name="seat_name">
+                                    </div>
+                                    <button id="update_seat_name" type="button" class="update_seat_name theme_btn mb-3" style="background-color: #16adcb" ;>Save Changes</button>
+                                </div>
+                            </div>`;
+                    html += `<div class="accordion-item d-none">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i>
+                                        Change seat time zone
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                </div>
+                            </div>`;
+                    html += `<div class="accordion-item d-none">
+                                <h2 class="accordion-header" id="headingThree">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i>
+                                        Cancel subscription
+                                    </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                </div>
+                            </div>`;
+                } else {
+                    html += `<div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i>
+                                        Change seat name
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                    <div class="form-group">
+                                        <label for="seat_name">Seat Name: </label>
+                                        <input type="text" id="seat_input_name" name="seat_name" readonly>
+                                        <span class="text-danger fw-bold">You cannot update seat name</span>
+                                    </div>
+                                </div>
+                            </div>`;
+                    html += `<div class="accordion-item d-none">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i>
+                                        Change seat time zone
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                </div>
+                            </div>`;
+                    html += `<div class="accordion-item d-none">
+                                <h2 class="accordion-header" id="headingThree">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i>
+                                        Cancel subscription
+                                    </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                </div>
+                            </div>`;
+                }
+
+                if (response.allow_delete_seat) {
+                    html += `<div class="accordion-item">
+                                <h2 class="accordion-header" id="headingFour">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="headingFour">
+                                        <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i>
+                                    Delete seat </button>
+                                </h2>
+                                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                    Are you sure you want to delete 
+                                    <span id="seat_name" style="color: #16adcb; font-weight: 600;"></span> seat?
+                                    <button id="delete_seat" type="button" class="theme_btn mb-3 delete_seat">Delete seat</button>
+                                </div>
+                            </div>`;
+                } else {
+                    html += `<div class="accordion-item">
+                                <h2 class="accordion-header" id="headingFour">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="headingFour">
+                                        <i class="fa-solid fa-address-card fa-sm mr-2" style="color: #b0b0b0;"></i>
+                                    Delete seat </button>
+                                </h2>
+                                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                    You can not delete this 
+                                    '<span id="seat_name" style="color: #16adcb; font-weight: 600;"></span>' seat.
+                                </div>
+                            </div>`;
+                }
+                html += `</div>
+                    </div >`;
+                $('#update_seat .modal-content').html(html);
                 var username = seat.username.charAt(0).toUpperCase() + seat.username.slice(1);
                 $('#seat_input_name').val(username);
                 $('#seat_name').html(username);
@@ -193,14 +348,43 @@ function setting_list(e) {
             }
         },
         error: function (xhr, status, error) {
+            if (status == 404) {
+                $('#update_seat').modal('hide');
+            }
             console.error(error);
         }
     });
 }
 
 function update_seat_name(e) {
+    e.preventDefault();
     var id = $(this).attr('id').replace('update_seat_name_', '');
     var name = $('#seat_input_name').val();
+
+    var toastrOptions = {
+        closeButton: true,
+        debug: false,
+        newestOnTop: false,
+        progressBar: true,
+        positionClass: "toast-top-right",
+        preventDuplicates: false,
+        onclick: null,
+        showDuration: "300",
+        hideDuration: "1000",
+        timeOut: "5000",
+        extendedTimeOut: "1000",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut",
+    };
+
+    if (!name.trim()) {
+        toastr.options = toastrOptions;
+        toastr.error('Seat name cannot be empty.');
+        return;
+    }
+
     $.ajax({
         url: updateNameRoute.replace(':seat_id', id).replace(':seat_name', name),
         type: "GET",
@@ -208,10 +392,13 @@ function update_seat_name(e) {
             if (response.success) {
                 $('#update_seat').modal('hide');
                 $('#table_row_' + id).find('.text-left').html(response.seat.username);
+                toastr.options = toastrOptions;
+                toastr.success('Seat name updated successfully.');
             }
         },
         error: function (xhr, status, error) {
-            console.error(error);
+            toastr.options = toastrOptions;
+            toastr.error(xhr.responseJSON.errors);
         }
     });
 }

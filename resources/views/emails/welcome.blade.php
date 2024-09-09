@@ -13,7 +13,8 @@
             <tr>
                 <td align="center" style="padding:40px 0">
                     <a href="{{ url('/') }}" target="_blank">
-                        <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" style="width:138px">
+                        <img src="{{ $message->embed(public_path('assets/images/logo.png')) }}" alt="Logo"
+                            style="width:138px;">
                     </a>
                 </td>
             </tr>
@@ -51,7 +52,8 @@
                 </tr>
             </table>
         </div>
-        <div style="max-width:640px;margin:20px auto;text-align:center;color:#99aab5;font-family:Arial;font-size:12px">
+        <div
+            style="max-width:640px;margin:20px auto;text-align:center;color:#99aab5;font-family:Arial;font-size:12px;padding:26px;">
             Sent by Networked • <a href="{{ url('/') }}" style="color:#1eb0f4;text-decoration:none">Check our
                 website</a>
         </div>

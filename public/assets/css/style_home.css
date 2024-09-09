@@ -8,6 +8,7 @@ html {
 .btn {
     padding: 0;
 }
+
 .btn-blue a {
     background: #16adcb;
     color: #fff;
@@ -18,10 +19,12 @@ html {
     display: inline-block;
     border: solid 1px #16adcb;
 }
+
 .btn-blue a:hover {
     background: transparent;
     color: #16adcb;
 }
+
 .btn-yellow a {
     background: #e3c935;
     border-color: #e3c935;
@@ -33,6 +36,7 @@ html {
     border-radius: 40px;
     letter-spacing: 1.5px;
 }
+
 .btn-yellow a i {
     background: #ffffff;
     height: 44px;
@@ -45,10 +49,12 @@ html {
     color: #e3c935;
     transition: 0.5s;
 }
+
 .btn-yellow a:hover {
     background: transparent;
     color: #000000;
 }
+
 .btn-yellow a:hover i {
     background: #e3c935;
     color: #fff;
@@ -57,18 +63,22 @@ html {
 a {
     transition: 0.5s;
 }
+
 body {
     font-family: "Poppins", sans-serif;
 }
+
 header#masthead .container-fluid {
     padding: 0 45px;
 }
+
 header#masthead .topbar {
     background: #d0eff5;
     padding: 7px 7px 7px 30px;
     border-radius: 40px;
     margin-bottom: 16px;
 }
+
 header#masthead .topbar ul {
     margin: 0;
     display: flex;
@@ -76,34 +86,42 @@ header#masthead .topbar ul {
     padding: 0;
     align-items: center;
 }
+
 header#masthead {
     padding-top: 20px;
 }
+
 header#masthead .topbar .row {
     align-items: center;
 }
+
 header#masthead .topbar ul li {
     padding-right: 32px;
 }
+
 header#masthead .topbar ul li a,
 header#masthead .topbar ul li {
     color: #0000009c;
     text-decoration: none;
 }
+
 header#masthead .topbar ul li i {
     padding-right: 15px;
     color: #16adcb;
 }
+
 header#masthead .topbar .language {
     display: flex;
     justify-content: flex-end;
 }
+
 header#masthead .topbar .language select.language {
     margin-right: 21px;
     background: transparent;
     border: none;
     padding: 0;
 }
+
 header#masthead .topbar .language select {
     background: #e3c935;
     border: solid 1px #e3c935;
@@ -112,15 +130,18 @@ header#masthead .topbar .language select {
     appearance: none;
     outline: none;
 }
+
 header#masthead li.nav-item a.nav-link {
     font-size: 18px;
     padding: 0;
     color: #1c1e22;
     position: relative;
 }
+
 header#masthead li.nav-item {
     margin-right: 50px;
 }
+
 header#masthead li.nav-item a.nav-link.active:after {
     content: "";
     position: absolute;
@@ -132,9 +153,11 @@ header#masthead li.nav-item a.nav-link.active:after {
     left: 50%;
     transform: translate(-50%, 0);
 }
+
 header#masthead li.nav-item a.nav-link.active {
     color: #16adcb;
 }
+
 header#masthead .socialicons ul {
     display: flex;
     align-items: center;
@@ -144,22 +167,27 @@ header#masthead .socialicons ul {
     margin: 0;
     margin-right: 21px;
 }
+
 header#masthead .socialicons {
     display: flex;
     justify-content: flex-end;
     align-items: center;
 }
+
 header#masthead .socialicons ul li {
     margin-left: 30px;
     line-height: 1;
 }
+
 header#masthead .socialicons ul li a {
     color: #0000002b;
     font-size: 24px;
 }
+
 header#masthead .logomain {
     text-align: center;
 }
+
 header#masthead .logomain .navbar-brand {
     height: 100%;
     display: block;
@@ -175,56 +203,69 @@ section.bannerSec {
     align-items: center;
     background: url(../images/bannerBG.png);
 }
+
 section.bannerSec .container {
     max-width: 1520px;
 }
+
 section.bannerSec h1 {
     font-size: 62px;
     font-weight: 600;
     line-height: 1.4;
     margin-bottom: 40px;
 }
+
 section.bannerSec img {
     width: 100%;
     margin-top: -60px;
 }
+
 section.bannerSec .ratingimg img {
     width: auto;
     margin-top: 40px;
 }
+
 p {
     font-size: 18px;
 }
+
 section.bannerSec p {
     width: 90%;
 }
+
 section.logoSec {
     background: #e3c935;
     padding: 34px 0;
 }
+
 section.logoSec .logonew img {
     width: auto;
     height: 44px;
     object-fit: scale-down;
 }
+
 section.logoSec .logonew .item {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 section.logoSec .logonew .owl-dots {
     display: none;
 }
+
 section.logoSec .logonew .item {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 section.logoSec .logonew .owl-dots {
     display: none;
 }
+
 section.bannerSec .img3 img {
     margin: 0;
     width: auto;
@@ -236,6 +277,7 @@ section.bannerSec .img3 img {
 .btn {
     padding: 0;
 }
+
 .btn-blue a {
     background: #16adcb;
     color: #fff;
@@ -246,10 +288,12 @@ section.bannerSec .img3 img {
     display: inline-block;
     border: solid 1px #16adcb;
 }
+
 .btn-blue a:hover {
     background: transparent;
     color: #16adcb;
 }
+
 .btn-yellow a {
     background: #e3c935;
     border-color: #e3c935;
@@ -261,6 +305,7 @@ section.bannerSec .img3 img {
     border-radius: 40px;
     letter-spacing: 1.5px;
 }
+
 .btn-yellow a i {
     background: #ffffff;
     height: 44px;
@@ -273,10 +318,12 @@ section.bannerSec .img3 img {
     color: #e3c935;
     transition: 0.5s;
 }
+
 .btn-yellow a:hover {
     background: transparent;
     color: #000000;
 }
+
 .btn-yellow a:hover i {
     background: #e3c935;
     color: #fff;
@@ -285,18 +332,22 @@ section.bannerSec .img3 img {
 a {
     transition: 0.5s;
 }
+
 body {
     font-family: "Poppins", sans-serif;
 }
+
 header#masthead .container-fluid {
     padding: 0 45px;
 }
+
 header#masthead .topbar {
     background: #d0eff5;
     padding: 7px 7px 7px 30px;
     border-radius: 40px;
     margin-bottom: 16px;
 }
+
 header#masthead .topbar ul {
     margin: 0;
     display: flex;
@@ -304,34 +355,42 @@ header#masthead .topbar ul {
     padding: 0;
     align-items: center;
 }
+
 header#masthead {
     padding-top: 20px;
 }
+
 header#masthead .topbar .row {
     align-items: center;
 }
+
 header#masthead .topbar ul li {
     padding-right: 32px;
 }
+
 header#masthead .topbar ul li a,
 header#masthead .topbar ul li {
     color: #0000009c;
     text-decoration: none;
 }
+
 header#masthead .topbar ul li i {
     padding-right: 15px;
     color: #16adcb;
 }
+
 header#masthead .topbar .language {
     display: flex;
     justify-content: flex-end;
 }
+
 header#masthead .topbar .language select.language {
     margin-right: 21px;
     background: transparent;
     border: none;
     padding: 0;
 }
+
 header#masthead .topbar .language select {
     background: #e3c935;
     border: solid 1px #e3c935;
@@ -340,15 +399,18 @@ header#masthead .topbar .language select {
     appearance: none;
     outline: none;
 }
+
 header#masthead li.nav-item a.nav-link {
     font-size: 18px;
     padding: 0;
     color: #1c1e22;
     position: relative;
 }
+
 header#masthead li.nav-item {
     margin-right: 50px;
 }
+
 header#masthead li.nav-item a.nav-link.active:after {
     content: "";
     position: absolute;
@@ -360,9 +422,11 @@ header#masthead li.nav-item a.nav-link.active:after {
     left: 50%;
     transform: translate(-50%, 0);
 }
+
 header#masthead li.nav-item a.nav-link.active {
     color: #16adcb;
 }
+
 header#masthead .socialicons ul {
     display: flex;
     align-items: center;
@@ -372,22 +436,27 @@ header#masthead .socialicons ul {
     margin: 0;
     margin-right: 21px;
 }
+
 header#masthead .socialicons {
     display: flex;
     justify-content: flex-end;
     align-items: center;
 }
+
 header#masthead .socialicons ul li {
     margin-left: 30px;
     line-height: 1;
 }
+
 header#masthead .socialicons ul li a {
     color: #0000002b;
     font-size: 24px;
 }
+
 header#masthead .logomain {
     text-align: center;
 }
+
 header#masthead .logomain .navbar-brand {
     height: 100%;
     display: block;
@@ -403,56 +472,69 @@ section.bannerSec {
     align-items: center;
     background: url(../images/bannerBG.png);
 }
+
 section.bannerSec .container {
     max-width: 1520px;
 }
+
 section.bannerSec h1 {
     font-size: 62px;
     font-weight: 600;
     line-height: 1.4;
     margin-bottom: 40px;
 }
+
 section.bannerSec img {
     width: 100%;
     margin-top: -60px;
 }
+
 section.bannerSec .ratingimg img {
     width: auto;
     margin-top: 40px;
 }
+
 p {
     font-size: 18px;
 }
+
 section.bannerSec p {
     width: 90%;
 }
+
 section.logoSec {
     background: #e3c935;
     padding: 34px 0;
 }
+
 section.logoSec .logonew img {
     width: auto;
     height: 44px;
     object-fit: scale-down;
 }
+
 section.logoSec .logonew .item {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 section.logoSec .logonew .owl-dots {
     display: none;
 }
+
 section.logoSec .logonew .item {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 section.logoSec .logonew .owl-dots {
     display: none;
 }
+
 section.connectSec {
     padding-top: 110px;
     padding-bottom: 100px;
@@ -461,6 +543,7 @@ section.connectSec {
     background-position: bottom;
     background-repeat: no-repeat;
 }
+
 section.connectSec h1 {
     text-align: center;
     font-size: 62px;
@@ -468,6 +551,7 @@ section.connectSec h1 {
     font-weight: 600;
     line-height: 1.3;
 }
+
 section.connectSec p {
     text-align: center;
     width: 80%;
@@ -476,13 +560,16 @@ section.connectSec p {
     margin-top: 30px;
     margin-bottom: 50px;
 }
+
 section.connectSec img {
     width: 100%;
 }
+
 section.connectSec .btn-yellow {
     width: 100%;
     text-align: center;
 }
+
 section.linkedin h1 {
     text-align: center;
     font-size: 62px;
@@ -493,6 +580,7 @@ section.linkedin h1 {
     margin: auto;
     margin-bottom: 20px;
 }
+
 section.linkedin p {
     text-align: center;
     width: 80%;
@@ -501,6 +589,7 @@ section.linkedin p {
     margin-top: 30px;
     margin-bottom: 50px;
 }
+
 section.linkedin .condition {
     background: #ffffff;
     padding: 25px;
@@ -512,6 +601,7 @@ section.linkedin .condition {
     justify-content: center;
     flex-direction: column;
 }
+
 section.linkedin {
     background: url(../images/blueBG.png);
     padding-top: 130px;
@@ -519,11 +609,13 @@ section.linkedin {
     background-position: center;
     padding-bottom: 40px;
 }
+
 section.linkedin .condition ul {
     padding: 0;
     list-style: none;
     margin: 0;
 }
+
 section.linkedin .condition ul li {
     background: #f2f2f2;
     margin-bottom: 11px;
@@ -533,6 +625,7 @@ section.linkedin .condition ul li {
     color: #8e99a8;
     position: relative;
 }
+
 section.linkedin .condition ul li img {
     height: 44px;
     width: 44px;
@@ -541,15 +634,18 @@ section.linkedin .condition ul li img {
     border-radius: 50%;
     margin-right: 12px;
 }
+
 section.linkedin .condition h3 {
     font-size: 25px;
     color: #000;
     font-weight: 600;
     margin-bottom: 18px;
 }
+
 section.linkedin .condition ul li:last-child {
     margin: 0;
 }
+
 section.linkedin .condition ul li:after {
     content: "";
     position: absolute;
@@ -560,6 +656,7 @@ section.linkedin .condition ul li:after {
     top: 50%;
     transform: translate(0, -50%);
 }
+
 section.tabsSec {
     padding-top: 110px;
     padding-bottom: 110px;
@@ -570,6 +667,7 @@ section.tabsSec {
     z-index: 9;
     position: relative;
 }
+
 section.tabsSec div#nav-tab {
     border: none !important;
     justify-content: center;
@@ -578,6 +676,7 @@ section.tabsSec div#nav-tab {
     border-radius: 50px;
     justify-content: space-between;
 }
+
 section.tabsSec .nav-tabs .nav-link {
     background: transparent !important;
     border: none !important;
@@ -588,13 +687,16 @@ section.tabsSec .nav-tabs .nav-link {
     color: #000;
     text-transform: capitalize;
 }
+
 section.tabsSec .nav-tabs .nav-link.active {
     background: #e3c935 !important;
     font-weight: 600;
 }
+
 section.tabsSec .tab-content {
     padding-top: 60px;
 }
+
 section.tabsSec .tab-content h2 {
     text-align: center;
     font-size: 62px;
@@ -606,6 +708,7 @@ section.tabsSec .tab-content h2 {
     margin-bottom: 20px;
     text-transform: capitalize;
 }
+
 section.tabsSec .tab-content p {
     text-align: center;
     width: 80%;
@@ -614,9 +717,11 @@ section.tabsSec .tab-content p {
     margin-top: 30px;
     margin-bottom: 50px;
 }
+
 section.tabsSec .tab-content img {
     width: 99%;
 }
+
 section.tabsSec .btn {
     width: 100%;
     margin-top: 60px;
@@ -626,6 +731,7 @@ section.getInSec {
     background: url(../images/getin.png);
     height: 450px;
 }
+
 section.getInSec img {
     width: 170%;
     margin-top: -139px;
@@ -633,6 +739,7 @@ section.getInSec img {
     z-index: 0;
     position: relative;
 }
+
 section.getInSec h3 {
     font-size: 38px;
     font-weight: 600;
@@ -640,23 +747,29 @@ section.getInSec h3 {
     margin-top: 80px;
     margin-bottom: 40px;
 }
+
 section.getInSec p {
     width: 80%;
 }
+
 section.getInSec .btn-chat a {
     background: #ffffff;
 }
+
 section.getInSec .btn-chat a i {
     background: #16adcb;
     color: #fff;
 }
+
 section.getInSec .btn-chat {
     margin-top: 22px;
 }
+
 section.getInSec .btn-chat a:hover {
     background: #16adcb;
     color: #fff;
 }
+
 section.getInSec .btn-chat a:hover i {
     background: #fff;
     color: #16adcb;
@@ -666,6 +779,7 @@ section.testimonialSec {
     padding-top: 130px;
     padding-bottom: 130px;
 }
+
 section.testimonialSec h2 {
     text-align: center;
     font-size: 62px;
@@ -677,6 +791,7 @@ section.testimonialSec h2 {
     margin-bottom: 20px;
     text-transform: capitalize;
 }
+
 section.testimonialSec p {
     text-align: center;
     width: 53%;
@@ -685,16 +800,19 @@ section.testimonialSec p {
     margin-top: 30px;
     margin-bottom: 50px;
 }
+
 section.testimonialSec .testimonialBox .titleImg {
     display: flex;
     align-items: center;
 }
+
 section.testimonialSec .testimonialBox .titleImg img {
     width: 44px;
     height: 44px;
     object-fit: cover;
     border-radius: 50%;
 }
+
 section.testimonialSec .testimonialBox .titleImg h4 {
     font-size: 18px;
     text-transform: uppercase;
@@ -702,6 +820,7 @@ section.testimonialSec .testimonialBox .titleImg h4 {
     margin: 0;
     margin-left: 13px;
 }
+
 section.testimonialSec .testimonialBox p {
     color: #11131778;
     width: 100%;
@@ -710,18 +829,22 @@ section.testimonialSec .testimonialBox p {
     margin: 20px 0;
     line-height: 2;
 }
+
 section.testimonialSec .testimonialBox {
     background: #f2f2f2;
     padding: 30px;
     border-radius: 30px;
 }
+
 section.testimonialSec .testimonialBox .fa-star {
     color: #e3c935;
     font-size: 20px;
 }
+
 section.testimonialSec .owl-dots {
     display: none;
 }
+
 .testimonialInner2 {
     margin-top: 26px;
 }
@@ -733,16 +856,19 @@ footer .connentin {
     padding: 60px;
     border-radius: 50px;
 }
+
 footer .connentin h3 {
     font-size: 38px;
     margin-bottom: 40px;
     font-weight: 600;
 }
+
 footer .connentin .startedrating {
     display: flex;
     justify-content: flex-end;
     align-items: center;
 }
+
 footer .connentin .startedrating .btn-yellow a {
     border: solid 3px #ffffff;
     padding: 30px 50px 30px 30px;
@@ -753,33 +879,40 @@ footer .connentin .startedrating .btn-yellow a {
     font-size: 22px;
     border-radius: 40px;
 }
+
 footer .connentin .startedrating .btn-yellow a i {
     height: 77.5px;
     width: 77.5px;
     font-size: 34px;
     color: #16adcb;
 }
+
 footer .connentin p {
     margin: 0;
 }
+
 footer {
     background: #f2f2f2;
     padding-top: 70px;
 }
+
 .widthinner {
     width: 85%;
     margin: auto;
     padding-top: 70px;
     padding-bottom: 60px;
 }
+
 footer p {
     margin: 0;
 }
+
 footer .col1 p {
     margin-bottom: 60px;
     font-size: 16px;
     color: #15151599;
 }
+
 footer .col1 ul {
     display: flex;
     list-style: none;
@@ -787,34 +920,41 @@ footer .col1 ul {
     padding: 0;
     margin-bottom: 20px;
 }
+
 footer .col1 ul a {
     color: #0000002b;
     font-size: 24px;
 }
+
 footer .col1 ul li {
     margin-right: 25px;
 }
+
 .widthinner .col2 ul {
     padding: 0;
     list-style: none;
     column-count: 2;
     width: 86%;
 }
+
 .widthinner .col2 ul li {
     margin-bottom: 22px;
 }
+
 .widthinner h4 {
     font-size: 28px;
     margin-bottom: 30px;
     font-weight: 600;
     text-transform: capitalize;
 }
+
 .widthinner .col2 ul li a {
     color: #15151599;
     text-decoration: none;
     position: relative;
     padding-left: 30px;
 }
+
 .widthinner .col2 ul li a:before {
     height: 6px;
     width: 6px;
@@ -825,30 +965,37 @@ footer .col1 ul li {
     top: 40%;
     border-radius: 50%;
 }
+
 .widthinner a {
     color: #15151599;
     text-decoration: none;
     font-size: 16px;
 }
+
 .widthinner .col3 p {
     margin-bottom: 18px;
 }
+
 .widthinner a.phone {
     font-size: 28px;
     color: #16adcb;
 }
+
 footer .col1 p:last-child {
     margin: 0;
     font-size: 14px;
 }
+
 .widthinner .col4 {
     width: 90%;
 }
+
 .widthinner .col4 p {
     margin-bottom: 30px;
     font-size: 16px;
     color: #15151599;
 }
+
 .widthinner .col4 form input {
     width: 100%;
     background: transparent;
@@ -857,6 +1004,7 @@ footer .col1 p:last-child {
     border-radius: 30px;
     outline: none;
 }
+
 .widthinner .col4 form .btn-blue {
     position: absolute;
     right: 5px;
@@ -872,9 +1020,11 @@ footer .col1 p:last-child {
     background-position: center;
     box-shadow: none;
 }
+
 .widthinner .col4 form {
     position: relative;
 }
+
 footer .col1 p:last-child a {
     color: #000;
     font-weight: 600;
@@ -884,6 +1034,7 @@ footer .col1 p:last-child a {
     body {
         zoom: 0.7;
     }
+
     .container {
         max-width: 1250px;
     }
@@ -902,16 +1053,20 @@ section.bannerSec.aboutSec {
     background: url(../images/aboutBg.png);
     align-items: center;
 }
+
 section.bannerSec.aboutSec h1 {
     line-height: 1.2;
 }
+
 section.bannerSec.aboutSec .row {
     align-items: center;
 }
+
 section.bannerSec.aboutSec .row .col-md-6:first-child {
     padding-left: 140px;
     padding-top: 70px;
 }
+
 section.missionSec p {
     line-height: 1.8;
 }
@@ -927,14 +1082,17 @@ section.missionSec {
     background-position: center;
     background-repeat: no-repeat;
 }
+
 section.missionSec .row {
     text-align: center;
 }
+
 section.missionSec h2 {
     font-size: 62px;
     font-weight: 600;
     margin-bottom: 40px;
 }
+
 section.missionSec p i {
     font-size: 20px;
     font-weight: 500;
@@ -951,6 +1109,7 @@ section.offserSec {
     display: flex;
     align-items: center;
 }
+
 section.offserSec h2 {
     text-align: center;
     font-size: 62px;
@@ -958,26 +1117,31 @@ section.offserSec h2 {
     margin-bottom: 21px;
     text-transform: capitalize;
 }
+
 section.offserSec p {
     width: 50%;
     margin: auto;
     text-align: center;
     margin-bottom: 70px;
 }
+
 section.offserSec .offerMain {
     padding: 6px 6px 40px;
     background: #fff;
     border-radius: 40px;
     min-height: 610px;
 }
+
 section.offserSec .offerMain p {
     width: 100%;
     margin: auto;
     text-align: left;
 }
+
 section.offserSec .offerMain .offerInner {
     padding: 20px 40px 0;
 }
+
 section.offserSec .offerMain h3 {
     font-size: 25px;
     font-weight: 600;
@@ -989,6 +1153,7 @@ section.faqSec img {
     margin: 0;
     width: 80%;
 }
+
 section.faqSection {
     padding-top: 0;
     padding-bottom: 80px;
@@ -997,6 +1162,7 @@ section.faqSection {
     background-position: center;
     background-repeat: no-repeat;
 }
+
 section.faqSection h1 {
     text-align: center;
     font-size: 62px;
@@ -1004,6 +1170,7 @@ section.faqSection h1 {
     margin-bottom: 50px;
     color: #000;
 }
+
 section.faqSection button.accordion-button {
     background: #f2f2f2;
     border: none !important;
@@ -1015,11 +1182,13 @@ section.faqSection button.accordion-button {
     box-shadow: none !important;
     color: #111317;
 }
+
 section.faqSection .accordion-item {
     margin-bottom: 11px;
     border: none;
     outline: none !important;
 }
+
 section.faqSection button.accordion-button span {
     position: absolute;
     left: 9px;
@@ -1033,6 +1202,7 @@ section.faqSection button.accordion-button span {
     justify-content: center;
     font-weight: 700;
 }
+
 section.faqSection .accordion-body {
     background: #f2f2f2;
     padding: 50px 80px 20px 160px;
@@ -1041,6 +1211,7 @@ section.faqSection .accordion-body {
     border-top-left-radius: 0 !important;
     margin-top: -49px;
 }
+
 section.faqSection .accordion-body p {
     font-size: 16px;
     line-height: 2;
@@ -1052,6 +1223,7 @@ section.testimonialSec {
     padding-top: 130px;
     padding-bottom: 130px;
 }
+
 section.testimonialSec h2 {
     text-align: center;
     font-size: 62px;
@@ -1063,6 +1235,7 @@ section.testimonialSec h2 {
     margin-bottom: 20px;
     text-transform: capitalize;
 }
+
 section.testimonialSec p {
     text-align: center;
     width: 53%;
@@ -1071,10 +1244,12 @@ section.testimonialSec p {
     margin-top: 30px;
     margin-bottom: 50px;
 }
+
 .testimonialBox .titleImg {
     display: flex;
     align-items: center;
 }
+
 .testimonialBox .titleImg img {
     width: 44px !important;
     height: 44px !important;
@@ -1082,6 +1257,7 @@ section.testimonialSec p {
     border-radius: 50% !important;
     display: none !important;
 }
+
 .testimonialBox .titleImg h4 {
     font-size: 18px;
     text-transform: uppercase;
@@ -1089,6 +1265,7 @@ section.testimonialSec p {
     margin: 0;
     margin-left: 13px;
 }
+
 .testimonialBox p {
     color: #11131778 !important;
     width: 100% !important;
@@ -1097,19 +1274,23 @@ section.testimonialSec p {
     margin: 20px 0 !important;
     line-height: 2 !important;
 }
+
 .testimonialBox {
     background: #f2f2f2;
     padding: 30px;
     border-radius: 30px;
     min-height: 330px;
 }
+
 .testimonialBox .fa-star {
     color: #e3c935;
     font-size: 20px;
 }
+
 .owl-dots {
     display: none;
 }
+
 .testimonialInner2 {
     margin-top: 26px;
 }
@@ -1117,17 +1298,21 @@ section.testimonialSec p {
 section.pricingSec img {
     margin: 0 !important;
 }
+
 section.pricingSec .testimonialInnerBox {
     padding: 40px;
     background: #d0eff5;
     border-radius: 30px;
 }
+
 section.pricingSec .testimonialInnerBox .fa-star {
     font-size: 32px;
 }
+
 section.pricingSec .owl-dots {
     display: block;
 }
+
 section.pricingSec .owl-dots .owl-dot {
     width: 14px;
     height: 14px;
@@ -1135,10 +1320,12 @@ section.pricingSec .owl-dots .owl-dot {
     margin-left: 12px;
     border-radius: 50%;
 }
+
 section.pricingSec .owl-dots {
     margin-top: 20px;
     margin-left: 5px;
 }
+
 section.pricingSec .owl-dots .owl-dot.owl-dot.active {
     background: #e3c935;
 }
@@ -1153,6 +1340,7 @@ section.pricingPageSec {
     background-position: center;
     background-repeat: no-repeat;
 }
+
 section.pricingPageSec h2 {
     text-align: center;
     font-size: 62px;
@@ -1163,6 +1351,7 @@ section.pricingPageSec h2 {
     margin-bottom: 20px;
     text-transform: capitalize;
 }
+
 section.pricingPageSec .col-md-12 p {
     text-align: center;
     width: 76%;
@@ -1170,6 +1359,7 @@ section.pricingPageSec .col-md-12 p {
     margin-left: auto;
     margin-bottom: 50px;
 }
+
 .pricingInner {
     text-align: center;
     background: #f2f2f2;
@@ -1177,6 +1367,7 @@ section.pricingPageSec .col-md-12 p {
     padding: 10px 10px 50px 10px;
     min-height: 630px;
 }
+
 .pricingInner .pricingPrice {
     background: #d0eff5;
     border-radius: 50px;
@@ -1187,11 +1378,13 @@ section.pricingPageSec .col-md-12 p {
     flex-direction: column;
     padding: 20px 20px;
 }
+
 .pricingInner .pricingPrice h3 {
     font-size: 32px;
     font-weight: 600;
     margin-bottom: 35px;
 }
+
 .pricingInner .pricingPrice .pricein {
     margin: 0;
     background: #ffffff;
@@ -1199,20 +1392,24 @@ section.pricingPageSec .col-md-12 p {
     border-radius: 50px;
     padding: 20px 28px;
 }
+
 .pricingInner .pricingPrice .pricein p {
     margin: 0;
     font-size: 48px;
     font-weight: 600;
     line-height: 1;
 }
+
 .pricingInner .pricingPrice .pricein span {
     display: block;
     margin-top: 6px;
 }
+
 .pricingInner ul {
     padding: 0;
     list-style: none;
 }
+
 .pricingInner ul li {
     font-size: 21px;
     margin-bottom: 20px;
@@ -1221,6 +1418,7 @@ section.pricingPageSec .col-md-12 p {
     width: 81%;
     margin: auto;
 }
+
 section.permissionSec {
     padding-top: 120px;
     background: url(../images/permissionBg.png);
@@ -1228,12 +1426,15 @@ section.permissionSec {
     background-position: center;
     background-repeat: no-repeat;
 }
+
 footer a.navbar-brand img {
     margin-bottom: 30px !important;
 }
+
 section.pricingPageSec .row {
     justify-content: center;
 }
+
 section.bannerSec.aboutSec.faqSec .row {
     align-items: flex-start;
 }
@@ -1242,6 +1443,7 @@ section.bannerSec.aboutSec.faqSec .row {
     body {
         zoom: 0.7;
     }
+
     .container {
         max-width: 1250px;
     }
@@ -1260,26 +1462,31 @@ section.bannerSec.aboutSec.faqSec .row {
     opacity: 0;
     transition: all 1.5s ease 0s;
 }
+
 .reveal.active {
     transform: translateY(0px);
     opacity: 1;
 }
+
 .revealleft {
     position: relative;
     transform: translateX(-150px);
     opacity: 0;
     transition: all 1.5s ease 0s;
 }
+
 .revealleft.active {
     transform: translateX(0px);
     opacity: 1;
 }
+
 .revealright {
     position: relative;
     transform: translateX(150px);
     opacity: 0;
     transition: all 1.5s ease 0s;
 }
+
 .revealright.active {
     transform: translateX(0px);
     opacity: 1;

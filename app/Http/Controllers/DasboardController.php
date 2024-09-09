@@ -3,11 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssignedSeats;
-use App\Models\Permissions;
 use Illuminate\Support\Facades\Auth;
-use App\Models\PhysicalPayment;
-use App\Models\Role_Permission;
-use App\Models\Roles;
 use App\Models\SeatInfo;
 use App\Models\Teams;
 use Exception;
@@ -16,6 +12,11 @@ use Illuminate\Support\Facades\Log;
 
 class DasboardController extends Controller
 {
+    /**
+     * Display the user's dashboard.
+     *
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function dashboard()
     {
         try {
@@ -32,6 +33,14 @@ class DasboardController extends Controller
             $seats = SeatInfo::where('team_id', $team->id)->get();
             $uc = new UnipileController();
 
+            $assignedSeat = AssignedSeats::where('seat_id', 0)->where('user_id', $user->id)->first();
+
+            $is_owner = false;
+
+            if (!empty($assignedSeat)) {
+                $is_owner = true;
+            }
+
             /* Process seats */
             $seats = $seats->map(function ($seat) use ($user, $uc) {
                 /* Default values for seat connection and activity status */
@@ -39,7 +48,7 @@ class DasboardController extends Controller
                 $seat['active'] = false;
 
                 /* Retrieve Assigned seats */
-                $assignedSeat = AssignedSeats::where('seat_id', [0, $seat['id']])->where('user_id', $user['id'])->first();
+                $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat['id']])->where('user_id', $user['id'])->first();
 
                 /* Check that if seat is assigned or not */
                 if (!empty($assignedSeat)) {
@@ -70,7 +79,8 @@ class DasboardController extends Controller
             $data = [
                 'title' => 'Account Dashboard',
                 'team' => $team,
-                'seats' => $seats
+                'seats' => $seats,
+                'is_owner' => $is_owner,
             ];
 
             /* Return the view with the prepared data */

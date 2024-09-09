@@ -9,6 +9,7 @@ use App\Models\Teams;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +18,11 @@ use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
+    /**
+     * Show the registration page.
+     *
+     * @return \Illuminate\View\View
+     */
     public function register()
     {
         /* Set the title for the registration page */
@@ -26,6 +32,12 @@ class RegisterController extends Controller
         return view('signup', $data);
     }
 
+    /**
+     * Handle the user registration.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function registerUser(Request $request)
     {
         /* Validate request data */
@@ -54,7 +66,7 @@ class RegisterController extends Controller
         DB::beginTransaction();
 
         try {
-            /* Find the Owner role */
+            /* Find the 'Owner' role */
             $role = Roles::where('role_name', 'Owner')->first();
 
             /* Handle case where no role is found */
@@ -62,12 +74,12 @@ class RegisterController extends Controller
                 return redirect()->back()->withErrors(['error' => 'Something went wrong'])->withInput();
             }
 
-            /* Create new team */
+            /* Create a new team with the provided company name */
             $team = Teams::create([
                 'team_name' => $request->input('company')
             ]);
 
-            /* Create new user */
+            /* Create a new user with the provided details */
             $user = User::create([
                 'name' => $request->input('name'),
                 'email' => $request->input('email'),
@@ -75,8 +87,8 @@ class RegisterController extends Controller
                 'team_id' => $team->id
             ]);
 
-            /* Create new Assigned Seats */
-            AssignedSeats::create([
+            /* Create a new assigned seat for the user */
+            $assignedSeat = AssignedSeats::create([
                 'user_id' => $user->id,
                 'role_id' => $role->id,
                 'seat_id' => 0,
@@ -85,25 +97,100 @@ class RegisterController extends Controller
             /* Commit the transaction */
             DB::commit();
 
-            /* Sending a welcome email */
+            /* Send a welcome email to the new user */
             Mail::to($user->email)->send(new WelcomeMail($user));
 
-            /* Redirect back with success message */
+            /* Redirect to login page with a success message */
             return redirect()->route('login')->with('success', 'User registered successfully');
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             /* Rollback the transaction if something fails */
             DB::rollBack();
+
+            /* Delete created entities only if they exist */
+            if (!empty($assignedSeat) && !empty($assignedSeat->id)) {
+                $assignedSeat->delete();
+            }
+            if (!empty($user) && !empty($user->id)) {
+                $user->delete();
+            }
+            if (!empty($team) && !empty($team->id)) {
+                $team->delete();
+            }
 
             /* Log the exception message for debugging */
             Log::error($e);
 
-            /* Redirect back with error message */
+            /* Redirect back with an error message */
             return redirect()->back()->withErrors(['error' => 'Something went wrong'])->withInput();
         }
     }
 
+    /**
+     * Verify the user's email address.
+     *
+     * @param string $email
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function verifyAnEmail($email)
     {
-        dd($email);
+        try {
+            /* Attempt to find the user by their email address */
+            $user = User::where('email', $email)->first();
+
+            /* Check if the user was found */
+            if (empty($user)) {
+                throw new Exception('Something went wrong');
+            }
+
+            /* Check if the email has already been verified */
+            if (!empty($user->email_verified_at)) {
+                /* Redirect to login with a success message if already verified */
+                return redirect()->route('login')->with(['success' => 'Email already verified', 'email' => $user->email]);
+            }
+
+            /* Set the email_verified_at timestamp to the current time */
+            $user->email_verified_at = now();
+            $user->save();
+
+            /* Redirect to login with a success message indicating verification was successful */
+            return redirect()->route('login')->with(['success' => 'Email Verification Successful', 'email' => $user->email]);
+        } catch (\Exception $e) {
+            /* Log the exception message for debugging purposes */
+            Log::error($e);
+
+            /* Redirect to login with an error message */
+            return redirect()->route('login')->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Resend the welcome email to the currently authenticated user.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function resend_an_email()
+    {
+        /* Retrieve the currently authenticated user */
+        $user = Auth::user();
+
+        /* Ensure that a user is authenticated before attempting to send an email */
+        if ($user) {
+            try {
+                /* Send a welcome email to the new user */
+                Mail::to($user->email)->send(new WelcomeMail($user));
+
+                /* Optionally, you can add a success message or redirect */
+                return redirect()->back()->with('success', 'Email sent successfully.');
+            } catch (\Exception $e) {
+                /* Log the exception message for debugging purposes */
+                Log::error($e);
+
+                /* Redirect to login with an error message */
+                return redirect()->route('login')->withErrors(['error' => $e->getMessage()]);
+            }
+        } else {
+            /* Optionally, handle the case where no user is authenticated */
+            return redirect()->back()->withErrors(['error' => 'No authenticated user found.']);
+        }
     }
 }

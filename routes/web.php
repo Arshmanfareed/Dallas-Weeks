@@ -52,7 +52,8 @@ Route::get('/faq', [HomeController::class, 'faq']); //Done
 /* These are login and signup url which does not require any authentication */
 Route::get('/register', [RegisterController::class, 'register'])->name('register'); //Done
 Route::post('/register-user', [RegisterController::class, 'registerUser'])->name('register-user'); //Done
-Route::get('/verify_an_Email/{email}', [RegisterController::class, 'verifyAnEmail'])->name('verify_an_Email'); //Need to check
+Route::get('/resend_an_email', [RegisterController::class, 'resend_an_email'])->name('resend_an_email'); //Done
+Route::get('/verify_an_Email/{email}', [RegisterController::class, 'verifyAnEmail'])->name('verify_an_Email'); //Done
 Route::get('/login', [LoginController::class, 'login'])->name('login'); //Done
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials'); //Done
 Route::post('/add_email_account', [LinkedInController::class, 'addEmailToAccount'])->name('addEmailAccount'); //Need to check
@@ -72,9 +73,9 @@ Route::middleware(['userAuth'])->group(function () {
     Route::get('/invoice', [InvoiceController::class, 'invoice']); //Need to check
     Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']); //Need to check
     Route::prefix('seat')->group(function () {
-        Route::get('/getSeatById/{id}', [SeatController::class, 'get_seat_by_id'])->name('getSeatById'); //Need to check
+        Route::get('/getSeatById/{id}', [SeatController::class, 'get_seat_by_id'])->name('getSeatById'); //Done
         Route::get('/deleteSeat/{id}', [SeatController::class, 'delete_seat'])->name('deleteSeat'); //Need to check
-        Route::get('/updateName/{id}/{seat_name}', [SeatController::class, 'update_name'])->name('updateName'); //Need to check
+        Route::get('/updateName/{id}/{seat_name}', [SeatController::class, 'update_name'])->name('updateName'); //Done
         Route::get('/filterSeat/{search}', [SeatController::class, 'filterSeat'])->name('filterSeat'); //Need to check
     });
     Route::controller(StripePaymentController::class)->group(function () {
