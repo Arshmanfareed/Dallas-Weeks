@@ -74,19 +74,23 @@ Route::middleware(['userAuth'])->group(function () {
     Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']); //Need to check
     Route::prefix('seat')->group(function () {
         Route::get('/getSeatById/{id}', [SeatController::class, 'get_seat_by_id'])->name('getSeatById'); //Done
-        Route::get('/deleteSeat/{id}', [SeatController::class, 'delete_seat'])->name('deleteSeat'); //Need to check
+        Route::get('/deleteSeat/{id}', [SeatController::class, 'delete_seat'])->name('deleteSeat'); //Done
         Route::get('/updateName/{id}/{seat_name}', [SeatController::class, 'update_name'])->name('updateName'); //Done
-        Route::get('/filterSeat/{search}', [SeatController::class, 'filterSeat'])->name('filterSeat'); //Need to check
+        Route::get('/filterSeat/{search}', [SeatController::class, 'filterSeat'])->name('filterSeat'); //Done
     });
     Route::controller(StripePaymentController::class)->group(function () {
         Route::get('stripe', 'stripe'); //Need to check
         Route::post('stripe', 'stripePost')->name('stripe.post'); //Need to check
     });
-    Route::get('/team-rolesandpermission', [RolespermissionController::class, 'rolespermission']); //Need to check
+    Route::prefix('role')->group(function () {
+        Route::post('/custom', [RolespermissionController::class, 'custom_role'])->name('customRole');
+        Route::get('/delete/{id}', [RolespermissionController::class, 'delete_role'])->name('deleteRole');
+    });
+    Route::get('/team/team-rolesandpermission', [RolespermissionController::class, 'rolespermission'])->name('rolespermission'); //Need to check
     Route::post('/logout', [LoginController::class, 'logoutUser'])->name('logout-user'); //Need to check
 
     /* This dashboard uses to update seat_id in session */
-    Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash'); //Need to check
+    Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash'); //Done
 
     /* This setting might not requires account connectivity */
     Route::get('/setting', [SettingController::class, 'setting'])->name('dash-settings'); //Need to check

@@ -34,9 +34,8 @@
     @if (request()->is('accdashboard', 'report', 'leads'))
         <script src="{{ asset('assets/js/chart_query.js') }}"></script>
     @endif
-    @if (request()->is('dashboard'))
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-    @endif
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
 <style>
     .custom_link {
@@ -56,12 +55,11 @@
     @else
         @if (empty(auth()->user()->email_verified_at))
             <div style="margin: 0;border-radius: 0%;padding: 7px;"
-                class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+                class="alert-warning alert-dismissible fade show text-center" role="alert">
                 <a href="{{ route('resend_an_email') }}" class="custom_link">
-                    <strong><i style="color: #ecb25d" class="fa-solid fa-triangle-exclamation"></i></strong> Please
-                    confirm
-                    your email. Check your
-                    inbox and your spam folder. No email? Click here to Resend confirmation email
+                    <strong><i style="color: #ecb25d" class="fa-solid fa-triangle-exclamation"></i></strong>
+                    Please confirm your email. Check your inbox and your spam folder. No email? Click here to Resend
+                    confirmation email
                 </a>
             </div>
         @endif

@@ -33,10 +33,15 @@ class DasboardController extends Controller
             $seats = SeatInfo::where('team_id', $team->id)->get();
             $uc = new UnipileController();
 
-            $assignedSeat = AssignedSeats::where('seat_id', 0)->where('user_id', $user->id)->first();
+            /* Get the assigned seat for the user where seat_id is 0 
+            (potentially indicating an unassigned seat or default seat)
+            */
+            $assignedSeat = AssignedSeats::where('seat_id', 0)
+                ->where('user_id', $user->id)
+                ->first();
 
+            /* Check if the user is the owner of the seat (is assigned seat_id 0) */
             $is_owner = false;
-
             if (!empty($assignedSeat)) {
                 $is_owner = true;
             }
@@ -48,7 +53,9 @@ class DasboardController extends Controller
                 $seat['active'] = false;
 
                 /* Retrieve Assigned seats */
-                $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat['id']])->where('user_id', $user['id'])->first();
+                $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat['id']])
+                    ->where('user_id', $user['id'])
+                    ->first();
 
                 /* Check that if seat is assigned or not */
                 if (!empty($assignedSeat)) {

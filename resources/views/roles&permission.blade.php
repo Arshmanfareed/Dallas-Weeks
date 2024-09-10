@@ -2,6 +2,27 @@
 @php
     use App\Models\Role_Permission;
 @endphp
+<style>
+    span.edit_role {
+        cursor: pointer;
+    }
+
+    span.edit_role:hover {
+        color: #0f0;
+    }
+
+    span.delete_role {
+        cursor: pointer;
+    }
+
+    span.delete_role:hover {
+        color: #f00;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@if ($is_owner)
+    <script src="{{ asset('assets/js/roles&permission.js') }}"></script>
+@endif
 @section('content')
     <section class="blacklist team_management role_per_sec">
         <div class="container-fluid">
@@ -11,12 +32,19 @@
                         <div class="cont">
                             <h3>Roles & permissions</h3>
                         </div>
-                        <div class="add_btn " bis_skin_checked="1">
-                            <a href="javascript:;" class="" data-bs-toggle="modal" data-bs-target="#create_new_role">
-                                <i class="fa-solid fa-plus"></i>
-                            </a>
-                            Create custom role
-                        </div>
+                        @if ($is_owner)
+                            <div>
+                                <div class="add_btn " bis_skin_checked="1">
+                                    <span style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#create_new_role">
+                                        <a href="javascript:;" class="">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </a>
+                                        Create custom role
+                                    </span>
+                                </div>
+                                <div class="text-center">{{ $count_role }}/10 customized roles</div>
+                            </div>
+                        @endif
                     </div>
                     <div class="data_row">
                         <div class="data_head">
@@ -26,7 +54,14 @@
                                         <th width="70%">Permission</th>
                                         @if ($roles->isNotEmpty())
                                             @foreach ($roles as $role)
-                                                <th>{{ $role['role_name'] }}</th>
+                                                <th class="text-center" id="{{ 'table_row_' . $role['id'] }}">
+                                                    {{ $role['role_name'] }}
+                                                    @if ($is_owner)
+                                                        {!! $role['team_id'] == 0
+                                                            ? ''
+                                                            : '<span class="edit_role"><i class="fa-solid fa-pencil"></i></span> <span class="delete_role"><i class="fa-solid fa-trash"></i></span>' !!}
+                                                    @endif
+                                                </th>
                                             @endforeach
                                         @endif
                                     </tr>
@@ -48,7 +83,7 @@
                                                         @endphp
                                                         @if (!empty($role_permission))
                                                             @if ($role_permission['view_only'] == 1)
-                                                                <td><span class="check">View Only</span></td>
+                                                                <td><span class="">View Only</span></td>
                                                             @elseif ($role_permission['access'] == 1)
                                                                 <td><span class="check checked"></span></td>
                                                             @else
@@ -70,37 +105,59 @@
             </div>
         </div>
     </section>
-    <div class="modal fade step_form_popup " id="create_new_role" tabindex="-1" aria-labelledby="create_new_role"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="create_new_role">Create a custom role</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body" bis_skin_checked="1">
-                    <form class="step_form" action="">
-                        <label for="role_name">Role name</label>
-                        <input type="text" name="role_name">
-                        <div>
-                            @if ($permissions->isNotEmpty())
-                                @foreach ($permissions as $permission)
-                                    <div style="display: flex; align-items: flex-start;">
-                                        <input style="width: 25px; height: 25px; margin-right: 25px;" type="checkbox"
-                                            name="{{ $permission['permission_slug'] }}">
-                                        <label>{{ $permission['permission_name'] }}</label>
-                                    </div>
-                                @endforeach
-                            @endif
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <a class="btn btn-next">Create Role</a>
+    @if ($is_owner)
+        <div class="modal fade step_form_popup " id="create_new_role" tabindex="-1" aria-labelledby="create_new_role"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="create_new_role">Create a custom role</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body" bis_skin_checked="1">
+                        <form class="step_form">
+                            <label for="role_name">Role name</label>
+                            <input type="text" name="role_name" required>
+                            <div>
+                                @if ($permissions->isNotEmpty())
+                                    @foreach ($permissions as $permission)
+                                        <div class="row">
+                                            <div class="col-lg-6" style="display: flex; width: 390px;">
+                                                <input class="permission"
+                                                    style="width: 25px; height: 25px; margin-right: 25px;" type="checkbox"
+                                                    id="permission_{{ $permission['permission_slug'] }}"
+                                                    name="{{ $permission['permission_slug'] }}">
+                                                <label
+                                                    for="permission_{{ $permission['permission_slug'] }}">{{ $permission['permission_name'] }}</label>
+                                            </div>
+                                            <div class="col-lg-6" style="display: none; width: 390px;">
+                                                @if ($permission->allow_view_only == 1)
+                                                    <input type="radio"
+                                                        style="width: 25px; height: 25px; margin-right: 25px;"
+                                                        id="view_only_{{ $permission['permission_slug'] }}"
+                                                        class="view_only"
+                                                        name="view_only_{{ $permission['permission_slug'] }}">
+                                                    <label for="view_only_{{ $permission['permission_slug'] }}">View
+                                                        Only</label>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
+                            </div>
+                            <button type="submit" class="btn btn-next">Create Role</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
+    @if ($is_owner)
+        <script>
+            var customRoleRoute = "{{ route('customRole') }}";
+            var deleteRoleRoute = "{{ route('deleteRole', [':id']) }}";
+        </script>
+    @endif
 @endsection

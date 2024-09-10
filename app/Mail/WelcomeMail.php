@@ -35,10 +35,6 @@ class WelcomeMail extends Mailable
             ->subject('Please Verify Your Email Address')
             ->with([
                 'user' => $this->user,
-            ])
-            ->attach(public_path('assets/images/logo.png'), [
-                'as' => 'logo.png',
-                'mime' => 'image/png',
             ]);
     }
 }

@@ -58,7 +58,6 @@ class SeatController extends Controller
             /* Retrieve permissions and role permissions for manage and delete seat actions */
             $allow_manage_settings = $this->checkPermission($role->id, 'manage_seat_settings');
             $allow_delete_seat = $this->checkPermission($role->id, 'delete_seat');
-            $allow_delete_seat = true; //Only for test
 
             /* Check if the seat was found */
             if (!empty($seat)) {
@@ -296,7 +295,7 @@ class SeatController extends Controller
                 /* Retrieve Assigned seats */
                 $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat->id])
                     ->where('user_id', $user->id)
-                    ->firstOrFail();
+                    ->first();
 
                 /* Check that if seat is assigned or not */
                 if (!empty($assignedSeat)) {
@@ -325,7 +324,7 @@ class SeatController extends Controller
 
             /* Check if any seats were found and return the response */
             if (count($seats) > 0) {
-                return response()->json(['success' => true, 'seats' => $seats]);
+                return response()->json(['success' => true, 'seats' => $seats, 'is_verified' => empty(auth()->user()->email_verified_at)]);
             }
 
             /* Throw an exception if no seats were found */
@@ -339,24 +338,50 @@ class SeatController extends Controller
         }
     }
 
+    /**
+     * Retrieve seats with an associated account and group them by the 'im' connection ID.
+     *
+     * @return array The array of grouped account IDs, where each key is the 'im' connection ID 
+     * and the value is an array of 'account_id's.
+     */
     public function get_final_accounts()
     {
+        /* Fetch all seats where 'account_id' is not null from the SeatInfo model */
         $seats = SeatInfo::whereNotNull('account_id')->get();
+
+        /* Initialize an empty array to store the final account data */
         $final_accounts = [];
+
+        /* Instantiate the UnipileController, presumably for interacting with an external service */
         $uc = new UnipileController();
+
+        /* Iterate over each seat record to retrieve and process the associated account data */
         for ($i = 0; $i < count($seats); $i++) {
+            /* Create an associative array with 'account_id' for the current seat */
             $account_id = [
                 'account_id' => $seats[$i]['account_id'],
             ];
+
+            /* Use UnipileController to retrieve account data by passing the account_id as a request */
             $account = $uc->retrieve_an_account(new \Illuminate\Http\Request($account_id));
+
+            /* Convert the response to an array format (using getData(true) to get array data from response) */
             $account = $account->getData(true);
+
+            /* Check if the account's 'im' connection id already exists in the $final_accounts array */
             if (array_key_exists($account['account']['connection_params']['im']['id'], $final_accounts)) {
+                /* If it exists, append the current seat's account_id to the array for that 'im' connection id */
                 $final_accounts[$account['account']['connection_params']['im']['id']][] = $seats[$i]['account_id'];
             } else {
+                /* If it does not exist, initialize a new array for the 'im' connection id */
                 $final_accounts[$account['account']['connection_params']['im']['id']] = [];
+
+                /* Add the current seat's account_id to the newly created array */
                 $final_accounts[$account['account']['connection_params']['im']['id']][] = $seats[$i]['account_id'];
             }
         }
+
+        /* Return the populated final_accounts array */
         return $final_accounts;
     }
 }

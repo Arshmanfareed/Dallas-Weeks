@@ -1,5 +1,8 @@
 @extends('partials/master')
 @section('content')
+@if ($is_owner)
+    <script src="{{ asset('assets/js/team.js') }}"></script>
+@endif
     <section class="blacklist team_management">
         <div class="container-fluid">
             <div class="row">
@@ -7,14 +10,21 @@
                     <div class="filter_head_row d-flex">
                         <div class="cont">
                             <h3>Team Management</h3>
-                            <p>Invite team members and manage team permissions.</p>
+                            @if ($is_owner)
+                                <p>Invite team members and manage team permissions.</p>
+                            @else
+                                <p class="text-danger">You can not invite team members and manage team permissions.</p>
+                            @endif
                         </div>
-
                         <div class="filt_opt d-flex">
-                            <div class="add_btn ">
-                                <a href="javascript:;" class="" data-toggle="modal" data-target="#"><i
-                                        class="fa-solid fa-plus"></i></a>Add team member
-                            </div>
+                            @if ($is_owner)
+                                <div style="cursor: pointer;" class="add_btn " data-bs-toggle="modal"
+                                    data-bs-target="#invite_team_modal">
+                                    <a href="javascript:;" class="">
+                                        <i class="fa-solid fa-plus"></i></a>
+                                    Add team member
+                                </div>
+                            @endif
                             <select name="num" id="num">
                                 <option value="01">10</option>
                                 <option value="02">20</option>
@@ -33,7 +43,7 @@
                                         <i class="fa fa-search"></i>
                                     </button>
                                 </form>
-                                <a href="/team-rolesandpermission" class="roles_btn">Roles & permissions</a>
+                                <a href="{{ route('rolespermission') }}" class="roles_btn">Roles & permissions</a>
                             </div>
                         </div>
                     </div>
@@ -50,30 +60,51 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @for ($i = 0; $i < 5; $i++)
-                                        @php
-                                            $asset_id = $i + 1;
-                                            $asset = 'assets/img/acc_img' . $asset_id . '.png';
-                                        @endphp
+                                    @if ($team_members->isNotEmpty())
+                                        @foreach ($team_members as $team_member)
+                                            @foreach ($team_member->roles as $role)
+                                                <tr title="{{ empty(auth()->user()->email_verified_at) ? 'Verify your email first to view seat' : '' }}"
+                                                    style="opacity:{{ empty(auth()->user()->email_verified_at) ? 0.7 : 1 }};">
+                                                    <td>
+                                                        <div class="d-flex align-items-center"><img
+                                                                style="background: #000; border-radius: 50%;"
+                                                                src="{{ asset('assets/img/acc.png') }}"
+                                                                alt=""><strong>{{ $team_member->name }}</strong>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ $team_member->email }}</td>
+                                                    <td>{{ $role['role_name'] }}</td>
+                                                    @if (!empty($team_member->email_verified_at))
+                                                        <td><a style="cursor: {{ empty(auth()->user()->email_verified_at) ? 'auto' : 'pointer' }};"
+                                                                href="javascript:;"
+                                                                class="black_list_activate active">Active</a></td>
+                                                    @else
+                                                        <td><a style="cursor: {{ empty(auth()->user()->email_verified_at) ? 'auto' : 'pointer' }};"
+                                                                href="javascript:;"
+                                                                class="black_list_activate non_active">InActive</a></td>
+                                                    @endif
+                                                    <td>
+                                                        <a style="cursor: {{ empty(auth()->user()->email_verified_at) ? 'auto' : 'pointer' }};"
+                                                            href="javascript:;" type="button" class="setting setting_btn"
+                                                            id=""><i class="fa-solid fa-gear"></i></a>
+                                                        <ul class="setting_list">
+                                                            <li><a href="javascript:;">Edit</a></li>
+                                                            <li><a href="javascript:;">Delete</a></li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endforeach
+                                    @else
                                         <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center"><img src="{{ asset($asset) }}"
-                                                        alt=""><strong>John doe</strong></div>
-                                            </td>
-                                            <td>info@johndoe.com</td>
-                                            <td>Executive</td>
-                                            <td><a href="javascript:;" class="black_list_activate active">Active</a></td>
-                                            <td>
-                                                <a href="javascript:;" type="button" class="setting setting_btn"
-                                                    id="" data-bs-toggle="modal"
-                                                    data-bs-target="#invite_team_modal"><i class="fa-solid fa-gear"></i></a>
-                                                <!--  <ul class="setting_list">
-                                                        <li><a href="javascript:;">Edit</a></li>
-                                                        <li><a href="javascript:;">Delete</a></li>
-                                                    </ul> -->
+                                            <td colspan="8">
+                                                <div class="text-center text-danger"
+                                                    style="font-size: 25px; font-weight: bold; font-style: italic;">
+                                                    Not Found!
+                                                </div>
                                             </td>
                                         </tr>
-                                    @endfor
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -82,76 +113,129 @@
             </div>
         </div>
     </section>
-    <div class="modal fade create_sequence_modal invite_team_modal" id="invite_team_modal" tabindex="-1"
-        aria-labelledby="invite_team_modal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="sequance_modal">Invite a team member</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
-                            class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="modal-body">
-                    <form action="">
-                        <div class="row invite_modal_row">
-                            <div class="col-lg-6">
-                                <label for="name">Name</label>
-                                <input type="text" name="name" placeholder="Enter team member's name">
+    @if ($is_owner)
+        <div class="modal fade step_form_popup " id="create_new_role" tabindex="-1" aria-labelledby="create_new_role"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="create_new_role">Create a custom role</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body" bis_skin_checked="1">
+                        <form class="step_form">
+                            <label for="role_name">Role name</label>
+                            <input type="text" name="role_name" required>
+                            <div>
+                                @if ($permissions->isNotEmpty())
+                                    @foreach ($permissions as $permission)
+                                        <div class="row">
+                                            <div class="col-lg-6" style="display: flex; width: 390px;">
+                                                <input class="permission"
+                                                    style="width: 25px; height: 25px; margin-right: 25px;" type="checkbox"
+                                                    id="permission_{{ $permission['permission_slug'] }}"
+                                                    name="{{ $permission['permission_slug'] }}">
+                                                <label
+                                                    for="permission_{{ $permission['permission_slug'] }}">{{ $permission['permission_name'] }}</label>
+                                            </div>
+                                            <div class="col-lg-6" style="display: none; width: 390px;">
+                                                @if ($permission->allow_view_only == 1)
+                                                    <input type="radio"
+                                                        style="width: 25px; height: 25px; margin-right: 25px;"
+                                                        id="view_only_{{ $permission['permission_slug'] }}"
+                                                        class="view_only"
+                                                        name="view_only_{{ $permission['permission_slug'] }}">
+                                                    <label for="view_only_{{ $permission['permission_slug'] }}">View
+                                                        Only</label>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
                             </div>
-                            <div class="col-lg-6">
-                                <label for="email">Email</label>
-                                <input type="email" name="email" placeholder="Enter team member's email">
-                            </div>
-                            <span>Select one or more roles for your team member</span>
-                            <div class="col-lg-6">
-                                <div class="checkboxes">
-                                    <div class="check">
-                                        <input type="checkbox" id="verified" name="verified" checked="">
-                                        <label for="verified">Owner</label>
-                                    </div>
-                                    <div class="check">
-                                        <input type="checkbox" id="verified1" name="verified1" checked="">
-                                        <label for="verified1">Admin</label>
-                                    </div>
-                                    <div class="check">
-                                        <input type="checkbox" id="verified2" name="verified2" checked="">
-                                        <label for="verified2">Editor</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 add_col">
-                                <div class="d-flex justify-content-end">
-                                    <div class="add_btn">
-                                        <a href="javascript:;" class="" type="button" data-bs-toggle="modal"
-                                            data-bs-target="#contact_modal"><i class="fa-solid fa-plus"></i></a>Create
-                                        custom role
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="border_box">
-                                    <h6>Manage payment system</h6>
-                                    <p>This is a global option that enables access to invoices and adding seats.</p>
-                                    <div class="switch_box"><input type="checkbox" class="switch" id="switch0"><label
-                                            for="switch0">Toggle</label></div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="border_box">
-                                    <h6>Manage global blacklist</h6>
-                                    <p>This is a global option that enables managing the global blacklist on the team level.
-                                    </p>
-                                    <div class="switch_box"><input type="checkbox" class="switch" id="switch1"><label
-                                            for="switch1">Toggle</label></div>
-                                </div>
-                            </div>
-
-                            <a href="javascript:;" class="crt_btn">Invite member<i
-                                    class="fa-solid fa-arrow-right"></i></a>
-                        </div>
-                    </form>
+                            <button type="submit" class="btn btn-next">Create Role</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
+    @if ($is_owner)
+        <div class="modal fade create_sequence_modal invite_team_modal" id="invite_team_modal" tabindex="-1"
+            aria-labelledby="invite_team_modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="sequance_modal">Invite a team member</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
+                                class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="">
+                            <div class="row invite_modal_row">
+                                <div class="col-lg-6">
+                                    <label for="name">Name</label>
+                                    <input type="text" name="name" placeholder="Enter team member's name">
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="email">Email</label>
+                                    <input type="email" name="email" placeholder="Enter team member's email">
+                                </div>
+                                <span>Select one or more roles for your team member</span>
+                                <div class="col-lg-6">
+                                    <div class="checkboxes">
+                                        @if ($roles->isNotEmpty())
+                                            @foreach ($roles as $role)
+                                                <div class="check">
+                                                    <input class="roles" name="{{ 'role_' . $role['id'] }}" type="checkbox" name="verified">
+                                                    <label for="verified">{{ $role['role_name'] }}</label>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 add_col">
+                                    <div class="d-flex justify-content-end">
+                                        <div style="cursor: pointer;" class="add_btn" data-bs-toggle="modal" data-bs-target="#create_new_role">
+                                            <a href="javascript:;" class="" type="button"><i
+                                                    class="fa-solid fa-plus"></i></a>
+                                            Create custom role
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="border_box">
+                                        <h6>Manage payment system</h6>
+                                        <p>This is a global option that enables access to invoices and adding seats.</p>
+                                        <div class="switch_box"><input type="checkbox" class="switch"
+                                                id="switch0"><label for="switch0">Toggle</label></div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="border_box">
+                                        <h6>Manage global blacklist</h6>
+                                        <p>This is a global option that enables managing the global blacklist on the team
+                                            level.
+                                        </p>
+                                        <div class="switch_box"><input type="checkbox" class="switch"
+                                                id="switch1"><label for="switch1">Toggle</label></div>
+                                    </div>
+                                </div>
+
+                                <a href="javascript:;" class="crt_btn">Invite member<i
+                                        class="fa-solid fa-arrow-right"></i></a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+    @if ($is_owner)
+        <script>
+            var customRoleRoute = "{{ route('customRole') }}";
+        </script>
+    @endif
 @endsection
