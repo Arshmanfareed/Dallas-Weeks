@@ -30,6 +30,9 @@
     <script src="{{ asset('assets/js/custom_dashboard.js') }}"></script>
     <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
     <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.min.js"></script>
+
 
     @if (request()->is('accdashboard', 'report', 'leads'))
         <script src="{{ asset('assets/js/chart_query.js') }}"></script>
@@ -51,15 +54,20 @@
 </style>
 
 <body>
-    @if (request()->is('login', 'register'))
-    @else
+    @if (!request()->is('login', 'register'))
         @if (empty(auth()->user()->email_verified_at))
             <div style="margin: 0;border-radius: 0%;padding: 7px;"
                 class="alert-warning alert-dismissible fade show text-center" role="alert">
-                <a href="{{ route('resend_an_email') }}" class="custom_link">
-                    <strong><i style="color: #ecb25d" class="fa-solid fa-triangle-exclamation"></i></strong>
-                    Please confirm your email. Check your inbox and your spam folder. No email? Click here to Resend
-                    confirmation email
+                <form action="{{ route('resend_an_email') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="user_email" value="{{ auth()->user()->email }}">
+                    <button type="submit" class="custom_link"
+                        style="background: none; border: none; color: inherit; padding: 0; cursor: pointer;">
+                        <strong><i style="color: #ecb25d" class="fa-solid fa-triangle-exclamation"></i></strong>
+                        Please confirm your email. Check your inbox and your spam folder. No email? Click here to Resend
+                        confirmation email
+                    </button>
+                </form>
                 </a>
             </div>
         @endif
@@ -75,26 +83,30 @@
                 <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->url() === URL('blacklist') ? 'active' : '' }}"
-                                href="/blacklist">Blacklist</a>
+                            <a class="nav-link {{ request()->is('dashobard/teams/' . $team->id . '/blacklist') ? 'active' : '' }}"
+                                href="{{ route('global_blacklist', ['team_id' => $team->id]) }}"> Blacklist </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->url() === URL('team') ? 'active' : '' }}"
-                                href="/team">Team</a>
-                        </li>
+                        @if ($is_executive)
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('dashobard/teams/' . $team->id . '/team') ? 'active' : '' }}"
+                                    href="{{ route('getTeam', ['team_id' => $team->id]) }}"> Team </a>
+                            </li>
+                        @endif
                         <li class="nav-item">
                             <a class="nav-link {{ request()->url() === URL('invoice') ? 'active' : '' }}"
                                 href="/invoice">Invoice</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->url() === URL('roles-and-permission-setting') ? 'active' : '' }}"
-                                href="/roles-and-permission-setting">Settings</a>
-                        </li>
+                        @if ($is_executive)
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->url() === URL('roles-and-permission-setting') ? 'active' : '' }}"
+                                    href="/roles-and-permission-setting">Settings</a>
+                            </li>
+                        @endif
                     </ul>
                 </div>
                 <div class="right_nav">
                     <ul class="d-flex list-unstyled">
-                        <!-- <li><a href="/setting"><i class="fa-solid fa-gear"></i></a></li> -->
+                        <li><a href="/setting"><i class="fa-solid fa-gear"></i></a></li>
                         <li><a href="#"><i class="fa-solid fa-arrow-up-from-bracket"></i></a></li>
                         <li class="acc d-flex align-item-center">
                             <img src="{{ asset('/assets/img/acc.png') }}" alt="">
@@ -104,7 +116,7 @@
                             <span>{{ $user->name }}</span>
                             <a type="button" class="user_toggle" id=""><i
                                     class="fa-solid fa-chevron-down"></i></a>
-                            <ul class="user_toggle_list" style="display: none">
+                            <ul class="user_toggle_list" style="display: none;width: max-content;">
                                 <li><a href="{{ route('logout-user') }}"
                                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         <i class="fa-solid fa-right-from-bracket"></i> Logout</a>
@@ -113,7 +125,6 @@
                                         @csrf
                                     </form>
                                 </li>
-
                             </ul>
                         </li>
                         <li class="darkmode"><a href="javascript:;" id="darkModeToggle"><i

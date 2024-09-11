@@ -7,7 +7,7 @@
   <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item ">
-        <a class="nav-link" href="/blacklist">Blacklist </a>
+        <a class="nav-link" href="{{ route('global_blacklist') }}">Blacklist </a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/team">Team</a>

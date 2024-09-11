@@ -80,6 +80,8 @@
             margin-top: 30px;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{{ asset('assets/js/login.js') }}"></script>
 
     <body>
         <section class="login">
@@ -90,6 +92,17 @@
                             <h2>Welcome back to Networked</h2>
                             <h6>Log In to your account</h6>
                         </div>
+                        @if ($errors->has('mismatch_token'))
+                            <div class="alert alert-danger">
+                                {{ $errors->first('mismatch_token') }}
+                                <form action="{{ route('resend_an_email') }}" method="post">
+                                    @csrf
+                                    <input value="{{ session('email') }}" type="hidden" name="user_email">
+                                    <button type="submit" class="theme_btn" style="padding: 7px 20px; margin: 0;">Resend an
+                                        email</button>
+                                </form>
+                            </div>
+                        @endif
                         @if ($errors->has('error'))
                             <div class="alert alert-danger">
                                 {{ $errors->first('error') }}
@@ -104,7 +117,8 @@
                         <form action="" class="login_form" method="POST">
                             <div>
                                 <label for="email">Email address</label>
-                                <input value="{{ session('email') }}" type="email" id="email" name="email" placeholder="Enter your email" required>
+                                <input value="{{ session('email') }}" type="email" id="email" name="email"
+                                    placeholder="Enter your email" required>
                             </div>
                             <div class="pass">
                                 <label for="password">Password:</label>
@@ -120,11 +134,7 @@
                                     <!-- <a href="#">Forgot password?</a> -->
                                 </span>
                             </div>
-                            <div>
-                                <a href="{{ route('dashobardz') }}" style="display: none;"
-                                    class="theme_btn login_btn">Login</a>
-                                <!-- <button style="display: none;" class="theme_btn login_btn">Login</button> -->
-                            </div>
+                            <div class="btn_div"></div>
                         </form>
                         <div class="regist">
                             Don't have an account? <a href="{{ route('register') }}">Register</a>
@@ -158,57 +168,14 @@
                         </form>
                     </div>
                     <!-- <div class="modal-footer">
-                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                                                                                                                                                                  </div> -->
+                                                                                                                                                                                                                                                                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                                                                                            <button type="button" class="btn btn-primary">Save changes</button>
+                                                                                                                                                                                                                                                                                                                          </div> -->
                 </div>
             </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
         <script>
-            var credentialAjax = null;
-            $(document).ready(function() {
-                $('#password').on('input', credential_check);
-                $('#email').on('input', credential_check);
-
-                function credential_check() {
-                    if (credentialAjax) {
-                        credentialAjax.abort();
-                        credentialAjax = null;
-                    }
-                    var email = $('#email').val();
-                    var password = $('#password').val();
-                    credentialAjax = $.ajax({
-                        type: 'POST',
-                        url: '{{ route('checkCredentials') }}',
-                        data: {
-                            '_token': '{{ csrf_token() }}',
-                            'email': email,
-                            'password': password
-                        },
-                        beforeSend: function() {
-                            $('#passwordError').html('');
-                            $('#successMessage').html('');
-                        },
-                        success: function(response, textStatus, xhr) {
-                            if (response.success) {
-                                $('#successMessage').html(response.message);
-                                $('.login_btn').show();
-                            } else {
-                                $('#passwordError').html(response.error);
-                                $('.login_btn').hide();
-                            }
-                        },
-                        error: function(xhr, textStatus, error) {
-                            $('#passwordError').html('An unexpected error occurred.');
-                            $('#successMessage').html('');
-                            $('.login_btn').hide();
-                        },
-                    });
-                }
-            });
+            var checkCredentialsRoute = "{{ route('checkCredentials') }}";
         </script>
-
     </body>
 @endsection

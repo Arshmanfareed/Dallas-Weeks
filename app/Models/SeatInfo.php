@@ -9,5 +9,16 @@ class SeatInfo extends Model
 {
     use HasFactory;
     protected $table = 'seat_info';
-    protected $guarded = [];
+
+    protected $fillable = [
+        'username',
+        'email',
+        'phone_number',
+        'profile_summary',
+        'linkedin',
+        'twitter',
+        'github',
+        'status',
+        'account_id',
+    ];
 }

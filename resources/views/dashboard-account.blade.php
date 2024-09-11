@@ -103,8 +103,10 @@
                     <div class="dashboard_cont">
                         <div class="row_filter d-flex align-items-center justify-content-between">
                             <div class="account d-flex align-items-center">
-                                <img src="{{ asset('assets/img/acc.png') }}" style="background-color: #000;"
-                                    alt=""><span>{{ $team['team_name'] }}</span>
+                                @if (!empty($team))
+                                    <img src="{{ asset('assets/img/acc.png') }}" alt="Team Image" class="team-image">
+                                    <span>{{ $team->name }}</span>
+                                @endif
                             </div>
                             <div class="form_add d-flex">
                                 <form action="/search" method="get" class="search-form">
@@ -113,7 +115,7 @@
                                         <i class="fa fa-search"></i>
                                     </button>
                                 </form>
-                                @if ($is_owner)
+                                @if ($is_executive)
                                     <div class="add_btn"
                                         style="opacity:{{ empty(auth()->user()->email_verified_at) ? 0.7 : 1 }}">
                                         @if (empty(auth()->user()->email_verified_at))
@@ -131,7 +133,6 @@
                                 @endif
                             </div>
                         </div>
-                        <hr>
                         <div class="row_table">
                             @if ($seats->isNotEmpty())
                                 <div class="add_account_div" style="width: 100%">
@@ -158,7 +159,7 @@
                                                         @endif
                                                         <td width="50%" class="text-left seat_table_data"
                                                             style="cursor: {{ empty(auth()->user()->email_verified_at) ? 'auto' : 'pointer' }};">
-                                                            {{ $seat['username'] }}
+                                                            {{ $seat['seat_info']['username'] }}
                                                         </td>
                                                         <td width="15%" class="connection_status">
                                                             @if ($seat['connected'])
@@ -186,7 +187,7 @@
                                         </table>
                                     </div>
                                 </div>
-                            @elseif ($is_owner)
+                            @elseif ($is_executive)
                                 <div class="add_account_div"
                                     style="opacity:{{ empty(auth()->user()->email_verified_at) ? 0.7 : 1 }}">
                                     <img src="{{ asset('assets/img/empty.png') }}" alt="">
@@ -227,7 +228,7 @@
             </div>
         </div>
     </section>
-    @if ($is_owner)
+    @if ($is_executive)
         <div class="modal fade step_form_popup" id="addaccount" tabindex="-1" role="dialog"
             aria-labelledby="addaccount" aria-hidden="true">
             <div class="modal-dialog" style="border-radius: 45px;">

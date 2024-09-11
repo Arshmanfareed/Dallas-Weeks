@@ -44,7 +44,7 @@
                 </tr>
                 <tr>
                     <td align="center" style="padding:10px 25px">
-                        <a href="{{ route('verify_an_Email', ['email' => $user->email]) }}"
+                        <a href="{{ route('verify_an_Email', ['email' => $user->email, 'token' => $user->remember_token]) }}"
                             style="display:inline-block;padding:15px 19px;background:#0080ff;color:white;text-decoration:none;border-radius:3px;font-size:15px">
                             Verify Email
                         </a>

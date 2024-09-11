@@ -27,6 +27,7 @@ use App\Http\Controllers\UnipileController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\SeatController;
 use App\Http\Controllers\TestController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,30 +50,34 @@ Route::get('/about', [HomeController::class, 'about']); //Done
 Route::get('/pricing', [HomeController::class, 'pricing']); //Done
 Route::get('/faq', [HomeController::class, 'faq']); //Done
 
-/* These are login and signup url which does not require any authentication */
+/* These are signup url which does not require any authentication */
 Route::get('/register', [RegisterController::class, 'register'])->name('register'); //Done
-Route::post('/register-user', [RegisterController::class, 'registerUser'])->name('register-user'); //Done
-Route::get('/resend_an_email', [RegisterController::class, 'resend_an_email'])->name('resend_an_email'); //Done
-Route::get('/verify_an_Email/{email}', [RegisterController::class, 'verifyAnEmail'])->name('verify_an_Email'); //Done
+Route::post('/register_user', [RegisterController::class, 'registerUser'])->name('register-user'); //Done
+Route::post('/resend_an_email', [RegisterController::class, 'resend_an_email'])->name('resend_an_email'); //Done
+Route::get('/verify_an_Email/{email}/{token}', [RegisterController::class, 'verifyAnEmail'])->name('verify_an_Email'); //Done
+
+/* These are login and signup url which does not require any authentication */
 Route::get('/login', [LoginController::class, 'login'])->name('login'); //Done
+Route::post('/logout', [LoginController::class, 'logoutUser'])->name('logout-user'); //Done
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials'); //Done
-Route::post('/add_email_account', [LinkedInController::class, 'addEmailToAccount'])->name('addEmailAccount'); //Need to check
-Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccount'])->name('createLinkAccount'); //Need to check
 
 /* These are for actions like campaign and leads */
 Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']); //Need to check
 Route::get('/delete_an_account', [LinkedInController::class, 'delete_an_account'])->name('delete_an_account'); //Need to check
 Route::get('/delete_an_email_account/{seat_email}', [LinkedInController::class, 'delete_an_email_account'])->name('delete_an_email_account'); //Need to check
+Route::post('/add_email_account', [LinkedInController::class, 'addEmailToAccount'])->name('addEmailAccount'); //Need to check
+Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccount'])->name('createLinkAccount'); //Need to check
 
 /* These are for dashboard which requires authentication */
 Route::middleware(['userAuth'])->group(function () {
     /* These are for dashboard which does not require seat_id in session */
-    Route::get('/dashboard', [DasboardController::class, 'dashboard'])->name('dashobardz'); //Done
-    Route::get('/blacklist', [BlacklistController::class, 'blacklist']); //Need to check
-    Route::get('/team', [TeamController::class, 'team']); //Need to check
+    Route::get('/dashobard', [DasboardController::class, 'to_dashobard'])->name('dashobardz'); //Done
+    Route::get('/dashobard/teams/{team_id}', [DasboardController::class, 'dashboard'])->name('dashobard'); //Done
+    Route::get('/dashobard/teams/{team_id}/blacklist', [BlacklistController::class, 'blacklist'])->name('global_blacklist'); //Need to check
+    Route::get('/dashobard/teams/{team_id}/team', [TeamController::class, 'team'])->name('getTeam'); //Need to check
     Route::get('/invoice', [InvoiceController::class, 'invoice']); //Need to check
     Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']); //Need to check
-    Route::prefix('seat')->group(function () {
+    Route::prefix('dashobard/seat')->group(function () {
         Route::get('/getSeatById/{id}', [SeatController::class, 'get_seat_by_id'])->name('getSeatById'); //Done
         Route::get('/deleteSeat/{id}', [SeatController::class, 'delete_seat'])->name('deleteSeat'); //Done
         Route::get('/updateName/{id}/{seat_name}', [SeatController::class, 'update_name'])->name('updateName'); //Done
@@ -87,7 +92,6 @@ Route::middleware(['userAuth'])->group(function () {
         Route::get('/delete/{id}', [RolespermissionController::class, 'delete_role'])->name('deleteRole');
     });
     Route::get('/team/team-rolesandpermission', [RolespermissionController::class, 'rolespermission'])->name('rolespermission'); //Need to check
-    Route::post('/logout', [LoginController::class, 'logoutUser'])->name('logout-user'); //Need to check
 
     /* This dashboard uses to update seat_id in session */
     Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash'); //Done

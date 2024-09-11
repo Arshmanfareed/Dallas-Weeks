@@ -5,16 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Roles extends Model
+class TeamMembers extends Model
 {
     use HasFactory;
 
-    protected $table = 'roles';
+    protected $table = 'team_members';
 
     protected $fillable = [
-        'role_name',
+        'user_id',
         'team_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function team()
     {
