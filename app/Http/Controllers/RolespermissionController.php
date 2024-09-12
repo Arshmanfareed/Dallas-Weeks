@@ -9,6 +9,7 @@ use Exception;
 use App\Models\AssignedSeats;
 use App\Models\Role_Permission;
 use App\Models\Teams;
+use App\Models\GlobalPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -24,6 +25,7 @@ class RolespermissionController extends Controller
         try {
             /* Retrieve the currently authenticated user */
             $user = Auth::user();
+            $team = Teams::find($user->team_id);
 
             /* Get the assigned seat for the user where seat_id is 0 (potentially indicating an unassigned seat or default seat) */
             $assignedSeat = AssignedSeats::where('seat_id', 0)
@@ -34,6 +36,23 @@ class RolespermissionController extends Controller
             $is_owner = false;
             if (!empty($assignedSeat)) {
                 $is_owner = true;
+            }
+            $is_manage_payment_system = false;
+            $manage_payment_system = GlobalPermission::where('permission_slug', 'manage_payment_system')
+                ->where('user_id', $user->id)
+                ->where('team_id', $team->id)
+                ->first();
+            if (!empty($manage_payment_system)) {
+                $is_manage_payment_system = true;
+            }
+
+            $is_manage_global_blacklist = false;
+            $manage_global_blacklist = GlobalPermission::where('permission_slug', 'manage_global_blacklist')
+                ->where('user_id', $user->id)
+                ->where('team_id', $team->id)
+                ->first();
+            if (!empty($manage_global_blacklist)) {
+                $is_manage_global_blacklist = true;
             }
 
             /* Fetch all available permissions */
@@ -49,6 +68,8 @@ class RolespermissionController extends Controller
                 'roles' => $roles,
                 'is_owner' => $is_owner,
                 'count_role' => Roles::where('team_id', $user['team_id'])->count(),
+                'is_manage_payment_system' => $is_manage_payment_system,
+                'is_manage_global_blacklist' => $is_manage_global_blacklist,
             ];
 
             /* Return the view with the prepared data */

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SeatInfo;
 use Exception;
+use App\Models\Role_Permission;
+use App\Models\Permissions;
 use App\Models\Teams;
 use Illuminate\Support\Facades\Log;
 use App\Models\AssignedSeats;
@@ -139,13 +141,20 @@ class MaindashboardController extends Controller
                     }
 
                     /* Prepare data to be passed to the main-dashboard view. */
-                    $data = [
-                        'title' => 'Account Dashboard',
-                        'campaigns' => $campaigns,
-                        'seat' => $seat,
-                        'chats' => $chats,
-                        'relations' => $relations
-                    ];
+                    $data['title'] = 'Account Dashboard';
+                    $data['campaigns'] = $campaigns;
+                    $data['seat'] = $seat;
+                    $data['chats'] = $chats;
+                    $data['relations'] = $relations;
+                    $data['manage_webhooks'] = $this->checkPermission($role->id, 'manage_webhooks');
+                    $data['manage_linkedin_integrations'] = $this->checkPermission($role->id, 'manage_linkedin_integrations');
+                    $data['manage_email_settings'] = $this->checkPermission($role->id, 'manage_email_settings');
+                    $data['manage_global_limits'] = $this->checkPermission($role->id, 'manage_global_limits');
+                    $data['manage_account_health'] = $this->checkPermission($role->id, 'manage_account_health');
+                    $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
+                    $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
+                    $data['manage_chat'] = $this->checkPermission($role->id, 'manage_chat');
+                    $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
 
                     /* Return the main-dashboard view with the fetched data. */
                     return view('main-dashboard', $data);
@@ -168,5 +177,36 @@ class MaindashboardController extends Controller
             /* Return a JSON response with the error message and a 404 status code */
             return redirect()->route('dashobardz')->withErrors(['error' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Check if the role has a given permission and return the access level.
+     *
+     * @param int $role_id The role ID to check.
+     * @param string $permission_slug The permission slug to check.
+     * @return bool|string True for full access, 'view_only' for view-only access, false for no access.
+     */
+    private function checkPermission($role_id, $permission_slug)
+    {
+        /* Fetch the permission for the given slug */
+        $permission = Permissions::where('permission_slug', 'like', '%' . $permission_slug . '%')->first();
+
+        if (!$permission) {
+            return false;
+        }
+
+        /* Fetch the role permission relation */
+        $rolePermission = Role_Permission::where('permission_id', $permission->id)
+            ->where('role_id', $role_id)
+            ->first();
+
+        /* Check access and return appropriate status */
+        if ($rolePermission && $rolePermission->view_only == 1) {
+            return 'view_only';
+        } elseif ($rolePermission && $rolePermission->access == 1) {
+            return true;
+        }
+
+        return false;
     }
 }

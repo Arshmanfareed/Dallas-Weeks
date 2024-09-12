@@ -13,15 +13,17 @@ class WelcomeMail extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+    public $password = null;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($user, $password = null)
     {
         $this->user = $user;
+        $this->password = $password;
     }
 
     /**
@@ -35,6 +37,7 @@ class WelcomeMail extends Mailable
             ->subject('Please Verify Your Email Address')
             ->with([
                 'user' => $this->user,
+                'password' => $this->password,
             ]);
     }
 }

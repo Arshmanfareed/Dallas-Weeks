@@ -1,8 +1,14 @@
 @extends('partials/master')
 @section('content')
-@if ($is_owner)
-    <script src="{{ asset('assets/js/team.js') }}"></script>
-@endif
+    @if ($is_owner)
+        <script src="{{ asset('assets/js/team.js') }}"></script>
+    @endif
+    <style>
+        .disabled {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+    </style>
     <section class="blacklist team_management">
         <div class="container-fluid">
             <div class="row">
@@ -113,6 +119,9 @@
             </div>
         </div>
     </section>
+    <script>
+        var seats = @json($seats);
+    </script>
     @if ($is_owner)
         <div class="modal fade step_form_popup " id="create_new_role" tabindex="-1" aria-labelledby="create_new_role"
             aria-hidden="true">
@@ -173,59 +182,70 @@
                                 class="fa-solid fa-xmark"></i></button>
                     </div>
                     <div class="modal-body">
-                        <form action="">
+                        <div class="model_alert alert alert-danger alert-dismissible fade show" style="display: none;"
+                            role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form class="invite_form">
+                            <input type="hidden" name="team_id" value="{{ $team->id }}">
                             <div class="row invite_modal_row">
                                 <div class="col-lg-6">
                                     <label for="name">Name</label>
-                                    <input type="text" name="name" placeholder="Enter team member's name">
+                                    <input type="text" name="name" placeholder="Enter team member's name" required>
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="email">Email</label>
-                                    <input type="email" name="email" placeholder="Enter team member's email">
+                                    <input type="email" id="invite_email" name="invite_email"
+                                        placeholder="Enter team member's email" required>
                                 </div>
-                                <span>Select one or more roles for your team member</span>
-                                <div class="col-lg-6">
-                                    <div class="checkboxes">
-                                        @if ($roles->isNotEmpty())
-                                            @foreach ($roles as $role)
+                                <span>Select one role for your team member</span>
+                                <div class="col-lg-6 edit_able disabled">
+                                    @if ($roles->isNotEmpty())
+                                        @foreach ($roles as $role)
+                                            <div class="checkboxes">
                                                 <div class="check">
-                                                    <input class="roles" name="{{ 'role_' . $role['id'] }}" type="checkbox" name="verified">
-                                                    <label for="verified">{{ $role['role_name'] }}</label>
+                                                    <input value="{{ 'role_' . $role['id'] }}" name="role"
+                                                        type="checkbox">
+                                                    <label class="roles"
+                                                        for="{{ 'role_' . $role['id'] }}">{{ $role['role_name'] }}</label>
                                                 </div>
-                                            @endforeach
-                                        @endif
-                                    </div>
+                                            </div>
+                                        @endforeach
+                                    @endif
                                 </div>
-                                <div class="col-lg-6 add_col">
+                                <div class="col-lg-6 add_col edit_able disabled">
                                     <div class="d-flex justify-content-end">
-                                        <div style="cursor: pointer;" class="add_btn" data-bs-toggle="modal" data-bs-target="#create_new_role">
+                                        <div style="cursor: pointer;" class="add_btn" data-bs-toggle="modal"
+                                            data-bs-target="#create_new_role">
                                             <a href="javascript:;" class="" type="button"><i
                                                     class="fa-solid fa-plus"></i></a>
                                             Create custom role
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-6 edit_able disabled">
                                     <div class="border_box">
                                         <h6>Manage payment system</h6>
                                         <p>This is a global option that enables access to invoices and adding seats.</p>
-                                        <div class="switch_box"><input type="checkbox" class="switch"
-                                                id="switch0"><label for="switch0">Toggle</label></div>
+                                        <div class="switch_box"><input type="checkbox" name="manage_payment_system"
+                                                class="switch" id="switch0"><label for="switch0">Toggle</label></div>
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-6 edit_able disabled">
                                     <div class="border_box">
                                         <h6>Manage global blacklist</h6>
                                         <p>This is a global option that enables managing the global blacklist on the team
                                             level.
                                         </p>
-                                        <div class="switch_box"><input type="checkbox" class="switch"
-                                                id="switch1"><label for="switch1">Toggle</label></div>
+                                        <div class="switch_box"><input type="checkbox" name="manage_global_blacklist"
+                                                class="switch" id="switch1"><label for="switch1">Toggle</label></div>
                                     </div>
                                 </div>
-
-                                <a href="javascript:;" class="crt_btn">Invite member<i
-                                        class="fa-solid fa-arrow-right"></i></a>
+                                <button type="submit" class="crt_btn edit_able disabled manage_member">
+                                    Invite member <i class="fa-solid fa-arrow-right"></i>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -236,6 +256,7 @@
     @if ($is_owner)
         <script>
             var customRoleRoute = "{{ route('customRole') }}";
+            var teamMemeberRoute = "{{ route('add_team_member') }}";
         </script>
     @endif
 @endsection

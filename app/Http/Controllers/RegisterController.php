@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\WelcomeMail;
 use App\Models\AssignedSeats;
+use App\Models\GlobalPermission;
 use App\Models\Roles;
 use App\Models\Teams;
 use App\Models\User;
@@ -94,6 +95,24 @@ class RegisterController extends Controller
                 'seat_id' => 0,
             ]);
 
+            /* Create a new manage payment system for the user */
+            $manage_payment_system = GlobalPermission::create([
+                'permission_name' => 'Manage payment system',
+                'permission_slug' => 'manage_payment_system',
+                'user_id' => $user->id,
+                'team_id' => $team->id,
+                'access' => 1,
+            ]);
+
+            /* Create a new manage global blacklist for the user */
+            $manage_global_blacklist = GlobalPermission::create([
+                'permission_name' => 'Manage global blacklist',
+                'permission_slug' => 'manage_global_blacklist',
+                'user_id' => $user->id,
+                'team_id' => $team->id,
+                'access' => 1,
+            ]);
+
             /* Commit the transaction */
             DB::commit();
 
@@ -115,6 +134,12 @@ class RegisterController extends Controller
             }
             if (!empty($team) && !empty($team->id)) {
                 $team->delete();
+            }
+            if (!empty($manage_payment_system) && !empty($manage_payment_system->id)) {
+                $manage_payment_system->delete();
+            }
+            if (!empty($manage_global_blacklist) && !empty($manage_global_blacklist->id)) {
+                $manage_global_blacklist->delete();
             }
 
             /* Log the exception message for debugging */

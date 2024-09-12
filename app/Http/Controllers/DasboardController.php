@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssignedSeats;
+use App\Models\GlobalPermission;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SeatInfo;
 use App\Models\Teams;
@@ -44,6 +45,24 @@ class DasboardController extends Controller
             $is_owner = false;
             if (!empty($assignedSeat)) {
                 $is_owner = true;
+            }
+
+            $is_manage_payment_system = false;
+            $manage_payment_system = GlobalPermission::where('permission_slug', 'manage_payment_system')
+                ->where('user_id', $user->id)
+                ->where('team_id', $team->id)
+                ->first();
+            if (!empty($manage_payment_system)) {
+                $is_manage_payment_system = true;
+            }
+
+            $is_manage_global_blacklist = false;
+            $manage_global_blacklist = GlobalPermission::where('permission_slug', 'manage_global_blacklist')
+                ->where('user_id', $user->id)
+                ->where('team_id', $team->id)
+                ->first();
+            if (!empty($manage_global_blacklist)) {
+                $is_manage_global_blacklist = true;
             }
 
             /* Process seats */
@@ -88,6 +107,8 @@ class DasboardController extends Controller
                 'team' => $team,
                 'seats' => $seats,
                 'is_owner' => $is_owner,
+                'is_manage_payment_system' => $is_manage_payment_system,
+                'is_manage_global_blacklist' => $is_manage_global_blacklist,
             ];
 
             /* Return the view with the prepared data */

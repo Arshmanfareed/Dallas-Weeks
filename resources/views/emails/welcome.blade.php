@@ -52,6 +52,11 @@
                 </tr>
             </table>
         </div>
+        @if ($password)
+            <div>
+                Temperoray Password: {{ $password }}
+            </div>
+        @endif
         <div
             style="max-width:640px;margin:20px auto;text-align:center;color:#99aab5;font-family:Arial;font-size:12px;padding:26px;">
             Sent by Networked • <a href="{{ url('/') }}" style="color:#1eb0f4;text-decoration:none">Check our

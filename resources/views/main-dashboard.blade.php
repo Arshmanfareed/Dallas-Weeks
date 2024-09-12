@@ -77,35 +77,43 @@
                                         src="{{ asset('assets/img/settings.svg') }}" alt=""></a>
                             </div>
                             <div class="campaign_data">
-                                @if ($campaigns->isNotEmpty())
-                                    @foreach ($campaigns as $campaign)
-                                        <ul class="campaign_list" id="{{ 'campaign_list_' . $campaign['id'] }}">
-                                            <li>{{ $campaign['campaign_name'] }}</li>
-                                            <li>{{ $campaign['lead_count'] }}</li>
-                                            <li><a href="javascript:;" class="campaign_stat">48%</a></li>
-                                            <li><a href="javascript:;" class="campaign_stat down">23%</a></li>
-                                            <li>
-                                                <div class="switch_box">
-                                                    @if ($campaign['is_active'] == 1)
-                                                        <input type="checkbox" class="switch"
-                                                            id="switch{{ $campaign['id'] }}" checked />
-                                                    @else
-                                                        <input type="checkbox" class="switch"
-                                                            id="switch{{ $campaign['id'] }}" />
-                                                    @endif
-                                                    <label for="switch{{ $campaign['id'] }}">Toggle</label>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    @endforeach
-                                    <a class="get_more_label" href="{{ route('campaigns') }}" bis_skin_checked="1">
-                                        More Campaigns<i class="fa-solid fa-arrow-right"></i>
-                                    </a>
+                                @if ($manage_campaigns == true || $manage_campaigns == 'view_only')
+                                    @if ($campaigns->isNotEmpty())
+                                        @foreach ($campaigns as $campaign)
+                                            <ul class="campaign_list" id="{{ 'campaign_list_' . $campaign['id'] }}">
+                                                <li>{{ $campaign['campaign_name'] }}</li>
+                                                <li>{{ $campaign['lead_count'] }}</li>
+                                                <li><a href="javascript:;" class="campaign_stat">48%</a></li>
+                                                <li><a href="javascript:;" class="campaign_stat down">23%</a></li>
+                                                <li>
+                                                    <div class="switch_box">
+                                                        @if ($campaign['is_active'] == 1)
+                                                            <input type="checkbox" class="switch"
+                                                                id="switch{{ $campaign['id'] }}" checked />
+                                                        @else
+                                                            <input type="checkbox" class="switch"
+                                                                id="switch{{ $campaign['id'] }}" />
+                                                        @endif
+                                                        <label for="switch{{ $campaign['id'] }}">Toggle</label>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        @endforeach
+                                        <a class="get_more_label" href="{{ route('campaigns') }}" bis_skin_checked="1">
+                                            More Campaigns<i class="fa-solid fa-arrow-right"></i>
+                                        </a>
+                                    @else
+                                        <div class="campaign_list" style="display: block; cursor: auto;">
+                                            <div class="text-center text-danger"
+                                                style="font-size: 22px; font-weight: bold; font-style: italic;">
+                                                Campaign Not Found!
+                                            </div>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="campaign_list" style="display: block; cursor: auto;">
-                                        <div class="text-center text-danger"
-                                            style="font-size: 22px; font-weight: bold; font-style: italic;">
-                                            Campaign Not Found!
+                                        <div class="text-center text-danger" style="font-size: 22px; font-style: italic;">
+                                            You can not access Campaigns
                                         </div>
                                     </div>
                                 @endif
@@ -119,37 +127,49 @@
                                         src="{{ asset('assets/img/settings.svg') }}" alt=""></a>
                             </div>
                             <div class="campaign_data">
-                                @if (!empty($chats))
-                                    @foreach ($chats as $chat)
-                                        @php
-                                            $disable_chat = 'false';
-                                            if ($chat['read_only'] || in_array('reply', $chat['disabledFeatures'])) {
-                                                $disable_chat = 'true';
-                                            }
-                                        @endphp
-                                        <ul class="message_list chat-tab" id="{{ $chat['id'] }}"
-                                            data-profile="{{ $chat['attendee_provider_id'] }}"
-                                            data-disable="{{ $disable_chat }}">
-                                            <li class="skel_profile">
-                                                <img src="{{ asset('assets/img/acc.png') }}" alt="" class="skel_profile_img">
-                                                <a href="" class="skel_profile_name"></a>
-                                            </li>
-                                            <li class="col-lg-6">
-                                                <p class="skel_message"></p>
-                                            </li>
-                                            <li>
-                                                <a href="javascript:;"><i class="fa-brands fa-linkedin"></i></a>
-                                            </li>
-                                        </ul>
-                                    @endforeach
-                                    <a class="get_more_label" href="{{ route('dash-messages') }}" bis_skin_checked="1">
-                                        More Messages<i class="fa-solid fa-arrow-right"></i>
-                                    </a>
+                                @if ($manage_chat == true || $manage_chat == 'view_only')
+                                    @if (!empty($chats))
+                                        @foreach ($chats as $chat)
+                                            @php
+                                                $disable_chat = 'false';
+                                                if (
+                                                    $chat['read_only'] ||
+                                                    in_array('reply', $chat['disabledFeatures'])
+                                                ) {
+                                                    $disable_chat = 'true';
+                                                }
+                                            @endphp
+                                            <ul class="message_list chat-tab" id="{{ $chat['id'] }}"
+                                                data-profile="{{ $chat['attendee_provider_id'] }}"
+                                                data-disable="{{ $disable_chat }}">
+                                                <li class="skel_profile">
+                                                    <img src="{{ asset('assets/img/acc.png') }}" alt=""
+                                                        class="skel_profile_img">
+                                                    <a href="" class="skel_profile_name"></a>
+                                                </li>
+                                                <li class="col-lg-6">
+                                                    <p class="skel_message"></p>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;"><i class="fa-brands fa-linkedin"></i></a>
+                                                </li>
+                                            </ul>
+                                        @endforeach
+                                        <a class="get_more_label" href="{{ route('dash-messages') }}" bis_skin_checked="1">
+                                            More Messages<i class="fa-solid fa-arrow-right"></i>
+                                        </a>
+                                    @else
+                                        <div class="campaign_list" style="display: block; cursor: auto;">
+                                            <div class="text-center text-danger"
+                                                style="font-size: 22px; font-weight: bold; font-style: italic;">
+                                                Message Not Found!
+                                            </div>
+                                        </div>
+                                    @endif
                                 @else
-                                <div class="campaign_list" style="display: block; cursor: auto;">
-                                        <div class="text-center text-danger"
-                                            style="font-size: 22px; font-weight: bold; font-style: italic;">
-                                            Message Not Found!
+                                    <div class="campaign_list" style="display: block; cursor: auto;">
+                                        <div class="text-center text-danger" style="font-size: 22px; font-style: italic;">
+                                            You can not access Chats
                                         </div>
                                     </div>
                                 @endif
