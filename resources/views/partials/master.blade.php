@@ -77,22 +77,22 @@
                         @if ($is_manage_global_blacklist)
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->url() === URL('blacklist') ? 'active' : '' }}"
-                                    href="/blacklist">Blacklist</a>
+                                    href="{{ route('global_blacklist') }}">Blacklist</a>
                             </li>
                         @endif
                         <li class="nav-item">
                             <a class="nav-link {{ request()->url() === URL('team') ? 'active' : '' }}"
-                                href="/team">Team</a>
+                                href="{{ route('team') }}">Team</a>
                         </li>
                         @if ($is_manage_payment_system)
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->url() === URL('invoice') ? 'active' : '' }}"
-                                    href="/invoice">Invoice</a>
+                                    href="{{ route('global_invoice') }}">Invoice</a>
                             </li>
                         @endif
                         <li class="nav-item">
                             <a class="nav-link {{ request()->url() === URL('roles-and-permission-setting') ? 'active' : '' }}"
-                                href="/roles-and-permission-setting">Settings</a>
+                                href="{{ route('settingrolespermission') }}">Settings</a>
                         </li>
                     </ul>
                 </div>

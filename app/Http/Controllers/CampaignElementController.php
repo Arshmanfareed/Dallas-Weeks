@@ -54,36 +54,27 @@ class CampaignElementController extends Controller
             $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat->id])
                 ->where('user_id', $user->id)
                 ->first();
+            /* Get the user's role based on the assigned seat */
+            $role = Roles::find($assignedSeat->role_id);
 
-            if (!empty($assignedSeat)) {
-                /* Get the user's role based on the assigned seat */
-                $role = Roles::find($assignedSeat->role_id);
-
-                $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
-                if ($data['manage_campaigns'] == true || $data['manage_campaigns'] == 'view_only') {
-                    $data['manage_webhooks'] = $this->checkPermission($role->id, 'manage_webhooks');
-                    $data['manage_linkedin_integrations'] = $this->checkPermission($role->id, 'manage_linkedin_integrations');
-                    $data['manage_email_settings'] = $this->checkPermission($role->id, 'manage_email_settings');
-                    $data['manage_global_limits'] = $this->checkPermission($role->id, 'manage_global_limits');
-                    $data['manage_account_health'] = $this->checkPermission($role->id, 'manage_account_health');
-                    $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
-                    $data['manage_chat'] = $this->checkPermission($role->id, 'manage_chat');
-                    $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
-                    $elements = CampaignElement::where('element_slug', $slug)->first();
-                    if ($elements) {
-                        $properties = ElementProperties::where('element_id', $elements->id)->get();
-                        if ($properties->isNotEmpty()) {
-                            return response()->json(['success' => true, 'properties' => $properties]);
-                        } else {
-                            return response()->json(['success' => false, 'message' => 'No Properties Found']);
-                        }
-                    }
+            $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
+            $data['manage_webhooks'] = $this->checkPermission($role->id, 'manage_webhooks');
+            $data['manage_linkedin_integrations'] = $this->checkPermission($role->id, 'manage_linkedin_integrations');
+            $data['manage_email_settings'] = $this->checkPermission($role->id, 'manage_email_settings');
+            $data['manage_global_limits'] = $this->checkPermission($role->id, 'manage_global_limits');
+            $data['manage_account_health'] = $this->checkPermission($role->id, 'manage_account_health');
+            $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
+            $data['manage_chat'] = $this->checkPermission($role->id, 'manage_chat');
+            $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
+            $elements = CampaignElement::where('element_slug', $slug)->first();
+            if ($elements) {
+                $properties = ElementProperties::where('element_id', $elements->id)->get();
+                if ($properties->isNotEmpty()) {
+                    return response()->json(['success' => true, 'properties' => $properties]);
+                } else {
+                    return response()->json(['success' => false, 'message' => 'No Properties Found']);
                 }
-                /* If the user does not have permission, throw an exception */
-                throw new Exception('You can not add campaigns', 403);
             }
-            /* If the user does not have permission, throw an exception */
-            throw new Exception('You can not add campaigns', 403);
         } catch (Exception $e) {
             Log::info($e);
             return redirect()->route('acc_dash')->withErrors(['error' => $e->getMessage()]);
@@ -109,83 +100,74 @@ class CampaignElementController extends Controller
             $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat->id])
                 ->where('user_id', $user->id)
                 ->first();
+            /* Get the user's role based on the assigned seat */
+            $role = Roles::find($assignedSeat->role_id);
 
-            if (!empty($assignedSeat)) {
-                /* Get the user's role based on the assigned seat */
-                $role = Roles::find($assignedSeat->role_id);
-
-                $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
-                if ($data['manage_campaigns'] == true || $data['manage_campaigns'] == 'view_only') {
-                    $data['manage_webhooks'] = $this->checkPermission($role->id, 'manage_webhooks');
-                    $data['manage_linkedin_integrations'] = $this->checkPermission($role->id, 'manage_linkedin_integrations');
-                    $data['manage_email_settings'] = $this->checkPermission($role->id, 'manage_email_settings');
-                    $data['manage_global_limits'] = $this->checkPermission($role->id, 'manage_global_limits');
-                    $data['manage_account_health'] = $this->checkPermission($role->id, 'manage_account_health');
-                    $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
-                    $data['manage_chat'] = $this->checkPermission($role->id, 'manage_chat');
-                    $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
-                    DB::beginTransaction();
-                    $campaign = null;
-                    try {
-                        $user_id = Auth::user()->id;
-                        $seat_id = session('seat_id');
-                        $data = $request->all();
-                        $final_array = $data['final_array'];
-                        $final_data = $data['final_data'];
-                        $settings = $data['settings'];
-                        $img_path = $data['img_url'];
-                        $oneMinuteAgo = Carbon::now()->subMinute();
-                        $existing_campaign = Campaign::where('campaign_name', $settings['campaign_name'])
-                            ->where('user_id', $user_id)
-                            ->where('seat_id', $seat_id)
-                            ->where('created_at', '>=', $oneMinuteAgo)
-                            ->first();
-                        if ($existing_campaign) {
-                            $request->session()->flash('success', 'Campaign successfully saved!');
-                            return response()->json(['success' => true]);
-                        }
-                        $campaign = new Campaign([
-                            'campaign_name' => $settings['campaign_name'],
-                            'campaign_type' => $settings['campaign_type'],
-                            'campaign_url' => $settings['campaign_url'],
-                            'campaign_connection' => ($settings['campaign_type'] != 'import' && $settings['campaign_type'] != 'recruiter' && $settings['campaign_type'] != 'leads_list') ? $settings['connections'] : 'o',
-                            'user_id' => $user_id,
-                            'seat_id' => $seat_id,
-                            'modified_date' => now()->format('Y-m-d'),
-                            'start_date' => now()->format('Y-m-d'),
-                            'end_date' => now()->format('Y-m-d'),
-                            'img_path' => $img_path
-                        ]);
+            $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
+            $data['manage_webhooks'] = $this->checkPermission($role->id, 'manage_webhooks');
+            $data['manage_linkedin_integrations'] = $this->checkPermission($role->id, 'manage_linkedin_integrations');
+            $data['manage_email_settings'] = $this->checkPermission($role->id, 'manage_email_settings');
+            $data['manage_global_limits'] = $this->checkPermission($role->id, 'manage_global_limits');
+            $data['manage_account_health'] = $this->checkPermission($role->id, 'manage_account_health');
+            $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
+            $data['manage_chat'] = $this->checkPermission($role->id, 'manage_chat');
+            $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
+            DB::beginTransaction();
+            $campaign = null;
+            try {
+                $user_id = Auth::user()->id;
+                $seat_id = session('seat_id');
+                $data = $request->all();
+                $final_array = $data['final_array'];
+                $final_data = $data['final_data'];
+                $settings = $data['settings'];
+                $img_path = $data['img_url'];
+                $oneMinuteAgo = Carbon::now()->subMinute();
+                $existing_campaign = Campaign::where('campaign_name', $settings['campaign_name'])
+                    ->where('user_id', $user_id)
+                    ->where('seat_id', $seat_id)
+                    ->where('created_at', '>=', $oneMinuteAgo)
+                    ->first();
+                if ($existing_campaign) {
+                    $request->session()->flash('success', 'Campaign successfully saved!');
+                    return response()->json(['success' => true]);
+                }
+                $campaign = new Campaign([
+                    'campaign_name' => $settings['campaign_name'],
+                    'campaign_type' => $settings['campaign_type'],
+                    'campaign_url' => $settings['campaign_url'],
+                    'campaign_connection' => ($settings['campaign_type'] != 'import' && $settings['campaign_type'] != 'recruiter' && $settings['campaign_type'] != 'leads_list') ? $settings['connections'] : 'o',
+                    'user_id' => $user_id,
+                    'seat_id' => $seat_id,
+                    'modified_date' => now()->format('Y-m-d'),
+                    'start_date' => now()->format('Y-m-d'),
+                    'end_date' => now()->format('Y-m-d'),
+                    'img_path' => $img_path
+                ]);
+                $campaign->save();
+                if (!empty($settings['campaign_url_hidden'])) {
+                    $imported_lead = ImportedLeads::where('user_id', $user_id)
+                        ->where('file_path', $settings['campaign_url_hidden'])
+                        ->first();
+                    if (!empty($imported_lead)) {
+                        $imported_lead->update(['campaign_id' => $campaign->id]);
+                        $campaign['campaign_url'] = $imported_lead['file_path'];
                         $campaign->save();
-                        if (!empty($settings['campaign_url_hidden'])) {
-                            $imported_lead = ImportedLeads::where('user_id', $user_id)
-                                ->where('file_path', $settings['campaign_url_hidden'])
-                                ->first();
-                            if (!empty($imported_lead)) {
-                                $imported_lead->update(['campaign_id' => $campaign->id]);
-                                $campaign['campaign_url'] = $imported_lead['file_path'];
-                                $campaign->save();
-                            }
-                        }
-                        $this->saveSettings($settings, $campaign->id, $user_id);
-                        $this->saveCampaignElements($final_array, $final_data, $campaign->id, $user_id);
-                        $this->createInitialCampaignAction($campaign->id);
-                        DB::commit();
-                        $request->session()->flash('success', 'Campaign successfully saved!');
-                        return response()->json(['success' => true]);
-                    } catch (\Exception $e) {
-                        DB::rollBack();
-                        if ($campaign !== null) {
-                            $this->deleteCampaignData($campaign->id);
-                        }
-                        return response()->json(['success' => false, 'message' => 'Campaign save unsuccesfull']);
                     }
                 }
-                /* If the user does not have permission, throw an exception */
-                throw new Exception('You can not add campaigns', 403);
+                $this->saveSettings($settings, $campaign->id, $user_id);
+                $this->saveCampaignElements($final_array, $final_data, $campaign->id, $user_id);
+                $this->createInitialCampaignAction($campaign->id);
+                DB::commit();
+                $request->session()->flash('success', 'Campaign successfully saved!');
+                return response()->json(['success' => true]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                if ($campaign !== null) {
+                    $this->deleteCampaignData($campaign->id);
+                }
+                return response()->json(['success' => false, 'message' => 'Campaign save unsuccesfull']);
             }
-            /* If the user does not have permission, throw an exception */
-            throw new Exception('You can not add campaigns', 403);
         } catch (Exception $e) {
             Log::info($e);
             return redirect()->route('acc_dash')->withErrors(['error' => $e->getMessage()]);
@@ -363,30 +345,21 @@ class CampaignElementController extends Controller
             $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat->id])
                 ->where('user_id', $user->id)
                 ->first();
+            /* Get the user's role based on the assigned seat */
+            $role = Roles::find($assignedSeat->role_id);
 
-            if (!empty($assignedSeat)) {
-                /* Get the user's role based on the assigned seat */
-                $role = Roles::find($assignedSeat->role_id);
-
-                $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
-                if ($data['manage_campaigns'] == true || $data['manage_campaigns'] == 'view_only') {
-                    $properties = UpdatedCampaignProperties::where('element_id', $element_id)->get();
-                    if ($properties->isNotEmpty()) {
-                        foreach ($properties as $property) {
-                            $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
-                        }
-                        return response()->json(['success' => true, 'properties' => $properties]);
-                    } else {
-                        $element = CampaignElement::where('element_slug', $this->remove_prefix($element_id))->first();
-                        $properties = ElementProperties::where('element_id', $element->id)->get();
-                        return response()->json(['success' => false, 'properties' => $properties]);
-                    }
+            $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
+            $properties = UpdatedCampaignProperties::where('element_id', $element_id)->get();
+            if ($properties->isNotEmpty()) {
+                foreach ($properties as $property) {
+                    $property['original_properties'] = ElementProperties::where('id', $property->property_id)->first();
                 }
-                /* If the user does not have permission, throw an exception */
-                throw new Exception('You can not add campaigns', 403);
+                return response()->json(['success' => true, 'properties' => $properties]);
+            } else {
+                $element = CampaignElement::where('element_slug', $this->remove_prefix($element_id))->first();
+                $properties = ElementProperties::where('element_id', $element->id)->get();
+                return response()->json(['success' => false, 'properties' => $properties]);
             }
-            /* If the user does not have permission, throw an exception */
-            throw new Exception('You can not add campaigns', 403);
         } catch (Exception $e) {
             Log::info($e);
             return redirect()->route('acc_dash')->withErrors(['error' => $e->getMessage()]);

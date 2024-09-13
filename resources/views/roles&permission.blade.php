@@ -106,8 +106,8 @@
         </div>
     </section>
     @if ($is_owner)
-        <div class="modal fade step_form_popup " id="create_new_role" tabindex="-1" aria-labelledby="create_new_role"
-            aria-hidden="true">
+        <div class="modal fade create_sequence_modal step_form_popup invite_team_modal " id="create_new_role" tabindex="-1"
+            aria-labelledby="create_new_role" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -117,14 +117,14 @@
                         </button>
                     </div>
                     <div class="modal-body" bis_skin_checked="1">
-                        <form class="step_form">
+                        <form class="invite_form">
                             <label for="role_name">Role name</label>
                             <input type="text" name="role_name" required>
                             <div>
                                 @if ($permissions->isNotEmpty())
                                     @foreach ($permissions as $permission)
-                                        <div class="row">
-                                            <div class="col-lg-6" style="display: flex; width: 390px;">
+                                        <div class="row invite_modal_row ">
+                                            <div class="col-lg-6 checkboxes" style="display: flex; width: 390px;">
                                                 <input class="permission"
                                                     style="width: 25px; height: 25px; margin-right: 25px;" type="checkbox"
                                                     id="permission_{{ $permission['permission_slug'] }}"
@@ -132,16 +132,65 @@
                                                 <label
                                                     for="permission_{{ $permission['permission_slug'] }}">{{ $permission['permission_name'] }}</label>
                                             </div>
-                                            <div class="col-lg-6" style="display: none; width: 390px;">
+                                            <div class="col-lg-6 switch_box" style="display: none; width: 390px;">
                                                 @if ($permission->allow_view_only == 1)
-                                                    <input type="radio"
+                                                    <input type="checkbox"
                                                         style="width: 25px; height: 25px; margin-right: 25px;"
                                                         id="view_only_{{ $permission['permission_slug'] }}"
-                                                        class="view_only"
+                                                        class="view_only switch"
                                                         name="view_only_{{ $permission['permission_slug'] }}">
-                                                    <label for="view_only_{{ $permission['permission_slug'] }}">View
-                                                        Only</label>
+                                                    <label for="view_only_{{ $permission['permission_slug'] }}"></label>
                                                 @endif
+                                                View Only
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
+                            </div>
+                            <button type="submit" class="btn btn-next">Create Role</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+    @if ($is_owner)
+        <div class="modal fade create_sequence_modal step_form_popup invite_team_modal " id="edit_role" tabindex="-1"
+            aria-labelledby="edit_role" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="edit_role">Create a custom role</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body" bis_skin_checked="1">
+                        <form class="invite_form">
+                            <label for="role_name">Role name</label>
+                            <input type="text" id="role_name" name="role_name" required>
+                            <div>
+                                @if ($permissions->isNotEmpty())
+                                    @foreach ($permissions as $permission)
+                                        <div class="row invite_modal_row ">
+                                            <div class="col-lg-6 checkboxes" style="display: flex; width: 390px;">
+                                                <input class="permission"
+                                                    style="width: 25px; height: 25px; margin-right: 25px;" type="checkbox"
+                                                    id="permission_{{ $permission['permission_slug'] }}"
+                                                    name="{{ $permission['permission_slug'] }}">
+                                                <label
+                                                    for="permission_{{ $permission['permission_slug'] }}">{{ $permission['permission_name'] }}</label>
+                                            </div>
+                                            <div class="col-lg-6 switch_box" style="display: none; width: 390px;">
+                                                @if ($permission->allow_view_only == 1)
+                                                    <input type="checkbox"
+                                                        style="width: 25px; height: 25px; margin-right: 25px;"
+                                                        id="view_only_{{ $permission['permission_slug'] }}"
+                                                        class="view_only switch"
+                                                        name="view_only_{{ $permission['permission_slug'] }}">
+                                                    <label for="view_only_{{ $permission['permission_slug'] }}"></label>
+                                                @endif
+                                                View Only
                                             </div>
                                         </div>
                                     @endforeach
@@ -158,6 +207,7 @@
         <script>
             var customRoleRoute = "{{ route('customRole') }}";
             var deleteRoleRoute = "{{ route('deleteRole', [':id']) }}";
+            var getRoleRoute = "{{ route('getRole', [':id']) }}";
         </script>
     @endif
 @endsection

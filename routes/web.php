@@ -56,22 +56,22 @@ Route::get('/resend_an_email', [RegisterController::class, 'resend_an_email'])->
 Route::get('/verify_an_Email/{email}', [RegisterController::class, 'verifyAnEmail'])->name('verify_an_Email'); //Done
 Route::get('/login', [LoginController::class, 'login'])->name('login'); //Done
 Route::post('/check-credentials', [LoginController::class, 'checkCredentials'])->name('checkCredentials'); //Done
-Route::post('/add_email_account', [LinkedInController::class, 'addEmailToAccount'])->name('addEmailAccount'); //Done
-Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccount'])->name('createLinkAccount'); //Done
 
 /* These are for actions like campaign and leads */
 Route::match(['get', 'post'], '/unipile-callback', [UnipileController::class, 'handleCallback']); //Done
 Route::get('/delete_an_account', [LinkedInController::class, 'delete_an_account'])->name('delete_an_account'); //Done
 Route::get('/delete_an_email_account/{seat_email}', [LinkedInController::class, 'delete_an_email_account'])->name('delete_an_email_account'); //Done
+Route::post('/add_email_account', [LinkedInController::class, 'addEmailToAccount'])->name('addEmailAccount'); //Done
+Route::post('/create-link-account', [LinkedInController::class, 'createLinkAccount'])->name('createLinkAccount'); //Done
 
 /* These are for dashboard which requires authentication */
 Route::middleware(['userAuth'])->group(function () {
     /* These are for dashboard which does not require seat_id in session */
     Route::get('/dashboard', [DasboardController::class, 'dashboard'])->name('dashobardz'); //Done
-    Route::get('/blacklist', [BlacklistController::class, 'blacklist']); //Done
-    Route::get('/invoice', [InvoiceController::class, 'invoice']); //Done
-    Route::get('/team', [TeamController::class, 'team']); //Done
-    Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission']); //Done
+    Route::get('/blacklist', [BlacklistController::class, 'blacklist'])->name('global_blacklist'); //Done
+    Route::get('/invoice', [InvoiceController::class, 'invoice'])->name('global_invoice'); //Done
+    Route::get('/team', [TeamController::class, 'team'])->name('team'); //Done
+    Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission'])->name('settingrolespermission'); //Done
     Route::get('/team/team-rolesandpermission', [RolespermissionController::class, 'rolespermission'])->name('rolespermission'); //Done
     Route::prefix('seat')->group(function () {
         Route::get('/getSeatById/{id}', [SeatController::class, 'get_seat_by_id'])->name('getSeatById'); //Done
@@ -87,67 +87,77 @@ Route::middleware(['userAuth'])->group(function () {
     Route::prefix('role')->group(function () {
         Route::post('/custom', [RolespermissionController::class, 'custom_role'])->name('customRole'); //Done
         Route::get('/delete/{id}', [RolespermissionController::class, 'delete_role'])->name('deleteRole'); //Done
+        Route::get('/getRole/{id}', [RolespermissionController::class, 'get_role_by_id'])->name('getRole');
     });
     Route::post('/logout', [LoginController::class, 'logoutUser'])->name('logout-user'); //Done
 
-    /* This dashboard uses to update seat_id in session */
-    Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash'); //Done
+    Route::middleware(['isSeatAssigned'])->group(function () {
+        /* This dashboard uses to update seat_id in session */
+        Route::match(['get', 'post'], '/accdashboard', [MaindashboardController::class, 'maindasboard'])->name('acc_dash'); //Done
 
-    /* This setting might not requires account connectivity */
-    Route::get('/setting', [SettingController::class, 'setting'])->name('dash-settings'); //Done
+        /* This setting might not requires account connectivity */
+        Route::get('/setting', [SettingController::class, 'setting'])->name('dash-settings'); //Done
 
-    /* These are for dashboard which requires account connectivity */
-    Route::middleware(['linkedinAccount'])->group(function () {
-        Route::prefix('campaign')->group(function () {
-            Route::get('/', [CampaignController::class, 'campaign'])->name('campaigns'); //Done
-            Route::get('/createcampaign', [CampaignController::class, 'campaigncreate'])->name('campaigncreate'); //Done
-            Route::post('/campaigninfo', [CampaignController::class, 'campaigninfo'])->name('campaigninfo'); //Done
-            Route::post('/createcampaignfromscratch', [CampaignController::class, 'fromscratch'])->name('createcampaignfromscratch'); //Done
-            Route::get('/campaignDetails/{campaign_id}', [CampaignController::class, 'getCampaignDetails'])->name('campaignDetails'); //Done
-            Route::get('/changeCampaignStatus/{campaign_id}', [CampaignController::class, 'changeCampaignStatus'])->name('changeCampaignStatus'); //Done
-            Route::get('/{campaign_id}', [CampaignController::class, 'deleteCampaign'])->name('deleteCampaign'); //Done
-            Route::get('/archive/{campaign_id}', [CampaignController::class, 'archiveCampaign'])->name('archiveCampaign'); //Done
-            Route::get('/getcampaignelementbyslug/{slug}', [CampaignElementController::class, 'campaignElement'])->name('getcampaignelementbyslug'); //Done
-            Route::post('/createCampaign', [CampaignElementController::class, 'createCampaign'])->name('createCampaign'); //Done
-            Route::get('/getPropertyDatatype/{id}/{element_slug}', [PropertiesController::class, 'getPropertyDatatype'])->name('getPropertyDatatype'); //Done
-            // Route::get('/scheduleDays/{schedule_id}', [ScheduleCampaign::class, 'scheduleDays'])->name('scheduleDays');
-            Route::get('/editcampaign/{campaign_id}', [CampaignController::class, 'editCampaign'])->name('editCampaign'); //Done
-            Route::post('/editCampaignInfo/{campaign_id}', [CampaignController::class, 'editCampaignInfo'])->name('editCampaignInfo'); //Done
-            Route::post('/editCampaignSequence/{campaign_id}', [CampaignController::class, 'editCampaignSequence'])->name('editCampaignSequence'); //Done
-            Route::get('/getcampaignelementbyid/{element_id}', [CampaignElementController::class, 'getcampaignelementbyid'])->name('getcampaignelementbyid'); //Done
-            Route::post('/updateCampaign/{campaign_id}', [CampaignController::class, 'updateCampaign'])->name('updateCampaign'); //Done
-            Route::get('/getPropertyRequired/{id}', [PropertiesController::class, 'getPropertyRequired'])->name('getPropertyRequired'); //Done
+        /* These are for dashboard which requires account connectivity */
+        Route::middleware(['linkedinAccount'])->group(function () {
+            Route::middleware(['isCampaignAllowed'])->group(function () {
+                Route::prefix('campaign')->group(function () {
+                    Route::get('/', [CampaignController::class, 'campaign'])->name('campaigns'); //Done
+                    Route::get('/createcampaign', [CampaignController::class, 'campaigncreate'])->name('campaigncreate'); //Done
+                    Route::post('/campaigninfo', [CampaignController::class, 'campaigninfo'])->name('campaigninfo'); //Done
+                    Route::post('/createcampaignfromscratch', [CampaignController::class, 'fromscratch'])->name('createcampaignfromscratch'); //Done
+                    Route::get('/campaignDetails/{campaign_id}', [CampaignController::class, 'getCampaignDetails'])->name('campaignDetails'); //Done
+                    Route::get('/changeCampaignStatus/{campaign_id}', [CampaignController::class, 'changeCampaignStatus'])->name('changeCampaignStatus'); //Done
+                    Route::get('/{campaign_id}', [CampaignController::class, 'deleteCampaign'])->name('deleteCampaign'); //Done
+                    Route::get('/archive/{campaign_id}', [CampaignController::class, 'archiveCampaign'])->name('archiveCampaign'); //Done
+                    Route::get('/getcampaignelementbyslug/{slug}', [CampaignElementController::class, 'campaignElement'])->name('getcampaignelementbyslug'); //Done
+                    Route::post('/createCampaign', [CampaignElementController::class, 'createCampaign'])->name('createCampaign'); //Done
+                    Route::get('/getPropertyDatatype/{id}/{element_slug}', [PropertiesController::class, 'getPropertyDatatype'])->name('getPropertyDatatype'); //Done
+                    Route::get('/editcampaign/{campaign_id}', [CampaignController::class, 'editCampaign'])->name('editCampaign'); //Done
+                    Route::post('/editCampaignInfo/{campaign_id}', [CampaignController::class, 'editCampaignInfo'])->name('editCampaignInfo'); //Done
+                    Route::post('/editCampaignSequence/{campaign_id}', [CampaignController::class, 'editCampaignSequence'])->name('editCampaignSequence'); //Done
+                    Route::get('/getcampaignelementbyid/{element_id}', [CampaignElementController::class, 'getcampaignelementbyid'])->name('getcampaignelementbyid'); //Done
+                    Route::post('/updateCampaign/{campaign_id}', [CampaignController::class, 'updateCampaign'])->name('updateCampaign'); //Done
+                    Route::get('/getPropertyRequired/{id}', [PropertiesController::class, 'getPropertyRequired'])->name('getPropertyRequired'); //Done
+                });
+                Route::prefix('leads')->group(function () {
+                    Route::get('/', [LeadsController::class, 'leads'])->name('dash-leads'); //Done
+                    Route::get('/getLeadsByCampaign/{id}/{search}', [LeadsController::class, 'getLeadsByCampaign'])->name('getLeadsByCampaign'); //Done
+                    Route::post('/sendLeadsToEmail', [LeadsController::class, 'sendLeadsToEmail'])->name('sendLeadsToEmail'); //Done
+                });
+                Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign'); //Done
+                Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule'); //Done
+                Route::get('/filterSchedule/{search}', [ScheduleCampaign::class, 'filterSchedule'])->name('filterSchedule'); //Done
+                Route::get('/getElements/{campaign_id}', [CampaignElementController::class, 'getElements'])->name('getElements'); //Done
+            });
+            Route::middleware(['isChatAllowed'])->group(function () {
+                Route::prefix('message')->group(function () {
+                    Route::get('/', [MessageController::class, 'message'])->name('dash-messages');
+                    Route::get('/chat/profile/{profile_id}/{chat_id}', [MessageController::class, 'get_profile_and_latest_message'])->name('get_profile_and_latest_message'); //Done
+                    Route::get('/latest/{chat_id}', [MessageController::class, 'get_latest_Mesage_chat_id'])->name('get_latest_Mesage_chat_id'); //Done
+                    Route::get('/chat/latest/{chat_id}/{count}', [MessageController::class, 'get_latest_message_in_chat'])->name('get_latest_message_in_chat'); //Done
+                    Route::get('/chat/profile/{profile_id}', [MessageController::class, 'get_chat_Profile'])->name('get_chat_Profile'); //Done
+                    Route::get('/chat/receiver/{chat_id}', [MessageController::class, 'get_chat_receive'])->name('get_chat_receive'); //Done
+                    Route::get('/chat/sender', [MessageController::class, 'get_chat_sender'])->name('get_chat_sender'); //Done
+                    Route::get('/chat/{chat_id}', [MessageController::class, 'get_messages_chat_id'])->name('get_messages_chat_id'); //Done
+                    Route::get('/chat/{chat_id}/{cursor}', [MessageController::class, 'get_messages_chat_id_cursor'])->name('get_messages_chat_id_cursor'); //Done
+                    Route::get('/chats/{cursor}', [MessageController::class, 'get_remain_chats'])->name('get_remain_chats'); //Done
+                    Route::post('/send/chat', [MessageController::class, 'send_a_message'])->name('send_a_message'); //Done
+                    Route::post('/search', [MessageController::class, 'message_search'])->name('message_search'); //Done
+                    Route::get('/unread', [MessageController::class, 'unread_message'])->name('unread_message'); //Done
+                    Route::get('/profile/{profile_id}', [MessageController::class, 'profile_by_id'])->name('profile_by_id'); //Done
+                    Route::post('/retrieve/message/attachment', [UnipileController::class, 'retrieve_an_attachment_from_a_message'])->name('retrieve_an_attachment_from_a_message'); //Done
+                });
+            });
+            Route::post('/import_csv', [CsvController::class, 'import_csv'])->name('import_csv'); //Done
+            Route::middleware(['isReportAllowed'])->group(function () {
+                Route::get('/report', [ReportController::class, 'report'])->name('dash-reports'); //Done
+            });
+            Route::middleware(['isIntegrationAllowed'])->group(function () {
+                Route::get('/integration', [IntegrationController::class, 'integration'])->name('dash-integrations'); //Done
+            });
+            Route::get('/contacts', [ContactController::class, 'contact']); //Done
+            Route::get('/feature-suggestion', [FeatureController::class, 'featuresuggestions'])->name('dash-feature-suggestions'); //Done
         });
-        Route::prefix('leads')->group(function () {
-            Route::get('/', [LeadsController::class, 'leads'])->name('dash-leads'); //Done
-            Route::get('/getLeadsByCampaign/{id}/{search}', [LeadsController::class, 'getLeadsByCampaign'])->name('getLeadsByCampaign'); //Done
-            Route::post('/sendLeadsToEmail', [LeadsController::class, 'sendLeadsToEmail'])->name('sendLeadsToEmail'); //Done
-        });
-        Route::prefix('message')->group(function () {
-            Route::get('/', [MessageController::class, 'message'])->name('dash-messages');
-            Route::get('/chat/profile/{profile_id}/{chat_id}', [MessageController::class, 'get_profile_and_latest_message'])->name('get_profile_and_latest_message'); //Need to check
-            Route::get('/latest/{chat_id}', [MessageController::class, 'get_latest_Mesage_chat_id'])->name('get_latest_Mesage_chat_id'); //Need to check
-            Route::get('/chat/latest/{chat_id}/{count}', [MessageController::class, 'get_latest_message_in_chat'])->name('get_latest_message_in_chat'); //Need to check
-            Route::get('/chat/profile/{profile_id}', [MessageController::class, 'get_chat_Profile'])->name('get_chat_Profile'); //Need to check
-            Route::get('/chat/receiver/{chat_id}', [MessageController::class, 'get_chat_receive'])->name('get_chat_receive'); //Need to check
-            Route::get('/chat/sender', [MessageController::class, 'get_chat_sender'])->name('get_chat_sender'); //Need to check
-            Route::get('/chat/{chat_id}', [MessageController::class, 'get_messages_chat_id'])->name('get_messages_chat_id'); //Need to check
-            Route::get('/chat/{chat_id}/{cursor}', [MessageController::class, 'get_messages_chat_id_cursor'])->name('get_messages_chat_id_cursor'); //Need to check
-            Route::get('/chats/{cursor}', [MessageController::class, 'get_remain_chats'])->name('get_remain_chats'); //Need to check
-            Route::post('/send/chat', [MessageController::class, 'send_a_message'])->name('send_a_message'); //Need to check
-            Route::post('/search', [MessageController::class, 'message_search'])->name('message_search'); //Need to check
-            Route::get('/unread', [MessageController::class, 'unread_message'])->name('unread_message'); //Need to check
-            Route::get('/profile/{profile_id}', [MessageController::class, 'profile_by_id'])->name('profile_by_id'); //Need to check
-            Route::post('/retrieve/message/attachment', [UnipileController::class, 'retrieve_an_attachment_from_a_message'])->name('retrieve_an_attachment_from_a_message'); //Need to check
-        });
-        Route::get('/filterCampaign/{filter}/{search}', [CampaignController::class, 'filterCampaign'])->name('filterCampaign'); //Done
-        Route::post('/createSchedule', [ScheduleCampaign::class, 'createSchedule'])->name('createSchedule'); //Done
-        Route::get('/filterSchedule/{search}', [ScheduleCampaign::class, 'filterSchedule'])->name('filterSchedule'); //Done
-        Route::get('/getElements/{campaign_id}', [CampaignElementController::class, 'getElements'])->name('getElements'); //Done
-        Route::post('/import_csv', [CsvController::class, 'import_csv'])->name('import_csv'); //Done
-        Route::get('/report', [ReportController::class, 'report'])->name('dash-reports'); //Need to check
-        Route::get('/contacts', [ContactController::class, 'contact']); //Need to check
-        Route::get('/integration', [IntegrationController::class, 'integration'])->name('dash-integrations'); //Need to check
-        Route::get('/feature-suggestion', [FeatureController::class, 'featuresuggestions'])->name('dash-feature-suggestions'); //Need to check
     });
 });

@@ -37,38 +37,30 @@ class PropertiesController extends Controller
                 ->where('user_id', $user->id)
                 ->first();
 
-            if (!empty($assignedSeat)) {
-                /* Get the user's role based on the assigned seat */
-                $role = Roles::find($assignedSeat->role_id);
+            /* Get the user's role based on the assigned seat */
+            $role = Roles::find($assignedSeat->role_id);
 
-                $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
-                if ($data['manage_campaigns'] == true || $data['manage_campaigns'] == 'view_only') {
-                    $data['manage_webhooks'] = $this->checkPermission($role->id, 'manage_webhooks');
-                    $data['manage_linkedin_integrations'] = $this->checkPermission($role->id, 'manage_linkedin_integrations');
-                    $data['manage_email_settings'] = $this->checkPermission($role->id, 'manage_email_settings');
-                    $data['manage_global_limits'] = $this->checkPermission($role->id, 'manage_global_limits');
-                    $data['manage_account_health'] = $this->checkPermission($role->id, 'manage_account_health');
-                    $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
-                    $data['manage_chat'] = $this->checkPermission($role->id, 'manage_chat');
-                    $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
-                    $string = $element_slug;
-                    $element = CampaignElement::where('element_slug', $string)->first();
-                    if ($element) {
-                        $property = ElementProperties::where('element_id', $element->id)->where('id', $id)->first();
-                        if ($property) {
-                            return response()->json(['success' => true, 'property' => $property]);
-                        } else {
-                            return response()->json(['success' => false, 'property' => 'Properties not found!']);
-                        }
-                    } else {
-                        return response()->json(['success' => false, 'properties' => 'Element not found!' . $string]);
-                    }
+            $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
+            $data['manage_webhooks'] = $this->checkPermission($role->id, 'manage_webhooks');
+            $data['manage_linkedin_integrations'] = $this->checkPermission($role->id, 'manage_linkedin_integrations');
+            $data['manage_email_settings'] = $this->checkPermission($role->id, 'manage_email_settings');
+            $data['manage_global_limits'] = $this->checkPermission($role->id, 'manage_global_limits');
+            $data['manage_account_health'] = $this->checkPermission($role->id, 'manage_account_health');
+            $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
+            $data['manage_chat'] = $this->checkPermission($role->id, 'manage_chat');
+            $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
+            $string = $element_slug;
+            $element = CampaignElement::where('element_slug', $string)->first();
+            if ($element) {
+                $property = ElementProperties::where('element_id', $element->id)->where('id', $id)->first();
+                if ($property) {
+                    return response()->json(['success' => true, 'property' => $property]);
+                } else {
+                    return response()->json(['success' => false, 'property' => 'Properties not found!']);
                 }
-                /* If the user does not have permission, throw an exception */
-                throw new Exception('You can not add campaigns', 403);
+            } else {
+                return response()->json(['success' => false, 'properties' => 'Element not found!' . $string]);
             }
-            /* If the user does not have permission, throw an exception */
-            throw new Exception('You can not add campaigns', 403);
         } catch (Exception $e) {
             Log::info($e);
             return redirect()->route('acc_dash')->withErrors(['error' => $e->getMessage()]);
@@ -94,25 +86,16 @@ class PropertiesController extends Controller
             $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat->id])
                 ->where('user_id', $user->id)
                 ->first();
+            /* Get the user's role based on the assigned seat */
+            $role = Roles::find($assignedSeat->role_id);
 
-            if (!empty($assignedSeat)) {
-                /* Get the user's role based on the assigned seat */
-                $role = Roles::find($assignedSeat->role_id);
-
-                $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
-                if ($data['manage_campaigns'] == true || $data['manage_campaigns'] == 'view_only') {
-                    $property = ElementProperties::where('id', $id)->first();
-                    if ($property) {
-                        return response()->json(['success' => true, 'property' => $property]);
-                    } else {
-                        return response()->json(['success' => false, 'property' => 'Properties not found!']);
-                    }
-                }
-                /* If the user does not have permission, throw an exception */
-                throw new Exception('You can not add campaigns', 403);
+            $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
+            $property = ElementProperties::where('id', $id)->first();
+            if ($property) {
+                return response()->json(['success' => true, 'property' => $property]);
+            } else {
+                return response()->json(['success' => false, 'property' => 'Properties not found!']);
             }
-            /* If the user does not have permission, throw an exception */
-            throw new Exception('You can not add campaigns', 403);
         } catch (Exception $e) {
             Log::info($e);
             return redirect()->route('acc_dash')->withErrors(['error' => $e->getMessage()]);

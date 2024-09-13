@@ -16,6 +16,12 @@ class DasboardController extends Controller
     /**
      * Display the user's dashboard.
      *
+     * This method handles the logic for displaying the user's dashboard. It includes:
+     * - Clearing specific session data related to the user's seat and account.
+     * - Retrieving the authenticated user and their associated team.
+     * - Processing seat information and checking user permissions.
+     * - Preparing data for the dashboard view and handling exceptions.
+     *
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function dashboard()
@@ -118,7 +124,7 @@ class DasboardController extends Controller
             Log::error($e);
 
             /* Redirect to login with error message */
-            return redirect('login')->withErrors(['error' => 'Retry Login again']);
+            return redirect()->route('login')->withErrors(['error' => 'Please log in to access this page.']);
         }
     }
 }

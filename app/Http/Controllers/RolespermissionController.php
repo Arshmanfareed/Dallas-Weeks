@@ -102,56 +102,49 @@ class RolespermissionController extends Controller
             $assignedSeat = AssignedSeats::where('seat_id', 0)
                 ->where('user_id', $user->id)
                 ->first();
+            /* Find the team associated with the user */
+            $team = Teams::find($user->team_id);
 
-            /* If an assigned seat is found for the user */
-            if (!empty($assignedSeat)) {
-                /* Find the team associated with the user */
-                $team = Teams::find($user->team_id);
+            /* Create a new role for the team */
+            $role = Roles::create([
+                'role_name' => $all['role_name'],
+                'team_id' => $team->id,
+            ]);
 
-                /* Create a new role for the team */
-                $role = Roles::create([
-                    'role_name' => $all['role_name'],
-                    'team_id' => $team->id,
-                ]);
+            /* Remove 'role_name' and '_token' from the request data */
+            unset($all['role_name']);
+            unset($all['_token']);
 
-                /* Remove 'role_name' and '_token' from the request data */
-                unset($all['role_name']);
-                unset($all['_token']);
+            /* Fetch all available permissions */
+            $permissions = Permissions::all();
 
-                /* Fetch all available permissions */
-                $permissions = Permissions::all();
-
-                /* Iterate over each permission to assign it to the new role */
-                foreach ($permissions as $permission) {
-                    if (array_key_exists($permission['permission_slug'], $all)) {
-                        /* If the permission is present in the request, create a Role_Permission entry with access */
-                        Role_Permission::create([
-                            'role_id' => $role->id,
-                            'permission_id' => $permission->id,
-                            'access' => 1,
-                            'view_only' => array_key_exists('view_only_' . $permission['permission_slug'], $all) ? 1 : 0,
-                        ]);
-                    } else {
-                        /* If the permission is not present in the request, create a Role_Permission entry without access */
-                        Role_Permission::create([
-                            'role_id' => $role->id,
-                            'permission_id' => $permission->id,
-                            'access' => 0,
-                            'view_only' => 0,
-                        ]);
-                    }
-
-                    /* Remove processed permission entries from the request data */
-                    unset($all[$permission['permission_slug']]);
-                    unset($all['view_only_' . $permission['permission_slug']]);
+            /* Iterate over each permission to assign it to the new role */
+            foreach ($permissions as $permission) {
+                if (array_key_exists($permission['permission_slug'], $all)) {
+                    /* If the permission is present in the request, create a Role_Permission entry with access */
+                    Role_Permission::create([
+                        'role_id' => $role->id,
+                        'permission_id' => $permission->id,
+                        'access' => 1,
+                        'view_only' => array_key_exists('view_only_' . $permission['permission_slug'], $all) ? 1 : 0,
+                    ]);
+                } else {
+                    /* If the permission is not present in the request, create a Role_Permission entry without access */
+                    Role_Permission::create([
+                        'role_id' => $role->id,
+                        'permission_id' => $permission->id,
+                        'access' => 0,
+                        'view_only' => 0,
+                    ]);
                 }
 
-                /* Return the remaining data in JSON format */
-                return response()->json(['success' => true]);
+                /* Remove processed permission entries from the request data */
+                unset($all[$permission['permission_slug']]);
+                unset($all['view_only_' . $permission['permission_slug']]);
             }
 
-            /* If the assigned seat is not found, throw a permission denied exception */
-            throw new Exception('Permission Denied', 403);
+            /* Return the remaining data in JSON format */
+            return response()->json(['success' => true]);
         } catch (Exception $e) {
             /* Log the exception for debugging purposes */
             Log::error($e->getMessage());
@@ -179,28 +172,21 @@ class RolespermissionController extends Controller
                 $assignedSeat = AssignedSeats::where('seat_id', 0)
                     ->where('user_id', $user->id)
                     ->first();
+                /* Check if the role is assigned to any seat */
+                $assignedSeat = AssignedSeats::where('role_id', $role_id)->first();
+                if (empty($assignedSeat)) {
+                    /* Delete role permissions associated with the role */
+                    Role_Permission::where('role_id', $role_id)->delete();
 
-                /* If an assigned seat is found for the user */
-                if (!empty($assignedSeat)) {
-                    /* Check if the role is assigned to any seat */
-                    $assignedSeat = AssignedSeats::where('role_id', $role_id)->first();
-                    if (empty($assignedSeat)) {
-                        /* Delete role permissions associated with the role */
-                        Role_Permission::where('role_id', $role_id)->delete();
+                    /* Delete the role */
+                    Roles::find($role_id)->delete();
 
-                        /* Delete the role */
-                        Roles::find($role_id)->delete();
-
-                        /* Return a JSON response with the success */
-                        return response()->json(['success' => true]);
-                    }
-
-                    /* If the role is in use, throw an exception */
-                    throw new Exception('Role is already in use');
+                    /* Return a JSON response with the success */
+                    return response()->json(['success' => true]);
                 }
 
-                /* If the assigned seat is not found, throw a permission denied exception */
-                throw new Exception('Permission Denied', 403);
+                /* If the role is in use, throw an exception */
+                throw new Exception('Role is already in use');
             }
 
             /* If the role ID is one of the default roles (1, 2, 3), throw an exception */
@@ -210,7 +196,41 @@ class RolespermissionController extends Controller
             Log::error($e->getMessage());
 
             /* Return a JSON response with the error message and failure status */
-            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function get_role_by_id($role_id)
+    {
+        try {
+            /* Check if the role ID is not one of the default role IDs (1, 2, 3) */
+            if ($role_id != 1 && $role_id != 2 && $role_id != 3) {
+                /* Retrieve the currently authenticated user */
+                $user = Auth::user();
+
+                /* Retrieve the role */
+                $role = Roles::find($role_id);
+
+                $permissions_to_roles = Role_Permission::where('role_id', $role_id)->get();
+                $permissions = Permissions::all();
+
+                /* Return a JSON response with the success */
+                return response()->json([
+                    'success' => true,
+                    'role' => $role,
+                    'permissions_to_roles' => $permissions_to_roles,
+                    'permissions' => $permissions
+                ]);
+            }
+
+            /* If the role ID is one of the default roles (1, 2, 3), throw an exception */
+            throw new Exception('Cannot delete default roles');
+        } catch (Exception $e) {
+            /* Log the exception message for debugging purposes */
+            Log::error($e->getMessage());
+
+            /* Return a JSON response with the error message and failure status */
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 }

@@ -11,9 +11,11 @@
                     class="nav_link {{ Str::contains(request()->url(), URL('campaign')) ? 'active' : '' }}"><img
                         src="{{ asset('assets/img/speaker.svg') }}" alt=""></a></li>
         @endif
-        <li><a href="{{ route('dash-leads') }}"
-                class="nav_link {{ Str::contains(request()->url(), URL('leads')) ? 'active' : '' }}"><img
-                    src="{{ asset('assets/img/leads.svg') }}" alt=""></a></li>
+        @if ($manage_campaigns == true || $manage_campaigns == 'view_only')
+            <li><a href="{{ route('dash-leads') }}"
+                    class="nav_link {{ Str::contains(request()->url(), URL('leads')) ? 'active' : '' }}"><img
+                        src="{{ asset('assets/img/leads.svg') }}" alt=""></a></li>
+        @endif
         @if ($manage_campaign_details_and_reports == true || $manage_campaign_details_and_reports == 'view_only')
             <li><a href="{{ route('dash-reports') }}"
                     class="nav_link {{ Str::contains(request()->url(), URL('report')) ? 'active' : '' }}"><img

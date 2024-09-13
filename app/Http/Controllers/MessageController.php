@@ -7,11 +7,37 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\SeatInfo;
 use Illuminate\Http\JsonResponse;
 use DateTime;
+use App\Models\Roles;
+use App\Models\Teams;
+use App\Models\AssignedSeats;
+use App\Models\SeatEmail;
+use Illuminate\Support\Facades\Log;
+use App\Models\Role_Permission;
+use App\Models\Permissions;
 
 class MessageController extends Controller
 {
     public function message()
     {
+        /* Get seat_id from the request or session, if not found, throw an exception */
+        $seat_id = session('seat_id');
+
+        /* Get the authenticated user */
+        $user = Auth::user();
+
+        /* Retrieve the team record associated with the user's team ID */
+        $team = Teams::find($user->team_id);
+
+        /* Find the seat for the user based on the provided seat ID */
+        $seat = SeatInfo::where('team_id', $team->id)->where('id', $seat_id)->first();
+
+        /* Find the assigned seat for the user (either seat_id is 0 or matching the seat ID) */
+        $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat->id])
+            ->where('user_id', $user->id)
+            ->first();
+
+        /* Get the user's role based on the assigned seat */
+        $role = Roles::find($assignedSeat->role_id);
         $user_id = Auth::user()->id;
         $seat_id = session('seat_id');
         $seat = SeatInfo::where('id', $seat_id)->where('user_id', $user_id)->first();
@@ -22,11 +48,18 @@ class MessageController extends Controller
         ];
         $chats = $uc->list_all_chats(new \Illuminate\Http\Request($request));
         $all_chats = $chats->getData(true)['chats'];
-        $data = [
-            'title' => 'Message',
-            'chats' => $all_chats['items'],
-            'cursor' => $all_chats['cursor'],
-        ];
+        $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
+        $data['manage_webhooks'] = $this->checkPermission($role->id, 'manage_webhooks');
+        $data['manage_linkedin_integrations'] = $this->checkPermission($role->id, 'manage_linkedin_integrations');
+        $data['manage_email_settings'] = $this->checkPermission($role->id, 'manage_email_settings');
+        $data['manage_global_limits'] = $this->checkPermission($role->id, 'manage_global_limits');
+        $data['manage_account_health'] = $this->checkPermission($role->id, 'manage_account_health');
+        $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
+        $data['manage_chat'] = $this->checkPermission($role->id, 'manage_chat');
+        $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
+        $data['title'] = 'Message';
+        $data['chats'] = $all_chats['items'];
+        $data['cursor'] = $all_chats['cursor'];
         return view('message', $data);
     }
 
@@ -416,5 +449,36 @@ class MessageController extends Controller
             return response()->json($data);
         }
         return response()->json(['success' => false]);
+    }
+
+    /**
+     * Check if the role has a given permission and return the access level.
+     *
+     * @param int $role_id The role ID to check.
+     * @param string $permission_slug The permission slug to check.
+     * @return bool|string True for full access, 'view_only' for view-only access, false for no access.
+     */
+    private function checkPermission($role_id, $permission_slug)
+    {
+        /* Fetch the permission for the given slug */
+        $permission = Permissions::where('permission_slug', 'like', '%' . $permission_slug . '%')->first();
+
+        if (!$permission) {
+            return false;
+        }
+
+        /* Fetch the role permission relation */
+        $rolePermission = Role_Permission::where('permission_id', $permission->id)
+            ->where('role_id', $role_id)
+            ->first();
+
+        /* Check access and return appropriate status */
+        if ($rolePermission && $rolePermission->view_only == 1) {
+            return 'view_only';
+        } elseif ($rolePermission && $rolePermission->access == 1) {
+            return true;
+        }
+
+        return false;
     }
 }

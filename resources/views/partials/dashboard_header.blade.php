@@ -81,6 +81,31 @@
             }
         }
     </style>
+    <style>
+        .alert.alert-danger.alert-dismissible {
+            background: #870000;
+            border: none;
+            border-radius: 30px;
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .alert.alert-danger.alert-dismissible .close {
+            height: 50px;
+            width: 50px;
+            opacity: 1;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+            border-radius: 100%;
+            position: absolute;
+            top: 5px;
+            right: 10px;
+        }
+    </style>
 
     <script>
         window.addEventListener("load", function() {

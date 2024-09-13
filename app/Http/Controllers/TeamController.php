@@ -26,7 +26,18 @@ class TeamController extends Controller
     /**
      * Retrieve and prepare team members with their associated roles.
      *
-     * @return \Illuminate\View\View
+     * This method:
+     * 
+     * 1. Fetches the authenticated user and their team.
+     * 2. Checks user permissions for managing payment systems and global blacklist.
+     * 3. Retrieves all team members and their assigned roles.
+     * 4. Checks if the user is an owner of an unassigned seat.
+     * 5. Gathers all roles, permissions, and seat information for the team.
+     * 6. Prepares data for the view and returns it.
+     * 
+     * @return \Illuminate\View\View The view with team and user data.
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If any required model is not found.
+     * @throws \Exception For general errors during execution.
      */
     function team()
     {
@@ -37,6 +48,7 @@ class TeamController extends Controller
             /* Retrieve the team associated with the team member */
             $team = Teams::find($user->team_id);
 
+            /* Check user permissions for managing payment system and global blacklist */
             $is_manage_payment_system = false;
             $manage_payment_system = GlobalPermission::where('permission_slug', 'manage_payment_system')
                 ->where('user_id', $user->id)
@@ -46,6 +58,7 @@ class TeamController extends Controller
                 $is_manage_payment_system = true;
             }
 
+            /* Check user permissions for managing payment system and global blacklist */
             $is_manage_global_blacklist = false;
             $manage_global_blacklist = GlobalPermission::where('permission_slug', 'manage_global_blacklist')
                 ->where('user_id', $user->id)
@@ -54,9 +67,6 @@ class TeamController extends Controller
             if (!empty($manage_global_blacklist)) {
                 $is_manage_global_blacklist = true;
             }
-
-            /* Retrieve the team associated with the team member */
-            $team = Teams::findOrFail($user->team_id);
 
             /* Retrieve all users in the same team */
             $users = User::where('team_id', $team->id)->get();
@@ -86,9 +96,7 @@ class TeamController extends Controller
                 return $user;
             });
 
-            /* Get the assigned seat for the user where seat_id is 0 
-            (potentially indicating an unassigned seat or default seat)
-            */
+            /* Get the assigned seat for the user where seat_id is 0 (potentially indicating an unassigned seat or default seat) */
             $assignedSeat = AssignedSeats::where('seat_id', 0)
                 ->where('user_id', $user->id)
                 ->first();
@@ -99,6 +107,7 @@ class TeamController extends Controller
                 $is_owner = true;
             }
 
+            /* Retrieve roles, permissions, and seats for the team */
             $roles = Roles::whereIn('team_id', [0, $user->team_id])->get();
 
             /* Fetch all available permissions */

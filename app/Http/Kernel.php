@@ -65,5 +65,10 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'linkedinAccount' => \App\Http\Middleware\LinkedinAccountMiddleware::class,
         'userAuth' => \App\Http\Middleware\UserAuthMiddleware::class,
+        'isSeatAssigned' => \App\Http\Middleware\isSeatAssigned::class,
+        'isCampaignAllowed' => \App\Http\Middleware\isCampaignAllowed::class,
+        'isChatAllowed' => \App\Http\Middleware\isChatAllowed::class,
+        'isReportAllowed' => \App\Http\Middleware\isReportAllowed::class,
+        'isIntegrationAllowed' => \App\Http\Middleware\isIntegrationAllowed::class,
     ];
 }

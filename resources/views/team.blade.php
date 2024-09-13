@@ -243,7 +243,7 @@
                                                 class="switch" id="switch1"><label for="switch1">Toggle</label></div>
                                     </div>
                                 </div>
-                                <button type="submit" class="crt_btn edit_able disabled manage_member">
+                                <button type="submit" class="crt_btn edit_able disabled theme_btn manage_member mt-5">
                                     Invite member <i class="fa-solid fa-arrow-right"></i>
                                 </button>
                             </div>

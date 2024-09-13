@@ -1,15 +1,13 @@
 var customRoleAjax = null;
 var deleteRoleAjax = null;
-$(document).ready(function () {
-    $('.permission').on('click', function () {
-        if ($(this).prop('checked')) {
-            $(this).parent().siblings('div').css('display', 'flex');
-        } else {
-            $(this).parent().siblings('div').css('display', 'none');
-        }
-    });
-    $('.step_form').on('submit', custom_role);
-    $('.delete_role').on('click', delete_role);
+var editRoleAjax = null;
+
+$(document).on('submit', '.step_form', custom_role);
+$(document).on('click', '.delete_role', delete_role);
+$(document).on('click', '.edit_role', edit_role);
+$(document).on('click', '.permission', function () {
+    let displayStyle = $(this).prop('checked') ? 'flex' : 'none';
+    $(this).parent().siblings('div').css('display', displayStyle);
 });
 
 function custom_role(e) {
@@ -77,10 +75,77 @@ function delete_role(e) {
             },
             error: function (xhr, status, error) {
                 toastr.options = toastrOptions;
-                toastr.error(xhr.responseJSON.errors);
+                console.log(xhr.responseJSON);
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    toastr.error(xhr.responseJSON.error);
+                } else {
+                    toastr.error('An unexpected error occurred.');
+                }
             },
             complete: function () {
                 deleteRoleAjax = null;
+            }
+        });
+    }
+}
+
+function edit_role(e) {
+    e.preventDefault();
+    var id = $(this).parent().attr('id').replace('table_row_', '');
+
+    var toastrOptions = {
+        closeButton: true,
+        debug: false,
+        newestOnTop: false,
+        progressBar: true,
+        positionClass: "toast-top-right",
+        preventDuplicates: false,
+        onclick: null,
+        showDuration: "300",
+        hideDuration: "1000",
+        timeOut: "5000",
+        extendedTimeOut: "1000",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut",
+    };
+
+    if (!editRoleAjax) {
+        editRoleAjax = $.ajax({
+            url: getRoleRoute.replace(':id', id),
+            method: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    let permissionMap = {};
+                    response.permissions_to_roles.forEach(permit => {
+                        permissionMap[permit.permission_id] = permit.access;
+                    });
+                    $('#edit_role').find('#role_name').val(response.role.role_name);
+                    response.permissions.forEach(permission => {
+                        let target = $('#edit_role').find('#permission_' + permission.permission_slug);
+                        let access = permissionMap[permission.id] || 0;
+                        if (access == 1) {
+                            target.prop('checked', true);
+                            target.siblings('.permission').trigger('click');
+                        } else {
+                            target.prop('checked', false);
+                        }
+                    });
+                    $('#edit_role').modal('show');
+                }
+            },
+            error: function (xhr, status, error) {
+                toastr.options = toastrOptions;
+                console.log(xhr.responseJSON);
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    toastr.error(xhr.responseJSON.error);
+                } else {
+                    toastr.error('An unexpected error occurred.');
+                }
+            },
+            complete: function () {
+                editRoleAjax = null;
             }
         });
     }

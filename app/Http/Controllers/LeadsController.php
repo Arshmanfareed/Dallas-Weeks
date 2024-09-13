@@ -54,72 +54,63 @@ class LeadsController extends Controller
             $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat->id])
                 ->where('user_id', $user->id)
                 ->first();
+            /* Get the user's role based on the assigned seat */
+            $role = Roles::find($assignedSeat->role_id);
 
-            if (!empty($assignedSeat)) {
-                /* Get the user's role based on the assigned seat */
-                $role = Roles::find($assignedSeat->role_id);
-
-                $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
-                if ($data['manage_campaigns'] == true || $data['manage_campaigns'] == 'view_only') {
-                    $user_id = Auth::user()->id;
-                    $seat_id = session('seat_id');
-                    $campaigns = Campaign::where('user_id', $user_id)->where('seat_id', $seat_id)->where('is_archive', 0)->get();
-                    $leads = Leads::whereIn('campaign_id', $campaigns->pluck('id')->toArray())->get();
-                    foreach ($leads as $lead) {
-                        $leadAction = LeadActions::where('lead_id', $lead['id'])->orderBy('created_at', 'desc')->first();
-                        $lead['current_step'] = null;
-                        $lead['next_step'] = null;
-                        if ($leadAction) {
-                            $currentElementId = $leadAction->current_element_id;
-                            $updatedCampaignElement = UpdatedCampaignElements::find($currentElementId);
-                            if ($updatedCampaignElement) {
-                                $elementId = $updatedCampaignElement->element_id;
-                                $campaignElement = CampaignElement::find($elementId);
-                                if ($campaignElement) {
-                                    $lead['current_step'] = $campaignElement->element_name;
-                                }
-                            }
-                            $nextElementId = $leadAction->next_true_element_id;
-                            $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
-                            if ($updatedCampaignElement) {
-                                $elementId = $updatedCampaignElement->element_id;
-                                $campaignElement = CampaignElement::find($elementId);
-                                if ($campaignElement) {
-                                    $lead['next_step'] = $campaignElement->element_name;
-                                }
-                            } else {
-                                $nextElementId = $leadAction->next_false_element_id;
-                                $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
-                                if ($updatedCampaignElement) {
-                                    $elementId = $updatedCampaignElement->element_id;
-                                    $campaignElement = CampaignElement::find($elementId);
-                                    if ($campaignElement) {
-                                        $lead['next_step'] = $campaignElement->element_name;
-                                    }
-                                }
+            $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
+            $user_id = Auth::user()->id;
+            $seat_id = session('seat_id');
+            $campaigns = Campaign::where('user_id', $user_id)->where('seat_id', $seat_id)->where('is_archive', 0)->get();
+            $leads = Leads::whereIn('campaign_id', $campaigns->pluck('id')->toArray())->get();
+            foreach ($leads as $lead) {
+                $leadAction = LeadActions::where('lead_id', $lead['id'])->orderBy('created_at', 'desc')->first();
+                $lead['current_step'] = null;
+                $lead['next_step'] = null;
+                if ($leadAction) {
+                    $currentElementId = $leadAction->current_element_id;
+                    $updatedCampaignElement = UpdatedCampaignElements::find($currentElementId);
+                    if ($updatedCampaignElement) {
+                        $elementId = $updatedCampaignElement->element_id;
+                        $campaignElement = CampaignElement::find($elementId);
+                        if ($campaignElement) {
+                            $lead['current_step'] = $campaignElement->element_name;
+                        }
+                    }
+                    $nextElementId = $leadAction->next_true_element_id;
+                    $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
+                    if ($updatedCampaignElement) {
+                        $elementId = $updatedCampaignElement->element_id;
+                        $campaignElement = CampaignElement::find($elementId);
+                        if ($campaignElement) {
+                            $lead['next_step'] = $campaignElement->element_name;
+                        }
+                    } else {
+                        $nextElementId = $leadAction->next_false_element_id;
+                        $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
+                        if ($updatedCampaignElement) {
+                            $elementId = $updatedCampaignElement->element_id;
+                            $campaignElement = CampaignElement::find($elementId);
+                            if ($campaignElement) {
+                                $lead['next_step'] = $campaignElement->element_name;
                             }
                         }
                     }
-                    $schedules = CampaignSchedule::where('user_id', $user_id)->orWhere('user_id', 0)->get();
-                    $data['manage_webhooks'] = $this->checkPermission($role->id, 'manage_webhooks');
-                    $data['manage_linkedin_integrations'] = $this->checkPermission($role->id, 'manage_linkedin_integrations');
-                    $data['manage_email_settings'] = $this->checkPermission($role->id, 'manage_email_settings');
-                    $data['manage_global_limits'] = $this->checkPermission($role->id, 'manage_global_limits');
-                    $data['manage_account_health'] = $this->checkPermission($role->id, 'manage_account_health');
-                    $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
-                    $data['manage_chat'] = $this->checkPermission($role->id, 'manage_chat');
-                    $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
-                    $data['title'] = 'Leads';
-                    $data['leads'] = $leads;
-                    $data['campaigns'] = $campaigns;
-                    $data['campaign_schedule'] = $schedules;
-                    return view('leads', $data);
                 }
-                /* If the user does not have permission, throw an exception */
-                throw new Exception('You can not add campaigns', 403);
             }
-            /* If the user does not have permission, throw an exception */
-            throw new Exception('You can not add campaigns', 403);
+            $schedules = CampaignSchedule::where('user_id', $user_id)->orWhere('user_id', 0)->get();
+            $data['manage_webhooks'] = $this->checkPermission($role->id, 'manage_webhooks');
+            $data['manage_linkedin_integrations'] = $this->checkPermission($role->id, 'manage_linkedin_integrations');
+            $data['manage_email_settings'] = $this->checkPermission($role->id, 'manage_email_settings');
+            $data['manage_global_limits'] = $this->checkPermission($role->id, 'manage_global_limits');
+            $data['manage_account_health'] = $this->checkPermission($role->id, 'manage_account_health');
+            $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
+            $data['manage_chat'] = $this->checkPermission($role->id, 'manage_chat');
+            $data['manage_campaign_details_and_reports'] = $this->checkPermission($role->id, 'manage_campaign_details_and_reports');
+            $data['title'] = 'Leads';
+            $data['leads'] = $leads;
+            $data['campaigns'] = $campaigns;
+            $data['campaign_schedule'] = $schedules;
+            return view('leads', $data);
         } catch (Exception $e) {
             Log::info($e);
             return redirect()->route('acc_dash')->withErrors(['error' => $e->getMessage()]);
@@ -145,110 +136,101 @@ class LeadsController extends Controller
             $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat->id])
                 ->where('user_id', $user->id)
                 ->first();
+            /* Get the user's role based on the assigned seat */
+            $role = Roles::find($assignedSeat->role_id);
 
-            if (!empty($assignedSeat)) {
-                /* Get the user's role based on the assigned seat */
-                $role = Roles::find($assignedSeat->role_id);
-
-                $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
-                if ($data['manage_campaigns'] == true || $data['manage_campaigns'] == 'view_only') {
-                    $user_id = Auth::user()->id;
-                    $seat_id = session('seat_id');
-                    $lead = null;
-                    $campaign = null;
-                    $email_setting = null;
-                    $linkedin_setting = null;
-                    $global_setting = null;
-                    if ($search != 'null' && $id != 'all') {
-                        $campaign = Campaign::where('user_id', $user_id)
-                            ->where('seat_id', $seat_id)
-                            ->where('id', $id)
-                            ->where('is_archive', 0)
-                            ->first();
-                        $lead = Leads::where(function ($query) use ($search) {
-                            $query->where('contact', 'LIKE', '%' . $search . '%')->orWhere('title_company', 'LIKE', '%' . $search . '%');
-                        })->where('campaign_id', $campaign->id)->get();
-                        $email_setting = EmailSetting::where('campaign_id', $campaign->id)->get();
-                        $linkedin_setting = LinkedinSetting::where('campaign_id', $campaign->id)->get();
-                        $global_setting = GlobalSetting::where('campaign_id', $campaign->id)->get();
-                    } else if ($id != 'all') {
-                        $campaign = Campaign::where('user_id', $user_id)
-                            ->where('seat_id', $seat_id)
-                            ->where('id', $id)
-                            ->where('is_archive', 0)
-                            ->first();
-                        $lead = Leads::where('campaign_id', $campaign->id)->get();
-                        $email_setting = EmailSetting::where('campaign_id', $campaign->id)->get();
-                        $linkedin_setting = LinkedinSetting::where('campaign_id', $campaign->id)->get();
-                        $global_setting = GlobalSetting::where('campaign_id', $campaign->id)->get();
-                    } else if ($search != 'null') {
-                        $campaign = Campaign::where('user_id', $user_id)
-                            ->where('seat_id', $seat_id)
-                            ->where('is_archive', 0)
-                            ->get();
-                        $lead = Leads::where(function ($query) use ($search) {
-                            $query->where('contact', 'LIKE', '%' . $search . '%')->orWhere('title_company', 'LIKE', '%' . $search . '%');
-                        })->whereIn('campaign_id', $campaign->pluck('id')->toArray())->get();
-                        $campaign = null;
-                    } else {
-                        $campaign = Campaign::where('user_id', $user_id)
-                            ->where('seat_id', $seat_id)
-                            ->where('is_archive', 0)
-                            ->get();
-                        $lead = Leads::whereIn('campaign_id', $campaign->pluck('id')->toArray())->get();
-                        $campaign = null;
+            $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
+            $user_id = Auth::user()->id;
+            $seat_id = session('seat_id');
+            $lead = null;
+            $campaign = null;
+            $email_setting = null;
+            $linkedin_setting = null;
+            $global_setting = null;
+            if ($search != 'null' && $id != 'all') {
+                $campaign = Campaign::where('user_id', $user_id)
+                    ->where('seat_id', $seat_id)
+                    ->where('id', $id)
+                    ->where('is_archive', 0)
+                    ->first();
+                $lead = Leads::where(function ($query) use ($search) {
+                    $query->where('contact', 'LIKE', '%' . $search . '%')->orWhere('title_company', 'LIKE', '%' . $search . '%');
+                })->where('campaign_id', $campaign->id)->get();
+                $email_setting = EmailSetting::where('campaign_id', $campaign->id)->get();
+                $linkedin_setting = LinkedinSetting::where('campaign_id', $campaign->id)->get();
+                $global_setting = GlobalSetting::where('campaign_id', $campaign->id)->get();
+            } else if ($id != 'all') {
+                $campaign = Campaign::where('user_id', $user_id)
+                    ->where('seat_id', $seat_id)
+                    ->where('id', $id)
+                    ->where('is_archive', 0)
+                    ->first();
+                $lead = Leads::where('campaign_id', $campaign->id)->get();
+                $email_setting = EmailSetting::where('campaign_id', $campaign->id)->get();
+                $linkedin_setting = LinkedinSetting::where('campaign_id', $campaign->id)->get();
+                $global_setting = GlobalSetting::where('campaign_id', $campaign->id)->get();
+            } else if ($search != 'null') {
+                $campaign = Campaign::where('user_id', $user_id)
+                    ->where('seat_id', $seat_id)
+                    ->where('is_archive', 0)
+                    ->get();
+                $lead = Leads::where(function ($query) use ($search) {
+                    $query->where('contact', 'LIKE', '%' . $search . '%')->orWhere('title_company', 'LIKE', '%' . $search . '%');
+                })->whereIn('campaign_id', $campaign->pluck('id')->toArray())->get();
+                $campaign = null;
+            } else {
+                $campaign = Campaign::where('user_id', $user_id)
+                    ->where('seat_id', $seat_id)
+                    ->where('is_archive', 0)
+                    ->get();
+                $lead = Leads::whereIn('campaign_id', $campaign->pluck('id')->toArray())->get();
+                $campaign = null;
+            }
+            foreach ($lead as $item) {
+                $leadAction = LeadActions::where('lead_id', $item['id'])->orderBy('created_at', 'desc')->first();
+                $item['current_step'] = null;
+                $item['next_step'] = null;
+                if ($leadAction) {
+                    $currentElementId = $leadAction->current_element_id;
+                    $updatedCampaignElement = UpdatedCampaignElements::find($currentElementId);
+                    if ($updatedCampaignElement) {
+                        $elementId = $updatedCampaignElement->element_id;
+                        $campaignElement = CampaignElement::find($elementId);
+                        if ($campaignElement) {
+                            $item['current_step'] = $campaignElement->element_name;
+                        }
                     }
-                    foreach ($lead as $item) {
-                        $leadAction = LeadActions::where('lead_id', $item['id'])->orderBy('created_at', 'desc')->first();
-                        $item['current_step'] = null;
-                        $item['next_step'] = null;
-                        if ($leadAction) {
-                            $currentElementId = $leadAction->current_element_id;
-                            $updatedCampaignElement = UpdatedCampaignElements::find($currentElementId);
-                            if ($updatedCampaignElement) {
-                                $elementId = $updatedCampaignElement->element_id;
-                                $campaignElement = CampaignElement::find($elementId);
-                                if ($campaignElement) {
-                                    $item['current_step'] = $campaignElement->element_name;
-                                }
-                            }
-                            $nextElementId = $leadAction->next_true_element_id;
-                            $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
-                            if ($updatedCampaignElement) {
-                                $elementId = $updatedCampaignElement->element_id;
-                                $campaignElement = CampaignElement::find($elementId);
-                                if ($campaignElement) {
-                                    $item['next_step'] = $campaignElement->element_name;
-                                }
-                            } else {
-                                $nextElementId = $leadAction->next_false_element_id;
-                                $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
-                                if ($updatedCampaignElement) {
-                                    $elementId = $updatedCampaignElement->element_id;
-                                    $campaignElement = CampaignElement::find($elementId);
-                                    if ($campaignElement) {
-                                        $item['next_step'] = $campaignElement->element_name;
-                                    }
-                                }
+                    $nextElementId = $leadAction->next_true_element_id;
+                    $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
+                    if ($updatedCampaignElement) {
+                        $elementId = $updatedCampaignElement->element_id;
+                        $campaignElement = CampaignElement::find($elementId);
+                        if ($campaignElement) {
+                            $item['next_step'] = $campaignElement->element_name;
+                        }
+                    } else {
+                        $nextElementId = $leadAction->next_false_element_id;
+                        $updatedCampaignElement = UpdatedCampaignElements::find($nextElementId);
+                        if ($updatedCampaignElement) {
+                            $elementId = $updatedCampaignElement->element_id;
+                            $campaignElement = CampaignElement::find($elementId);
+                            if ($campaignElement) {
+                                $item['next_step'] = $campaignElement->element_name;
                             }
                         }
                     }
-                    $settings = [
-                        'email_setting' => $email_setting,
-                        'linkedin_setting' => $linkedin_setting,
-                        'global_setting' => $global_setting
-                    ];
-                    if (count($lead) > 0) {
-                        return response()->json(['success' => true, 'leads' => $lead, 'campaign' => $campaign, 'settings' => $settings]);
-                    } else {
-                        return response()->json(['success' => false, 'leads' => $lead, 'campaign' => $campaign, 'settings' => $settings]);
-                    }
                 }
-                /* If the user does not have permission, throw an exception */
-                throw new Exception('You can not add campaigns', 403);
             }
-            /* If the user does not have permission, throw an exception */
-            throw new Exception('You can not add campaigns', 403);
+            $settings = [
+                'email_setting' => $email_setting,
+                'linkedin_setting' => $linkedin_setting,
+                'global_setting' => $global_setting
+            ];
+            if (count($lead) > 0) {
+                return response()->json(['success' => true, 'leads' => $lead, 'campaign' => $campaign, 'settings' => $settings]);
+            } else {
+                return response()->json(['success' => false, 'leads' => $lead, 'campaign' => $campaign, 'settings' => $settings]);
+            }
         } catch (Exception $e) {
             Log::info($e);
             return redirect()->route('acc_dash')->withErrors(['error' => $e->getMessage()]);
@@ -274,74 +256,65 @@ class LeadsController extends Controller
             $assignedSeat = AssignedSeats::whereIn('seat_id', [0, $seat->id])
                 ->where('user_id', $user->id)
                 ->first();
+            /* Get the user's role based on the assigned seat */
+            $role = Roles::find($assignedSeat->role_id);
 
-            if (!empty($assignedSeat)) {
-                /* Get the user's role based on the assigned seat */
-                $role = Roles::find($assignedSeat->role_id);
-
-                $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
-                if ($data['manage_campaigns'] == true || $data['manage_campaigns'] == 'view_only') {
-                    $user_id = Auth::user()->id;
-                    $seat_id = session('seat_id');
-                    $all = $request->all();
-                    $email = $all['email'];
-                    $campaign_id = $all['campaign_id'];
-                    if ($campaign_id != 'all') {
-                        $campaigns = Campaign::where('user_id', $user_id)->where('seat_id', $seat_id)->where('id', $campaign_id)->get();
-                    } else {
-                        $campaigns = Campaign::where('user_id', $user_id)->where('seat_id', $seat_id)->get();
-                    }
-                    if (!$campaigns->isEmpty()) {
-                        foreach ($campaigns as $campaign) {
-                            $fileName = 'leads_' . time() . '_' . Str::random(10) . '.csv';
-                            $uploadDir = 'uploads/';
-                            $uploadFilePath = $uploadDir . $fileName;
-                            $csv = Writer::createFromFileObject(new \SplTempFileObject());
-
-                            $leads = Leads::where('user_id', $user_id)->where('campaign_id', $campaign->id)->get();
-                            $csv->insertOne(['Sr. #', 'Campaign Id', 'Campaign Name', 'Status', 'Contact', 'Title Company', 'Send Connections', 'Next Step', 'Executed Time']);
-
-                            if (!$leads->isEmpty()) {
-                                $count = 1;
-                                foreach ($leads as $lead) {
-                                    $csv->insertOne([
-                                        $count++,
-                                        $campaign->id,
-                                        $campaign->campaign_name,
-                                        $lead->is_active == '1' ? 'Active' : 'Not Active',
-                                        $lead->contact,
-                                        $lead->title_company,
-                                        $lead->send_connections == '1' ? 'Connected' : 'Disconnected',
-                                        $lead->next_step,
-                                        $lead->executed_time
-                                    ]);
-                                }
-                            } else {
-                                $csv->insertOne(['No Lead Found', '', '', '', '', '', '', '', '']);
-                            }
-                            $csvContent = $csv->getContent();
-                            Storage::put($uploadFilePath, $csvContent);
-                            $filePaths[] = $uploadFilePath;
-                        }
-                        Mail::send([], [], function ($message) use ($email, $filePaths) {
-                            $message->to($email)
-                                ->subject('Your Leads CSVs');
-                            $count = 1;
-                            foreach ($filePaths as $filePath) {
-                                $message->attach(Storage::path($filePath), [
-                                    'as' => 'Attachment # ' . $count++,
-                                    'mime' => 'text/csv',
-                                ]);
-                            }
-                        });
-                    }
-                    return response()->json(['success' => true]);
-                }
-                /* If the user does not have permission, throw an exception */
-                throw new Exception('You can not add campaigns', 403);
+            $data['manage_campaigns'] = $this->checkPermission($role->id, 'manage_campaigns');
+            $user_id = Auth::user()->id;
+            $seat_id = session('seat_id');
+            $all = $request->all();
+            $email = $all['email'];
+            $campaign_id = $all['campaign_id'];
+            if ($campaign_id != 'all') {
+                $campaigns = Campaign::where('user_id', $user_id)->where('seat_id', $seat_id)->where('id', $campaign_id)->get();
+            } else {
+                $campaigns = Campaign::where('user_id', $user_id)->where('seat_id', $seat_id)->get();
             }
-            /* If the user does not have permission, throw an exception */
-            throw new Exception('You can not add campaigns', 403);
+            if (!$campaigns->isEmpty()) {
+                foreach ($campaigns as $campaign) {
+                    $fileName = 'leads_' . time() . '_' . Str::random(10) . '.csv';
+                    $uploadDir = 'uploads/';
+                    $uploadFilePath = $uploadDir . $fileName;
+                    $csv = Writer::createFromFileObject(new \SplTempFileObject());
+
+                    $leads = Leads::where('user_id', $user_id)->where('campaign_id', $campaign->id)->get();
+                    $csv->insertOne(['Sr. #', 'Campaign Id', 'Campaign Name', 'Status', 'Contact', 'Title Company', 'Send Connections', 'Next Step', 'Executed Time']);
+
+                    if (!$leads->isEmpty()) {
+                        $count = 1;
+                        foreach ($leads as $lead) {
+                            $csv->insertOne([
+                                $count++,
+                                $campaign->id,
+                                $campaign->campaign_name,
+                                $lead->is_active == '1' ? 'Active' : 'Not Active',
+                                $lead->contact,
+                                $lead->title_company,
+                                $lead->send_connections == '1' ? 'Connected' : 'Disconnected',
+                                $lead->next_step,
+                                $lead->executed_time
+                            ]);
+                        }
+                    } else {
+                        $csv->insertOne(['No Lead Found', '', '', '', '', '', '', '', '']);
+                    }
+                    $csvContent = $csv->getContent();
+                    Storage::put($uploadFilePath, $csvContent);
+                    $filePaths[] = $uploadFilePath;
+                }
+                Mail::send([], [], function ($message) use ($email, $filePaths) {
+                    $message->to($email)
+                        ->subject('Your Leads CSVs');
+                    $count = 1;
+                    foreach ($filePaths as $filePath) {
+                        $message->attach(Storage::path($filePath), [
+                            'as' => 'Attachment # ' . $count++,
+                            'mime' => 'text/csv',
+                        ]);
+                    }
+                });
+            }
+            return response()->json(['success' => true]);
         } catch (Exception $e) {
             Log::info($e);
             return redirect()->route('acc_dash')->withErrors(['error' => $e->getMessage()]);
