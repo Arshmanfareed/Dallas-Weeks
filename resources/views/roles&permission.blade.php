@@ -117,7 +117,7 @@
                         </button>
                     </div>
                     <div class="modal-body" bis_skin_checked="1">
-                        <form class="invite_form">
+                        <form class="invite_form" id="">
                             <label for="role_name">Role name</label>
                             <input type="text" name="role_name" required>
                             <div>
@@ -140,8 +140,8 @@
                                                         class="view_only switch"
                                                         name="view_only_{{ $permission['permission_slug'] }}">
                                                     <label for="view_only_{{ $permission['permission_slug'] }}"></label>
+                                                    View Only
                                                 @endif
-                                                View Only
                                             </div>
                                         </div>
                                     @endforeach
@@ -160,13 +160,13 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="edit_role">Create a custom role</h5>
+                        <h5 class="modal-title" id="edit_role">Edit role</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
                     <div class="modal-body" bis_skin_checked="1">
-                        <form class="invite_form">
+                        <form class="edit_form">
                             <label for="role_name">Role name</label>
                             <input type="text" id="role_name" name="role_name" required>
                             <div>
@@ -176,27 +176,28 @@
                                             <div class="col-lg-6 checkboxes" style="display: flex; width: 390px;">
                                                 <input class="permission"
                                                     style="width: 25px; height: 25px; margin-right: 25px;" type="checkbox"
-                                                    id="permission_{{ $permission['permission_slug'] }}"
+                                                    id="edit_permission_{{ $permission['permission_slug'] }}"
                                                     name="{{ $permission['permission_slug'] }}">
                                                 <label
-                                                    for="permission_{{ $permission['permission_slug'] }}">{{ $permission['permission_name'] }}</label>
+                                                    for="edit_permission_{{ $permission['permission_slug'] }}">{{ $permission['permission_name'] }}</label>
                                             </div>
                                             <div class="col-lg-6 switch_box" style="display: none; width: 390px;">
                                                 @if ($permission->allow_view_only == 1)
                                                     <input type="checkbox"
                                                         style="width: 25px; height: 25px; margin-right: 25px;"
-                                                        id="view_only_{{ $permission['permission_slug'] }}"
+                                                        id="edit_view_only_{{ $permission['permission_slug'] }}"
                                                         class="view_only switch"
                                                         name="view_only_{{ $permission['permission_slug'] }}">
-                                                    <label for="view_only_{{ $permission['permission_slug'] }}"></label>
+                                                    <label
+                                                        for="edit_view_only_{{ $permission['permission_slug'] }}"></label>
+                                                    View Only
                                                 @endif
-                                                View Only
                                             </div>
                                         </div>
                                     @endforeach
                                 @endif
                             </div>
-                            <button type="submit" class="btn btn-next">Create Role</button>
+                            <button type="submit" class="btn btn-next">Edit Role</button>
                         </form>
                     </div>
                 </div>
@@ -208,6 +209,7 @@
             var customRoleRoute = "{{ route('customRole') }}";
             var deleteRoleRoute = "{{ route('deleteRole', [':id']) }}";
             var getRoleRoute = "{{ route('getRole', [':id']) }}";
+            var editRoleRoute = "{{ route('editRole', [':id']) }}";
         </script>
     @endif
 @endsection

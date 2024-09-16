@@ -87,7 +87,8 @@ Route::middleware(['userAuth'])->group(function () {
     Route::prefix('role')->group(function () {
         Route::post('/custom', [RolespermissionController::class, 'custom_role'])->name('customRole'); //Done
         Route::get('/delete/{id}', [RolespermissionController::class, 'delete_role'])->name('deleteRole'); //Done
-        Route::get('/getRole/{id}', [RolespermissionController::class, 'get_role_by_id'])->name('getRole');
+        Route::get('/getRole/{id}', [RolespermissionController::class, 'get_role_by_id'])->name('getRole'); //Done
+        Route::post('/editRole/{id}', [RolespermissionController::class, 'edit_role'])->name('editRole');
     });
     Route::post('/logout', [LoginController::class, 'logoutUser'])->name('logout-user'); //Done
 

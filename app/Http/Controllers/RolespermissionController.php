@@ -102,6 +102,7 @@ class RolespermissionController extends Controller
             $assignedSeat = AssignedSeats::where('seat_id', 0)
                 ->where('user_id', $user->id)
                 ->first();
+                
             /* Find the team associated with the user */
             $team = Teams::find($user->team_id);
 
@@ -224,13 +225,77 @@ class RolespermissionController extends Controller
             }
 
             /* If the role ID is one of the default roles (1, 2, 3), throw an exception */
-            throw new Exception('Cannot delete default roles');
+            throw new Exception('Cannot edit default roles');
         } catch (Exception $e) {
             /* Log the exception message for debugging purposes */
             Log::error($e->getMessage());
 
             /* Return a JSON response with the error message and failure status */
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function edit_role(Request $request, $role_id)
+    {
+        try {
+            /* Get all the input data from the request */
+            $all = $request->all();
+            /* Check if the role ID is not one of the default role IDs (1, 2, 3) */
+            if ($role_id != 1 && $role_id != 2 && $role_id != 3) {
+                /* Retrieve the currently authenticated user */
+                $user = Auth::user();
+
+                /* Find an assigned seat for the user where seat_id is 0 (indicating a default or unassigned seat) */
+                $assignedSeat = AssignedSeats::where('seat_id', 0)
+                    ->where('user_id', $user->id)
+                    ->first();
+
+                /* Find the team associated with the user */
+                $team = Teams::find($user->team_id);
+
+                /* Create a new role for the team */
+                $role = Roles::where('team_id', $team->id)->first();
+                $role->role_name = $all['role_name'];
+                $role->save();
+
+                /* Remove 'role_name' and '_token' from the request data */
+                unset($all['role_name']);
+                unset($all['_token']);
+
+                /* Fetch all available permissions */
+                $permissions = Permissions::all();
+
+                /* Iterate over each permission to assign it to the new role */
+                foreach ($permissions as $permission) {
+                    $rolePermission = Role_Permission::where('role_id', $role->id)->where('permission_id', $permission->id)->first();
+                    if (array_key_exists($permission['permission_slug'], $all)) {
+                        /* If the permission is present in the request, create a Role_Permission entry with access */
+                        $rolePermission->access = 1;
+                        $rolePermission->view_only = array_key_exists('view_only_' . $permission['permission_slug'], $all) ? 1 : 0;
+                    } else {
+                        /* If the permission is not present in the request, create a Role_Permission entry without access */
+                        $rolePermission->access = 0;
+                        $rolePermission->view_only = 0;
+                    }
+                    $rolePermission->save();
+
+                    /* Remove processed permission entries from the request data */
+                    unset($all[$permission['permission_slug']]);
+                    unset($all['view_only_' . $permission['permission_slug']]);
+                }
+
+                /* Return the remaining data in JSON format */
+                return response()->json(['success' => true]);
+            }
+
+            /* If the role ID is one of the default roles (1, 2, 3), throw an exception */
+            throw new Exception('Cannot edit default roles');
+        } catch (Exception $e) {
+            /* Log the exception for debugging purposes */
+            Log::error($e->getMessage());
+
+            /* Return a JSON response with the error message */
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 }
