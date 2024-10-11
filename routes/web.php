@@ -69,6 +69,10 @@ Route::middleware(['userAuth'])->group(function () {
     /* These are for dashboard which does not require seat_id in session */
     Route::get('/dashboard', [DasboardController::class, 'dashboard'])->name('dashobardz'); //Done
     Route::get('/blacklist', [BlacklistController::class, 'blacklist'])->name('global_blacklist'); //Done
+    Route::post('/save-global-blacklist', [BlacklistController::class, 'saveGlobalBlacklist'])->name('saveGlobalBlacklist'); //Done
+    Route::post('/save-email-blacklist', [BlacklistController::class, 'saveEmailBlacklist'])->name('saveEmailBlacklist'); //Done
+    Route::delete('/delete-global-blacklist/{id}', [BlacklistController::class, 'deleteGlobalBlacklist'])->name('deleteGlobalBlacklist'); //Done
+    Route::delete('/delete-email-blacklist/{id}', [BlacklistController::class, 'deleteEmailBlacklist'])->name('deleteEmailBlacklist');
     Route::get('/invoice', [InvoiceController::class, 'invoice'])->name('global_invoice'); //Done
     Route::get('/team', [TeamController::class, 'team'])->name('team'); //Done
     Route::get('/roles-and-permission-setting', [SettingController::class, 'settingrolespermission'])->name('settingrolespermission'); //Done

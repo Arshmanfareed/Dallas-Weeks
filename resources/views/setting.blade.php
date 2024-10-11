@@ -1,4 +1,4 @@
-@extends('partials/master')
+w@extends('partials/master')
 @section('content')
 <section class="blacklist setting_sec">
     <div class="container-fluid">

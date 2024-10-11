@@ -359,7 +359,7 @@
                                                             Linked in</button>
                                                     @endif
                                                 </div>
-                                            @elseif ($manage_linkedin_integrations == 'view_only')
+                                            @elseif ($manage_linkedin_integrations == 'view_only')web-browser
                                                 <div class="tab-pane linkedin_pane integrations_tab {{ session()->has('add_account') ? 'active' : '' }}"
                                                     id="integrations" role="tabpanel">
                                                     @if (session()->has('account') && session()->has('account_profile'))

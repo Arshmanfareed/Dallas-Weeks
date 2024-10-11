@@ -15,7 +15,7 @@ use Symfony\Component\Translation\Provider\Dsn;
 
 class UnipileController extends Controller
 {
-    var $x_api_key = 'Z+eeumbS.GmXz1XXr2mxTXjEsn9vepK/2xnq+HcR8bpoGSuv/l6w=';
+    var $x_api_key = 'dOqretfY.Hkgk0hZugngqn2VyC1rkJyp4L8rml/ZwwJvEX6pxt30=';
     var $dsn = 'https://api4.unipile.com:13443/';
 
     public function list_all_accounts(Request $request)

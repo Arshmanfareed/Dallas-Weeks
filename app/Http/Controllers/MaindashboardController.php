@@ -78,7 +78,7 @@ class MaindashboardController extends Controller
 
                 /* If profile retrieval is successful, fetch LinkedIn profile and store profile data in session. */
                 if ($account instanceof JsonResponse && !isset($account->getData(true)['error'])) {
-                    $account = $account->getData(true)['account'];
+                    $account = $account->getData(true)['account']; 
                     $profile_url = 'https://www.linkedin.com/in/' . $account['provider_id'];
                     $request = [
                         'account_id' => $seat['account_id'],
